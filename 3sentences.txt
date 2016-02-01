@@ -4,4 +4,4 @@ Group members:
 - Michael Mauer
 - David Li
 
-We are interested in improving spaced repetition/SRS in the context of language learning, specifically, Japanese learning.
+We are interested in improving spaced repetition/SRS in the context of language learning, specifically, Japanese learning. In particular, we would like to improve the intervals used in SRS, with a learning technique that can find the best parameters for users or a specific user. Alternatively, we are interested in providing alternate ways for people to engage with SRS, either through a standalone interface or integrated into a system like Crystallize.
