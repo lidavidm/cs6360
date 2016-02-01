@@ -1,0 +1,7 @@
+Group members:
+
+- Andy Jiang
+- Michael Mauer
+- David Li
+
+We are interested in improving spaced repetition/SRS in the context of language learning, specifically, Japanese learning.
