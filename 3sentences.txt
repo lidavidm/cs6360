@@ -1,7 +1,10 @@
 Group members:
 
-- Andy Jiang
+- Andrew Jiang
 - Michael Mauer
 - David Li
 
 We are interested in improving spaced repetition/SRS in the context of language learning, specifically, Japanese learning. In particular, we would like to improve the intervals used in SRS, with a learning technique that can find the best parameters for users or a specific user. Alternatively, we are interested in providing alternate ways for people to engage with SRS, either through a standalone interface or integrated into a system like Crystallize.
+
+Revision 1:
+We are interested in improving spaced repetition/SRS either in general or in the context of language learning. In particular, we would like to apply reinforcement learning to the task of constructing a review schedule that is tailored to the learning habits and ability of a specific user. Alternatively, we are interested in providing new ways for people to engage with SRS, either through a standalone interface or integrated into a system like Crystallize.
