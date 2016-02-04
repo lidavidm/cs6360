@@ -18,3 +18,8 @@
 *.aux
 *.synctex.gz
 *.log
+
+# Python
+
+__pycache__/
+virtualenv/

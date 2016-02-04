@@ -1,0 +1,11 @@
+Jinja2==2.8
+MarkupSafe==0.23
+wheezy.caching==0.1.114
+wheezy.core==0.1.140
+wheezy.html==0.1.147
+wheezy.http==0.1.344
+wheezy.routing==0.1.157
+wheezy.security==0.1.64
+wheezy.template==0.1.167
+wheezy.validation==0.1.135
+wheezy.web==0.1.485
