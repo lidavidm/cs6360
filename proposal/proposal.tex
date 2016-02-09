@@ -8,7 +8,8 @@
 \usepackage[letterpaper]{geometry}
 \usepackage{titlesec}
 
-\titleformat{\section}{\normalfont\large}{\thesection}{1em}{}
+\titleformat{\section}{\normalfont\large}{\thesection}{0.5em}{}
+\titlespacing*{\section}{}{0.75em}{0.3em}
 
 \begin{document}
 \begingroup
@@ -41,33 +42,33 @@ generation of computer science and software development students.
 Our approach is to develop a game based on visual programming, where
 the immediate objective is to manipulate various objects within a
 world to accomplish certain goals. Tentatively, the main theme will be
-controlling a robot. Students will control the robot and other objects
-via a block-based visual programming interface akin to Scratch.
-However, the interface will be designed to express object-oriented
-concepts, making clear ideas such as method invocation, object
-instantiation, and polymorphism. Furthermore, the intent is to
-demonstrate the link between the abstracted representation and the
-underlying code: the system will translate the visual representation
-to Java code, showing its execution in tandem with the symbolic
-execution of the blocks and the effect of the code in the world. The
-system will highlight the visual block being executed, as well as the
-corresponding line of code. Eventually, the system will fade the
-visual representation, asking students to directly write more and more
-of the code itself.
+controlling a robot to gather resources, build new robots (teaching
+object instantiation, design patterns), writing code for new robots
+(teaching inheritance, encapsulation, etc.), or terraforming the
+environment. Students will control the robot and other objects via a
+block-based visual programming interface akin to Scratch.  However,
+the interface will be designed to express object-oriented concepts,
+making clear ideas such as method invocation, object instantiation,
+and polymorphism. Furthermore, the intent is to demonstrate the link
+between the abstracted representation and the underlying code: the
+system will translate the visual representation to Java code, showing
+its execution in tandem with the symbolic execution of the blocks and
+the effect of the code in the world. The system will highlight the
+visual block being executed, as well as the corresponding line of
+code. Eventually, the system will fade the visual representation,
+asking students to directly write more and more of the code itself.
 
 Specifically, we intend to integrate various visual metaphors for
 object-oriented concepts within the visual programming interface. For
-instance, in the sample UI, the object reference \texttt{this} is
-clearly separated from the rest of the code, emphasizing the dynamic
-dispatch/message-passing concept. And while in a system such as
-Scratch all objects in the world are immediately accessible, in this
-system, encapsulation and composition would be emphasized by having
-methods and member variables to obtain references to other
-objects. Eventually, the system could progress to defining custom
-classes, directly demonstrating inheritance and other
-concepts. Subtyping could be demonstrated via color or decorations on
-the object blocks, requiring students to match up a correctly
-decorated block with the appropriate slot.
+example, class definitions would be represented as ``blueprints''
+containing lists of methods, which students would drag into ``tell''
+blocks that represent the message-passing style of OOP.\@ Students
+would also add an object reference to the ``tell'' block, which the
+system would translate into method invocation on the instance. Each
+class would have an associated pictorial representation, which would
+be attached to object reference blocks in the editor, and which would
+also be used to represent instances of that object in the game world
+grid.
 
 \begin{figure}[h]
   \centering
