@@ -45,6 +45,9 @@ public class RakkaMain {
 //            }
             BufferedReader reader = new BufferedReader(new InputStreamReader(vm.process().getInputStream()));
             reader.lines().forEach(System.out::println);
+
+            BufferedReader stderr = new BufferedReader(new InputStreamReader(vm.process().getErrorStream()));
+            stderr.lines().forEach(System.out::println);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (IllegalConnectorArgumentsException e) {
