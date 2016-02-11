@@ -60,6 +60,7 @@ public class RekiShim {
                 System.err.println("Could not compile!");
                 return;
             }
+            System.out.println("Finished compiling new code!");
         } catch (IOException e) {
             e.printStackTrace();
             return;

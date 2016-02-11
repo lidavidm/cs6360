@@ -1,19 +1,19 @@
 package rakka;
 
-import com.sun.jdi.Bootstrap;
-import com.sun.jdi.VirtualMachine;
-import com.sun.jdi.VirtualMachineManager;
+import com.sun.jdi.*;
 import com.sun.jdi.connect.Connector;
 import com.sun.jdi.connect.IllegalConnectorArgumentsException;
 import com.sun.jdi.connect.LaunchingConnector;
 import com.sun.jdi.connect.VMStartException;
-import com.sun.jdi.event.Event;
-import com.sun.jdi.event.EventQueue;
-import com.sun.jdi.event.EventSet;
-import com.sun.jdi.event.VMDisconnectEvent;
+import com.sun.jdi.event.*;
+import com.sun.jdi.request.EventRequest;
+import com.sun.jdi.request.EventRequestManager;
+import com.sun.jdi.request.MethodEntryRequest;
+import com.sun.jdi.request.StepRequest;
 
 import java.io.*;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by lidavidm on 2/10/16.
@@ -50,11 +50,35 @@ public class RakkaMain {
         arguments.get("options").setValue("-cp /home/lidavidm/Code/cornell/cs6360/server_prototype/out/production/server_prototype");
         try {
             VirtualMachine vm = connector.launch(arguments);
-            vm.resume();
 
-            new StreamHandlerThread(vm.process().getInputStream(), System.out).run();
-            new StreamHandlerThread(vm.process().getErrorStream(), System.err).run();
             EventQueue events = vm.eventQueue();
+            EventRequestManager manager = vm.eventRequestManager();
+
+            ThreadReference mainThread = null;
+            for (ThreadReference thread : vm.allThreads()) {
+                if (thread.name().equals("main")) {
+                    mainThread = thread;
+                    break;
+                }
+            }
+            if (mainThread == null) {
+                System.out.println("Couldn't find main thread!");
+                return;
+            }
+
+            StepRequest stepRequest = manager.createStepRequest(mainThread, StepRequest.STEP_LINE, StepRequest.STEP_INTO);
+            stepRequest.addClassFilter("MyRobot");
+            stepRequest.enable();
+
+//            MethodEntryRequest request = manager.createMethodEntryRequest();
+//            request.setSuspendPolicy(EventRequest.SUSPEND_NONE);
+//            request.addClassFilter("MyRobot");
+//            request.enable();
+
+            new StreamHandlerThread(vm.process().getInputStream(), System.out).start();
+            new StreamHandlerThread(vm.process().getErrorStream(), System.err).start();
+
+            vm.resume();
 
             EVENT_LOOP:
             while (true) {
@@ -63,8 +87,18 @@ public class RakkaMain {
                     if (event instanceof VMDisconnectEvent) {
                         break EVENT_LOOP;
                     }
-
-                    System.out.println(event);
+                    else if (event instanceof MethodEntryEvent) {
+                        MethodEntryEvent evt = (MethodEntryEvent) event;
+                        System.out.println("Entering method: " + evt.method().name());
+                    }
+                    else if (event instanceof StepEvent) {
+                        StepEvent evt = (StepEvent) event;
+                        Location location = evt.location();
+                        if (location.method().name().equals("run")) {
+                            System.out.println("Got to: " + location.method().name() + " line " + location.lineNumber());
+                        }
+                        vm.resume();
+                    }
                 }
             }
         } catch (InterruptedException e) {
