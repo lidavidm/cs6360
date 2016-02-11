@@ -28,17 +28,66 @@ body {
     width: 60%;
 }
 
-.blueprint {
-    display: inline-block;
-    background: #00C;
-    border: 1px solid #00F;
+.workbench-area {
+    display: block;
     color: #FFF;
+    margin: 1em;
+    padding: 0.5em;
 }
 
-.blueprint .method {
-    display: block;
-    background: #C0C;
+.workbench-item {
+    display: inline-block;
     border-radius: 5px;
+    width: calc(50% - 1.5em);
+    margin: 0.5em;
+    padding: 0.25em;
+}
+
+.blueprint {
+    background: #00C;
+    border: 1px solid #00F;
+    /* Based on http://lea.verou.me/css3patterns/#blueprint-grid */
+    /* My understanding: background-size sets the size of the pattern, one
+       pair per linear-gradient line. This causes the pattern to tile. */
+    background-size: 10px 10px, 10px 10px;
+    /* Here we specify a color and a stop. The stop is the position along
+       the gradient where the color should stop. */
+    background-image:
+    linear-gradient(rgba(255, 255, 255, 0.2) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.2) 1px, transparent 1px);
+}
+
+.blueprint .class {
+    font-family: "Consolas", monospace;
+}
+
+div.method {
+    background: #C0C;
+}
+
+span.method {
+    color: #C0C;
+}
+
+div.control-flow-structure {
+    background: orange;
+}
+
+span.object {
+    color: #0F0;
+}
+
+div.primitive {
+    background: brown;
+}
+
+div.boolean {
+    background: red;
+}
+
+.toolbox {
+    background: #777;
+    border: 1px solid #333;
 }
 
 #map {
