@@ -1,7 +1,9 @@
 'use strict';
 
-function Block() {
-
+function Block(data) {
+    this.kind = m.prop(data.kind);
+    this.subkind = m.prop(data.subkind || null);
+    this.value = m.prop(data.value);
 }
 
 var GameWidget = {
@@ -41,7 +43,44 @@ var EditorComponent = {
                     drake.containers.push(document.getElementById("workspace"));
                     drake.containers.push(document.getElementById("workbench"));
                     drake.on("drop", function(el, target, source, sibling) {
+                        // TODO: only do this if source is not target;
+                        // else, need to reorder block list
+                        m.startComputation();
+                        // TODO: separate the creation of the Block
+                        // and deciding where to attach it (to the
+                        // main block list or to a sublist)
+                        if (el.classList.contains("control-flow-structure")) {
+                            controller.blocks().push(new Block({
+                                kind: "control-flow-structure",
+                                subkind: el.dataset.subkind,
+                                value: null,
+                            }));
+                        }
+                        else if (el.classList.contains("primitive")) {
+                             controller.blocks().push(new Block({
+                                 kind: "primitive",
+                                 subkind: el.innerText,
+                                 value: null,
+                            }));
+                        }
+                        // These are not legal
+                        // else if (el.classList.contains("method")) {
+                        //     controller.blocks().push(new Block({
+                        //         kind: "method",
+                        //         // TODO: subkind based on source
+                        //         value: el.innerText,
+                        //     }));
+                        // }
+                        // else if (el.classList.contains("boolean")) {
+                        //     controller.blocks().push(new Block({
+                        //          kind: "boolean",
+                        //          value: el.innerText == "true" ? true : false,
+                        //     }));
+                        // }
+
+                        drake.remove();
                         console.log(el, target, source, sibling);
+                        m.endComputation();
                     });
                 }
             },
@@ -63,7 +102,38 @@ var WorkspaceComponent = {
     },
 
     view: function(controller, args) {
-        return m("div#workspace.block-acceptor", "Blocks go here");
+        return m("div#workspace.block-acceptor", args.blocks.map(function(block, index) {
+            switch (block.kind()) {
+            case "primitive":
+                if (block.subkind() === "number") {
+                    return m("div.primitive", [
+                        "Number: ",
+                        m("input[type='number']")
+                    ]);
+                }
+                else if (block.subkind() === "text") {
+                    return m("div.primitive", [
+                        "Text: ",
+                        m("input[type='text']")
+                    ]);
+                }
+                break;
+            case "control-flow-structure":
+                if (block.subkind() === "tell") {
+                    return m("div.control-flow-structure", [
+                        "tell ",
+                        m("div.block-hole.value"),
+                        " to ",
+                        m("div.block-hole.method"),
+                    ]);
+                }
+                break;
+            default:
+                return m("div", {
+                    class: block.kind(),
+                }, block.value());
+            }
+        }));
     },
 };
 
@@ -97,13 +167,19 @@ var ToolboxComponent = {
         return m(".toolbox.workbench-area", [
             m("header", "Toolbox"),
             m(".control-flow-structures.block-container", [
-                m(".control-flow-structure.workbench-item", "if..else.."),
-                m(".control-flow-structure.workbench-item", "forever"),
+                m(".control-flow-structure.workbench-item", {
+                    "data-subkind": "if/else",
+                }, "if..else.."),
+                m(".control-flow-structure.workbench-item", {
+                    "data-subkind": "forever",
+                }, "forever"),
                 m(".boolean.workbench-item", "true"),
                 m(".boolean.workbench-item", "false"),
                 m(".primitive.workbench-item", "text"),
                 m(".primitive.workbench-item", "number"),
-                m(".control-flow-structure.workbench-item", [
+                m(".control-flow-structure.workbench-item", {
+                    "data-subkind": "tell",
+                }, [
                     "tell ",
                     m("span.object", "object"),
                     " to ",
