@@ -1,6 +1,9 @@
 body {
     margin: 0;
     padding: 0;
+
+    font-size: 1em;
+    font-family: "Noto Sans UI", sans-serif;
 }
 
 .container {
@@ -12,10 +15,42 @@ body {
 
 #editor {
     float: left;
-    width: 66%;
+    width: 70%;
+}
+
+#workspace {
+    float: left;
+    width: 40%;
+}
+
+#workbench {
+    float: left;
+    width: 60%;
+}
+
+.blueprint {
+    display: inline-block;
+    background: #00C;
+    border: 1px solid #00F;
+    color: #FFF;
+}
+
+.blueprint .method {
+    display: block;
+    background: #C0C;
+    border-radius: 5px;
 }
 
 #map {
     float: left;
-    width: 33%;
+    width: 30%;
+    height: 100%;
+}
+
+#worldMap {
+    height: 85%;
+}
+
+#gameControls {
+    height: 15%;
 }
