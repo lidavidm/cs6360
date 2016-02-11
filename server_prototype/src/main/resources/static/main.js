@@ -120,7 +120,7 @@ var WorkspaceComponent = {
                 break;
             case "control-flow-structure":
                 if (block.subkind() === "tell") {
-                    return m("div.control-flow-structure", [
+                    return m("div.workspace-block.control-flow-structure", [
                         "tell ",
                         m("div.block-hole.value"),
                         " to ",
