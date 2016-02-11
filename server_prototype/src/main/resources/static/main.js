@@ -1,23 +1,13 @@
+'use strict';
+
 var GameWidget = {
     controller: function(args) {
     },
 
     view: function(controller) {
-        return m("html", [
-            m("head", [
-                m("title", "Test Game"),
-                m("link", {
-                    rel: "stylesheet",
-                    type: "text/css",
-                    href: "main.css",
-                }),
-            ]),
-            m("body", [
-                m(".container", [
-                    m.component(EditorComponent),
-                    m.component(MapComponent),
-                ]),
-            ]),
+        return m(".container", [
+            m.component(EditorComponent),
+            m.component(MapComponent),
         ]);
     },
 };
@@ -27,8 +17,28 @@ var EditorComponent = {
     },
 
     view: function(controller) {
-        return m("div#editor", [
-            m("div#workspace", "Blocks go here"),
+        return m("div#editor", {
+            config: function(element, isInitialized) {
+                if (!isInitialized) {
+                    var drake = dragula({
+                        copy: function(el, source) {
+                            return source.classList.contains("block-container");
+                        },
+                        accepts: function(el, target, source, sibling) {
+                            return source.classList.contains("block-container") &&
+                                target.classList.contains("block-acceptor");
+                        },
+                        isContainer: function(el) {
+                            return el.classList.contains("block-container");
+                        }
+                    });
+                    drake.containers.push(document.getElementById("workspace"));
+                    drake.containers.push(document.getElementById("workbench"));
+                   // drake.on('drag', function() { console.log('drag'); });
+                }
+            },
+        }, [
+            m("div#workspace.block-acceptor", "Blocks go here"),
             m("div#workbench", [
                 "Blueprints/toolboxes go here",
                 m.component(ToolboxComponent),
@@ -49,7 +59,7 @@ var BlueprintComponent = {
                 m("span.class", "Robot"),
                 " can",
             ]),
-            m(".methods", [
+            m(".methods.block-container", [
                 m(".method.workbench-item", "moveForward"),
                 m(".method.workbench-item", "turnLeft"),
                 m(".method.workbench-item", "selfDestruct"),
@@ -67,7 +77,7 @@ var ToolboxComponent = {
     view: function(controller) {
         return m(".toolbox.workbench-area", [
             m("header", "Toolbox"),
-            m(".control-flow-structures", [
+            m(".control-flow-structures.block-container", [
                 m(".control-flow-structure.workbench-item", "if..else.."),
                 m(".control-flow-structure.workbench-item", "forever"),
                 m(".boolean.workbench-item", "true"),
@@ -124,4 +134,4 @@ var MapComponent = {
     },
 };
 
-m.mount(document, GameWidget);
+m.mount(document.body, GameWidget);
