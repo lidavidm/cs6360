@@ -56,15 +56,13 @@ public class RekiShim {
                     null,
                     Collections.singletonList(code)
             );
-            if (task.call()) {
-
-            }
-            else {
+            if (!task.call()) {
                 System.err.println("Could not compile!");
                 return;
             }
         } catch (IOException e) {
             e.printStackTrace();
+            return;
         }
 
 
@@ -75,8 +73,7 @@ public class RekiShim {
             }, RekiShim.class.getClassLoader());
             Class robotClass = loader.loadClass("MyRobot");
             ReloadableRobot robot = (ReloadableRobot) robotClass.newInstance();
-            robot.moveForward();
-            robot.turnLeft();
+            robot.run();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (InstantiationException e) {

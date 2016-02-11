@@ -4,7 +4,7 @@ package reki.shim;
  * Created by lidavidm on 2/10/16.
  */
 @SuppressWarnings("unused")
-public class Robot implements ReloadableRobot {
+public abstract class Robot implements ReloadableRobot {
     public Robot() {
 
     }

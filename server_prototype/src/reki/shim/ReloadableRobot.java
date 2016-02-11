@@ -7,4 +7,6 @@ package reki.shim;
 public interface ReloadableRobot extends ReloadableGameObject {
     void moveForward();
     void turnLeft();
+
+    void run();
 }
