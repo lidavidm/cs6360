@@ -25,8 +25,7 @@ var EditorComponent = {
                             return source.classList.contains("block-container");
                         },
                         accepts: function(el, target, source, sibling) {
-                            return source.classList.contains("block-container") &&
-                                target.classList.contains("block-acceptor");
+                            return target.classList.contains("block-acceptor");
                         },
                         isContainer: function(el) {
                             return el.classList.contains("block-container");
