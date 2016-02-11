@@ -10,7 +10,8 @@ public class WashiServer {
         staticFileLocation("/static");
 
         get("/", (request, response) -> {
-            return "Test";
+            response.redirect("/index.html");
+            return "";
         });
     }
 }

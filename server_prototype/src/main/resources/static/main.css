@@ -1,0 +1,21 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    margin: 0 auto;
+    width: 1280px;
+    height: 720px;
+    border: 1px solid #000;
+}
+
+#editor {
+    float: left;
+    width: 66%;
+}
+
+#map {
+    float: left;
+    width: 33%;
+}
