@@ -1,5 +1,9 @@
 'use strict';
 
+function Block() {
+
+}
+
 var GameWidget = {
     controller: function(args) {
     },
@@ -14,6 +18,9 @@ var GameWidget = {
 
 var EditorComponent = {
     controller: function(args) {
+        return {
+            blocks: m.prop([]),
+        };
     },
 
     view: function(controller) {
@@ -33,17 +40,30 @@ var EditorComponent = {
                     });
                     drake.containers.push(document.getElementById("workspace"));
                     drake.containers.push(document.getElementById("workbench"));
-                   // drake.on('drag', function() { console.log('drag'); });
+                    drake.on("drop", function(el, target, source, sibling) {
+                        console.log(el, target, source, sibling);
+                    });
                 }
             },
         }, [
-            m("div#workspace.block-acceptor", "Blocks go here"),
+            m.component(WorkspaceComponent, {
+                blocks: controller.blocks(),
+            }),
             m("div#workbench", [
-                "Blueprints/toolboxes go here",
                 m.component(ToolboxComponent),
                 m.component(BlueprintComponent),
             ]),
         ]);
+    },
+};
+
+var WorkspaceComponent = {
+    controller: function(args) {
+
+    },
+
+    view: function(controller, args) {
+        return m("div#workspace.block-acceptor", "Blocks go here");
     },
 };
 
