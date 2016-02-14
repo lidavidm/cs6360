@@ -4,6 +4,7 @@ function Block(data) {
     this.kind = m.prop(data.kind);
     this.subkind = m.prop(data.subkind || null);
     this.value = m.prop(data.value);
+    this.children = m.prop(data.children || []);
 }
 
 var GameWidget = {
@@ -20,68 +21,111 @@ var GameWidget = {
 
 var EditorComponent = {
     controller: function(args) {
-        return {
+        var controller = {
             blocks: m.prop([]),
+            handleDrop: handleDrop,
+            drake: null,
         };
+
+        function handleDrop(el, target, source, sibling) {
+            // TODO: only do this if source is not target;
+            // else, need to reorder block list
+            m.startComputation();
+            if (source === target) {
+                // TODO: reorder the list
+            }
+            else if (target === null) {
+
+            }
+            else {
+                var block;
+                if (el.classList.contains("control-flow-structure")) {
+                    block = new Block({
+                        kind: "control-flow-structure",
+                        subkind: el.dataset.subkind,
+                        value: null,
+                    });
+                }
+                else if (el.classList.contains("primitive")) {
+                    block = new Block({
+                        kind: "primitive",
+                        subkind: el.innerText,
+                        value: null,
+                    });
+                }
+                else if (el.classList.contains("method")) {
+                    block = new Block({
+                        kind: "method",
+                        // TODO: subkind based on source
+                        value: el.innerText,
+                    });
+                }
+
+                if (block) {
+                    if (target.id === "workspace") {
+                        if (block.kind() === "control-flow-structure") {
+                            controller.blocks().push(block);
+                        }
+                        else {
+                            // TODO: some sort of error message +
+                            // visual indicator
+                        }
+                    }
+                    else {
+                        var indices = [];
+                        var childIndex = parseInt(target.dataset.childIndex, 10);
+                        target = target.parentNode;
+                        while (target.id !== "workspace") {
+                            indices.push(parseInt(target.dataset.key, 10));
+                            target = target.parentNode;
+                        }
+
+                        var blockObj = controller.blocks()[indices.length - 1];
+                        for (var i = indices.length - 2; i >= 0; i--) {
+                            blockObj = blockObj.children()[i];
+                        }
+                        blockObj.children()[childIndex] = block;
+                    }
+                }
+
+                controller.drake.remove();
+            }
+            // These are not legal
+            // else if (el.classList.contains("boolean")) {
+            //     controller.blocks().push(new Block({
+            //          kind: "boolean",
+            //          value: el.innerText == "true" ? true : false,
+            //     }));
+            // }
+
+            m.endComputation();
+        }
+
+        return controller;
     },
 
     view: function(controller) {
         return m("div#editor", {
             config: function(element, isInitialized) {
                 if (!isInitialized) {
-                    var drake = dragula({
+                    controller.drake = dragula({
                         copy: function(el, source) {
                             return source.classList.contains("block-container");
                         },
                         accepts: function(el, target, source, sibling) {
-                            return target.classList.contains("block-acceptor");
+                            return (
+                                (el.classList.contains("control-flow-structure") &&
+                                 target.classList.contains("block-acceptor")) ||
+                                target.classList.contains("block-hole"));
                         },
                         isContainer: function(el) {
-                            return el.classList.contains("block-container");
+                            return el.classList.contains("block-container") ||
+                                el.classList.contains("block-hole");
                         }
                     });
-                    drake.containers.push(document.getElementById("workspace"));
-                    drake.containers.push(document.getElementById("workbench"));
-                    drake.on("drop", function(el, target, source, sibling) {
-                        // TODO: only do this if source is not target;
-                        // else, need to reorder block list
-                        m.startComputation();
-                        // TODO: separate the creation of the Block
-                        // and deciding where to attach it (to the
-                        // main block list or to a sublist)
-                        if (el.classList.contains("control-flow-structure")) {
-                            controller.blocks().push(new Block({
-                                kind: "control-flow-structure",
-                                subkind: el.dataset.subkind,
-                                value: null,
-                            }));
-                        }
-                        else if (el.classList.contains("primitive")) {
-                             controller.blocks().push(new Block({
-                                 kind: "primitive",
-                                 subkind: el.innerText,
-                                 value: null,
-                            }));
-                        }
-                        // These are not legal
-                        // else if (el.classList.contains("method")) {
-                        //     controller.blocks().push(new Block({
-                        //         kind: "method",
-                        //         // TODO: subkind based on source
-                        //         value: el.innerText,
-                        //     }));
-                        // }
-                        // else if (el.classList.contains("boolean")) {
-                        //     controller.blocks().push(new Block({
-                        //          kind: "boolean",
-                        //          value: el.innerText == "true" ? true : false,
-                        //     }));
-                        // }
-
-                        drake.remove();
-                        console.log(el, target, source, sibling);
-                        m.endComputation();
-                    });
+                    controller.drake.containers.push(document.getElementById("workspace"));
+                    controller.drake.containers.push(document.getElementById("workbench"));
+                    controller.drake.on("drop", controller.handleDrop);
                 }
             },
         }, [
@@ -101,38 +145,56 @@ var WorkspaceComponent = {
 
     },
 
+    renderHole: function(kind, index) {
+        return m("div.block-hole." + kind, {
+            key: index,
+            "data-child-index": index,
+        });
+    },
+
+    renderBlock: function(block, index) {
+        if (!block) return false;
+
+        var config = {
+            key: index,
+            "data-key": index,
+        };
+        switch (block.kind()) {
+        case "primitive":
+            if (block.subkind() === "number") {
+                return m("div.primitive", config, [
+                    "Number: ",
+                    m("input[type='number']")
+                ]);
+            }
+            else if (block.subkind() === "text") {
+                return m("div.primitive", config, [
+                    "Text: ",
+                    m("input[type='text']")
+                ]);
+            }
+            break;
+        case "control-flow-structure":
+            if (block.subkind() === "tell") {
+                return m("div.workspace-block.control-flow-structure", config, [
+                    "tell ",
+                    WorkspaceComponent.renderBlock(block.children()[0], 0) ||
+                        WorkspaceComponent.renderHole("value", 0),
+                    " to ",
+                    WorkspaceComponent.renderBlock(block.children()[1], 1) ||
+                        WorkspaceComponent.renderHole("method", 1)
+                ]);
+            }
+            break;
+        default:
+            return m("div.workspace-block." + block.kind(),
+                     config, block.value());
+        }
+    },
+
     view: function(controller, args) {
         return m("div#workspace.block-acceptor", args.blocks.map(function(block, index) {
-            switch (block.kind()) {
-            case "primitive":
-                if (block.subkind() === "number") {
-                    return m("div.primitive", [
-                        "Number: ",
-                        m("input[type='number']")
-                    ]);
-                }
-                else if (block.subkind() === "text") {
-                    return m("div.primitive", [
-                        "Text: ",
-                        m("input[type='text']")
-                    ]);
-                }
-                break;
-            case "control-flow-structure":
-                if (block.subkind() === "tell") {
-                    return m("div.workspace-block.control-flow-structure", [
-                        "tell ",
-                        m("div.block-hole.value"),
-                        " to ",
-                        m("div.block-hole.method"),
-                    ]);
-                }
-                break;
-            default:
-                return m("div", {
-                    class: block.kind(),
-                }, block.value());
-            }
+            return WorkspaceComponent.renderBlock(block, index);
         }));
     },
 };
@@ -195,19 +257,21 @@ var MapComponent = {
     controller: function(args) {
         var controller = {
             phaser: null,
-            create: function() {
-                var game = controller.phaser;
-
-                var text = "test";
-                var style = {
-                    font: "24px Arial",
-                    fill: "#FFFFFF",
-                    align: "center",
-                };
-
-                game.add.text(game.world.centerX, 0, text, style);
-            },
+            create: create,
         };
+
+        function create() {
+            var game = controller.phaser;
+
+            var text = "test";
+            var style = {
+                font: "24px Arial",
+                fill: "#FFFFFF",
+                align: "center",
+            };
+
+            game.add.text(game.world.centerX, 0, text, style);
+        }
 
         return controller;
     },
