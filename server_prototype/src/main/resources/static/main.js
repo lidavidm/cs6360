@@ -82,14 +82,14 @@ var EditorComponent = {
                     }
                     else {
                         var indices = [];
-                        var childIndex = parseInt(target.dataset.childIndex, 10);
+                        var childIndex = parseInt(target.dataset.index, 10);
                         target = target.parentNode;
                         while (target.id !== "workspace") {
-                            indices.push(parseInt(target.dataset.key, 10));
+                            indices.push(parseInt(target.dataset.index, 10));
                             target = target.parentNode;
                         }
 
-                        var blockObj = controller.blocks()[indices.length - 1];
+                        var blockObj = controller.blocks()[indices[indices.length - 1]];
                         for (var i = indices.length - 2; i >= 0; i--) {
                             blockObj = blockObj.children()[i];
                         }
@@ -157,27 +157,28 @@ var WorkspaceComponent = {
     renderHole: function(kind, index) {
         return m("div." + kind + ".block-hole", {
             key: index,
-            "data-child-index": index,
+            "data-index": index,
         });
     },
 
-    renderBlock: function(block, index) {
+    renderBlock: function(block, index, toplevel) {
         if (!block) return false;
 
         var config = {
             key: index,
-            "data-key": index,
+            "data-index": index,
         };
+        var blockEl = null;
         switch (block.kind()) {
         case "primitive":
             if (block.subkind() === "number") {
-                return m("div.primitive", config, [
+                blockEl = m("div.primitive", config, [
                     "Number: ",
                     m("input[type='number']")
                 ]);
             }
             else if (block.subkind() === "text") {
-                return m("div.primitive", config, [
+                blockEl = m("div.primitive", config, [
                     "Text: ",
                     m("input[type='text']")
                 ]);
@@ -185,25 +186,30 @@ var WorkspaceComponent = {
             break;
         case "control-flow-structure":
             if (block.subkind() === "tell") {
-                return m("div.workspace-block.control-flow-structure", config, [
+                blockEl = m("div.block.control-flow-structure", config, [
                     "tell ",
-                    WorkspaceComponent.renderBlock(block.children()[0], 0) ||
+                    WorkspaceComponent.renderBlock(block.children()[0], 0, false) ||
                         WorkspaceComponent.renderHole("primitive", 0),
                     " to ",
-                    WorkspaceComponent.renderBlock(block.children()[1], 1) ||
+                    WorkspaceComponent.renderBlock(block.children()[1], 1, false) ||
                         WorkspaceComponent.renderHole("method", 1)
                 ]);
             }
             break;
         default:
-            return m("div.workspace-block." + block.kind(),
+            blockEl = m("div.block." + block.kind(),
                      config, block.value());
         }
+
+        if (toplevel) {
+            return blockEl;
+        }
+        return m(".block-hole.filled", config, blockEl);
     },
 
     view: function(controller, args) {
         return m("div#workspace.block-acceptor", args.blocks.map(function(block, index) {
-            return WorkspaceComponent.renderBlock(block, index);
+            return WorkspaceComponent.renderBlock(block, index, true);
         }));
     },
 };
@@ -220,10 +226,10 @@ var BlueprintComponent = {
                 " can",
             ]),
             m(".methods.block-container", [
-                m(".method.workbench-item", "moveForward"),
-                m(".method.workbench-item", "turnLeft"),
-                m(".method.workbench-item", "selfDestruct"),
-                m(".method.workbench-item", "reverse"),
+                m(".method.block", "moveForward"),
+                m(".method.block", "turnLeft"),
+                m(".method.block", "selfDestruct"),
+                m(".method.block", "reverse"),
             ]),
         ]);
     }
@@ -238,17 +244,17 @@ var ToolboxComponent = {
         return m(".toolbox.workbench-area", [
             m("header", "Toolbox"),
             m(".control-flow-structures.block-container", [
-                m(".control-flow-structure.workbench-item", {
+                m(".control-flow-structure.block", {
                     "data-subkind": "if/else",
                 }, "if..else.."),
-                m(".control-flow-structure.workbench-item", {
+                m(".control-flow-structure.block", {
                     "data-subkind": "forever",
                 }, "forever"),
-                m(".boolean.workbench-item", "true"),
-                m(".boolean.workbench-item", "false"),
-                m(".primitive.workbench-item", "text"),
-                m(".primitive.workbench-item", "number"),
-                m(".control-flow-structure.workbench-item", {
+                m(".boolean.block", "true"),
+                m(".boolean.block", "false"),
+                m(".primitive.block", "text"),
+                m(".primitive.block", "number"),
+                m(".control-flow-structure.block", {
                     "data-subkind": "tell",
                 }, [
                     "tell ",
