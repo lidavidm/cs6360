@@ -53,6 +53,7 @@ var EditorComponent = {
                 null,
                 Block.newMethod("moveForward"),
             ])]),
+            showTrash: m.prop(false),
             handleDrop: handleDrop,
             drake: null,
         };
@@ -81,6 +82,31 @@ var EditorComponent = {
             return null;
         }
 
+        function findBlock(target) {
+            var indices = [parseInt(target.dataset.index, 10)];
+            target = target.parentNode;
+            while (target && target.id !== "block-editor" &&
+                   target.id !== "workspace") {
+                indices.push(parseInt(target.dataset.index, 10));
+                target = target.parentNode;
+            }
+
+            indices.reverse();
+
+            var blockObj = null;
+            if (indices.length > 1) {
+                blockObj = controller.blocks()[indices[0]];
+            }
+            for (var i = 1; i < indices.length - 1; i++) {
+                blockObj = blockObj.children()[i];
+            }
+
+            return {
+                block: blockObj,
+                indices: indices,
+            };
+        }
+
         function handleDrop(el, target, source, sibling) {
             m.startComputation();
             if (source === target) {
@@ -89,11 +115,31 @@ var EditorComponent = {
             else if (target === null) {
 
             }
+            else if (target.classList.contains("block-trash")) {
+                // target is the deletion zone, so the last index is
+                // the index of the block, and blockObj is the parent
+                // (or null)
+                var result = findBlock(source);
+                var lastIndex = result.indices[result.indices.length - 1];
+                if (result.block) {
+                    // Deleting sub-block, put a hole back in
+                    result.block.children()[lastIndex] = result.block.children()[lastIndex].kind();
+                }
+                else {
+                    controller.blocks().splice(lastIndex, 1);
+                }
+                controller.drake.remove();
+                // var indices = result.indices;
+                // var blockObj = result.block;
+                // var childIndex = result.childIndex;
+
+                // TODO: remove from list
+            }
             else {
                 var block = makeBlock(el);
 
                 if (block) {
-                    if (target.id === "workspace") {
+                    if (target.id === "block-editor") {
                         if (block.kind() === "control-flow-structure") {
                             controller.blocks().push(block);
                         }
@@ -103,18 +149,13 @@ var EditorComponent = {
                         }
                     }
                     else {
-                        var indices = [];
-                        var childIndex = parseInt(target.dataset.index, 10);
-                        target = target.parentNode;
-                        while (target.id !== "workspace") {
-                            indices.push(parseInt(target.dataset.index, 10));
-                            target = target.parentNode;
-                        }
-
-                        var blockObj = controller.blocks()[indices[indices.length - 1]];
-                        for (var i = indices.length - 2; i >= 0; i--) {
-                            blockObj = blockObj.children()[i];
-                        }
+                        // target is a hole, so the last index is the
+                        // index of the hole, and blockObj is the
+                        // parent
+                        var result = findBlock(target);
+                        var indices = result.indices;
+                        var blockObj = result.block;
+                        var childIndex = result.indices[result.indices.length - 1];
 
                         // Make sure child is of correct type
                         var children = blockObj.children();
@@ -151,21 +192,35 @@ var EditorComponent = {
                             return (
                                 (el.classList.contains("control-flow-structure") &&
                                  target.classList.contains("block-acceptor")) ||
-                                target.classList.contains("block-hole"));
+                                    target.classList.contains("block-hole") ||
+                                    target.classList.contains("block-trash"));
                         },
                         isContainer: function(el) {
                             return el.classList.contains("block-container") ||
-                                el.classList.contains("block-hole");
+                                el.classList.contains("block-hole") ||
+                                el.classList.contains("block-acceptor");
                         }
                     });
                     controller.drake.containers.push(document.getElementById("workspace"));
                     controller.drake.containers.push(document.getElementById("workbench"));
                     controller.drake.on("drop", controller.handleDrop);
+                    controller.drake.on("drag", function() {
+                        m.startComputation();
+                        controller.showTrash(true);
+                        m.endComputation();
+                    });
+                    controller.drake.on("dragend", function() {
+                        m.startComputation();
+                        controller.showTrash(false);
+                        m.endComputation();
+                    });
+
                 }
             },
         }, [
             m.component(WorkspaceComponent, {
                 blocks: controller.blocks(),
+                showTrash: controller.showTrash(),
             }),
             m("div#workbench", [
                 m.component(ToolboxComponent),
@@ -239,9 +294,16 @@ var WorkspaceComponent = {
     },
 
     view: function(controller, args) {
-        return m("div#workspace.block-acceptor", args.blocks.map(function(block, index) {
-            return WorkspaceComponent.render(block, index, true);
-        }));
+        return m("div#workspace", [
+            m(".block-acceptor#block-editor", args.blocks.map(function(block, index) {
+                return WorkspaceComponent.render(block, index, true);
+            })),
+            m(".block-acceptor.block-trash", {
+                style: {
+                    display: args.showTrash ? "block" : "none",
+                },
+            }),
+        ]);
     },
 };
 

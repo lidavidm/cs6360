@@ -26,6 +26,15 @@ body {
     border-right: 1px solid #000;
 }
 
+#block-editor {
+    height: 80%;
+}
+
+#workspace .block-trash {
+    height: 20%;
+    border: 1px solid red;
+}
+
 #workspace .block {
     font-size: 1.25em;
     width: -moz-max-content;
