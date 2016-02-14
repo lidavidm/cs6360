@@ -4,8 +4,35 @@ function Block(data) {
     this.kind = m.prop(data.kind);
     this.subkind = m.prop(data.subkind || null);
     this.value = m.prop(data.value);
+    /// Array of string or Block. String = a hole of type (string
+    /// value), i.e. "method" means we want a method block here.
     this.children = m.prop(data.children || []);
 }
+Block.newControlFlow = function(subkind, children) {
+    children = children || [];
+    switch (subkind) {
+    case "tell":
+        children[0] = children[0] || "object";
+        children[1] = children[1] || "method";
+        break;
+    default:
+        throw "Error: invalid control flow subkind: " + subkind;
+    }
+    return new Block({
+        kind: "control-flow-structure",
+        subkind: subkind,
+        value: null,
+        children: children,
+    });
+};
+// TODO: specify class as well
+Block.newMethod = function(name) {
+    return new Block({
+        kind: "method",
+        subkind: null,
+        value: name,
+    })
+};
 
 var GameWidget = {
     controller: function(args) {
@@ -22,23 +49,39 @@ var GameWidget = {
 var EditorComponent = {
     controller: function(args) {
         var controller = {
-            blocks: m.prop([new Block({
-                kind: "control-flow-structure",
-                subkind: "tell",
-                value: null,
-                children: [null, new Block({
-                    kind: "method",
-                    subkind: null,
-                    value: "moveForward",
-                })],
-            })]),
+            blocks: m.prop([Block.newControlFlow("tell", [
+                null,
+                Block.newMethod("moveForward"),
+            ])]),
             handleDrop: handleDrop,
             drake: null,
         };
 
+        function makeBlock(el) {
+            if (el.classList.contains("control-flow-structure")) {
+                return Block.newControlFlow(el.dataset.subkind);
+            }
+            else if (el.classList.contains("primitive")) {
+                return new Block({
+                    kind: "primitive",
+                    subkind: el.innerText,
+                    value: null,
+                });
+            }
+            else if (el.classList.contains("method")) {
+                // TODO: set class based on source
+                return Block.newMethod(el.innerText);
+            }
+            else if (el.classList.contains("boolean")) {
+                return new Block({
+                    kind: "boolean",
+                    value: el.innerText == "true" ? true : false,
+                });
+            }
+            return null;
+        }
+
         function handleDrop(el, target, source, sibling) {
-            // TODO: only do this if source is not target;
-            // else, need to reorder block list
             m.startComputation();
             if (source === target) {
                 // TODO: reorder the list
@@ -47,28 +90,7 @@ var EditorComponent = {
 
             }
             else {
-                var block;
-                if (el.classList.contains("control-flow-structure")) {
-                    block = new Block({
-                        kind: "control-flow-structure",
-                        subkind: el.dataset.subkind,
-                        value: null,
-                    });
-                }
-                else if (el.classList.contains("primitive")) {
-                    block = new Block({
-                        kind: "primitive",
-                        subkind: el.innerText,
-                        value: null,
-                    });
-                }
-                else if (el.classList.contains("method")) {
-                    block = new Block({
-                        kind: "method",
-                        // TODO: subkind based on source
-                        value: el.innerText,
-                    });
-                }
+                var block = makeBlock(el);
 
                 if (block) {
                     if (target.id === "workspace") {
@@ -93,19 +115,23 @@ var EditorComponent = {
                         for (var i = indices.length - 2; i >= 0; i--) {
                             blockObj = blockObj.children()[i];
                         }
-                        blockObj.children()[childIndex] = block;
+
+                        // Make sure child is of correct type
+                        var children = blockObj.children();
+                        var blockType = children[childIndex] instanceof Block ?
+                            children[childIndex].kind() :
+                            children[childIndex];
+                        if (block.kind() === blockType) {
+                            blockObj.children()[childIndex] = block;
+                        }
+                        else {
+                            // TODO: error + visual indicator
+                        }
                     }
                 }
 
                 controller.drake.remove();
             }
-            // These are not legal
-            // else if (el.classList.contains("boolean")) {
-            //     controller.blocks().push(new Block({
-            //          kind: "boolean",
-            //          value: el.innerText == "true" ? true : false,
-            //     }));
-            // }
 
             m.endComputation();
         }
@@ -188,11 +214,9 @@ var WorkspaceComponent = {
             if (block.subkind() === "tell") {
                 blockEl = m("div.block.control-flow-structure", config, [
                     "tell ",
-                    WorkspaceComponent.renderBlock(block.children()[0], 0, false) ||
-                        WorkspaceComponent.renderHole("primitive", 0),
+                    this.render(block.children()[0], 0, false),
                     " to ",
-                    WorkspaceComponent.renderBlock(block.children()[1], 1, false) ||
-                        WorkspaceComponent.renderHole("method", 1)
+                    this.render(block.children()[1], 1, false)
                 ]);
             }
             break;
@@ -207,9 +231,16 @@ var WorkspaceComponent = {
         return m(".block-hole.filled", config, blockEl);
     },
 
+    render: function(blockOrHole, index, toplevel) {
+        if (typeof blockOrHole === "string") {
+            return this.renderHole(blockOrHole, index);
+        }
+        return this.renderBlock(blockOrHole, index, toplevel);
+    },
+
     view: function(controller, args) {
         return m("div#workspace.block-acceptor", args.blocks.map(function(block, index) {
-            return WorkspaceComponent.renderBlock(block, index, true);
+            return WorkspaceComponent.render(block, index, true);
         }));
     },
 };
