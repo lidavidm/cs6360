@@ -22,7 +22,16 @@ var GameWidget = {
 var EditorComponent = {
     controller: function(args) {
         var controller = {
-            blocks: m.prop([]),
+            blocks: m.prop([new Block({
+                kind: "control-flow-structure",
+                subkind: "tell",
+                value: null,
+                children: [null, new Block({
+                    kind: "method",
+                    subkind: null,
+                    value: "moveForward",
+                })],
+            })]),
             handleDrop: handleDrop,
             drake: null,
         };
@@ -146,7 +155,7 @@ var WorkspaceComponent = {
     },
 
     renderHole: function(kind, index) {
-        return m("div.block-hole." + kind, {
+        return m("div." + kind + ".block-hole", {
             key: index,
             "data-child-index": index,
         });
@@ -179,7 +188,7 @@ var WorkspaceComponent = {
                 return m("div.workspace-block.control-flow-structure", config, [
                     "tell ",
                     WorkspaceComponent.renderBlock(block.children()[0], 0) ||
-                        WorkspaceComponent.renderHole("value", 0),
+                        WorkspaceComponent.renderHole("primitive", 0),
                     " to ",
                     WorkspaceComponent.renderBlock(block.children()[1], 1) ||
                         WorkspaceComponent.renderHole("method", 1)
