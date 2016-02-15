@@ -60,7 +60,12 @@ var EditorComponent = {
 
         function makeBlock(el) {
             if (el.classList.contains("control-flow-structure")) {
-                return Block.newControlFlow(el.dataset.subkind);
+                try {
+                    return Block.newControlFlow(el.dataset.subkind);
+                }
+                catch (e) {
+                    return null;
+                }
             }
             else if (el.classList.contains("primitive")) {
                 return new Block({
@@ -107,15 +112,26 @@ var EditorComponent = {
             };
         }
 
+        /**
+         * restoreHole updates the model after dragging a block from
+         * one block to another.
+         */
+        function restoreHole(source) {
+
+        }
+
         function handleDrop(el, target, source, sibling) {
+            console.log("handle drop", target);
             m.startComputation();
             if (source === target) {
                 // TODO: reorder the list
+                console.log("reorder");
             }
             else if (target === null) {
-
+                console.log("null target");
             }
             else if (target.classList.contains("block-trash")) {
+                console.log("delete");
                 // target is the deletion zone, so the last index is
                 // the index of the block, and blockObj is the parent
                 // (or null)
@@ -125,10 +141,10 @@ var EditorComponent = {
                 if (!source.classList.contains("workbench-area")) {
                     var result = findBlock(source);
                     var lastIndex = result.indices[result.indices.length - 1];
+                    console.log(result);
                     if (result.block) {
                         // Deleting sub-block, put a hole back in
                         result.block.children()[lastIndex] = result.block.children()[lastIndex].kind();
-                        console.log(result.block.children());
                     }
                     else {
                         controller.blocks().splice(lastIndex, 1);
@@ -138,7 +154,11 @@ var EditorComponent = {
 
                 // TODO: remove from list
             }
+            // else if (source === ) {
+
+            // }
             else {
+                console.log("new block");
                 var block = makeBlock(el);
 
                 if (block) {
@@ -172,6 +192,9 @@ var EditorComponent = {
                             // TODO: error + visual indicator
                         }
                     }
+
+                    // TODO: if source was another block, put a hole
+                    // in that block
                 }
 
                 controller.drake.remove();
