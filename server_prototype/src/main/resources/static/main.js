@@ -119,19 +119,22 @@ var EditorComponent = {
                 // target is the deletion zone, so the last index is
                 // the index of the block, and blockObj is the parent
                 // (or null)
-                var result = findBlock(source);
-                var lastIndex = result.indices[result.indices.length - 1];
-                if (result.block) {
-                    // Deleting sub-block, put a hole back in
-                    result.block.children()[lastIndex] = result.block.children()[lastIndex].kind();
-                }
-                else {
-                    controller.blocks().splice(lastIndex, 1);
+
+                // Don't bother trying to delete the block if it
+                // didn't come from the block editor
+                if (!source.classList.contains("workbench-area")) {
+                    var result = findBlock(source);
+                    var lastIndex = result.indices[result.indices.length - 1];
+                    if (result.block) {
+                        // Deleting sub-block, put a hole back in
+                        result.block.children()[lastIndex] = result.block.children()[lastIndex].kind();
+                        console.log(result.block.children());
+                    }
+                    else {
+                        controller.blocks().splice(lastIndex, 1);
+                    }
                 }
                 controller.drake.remove();
-                // var indices = result.indices;
-                // var blockObj = result.block;
-                // var childIndex = result.childIndex;
 
                 // TODO: remove from list
             }
