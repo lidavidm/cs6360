@@ -71,7 +71,7 @@ var EditorComponent = {
             }
             else if (el.classList.contains("method")) {
                 // TODO: set class based on source
-                return Block.newMethod(el.innerText);
+                return Block.newMethod(el.textContent);
             }
             else if (el.classList.contains("boolean")) {
                 return new Block({
