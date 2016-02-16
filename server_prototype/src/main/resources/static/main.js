@@ -77,7 +77,7 @@ var EditorComponent = {
     controller: function(args) {
         var controller = {
             blocks: m.prop([Block.newControlFlow("tell", [
-                null,
+                "object",
                 Block.newMethod("moveForward"),
             ])]),
             showTrash: m.prop(false),
@@ -193,10 +193,10 @@ var EditorComponent = {
                     }
                     else {
                         result.block.setChild(lastIndex, block);
-                        // Force complete redraw, since Dragula will
-                        // delete the block and Mithril won't notice
-                        // its gone
-                        m.redraw.strategy("all");
+                        // Force dragula to revert the drop. We can't
+                        // use m.redraw.strategy("all") since this
+                        // recreates the controller, resetting the UI.
+                        controller.drake.cancel(true);
                     }
                 }
                 else {
