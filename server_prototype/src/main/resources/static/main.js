@@ -148,11 +148,14 @@ var EditorComponent = {
         }
 
         function handleDrop(el, target, source, sibling) {
-            console.log("handle drop", target);
+            console.log("handle drop", source, target, el.contains(target));
             m.startComputation();
             if (source === target) {
                 // TODO: reorder the list
                 console.log("reorder");
+            }
+            else if (el.contains(target)) {
+                controller.drake.cancel(true);
             }
             else if (target === null) {
                 console.log("null target");
@@ -204,7 +207,7 @@ var EditorComponent = {
                 }
                 controller.drake.remove();
             }
-            else {
+            else if (source.parentNode.classList.contains("workbench-area")) {
                 console.log("new block");
                 var block = makeBlock(el);
 
