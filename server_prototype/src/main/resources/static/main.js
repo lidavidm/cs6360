@@ -139,14 +139,6 @@ var EditorComponent = {
             };
         }
 
-        /**
-         * restoreHole updates the model after dragging a block from
-         * one block to another.
-         */
-        function restoreHole(source) {
-
-        }
-
         function handleDrop(el, target, source, sibling) {
             console.log("handle drop", source, target, el.contains(target));
             m.startComputation();
@@ -168,7 +160,7 @@ var EditorComponent = {
 
                 // Don't bother trying to delete the block if it
                 // didn't come from the block editor
-                if (!source.classList.contains("workbench-area")) {
+                if (!source.parentNode.classList.contains("workbench-area")) {
                     var result = findBlock(source);
                     var lastIndex = result.indices[result.indices.length - 1];
                     console.log(result);
