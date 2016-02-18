@@ -8,6 +8,33 @@ function Block(data) {
     /// value), i.e. "method" means we want a method block here.
     this.children = m.prop(data.children || []);
 }
+
+Block.prototype.isChildValid = function(index, kind) {
+    var child = this.children()[index];
+    if (child instanceof Block) {
+        return child.kind() === kind;
+    }
+    return child === kind;
+};
+
+Block.prototype.setChild = function(index, block) {
+    this.children()[index] = block;
+};
+
+Block.prototype.removeChild = function(index) {
+    // Deleting sub-block, put a hole back in
+    var block = this.children()[index];
+    this.children()[index] = block.kind();
+    return block;
+};
+
+Block.prototype.toString = function() {
+    return "Block(kind=" + this.kind() +
+        ", subkind=" + this.subkind() +
+        ", value=" + this.value() +
+        ", children=[" + this.children().join(", ") + "])";
+};
+
 Block.newControlFlow = function(subkind, children) {
     children = children || [];
     switch (subkind) {
@@ -31,7 +58,7 @@ Block.newMethod = function(name) {
         kind: "method",
         subkind: null,
         value: name,
-    })
+    });
 };
 
 var GameWidget = {
@@ -50,7 +77,7 @@ var EditorComponent = {
     controller: function(args) {
         var controller = {
             blocks: m.prop([Block.newControlFlow("tell", [
-                null,
+                "object",
                 Block.newMethod("moveForward"),
             ])]),
             showTrash: m.prop(false),
@@ -143,8 +170,7 @@ var EditorComponent = {
                     var lastIndex = result.indices[result.indices.length - 1];
                     console.log(result);
                     if (result.block) {
-                        // Deleting sub-block, put a hole back in
-                        result.block.children()[lastIndex] = result.block.children()[lastIndex].kind();
+                        result.block.removeChild(lastIndex);
                     }
                     else {
                         controller.blocks().splice(lastIndex, 1);
@@ -154,9 +180,30 @@ var EditorComponent = {
 
                 // TODO: remove from list
             }
-            // else if (source === ) {
-
-            // }
+            else if (source.classList.contains("block-hole") &&
+                     target.classList.contains("block-hole")) {
+                var result = findBlock(source);
+                var newParent = findBlock(target);
+                var lastIndex = result.indices[result.indices.length - 1];
+                var newIndex = newParent.indices[newParent.indices.length - 1];
+                if (result.block && newParent.block) {
+                    var block = result.block.removeChild(lastIndex);
+                    if (newParent.block.isChildValid(newIndex, block.kind())) {
+                        newParent.block.setChild(newIndex, block);
+                    }
+                    else {
+                        result.block.setChild(lastIndex, block);
+                        // Force dragula to revert the drop. We can't
+                        // use m.redraw.strategy("all") since this
+                        // recreates the controller, resetting the UI.
+                        controller.drake.cancel(true);
+                    }
+                }
+                else {
+                    console.log("ERROR: could not find block hole");
+                }
+                controller.drake.remove();
+            }
             else {
                 console.log("new block");
                 var block = makeBlock(el);
@@ -200,6 +247,8 @@ var EditorComponent = {
                 controller.drake.remove();
             }
 
+            console.log(controller.blocks());
+
             m.endComputation();
         }
 
@@ -207,6 +256,7 @@ var EditorComponent = {
     },
 
     view: function(controller) {
+        console.log(controller.blocks());
         return m("div#editor", {
             config: function(element, isInitialized) {
                 if (!isInitialized) {
@@ -320,6 +370,7 @@ var WorkspaceComponent = {
     },
 
     view: function(controller, args) {
+        console.log(args.blocks);
         return m("div#workspace", [
             m(".block-acceptor#block-editor", args.blocks.map(function(block, index) {
                 return WorkspaceComponent.render(block, index, true);
