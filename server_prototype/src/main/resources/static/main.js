@@ -276,7 +276,7 @@ var EditorComponent = {
                         isContainer: function(el) {
                             return el.classList.contains("block-container") ||
                                 (el.classList.contains("block-hole") &&
-                                 !document.getElementById("workbench").contains(el))
+                                 !document.getElementById("workbench").contains(el)) ||
                                 el.classList.contains("block-acceptor");
                         }
                     });
