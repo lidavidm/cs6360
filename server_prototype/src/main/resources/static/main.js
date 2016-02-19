@@ -42,6 +42,11 @@ Block.newControlFlow = function(subkind, children) {
         children[0] = children[0] || "object";
         children[1] = children[1] || "method";
         break;
+    case "if/else":
+        children[0] = children[0] || "boolean";
+        break;
+    case "forever":
+        break;
     default:
         throw "Error: invalid control flow subkind: " + subkind;
     }
@@ -83,10 +88,13 @@ var GameWidget = {
 var EditorComponent = {
     controller: function(args) {
         var controller = {
-            blocks: m.prop([Block.newControlFlow("tell", [
-                "object",
-                Block.newMethod("moveForward"),
-            ])]),
+            blocks: m.prop([
+                Block.newControlFlow("tell", [
+                    "object",
+                    Block.newMethod("moveForward"),
+                ]),
+                Block.newControlFlow("if/else"),
+            ]),
             showTrash: m.prop(false),
             handleDrop: handleDrop,
             drake: null,
@@ -126,6 +134,12 @@ var EditorComponent = {
             target = target.parentNode;
             while (target && target.id !== "block-editor" &&
                    target.id !== "workspace") {
+                if (typeof target.dataset.index === "undefined") {
+                    target = target.parentNode;
+                    continue;
+                }
+
+                console.log(target, target.dataset.index);
                 indices.push(parseInt(target.dataset.index, 10));
                 target = target.parentNode;
             }
@@ -363,6 +377,25 @@ var WorkspaceComponent = {
                     this.render(block.children()[1], 1, false)
                 ]);
             }
+            else if (block.subkind() === "if/else") {
+                blockEl = m(".block.multi-child.control-flow-structure", config, [
+                    // m("div", [
+                        "if ",
+                        this.render(block.children()[0], 0, false),
+                        " then ",
+                        this.renderHole("blocks", 1),
+                    // ]),
+                    // m("div", [
+                        "else ",
+                        this.renderHole("blocks", 2),
+                    // ])
+                ]);
+            }
+            else if (block.subkind() === "forever") {
+                blockEl = m("div.block.control-flow-structure", config, [
+                    "forever",
+                ]);
+            }
             break;
         default:
             blockEl = m("div.block." + block.kind(),
@@ -390,7 +423,8 @@ var WorkspaceComponent = {
             })),
             m(".block-acceptor.block-trash", {
                 style: {
-                    display: args.showTrash ? "block" : "none",
+                    bottom: args.showTrash ? 0 : "2000px",
+                    opacity: args.showTrash ? 1 : 0,
                 },
             }),
         ]);

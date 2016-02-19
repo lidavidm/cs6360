@@ -24,15 +24,38 @@ body {
     width: calc(60% - 1px);
     height: 100%;
     border-right: 1px solid #000;
+    position: relative;
 }
 
 #block-editor {
-    height: 80%;
+    height: calc(100% - 1em);
+    margin: 0.5em;
+    overflow-y: auto;
 }
 
-#workspace .block-trash {
-    height: 20%;
+.block-trash {
+    height: 150px;
     border: 1px solid red;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #FFF;
+    color: #F00;
+}
+
+.block-trash:after {
+    content: "Drop here to delete";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    line-height: 150px;
+    font-size: 2em;
+    transition: 0.3s ease-in-out opacity;
 }
 
 #workspace .block {
@@ -56,6 +79,33 @@ body {
 
 .block:hover {
     box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.5);
+}
+
+.multi-child {
+    height: auto;
+    padding-bottom: 0.25em;
+}
+
+.block-hole.blocks {
+    display: block;
+    width: 100%;
+    min-width: 8em;
+    min-height: 6em;
+    margin: 0.25em 0;
+    border-radius: 5px 0 0 5px;
+}
+
+/* This is dark wizardry. */
+.block-hole.blocks:after {
+    content: " ";
+    display: block;
+    position: relative;
+    height: calc(100% + 4px);
+    width: 25px;
+    background: #FFF;
+    top: -2px;
+    left: 100%;
+    float: left;
 }
 
 .block-hole .block, .block-hole {
@@ -97,6 +147,10 @@ body {
 
 .block-hole.object {
     border-color: #0F0;
+}
+
+#block-editor .block {
+    margin: 0;
 }
 
 #workbench {
