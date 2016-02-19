@@ -151,11 +151,12 @@ var EditorComponent = {
             return null;
         }
 
-        function findBlock(target) {
+        function findBlock(target, forceTargetIndex) {
+            forceTargetIndex = forceTargetIndex || false;
             var targetIndex = undefined;
             var indices = [];
-            if (target.classList.contains("block-hole") &&
-                !target.classList.contains("blocks")) {
+            if ((target.classList.contains("block-hole") &&
+                !target.classList.contains("blocks")) || forceTargetIndex) {
                 targetIndex = parseInt(target.dataset.index, 10);
             }
             else {
@@ -229,24 +230,18 @@ var EditorComponent = {
 
                 // Don't bother trying to delete the block if it
                 // didn't come from the block editor
+
+                controller.drake.cancel(true);
                 if (document.getElementById("workspace").contains(source)) {
-                    var result;
-                    if (source.id === "block-editor") {
-                        result = findBlock(el);
-                    }
-                    else {
-                        result = findBlock(source);
-                    }
-                    var lastIndex = result.indices[result.indices.length - 1];
+                    var result = findBlock(el, true);
                     console.log(result);
-                    if (result.block) {
-                        result.block.removeChild(lastIndex);
+                    if (result.parent) {
+                        result.parent.removeChild(result.targetIndex);
                     }
                     else {
-                        controller.blocks().splice(lastIndex, 1);
+                        controller.blocks().splice(result.targetIndex, 1);
                     }
                 }
-                controller.drake.cancel(true);
             }
             else if (source.classList.contains("block-hole") &&
                      target.classList.contains("block-hole")) {
