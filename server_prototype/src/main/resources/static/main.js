@@ -168,7 +168,13 @@ var EditorComponent = {
                 // Don't bother trying to delete the block if it
                 // didn't come from the block editor
                 if (!document.getElementById("workbench").contains(source)) {
-                    var result = findBlock(source);
+                    var result;
+                    if (source.id === "block-editor") {
+                        result = findBlock(el);
+                    }
+                    else {
+                        result = findBlock(source);
+                    }
                     var lastIndex = result.indices[result.indices.length - 1];
                     console.log(result);
                     if (result.block) {
