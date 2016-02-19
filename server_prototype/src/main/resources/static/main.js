@@ -63,12 +63,19 @@ Block.newMethod = function(name) {
 
 var GameWidget = {
     controller: function(args) {
+        var controller = {
+            mapMode: m.prop("minimap"),
+        };
+
+        return controller;
     },
 
     view: function(controller) {
         return m(".container", [
+            m.component(MapComponent, {
+                mode: controller.mapMode(),
+            }),
             m.component(EditorComponent),
-            m.component(MapComponent),
         ]);
     },
 };
@@ -160,7 +167,7 @@ var EditorComponent = {
 
                 // Don't bother trying to delete the block if it
                 // didn't come from the block editor
-                if (!source.parentNode.classList.contains("workbench-area")) {
+                if (!document.getElementById("workbench").contains(source)) {
                     var result = findBlock(source);
                     var lastIndex = result.indices[result.indices.length - 1];
                     console.log(result);
@@ -268,12 +275,12 @@ var EditorComponent = {
                         },
                         isContainer: function(el) {
                             return el.classList.contains("block-container") ||
-                                el.classList.contains("block-hole") ||
+                                (el.classList.contains("block-hole") &&
+                                 !document.getElementById("workbench").contains(el))
                                 el.classList.contains("block-acceptor");
                         }
                     });
                     controller.drake.containers.push(document.getElementById("workspace"));
-                    controller.drake.containers.push(document.getElementById("workbench"));
                     controller.drake.on("drop", controller.handleDrop);
                     controller.drake.on("drag", function() {
                         m.startComputation();
@@ -294,7 +301,12 @@ var EditorComponent = {
                 showTrash: controller.showTrash(),
             }),
             m("div#workbench", [
-                m.component(ToolboxComponent),
+                m.component(ToolboxComponent, {
+                    title: "Toolbox",
+                }),
+                m.component(ToolboxComponent, {
+                    title: "Variables",
+                }),
                 m.component(BlueprintComponent),
             ]),
         ]);
@@ -405,10 +417,10 @@ var ToolboxComponent = {
 
     },
 
-    view: function(controller) {
+    view: function(controller, args) {
         return m(".toolbox.workbench-area", [
-            m("header", "Toolbox"),
-            m(".control-flow-structures.block-container", [
+            m("header", args.title),
+            m(".block-container", [
                 m(".control-flow-structure.block", {
                     "data-subkind": "if/else",
                 }, "if..else.."),
@@ -419,13 +431,13 @@ var ToolboxComponent = {
                 m(".boolean.block", "false"),
                 m(".primitive.block", "text"),
                 m(".primitive.block", "number"),
-                m(".control-flow-structure.block", {
+                m(".control-flow-structure.block.wide", {
                     "data-subkind": "tell",
                 }, [
                     "tell ",
-                    m("span.object", "object"),
+                    m(".block-hole.filled", m(".block.object", "object")),
                     " to ",
-                    m("span.method", "do something"),
+                    m(".block-hole.filled", m(".block.method", "do something")),
                 ]),
             ]),
         ]);
@@ -456,13 +468,18 @@ var MapComponent = {
         return controller;
     },
 
-    view: function(controller) {
-        return m("div#map", [
+    view: function(controller, args) {
+        var style = "expanded";
+        if (args.mode === "minimap") {
+            style = "minimap";
+        }
+
+        return m("div#map." + style, [
             m("div#worldMap", {
                 config: function(element, isInitialized) {
                     if (!isInitialized) {
                         // TODO: figure out how to get this to scale properly
-                        controller.phaser = new Phaser.Game(384, 612, Phaser.CANVAS, element, {
+                        controller.phaser = new Phaser.Game(256, 612, Phaser.CANVAS, element, {
                             create: controller.create,
                         });
                     }
