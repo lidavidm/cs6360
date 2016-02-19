@@ -198,9 +198,7 @@ var EditorComponent = {
                         controller.blocks().splice(lastIndex, 1);
                     }
                 }
-                controller.drake.remove();
-
-                // TODO: remove from list
+                controller.drake.cancel(true);
             }
             else if (source.classList.contains("block-hole") &&
                      target.classList.contains("block-hole")) {
@@ -340,7 +338,6 @@ var WorkspaceComponent = {
 
     renderHole: function(kind, index) {
         return m("div." + kind + ".block-hole", {
-            key: index,
             "data-index": index,
         });
     },
@@ -349,7 +346,6 @@ var WorkspaceComponent = {
         if (!block) return false;
 
         var config = {
-            key: index,
             "data-index": index,
         };
         var blockEl = null;
