@@ -165,7 +165,22 @@ var EditorComponent = {
             m.startComputation();
             if (source === target) {
                 // TODO: reorder the list
-                console.log("reorder");
+                console.log("reorder", sibling, el, el.previousSibling);
+                var result;
+                if (source.id === "block-editor") {
+                    result = findBlock(el);
+                }
+                else {
+
+                }
+
+                if (sibling === null) {
+                    var lastIndex = result.indices[result.indices.length - 1];
+                    var block = controller.blocks().splice(lastIndex, 1)[0];
+                    controller.blocks().push(block);
+                }
+
+                controller.drake.cancel(true);
             }
             else if (el.contains(target)) {
                 controller.drake.cancel(true);
@@ -222,6 +237,8 @@ var EditorComponent = {
                 else {
                     console.log("ERROR: could not find block hole");
                 }
+
+                // TODO: swap if both holes are filled?
                 controller.drake.remove();
             }
             else if (source.parentNode.classList.contains("workbench-area")) {

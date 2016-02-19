@@ -89,23 +89,27 @@ body {
 .block-hole.blocks {
     display: block;
     width: 100%;
+    height: auto;
     min-width: 8em;
     min-height: 6em;
     margin: 0.25em 0;
     border-radius: 5px 0 0 5px;
+    padding: 0 0 2em 0;
+    border: 0;
 }
 
-/* This is dark wizardry. */
-.block-hole.blocks:after {
-    content: " ";
+.block-hole.blocks .block {
     display: block;
-    position: relative;
-    height: calc(100% + 4px);
-    width: 25px;
-    background: #FFF;
-    top: -2px;
-    left: 100%;
-    float: left;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.5);
+    border-radius: 0 5px 5px 0;
+}
+
+.block-hole.blocks .block:first-child {
+    border-radius: 5px 5px 5px 0;
+}
+
+.block-hole.blocks .block:last-child {
+    border-radius: 0 5px 5px 5px;
 }
 
 .block-hole .block, .block-hole {
