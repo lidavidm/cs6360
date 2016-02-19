@@ -35,6 +35,17 @@ Block.prototype.toString = function() {
         ", children=[" + this.children().join(", ") + "])";
 };
 
+Block.newGroup = function(children) {
+    children = children || [];
+
+    return new Block({
+        kind: "group",
+        subkind: null,
+        value: null,
+        children: children,
+    });
+};
+
 Block.newControlFlow = function(subkind, children) {
     children = children || [];
     switch (subkind) {
@@ -44,8 +55,11 @@ Block.newControlFlow = function(subkind, children) {
         break;
     case "if/else":
         children[0] = children[0] || "boolean";
+        children[1] = children[1] || Block.newGroup();
+        children[2] = children[2] || Block.newGroup();
         break;
     case "forever":
+        children[0] = children[0] || Block.newGroup();
         break;
     default:
         throw "Error: invalid control flow subkind: " + subkind;
@@ -94,6 +108,14 @@ var EditorComponent = {
                     Block.newMethod("moveForward"),
                 ]),
                 Block.newControlFlow("if/else"),
+                Block.newControlFlow("forever", [
+                    Block.newGroup([
+                        Block.newControlFlow("tell", [
+                            "object",
+                            Block.newMethod("reverse"),
+                        ]),
+                    ]),
+                ]),
             ]),
             showTrash: m.prop(false),
             handleDrop: handleDrop,
@@ -130,7 +152,16 @@ var EditorComponent = {
         }
 
         function findBlock(target) {
-            var indices = [parseInt(target.dataset.index, 10)];
+            var targetIndex = undefined;
+            var indices = [];
+            if (target.classList.contains("block-hole") &&
+                !target.classList.contains("blocks")) {
+                targetIndex = parseInt(target.dataset.index, 10);
+            }
+            else {
+                indices = [parseInt(target.dataset.index)];
+            }
+
             target = target.parentNode;
             while (target && target.id !== "block-editor" &&
                    target.id !== "workspace") {
@@ -146,18 +177,20 @@ var EditorComponent = {
 
             indices.reverse();
 
-            var blockObj = null;
-            if (indices.length > 1) {
-                blockObj = controller.blocks()[indices[0]];
-            }
-            for (var i = 1; i < indices.length - 1; i++) {
-                blockObj = blockObj.children()[i];
+            var blockObj = controller.blocks()[indices[0]];
+            for (var i = 1; i < indices.length; i++) {
+                blockObj = blockObj.children()[indices[i]];
             }
 
             return {
-                block: blockObj,
+                parent: blockObj,
                 indices: indices,
+                targetIndex: targetIndex,
             };
+        }
+
+        function addToBlock() {
+
         }
 
         function handleDrop(el, target, source, sibling) {
@@ -196,7 +229,7 @@ var EditorComponent = {
 
                 // Don't bother trying to delete the block if it
                 // didn't come from the block editor
-                if (!document.getElementById("workbench").contains(source)) {
+                if (document.getElementById("workspace").contains(source)) {
                     var result;
                     if (source.id === "block-editor") {
                         result = findBlock(el);
@@ -245,40 +278,38 @@ var EditorComponent = {
                 console.log("new block");
                 var block = makeBlock(el);
 
-                if (block) {
-                    if (target.id === "block-editor") {
-                        if (block.kind() === "control-flow-structure") {
-                            controller.blocks().push(block);
+                if (target.id === "block-editor") {
+                    if (block.kind() === "control-flow-structure") {
+                        controller.blocks().push(block);
+                    }
+                    else {
+                        // TODO: some sort of error message +
+                        // visual indicator
+                    }
+                }
+                else {
+                    var result = findBlock(target);
+                    var parent = result.parent;
+
+                    console.log(result);
+
+                    if (typeof result.targetIndex !== "undefined") {
+                        // Make sure child is of correct type
+                        var children = parent.children();
+                        var blockType = children[result.targetIndex] instanceof Block ?
+                                children[result.targetIndex].kind() :
+                                children[result.targetIndex];
+
+                        if (block.kind() === blockType) {
+                            parent.children()[result.targetIndex] = block;
                         }
                         else {
-                            // TODO: some sort of error message +
-                            // visual indicator
+                            // TODO: error, visual indicator
                         }
                     }
                     else {
-                        // target is a hole, so the last index is the
-                        // index of the hole, and blockObj is the
-                        // parent
-                        var result = findBlock(target);
-                        var indices = result.indices;
-                        var blockObj = result.block;
-                        var childIndex = result.indices[result.indices.length - 1];
-
-                        // Make sure child is of correct type
-                        var children = blockObj.children();
-                        var blockType = children[childIndex] instanceof Block ?
-                            children[childIndex].kind() :
-                            children[childIndex];
-                        if (block.kind() === blockType) {
-                            blockObj.children()[childIndex] = block;
-                        }
-                        else {
-                            // TODO: error + visual indicator
-                        }
+                        result.parent.children().push(block);
                     }
-
-                    // TODO: if source was another block, put a hole
-                    // in that block
                 }
 
                 controller.drake.remove();
@@ -359,7 +390,17 @@ var WorkspaceComponent = {
         });
     },
 
-    renderBlock: function(block, index, toplevel) {
+    wrapHole: function(child, index) {
+        if (typeof child === "string") {
+            return this.renderHole(child, index);
+        }
+        else if (child.kind() === "group") {
+            return this.render(child, index);
+        }
+        return m(".block-hole.filled", this.render(child, index));
+    },
+
+    renderBlock: function(block, index) {
         if (!block) return false;
 
         var config = {
@@ -367,6 +408,12 @@ var WorkspaceComponent = {
         };
         var blockEl = null;
         switch (block.kind()) {
+        case "group":
+            blockEl = m(".block-hole.blocks", config,
+                        block.children().map(function(child, index) {
+                            return this.render(child, index, true);
+                        }.bind(this)));
+            break;
         case "primitive":
             if (block.subkind() === "number") {
                 blockEl = m("div.primitive", config, [
@@ -385,28 +432,25 @@ var WorkspaceComponent = {
             if (block.subkind() === "tell") {
                 blockEl = m("div.block.control-flow-structure", config, [
                     "tell ",
-                    this.render(block.children()[0], 0, false),
+                    this.wrapHole(block.children()[0], 0),
                     " to ",
-                    this.render(block.children()[1], 1, false)
+                    this.wrapHole(block.children()[1], 1),
                 ]);
             }
             else if (block.subkind() === "if/else") {
                 blockEl = m(".block.multi-child.control-flow-structure", config, [
-                    // m("div", [
-                        "if ",
-                        this.render(block.children()[0], 0, false),
-                        " then ",
-                        this.renderHole("blocks", 1),
-                    // ]),
-                    // m("div", [
-                        "else ",
-                        this.renderHole("blocks", 2),
-                    // ])
+                    "if ",
+                    this.wrapHole(block.children()[0], 0),
+                    " then ",
+                    this.wrapHole(block.children()[1], 1),
+                    "else ",
+                    this.wrapHole(block.children()[2], 2),
                 ]);
             }
             else if (block.subkind() === "forever") {
-                blockEl = m("div.block.control-flow-structure", config, [
+                blockEl = m(".block.multi-child.control-flow-structure", config, [
                     "forever",
+                    this.wrapHole(block.children()[0], 0),
                 ]);
             }
             break;
@@ -415,24 +459,21 @@ var WorkspaceComponent = {
                      config, block.value());
         }
 
-        if (toplevel) {
-            return blockEl;
-        }
-        return m(".block-hole.filled", config, blockEl);
+        return blockEl;
     },
 
-    render: function(blockOrHole, index, toplevel) {
+    render: function(blockOrHole, index) {
         if (typeof blockOrHole === "string") {
             return this.renderHole(blockOrHole, index);
         }
-        return this.renderBlock(blockOrHole, index, toplevel);
+        return this.renderBlock(blockOrHole, index);
     },
 
     view: function(controller, args) {
         console.log(args.blocks);
         return m("div#workspace", [
             m(".block-acceptor#block-editor", args.blocks.map(function(block, index) {
-                return WorkspaceComponent.render(block, index, true);
+                return WorkspaceComponent.render(block, index);
             })),
             m(".block-acceptor.block-trash", {
                 style: {
