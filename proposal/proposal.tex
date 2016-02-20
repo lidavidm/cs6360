@@ -7,8 +7,11 @@
 \usepackage[utf8x]{inputenc}
 \usepackage[letterpaper]{geometry}
 \usepackage{titlesec}
+\usepackage{booktabs}
+\usepackage{tabu}
 
 \titleformat{\section}{\normalfont\large}{\thesection}{0.5em}{}
+\titleformat{\subsection}{\normalfont}{\thesubsection}{0.5em}{}
 \titlespacing*{\section}{0em}{0.75em}{0.3em}
 
 \begin{document}
@@ -78,21 +81,118 @@ Java.
   \includegraphics[width=\textwidth]{mockup.pdf}
   \caption{The main game interface.}
 \end{figure}
+
 The user interface has three main components: the world map, the
 visual programmer and the interactive debugger. Normally, the student
 will see only the programming and map interface. Once the student runs
 their code, the debugger will appear, tracing the execution of the
-Java code in tandem with the world map and code blocks. Here the
-``blueprint'' metaphor shows the student what methods are available,
-and the object instance they are controlling is highlighted on the
-map. The \texttt{self} block (\texttt{this} in Java) is annotated with
-the same picture as the blueprint and map.
+code blocks in tandem with their effect on the world map. Based on
+feedback from the paper prototype, we removed the interactive Java
+debugger, as students would likely ignore it. Instead, we plan to fade
+Java code into the blocks themselves while executing, mixing in more
+actual code with the blocks as the game progresses.
+
+Here the ``blueprint'' metaphor shows the student what methods are
+available, and the object instance they are controlling is highlighted
+on the map. The \texttt{self} block (\texttt{this} in Java) is
+annotated with the same picture as the blueprint and map.
+
+\subsection{Level Design and Progression}
+
+Our rough concept progression can be found in figure~\ref{fig:progression}.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{concept_progression.pdf}
+  \caption{The concept progression. Items within a row do not
+    necessarily depend on each other, but each row depends on the
+    concepts in the previous row.}\label{fig:progression}
+\end{figure}
+
+The game will begin and feature a series of interactive
+tutorials. When introducing a concept, students will be guided through
+using the new idea TODO finish sentence. In particular, most block
+types and capabilities will be slowly introduced, based on feedback
+from the paper prototype, where the function and intent of many blocks
+was unclear when presented without some sort of accompanying
+explanation.
+
+% What are the actions that the player can take in the game? What will
+% be the result of these actions?
+
+% What will the challenges look like?  What will the player
+% specifically be asked to do?
+As for the challenges themselves,
+
+% How will your game decide whether object-oriented code the player
+% has constructed is correct? Will correctness be based purely on
+% whether the code performs the desired task, or will you also add
+% constraints to enforce object-orientedness? How would this be done?
+Our system simply requires the student to accomplish the given
+objectives, using the tools given to them. Judging object-orientedness
+TODO. However, the intent is to construct puzzles such that a
+non-object-oriented solution is tedious or unappealing; for instance,
+a robot may lack a \texttt{turnRight()} method, and students would be
+encouraged to define one. While they do not necessarily have to,
+
+% How will the game increase in difficulty? What will an easy, medium,
+% and hard challenge look like?
+In terms of difficulty,
+
+\section{Prior Work}
+
+Compared to prior systems like
+Scratch\footnote{https://scratch.mit.edu/} and
+Lightbot\footnote{http://lightbot.com/hour-of-code-2015-flash.html},
+our system will explicitly model object-oriented concepts. For
+instance, LightBot provides a fixed set of actions that implicitly
+operate on the robot and space for a single subroutine. In contrast,
+our system would allow user-defined methods on multiple classes, as
+well as multiple different types of objects and control over multiple
+objects simultaneously. Compared to Scratch, while our block system is
+(intentionally) modeled after theirs, again, our system explicitly
+shows the objects and methods being invoked, while in Scratch scripts
+are attached to a particular sprite and implicitly act on that
+sprite. In other words, while Scratch has all actions take place on
+\texttt{this}, our system will show \texttt{this} as well as other
+objects and allow the user to manipulate them at will.
 
 \section{Evaluation}
 
 We intend to test the system with a group of students in a class such
 as CS 2110, Advanced Placement Computer Science, or similar class
 involving Java and object-oriented principles. Students could be given
-a pre- and post- test asking about various concepts from this paradigm.
+a pre- and post- test asking about various concepts from this
+paradigm. As noted from feedback on the paper prototype, finding an
+appropriate target audience is difficult---we need students who have
+some programming basics, but who have not fully learned OOP.\@ TODO:
+solution.
+
+\section{Milestones}
+
+\subsection{Alpha}
+
+\begin{itemize}
+\item
+\end{itemize}
+
+\begin{tabu}{lXXl}
+\toprule
+Task & Priority & Person & Hours \\
+\midrule
+Task description & Must/should/could have & Person & Hours \\
+\bottomrule
+\end{tabu}
+
+\subsection{Beta}
+
+\begin{itemize}
+\item
+\end{itemize}
+
+\subsection{Final}
+\begin{itemize}
+\item
+\end{itemize}
 
 \end{document}
