@@ -144,12 +144,31 @@ certain objectives.
 
 % What will the challenges look like?  What will the player
 % specifically be asked to do?
-As for the challenges themselves, the player will be asked to
+As for the challenges themselves, the basic flow will be to:
+
+\begin{enumerate}
+\item Instantiate (or be given) new robot(s) in the Controller class
+\item Give commands to the robot(s) to:
+  \begin{itemize}
+  \item Pick up resources
+  \item Activate tools to extract resources/terraform
+  \item Bring things back to base/a target location
+  \item Activate tools to construct buildings
+  \item Avoid obstacles/traps
+  \end{itemize}
+\item Implement new methods and classes, to fill in missing
+  functionality or specialize a robot for a task. For instance, the
+  robot may not be able to make use of a drill until it is subclassed
+  and methods are added to power on the drill, control its speed,
+  power it off, etc.
+\end{enumerate}
 
 % How will the game increase in difficulty? What will an easy, medium,
 % and hard challenge look like?
 Some example tasks, with difficulty levels and rationale, are given
-below.
+below. In general, more difficult tasks involve at least one of the
+following: more concepts, more objectives, and less
+scaffolding/tutorial material.
 
 \noindent\begin{tabu}{lXX}
   \\
@@ -219,12 +238,46 @@ appropriate target audience is difficult---we need students who have
 some programming basics, but who have not fully learned OOP.\@ TODO:
 solution.
 
+As for other data to collect, we can record basic statistics such as
+the amount of time spent in the game, the amount of time per lesson,
+the number of tries per lesson, and so on. We could also record their
+intermediate attempts at a solution.
+
 \section{Milestones}
 
 \subsection{Alpha}
 
+The minimum playable product would require:
 \begin{itemize}
-\item
+\item Block editor
+\item World map
+\item Code execution
+\item The first lesson
+\end{itemize}
+
+\begin{tabu}{Xlll}
+\toprule
+Task & Priority & Person & Hours \\
+\midrule
+Integrate Google Blockly as the block editor & Must have & Person & Hours \\
+Set up Blockly to generate Java code & Must have & Person & Hours \\
+Find art assets for the world map & Must have & Person & Hours \\
+Render the map using Phaser.js & Must have & Person & Hours \\
+Implement ``shim'' classes, to be called by the player code, which update the game state & Must have & Person & Hours \\
+Implement the game state & Must have & Person & Hours \\
+Relay the game state via WebSocket to the client & Must have & Person & Hours \\
+Step through Java code using the Java Debug Interface & Must have & Person & Hours \\
+Relay code execution events via WebSocket to the client & Must have & Person & Hours \\
+\bottomrule
+\end{tabu}
+
+\subsection{Beta}
+
+\begin{itemize}
+\item Level creation tools (to develop content and lessons quickly)
+\item Tutorial/hint capability (to guide players through a lesson)
+\item More lessons
+\item Savegame capability
 \end{itemize}
 
 \begin{tabu}{lXXl}
@@ -235,15 +288,18 @@ Task description & Must/should/could have & Person & Hours \\
 \bottomrule
 \end{tabu}
 
-\subsection{Beta}
-
-\begin{itemize}
-\item
-\end{itemize}
-
 \subsection{Final}
 \begin{itemize}
-\item
+\item All the lessons, covering up to subclassing/class hierarchy (our
+  target concept)
 \end{itemize}
+
+\begin{tabu}{lXXl}
+\toprule
+Task & Priority & Person & Hours \\
+\midrule
+Task description & Must/should/could have & Person & Hours \\
+\bottomrule
+\end{tabu}
 
 \end{document}
