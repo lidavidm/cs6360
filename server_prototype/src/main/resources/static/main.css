@@ -195,8 +195,11 @@ body {
 }
 
 .blueprint {
+    display: inline-block;
+    width: 100%;
+
+    color: #FFF;
     background: #00C;
-    border: 1px solid #00F;
     /* Based on http://lea.verou.me/css3patterns/#blueprint-grid */
     /* My understanding: background-size sets the size of the pattern, one
        pair per linear-gradient line. This causes the pattern to tile. */

@@ -1,0 +1,6 @@
+[submodule "server_prototype/src/main/resources/static/blockly"]
+	path = server_prototype/src/main/resources/static/blockly
+	url = https://github.com/google/blockly.git
+[submodule "server_prototype/src/main/resources/static/closure-library"]
+	path = server_prototype/src/main/resources/static/closure-library
+	url = https://github.com/google/closure-library.git
