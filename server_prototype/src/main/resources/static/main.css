@@ -19,181 +19,6 @@ body {
     height: 100%;
 }
 
-#workspace {
-    float: left;
-    width: calc(60% - 1px);
-    height: 100%;
-    border-right: 1px solid #000;
-    position: relative;
-}
-
-#block-editor {
-    height: calc(100% - 1em);
-    margin: 0.5em;
-    overflow-y: auto;
-}
-
-.block-trash {
-    height: 150px;
-    border: 1px solid red;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #FFF;
-    color: #F00;
-}
-
-.block-trash:after {
-    content: "Drop here to delete";
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    text-align: center;
-    line-height: 150px;
-    font-size: 2em;
-    transition: 0.3s ease-in-out opacity;
-}
-
-#workspace .block {
-    width: -moz-max-content;
-    width: max-content;
-}
-
-.block {
-    display: block;
-    border-radius: 5px;
-    margin: 0.5em;
-    padding: 0 0 0 0.5em;
-    box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.5);
-    cursor: grab;
-    transition: 0.3s ease-in-out box-shadow;
-    color: #FFF;
-    height: 2em;
-    line-height: 2em;
-    transition: 0.3s ease-in-out box-shadow;
-}
-
-.block:hover {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.5);
-}
-
-.multi-child {
-    height: auto;
-    padding-bottom: 0.25em;
-}
-
-.block-hole.blocks {
-    display: block;
-    width: 100%;
-    height: auto;
-    min-width: 8em;
-    min-height: 6em;
-    margin: 0.25em 0;
-    border-radius: 5px 0 0 5px;
-    padding: 0 0 2em 0;
-    border: 0;
-}
-
-.block-hole.blocks > .block {
-    display: block;
-    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.5);
-    border-radius: 0 5px 5px 0;
-}
-
-.block-hole.blocks > .block:first-child {
-    border-radius: 5px 5px 5px 0;
-}
-
-.block-hole.blocks > .block:last-child {
-    border-radius: 0 5px 5px 5px;
-}
-
-.block-hole .block, .block-hole {
-    box-sizing: border-box;
-    display: inline-block;
-    height: 2rem;
-    vertical-align: top;
-    border-radius: 5px;
-    line-height: 2em;
-    box-shadow: none;
-    margin: 0;
-    padding: 0 0.5em;
-}
-
-.block-hole {
-    width: 3em;
-    border: 2px dashed;
-    background: #FFF !important;
-}
-
-.block-hole.filled {
-    width: auto;
-    border: 0;
-    background: none;
-    padding: 0;
-}
-
-.block-hole .workspace-block {
-    width: auto;
-}
-
-.block-hole.method {
-    border-color: #C0C;
-}
-
-.block-hole.primitive {
-    border-color: brown;
-}
-
-.block-hole.object {
-    border-color: #0F0;
-}
-
-#block-editor .block {
-    margin: 0;
-}
-
-#workbench {
-    float: left;
-    width: 40%;
-    height: 100%;
-}
-
-.workbench-area {
-    display: block;
-    padding: 0.5em;
-    color: #FFF;
-    overflow-y: auto;
-}
-
-.workbench-area:nth-child(1) {
-    height: calc(40% - 1em);
-}
-
-.workbench-area:nth-child(2) {
-    height: calc(20% - 1em);
-}
-
-.workbench-area:nth-child(3) {
-    height: calc(40% - 1em);
-}
-
-.block-container > .block {
-    display: inline-block;
-    width: calc(50% - 1.5em);
-    margin: 0.5em;
-}
-
-.block-container .block.wide {
-    width: -moz-max-content;
-    width: -webkit-max-content;
-    width: max-content;
-}
-
 .blueprint {
     display: inline-block;
     width: 100%;
@@ -215,39 +40,6 @@ body {
     font-family: "Consolas", monospace;
 }
 
-div.method {
-    background: #C0C;
-}
-
-span.method {
-    color: #C0C;
-}
-
-div.control-flow-structure {
-    background: orange;
-}
-
-div.object {
-    background: #0F0;
-}
-
-span.object {
-    color: #0F0;
-}
-
-div.primitive {
-    background: brown;
-}
-
-div.boolean {
-    background: red;
-}
-
-.toolbox {
-    background: #777;
-    border: 1px solid #333;
-}
-
 #map {
     float: left;
     width: 20%;
@@ -255,9 +47,48 @@ div.boolean {
 }
 
 #worldMap {
-    height: 65%;
+    height: 35.5556%;
+    width: 100%;
+    float: left;
+}
+
+#objectives {
+    height: 49.4444%;
+    width: 100%;
+    float: left;
+}
+
+#objectives h2 {
+    margin: 0;
 }
 
 #gameControls {
     height: 15%;
+    width: 100%;
+    float: left;
+}
+
+#gameControls button {
+    border: 0;
+    width: 100%;
+    height: 100%;
+    background: green;
+    color: #FFF;
+    font-size: 3rem;
+}
+
+#editor.executing {
+    width: 60%;
+}
+
+#map.executing {
+    width: 40%;
+}
+
+.executing #worldMap {
+    height: 60%;
+}
+
+.executing #objectives {
+    height: 25%;
 }

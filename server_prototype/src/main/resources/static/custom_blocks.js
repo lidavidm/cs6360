@@ -7,7 +7,7 @@ Blockly.Blocks["method"] = {
             "args0": [
                 {
                     "type": "field_dropdown",
-                    "name": "method name",
+                    "name": "METHOD_NAME",
                     "options": [
                         [
                             "turn left",
