@@ -24,7 +24,7 @@ body {
     width: 100%;
 
     color: #FFF;
-    background: #00C;
+    background: #007;
     /* Based on http://lea.verou.me/css3patterns/#blueprint-grid */
     /* My understanding: background-size sets the size of the pattern, one
        pair per linear-gradient line. This causes the pattern to tile. */
@@ -36,8 +36,8 @@ body {
     linear-gradient(90deg, rgba(255, 255, 255, 0.2) 1px, transparent 1px);
 }
 
-.blueprint .class {
-    font-family: "Consolas", monospace;
+.blueprint.blocklyTreeRow:hover:not(.blocklyTreeSelected) {
+    background-color: #00A;
 }
 
 #map {
