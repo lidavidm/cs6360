@@ -1,8 +1,8 @@
 \documentclass[12pt,notitlepage]{article}
-\usepackage[bitstream-charter]{mathdesign}
-\usepackage{inconsolata}
+%% \usepackage[bitstream-charter]{mathdesign}
+%% \usepackage{inconsolata}
 \usepackage[T1]{fontenc}
-\usepackage{microtype}
+%% \usepackage{microtype}
 \usepackage{graphicx}
 \usepackage[utf8x]{inputenc}
 \usepackage[letterpaper]{geometry}
@@ -192,9 +192,9 @@ command the robot. \\
 Two Left Wheels & One of the robots you have can only turn
 left. Implement a \texttt{turnRight} method for it. & Easy---this is a
 very basic method definition.\\ \\
-Robot Rescue & & Medium--- \\ \\
-Fracking for Gas & & Medium--- \\ \\
-General-Purpose Robot & & Hard--- \\
+Robot Rescue & One of your robots has broken down; instantiate a new robot, send it over, call a method to get a reference to the broken robot, and reboot it. & Medium---students need to work with multiple objects, instantiation, and understand that methods can return object references. \\ \\
+Fracking for Gas & Coordinate a pump robot and a collector robot to extract natural gas from a deposit. & Medium---students have to manipulate two objects of distinct classes, and must understand why methods are available on one but not the other. \\ \\
+General-Purpose Robot & Given a \texttt{Tool} superclass, design a robot that is given some \texttt{Tool} and can activate and use it without knowing the actual subclass. Use these robots with various tools to mine resources and build a rocket. & Hard---students have to understand objects as representing abstract concepts. \\
 \bottomrule
 \\
 \end{tabu}
@@ -204,7 +204,13 @@ General-Purpose Robot & & Hard--- \\
 % constraints to enforce object-orientedness? How would this be done?
 Our system simply requires the student to accomplish the given
 objectives, using the tools given to them. Judging object-orientedness
-TODO.
+is not a goal of our system: instead; our system essentially only
+allows object-oriented programming. The only non-OOP blocks are
+control flow blocks, and levels will be designed such that students
+will be required to implement methods, create subclasses, and so
+on. Of course, we will have interactive tutorials for each concept
+introduced as well, to walk students students through the new blocks
+and ideas.
 
 \section{Prior Work}
 
@@ -233,7 +239,15 @@ only code. Our system differs in that we intend to make this
 transition between blocks and code gradually, migrating the blocks to
 show code on them slowly, then having some tasks (e.g.\ the
 implementation of some methods) be code-only, before ending with
-code-only.
+code-only. In contrast, Blockly Games makes the jump suddenly; when
+the user advances to the next set of levels, the blocks suddenly
+contain code on them, with no explanation. However, Google does have
+good design
+advice\footnote{\url{https://developers.google.com/blockly/hacking/mistakes}}
+in the layout of the editor and the format of interactive tutorials
+(essentially: make them mandatory and only dismissable by completing
+the relevant objective, otherwise, students will close them on
+instinct).
 
 \section{Evaluation}
 
@@ -243,8 +257,10 @@ involving Java and object-oriented principles. Students could be given
 a pre- and post- test asking about various concepts from this
 paradigm. As noted from feedback on the paper prototype, finding an
 appropriate target audience is difficult---we need students who have
-some programming basics, but who have not fully learned OOP.\@ TODO:
-solution.
+some programming basics, but who have not fully learned OOP.\@
+Students from other universities and high schools could be recruited;
+alternatively, we could target students in classes like CS 1110,
+revamping the system to use a language besides Java.
 
 As for other data to collect, we can record basic statistics such as
 the amount of time spent in the game, the amount of time per lesson,
@@ -263,36 +279,56 @@ The minimum playable product would require:
 \item The first lesson
 \end{itemize}
 
+\emph{Note: multiply all given values by $\pi$, because estimation is hard.}
+
 \begin{tabu}{Xlll}
 \toprule
 Task & Priority & Person & Hours \\
 \midrule
-Integrate Google Blockly as the block editor & Must have & Person & Hours \\
-Set up Blockly to generate Java code & Must have & Person & Hours \\
-Find art assets for the world map & Must have & Person & Hours \\
-Render the map using Phaser.js & Must have & Person & Hours \\
-Implement ``shim'' classes, to be called by the player code, which update the game state & Must have & Person & Hours \\
-Implement the game state & Must have & Person & Hours \\
-Relay the game state via WebSocket to the client & Must have & Person & Hours \\
-Step through Java code using the Java Debug Interface & Must have & Person & Hours \\
-Relay code execution events via WebSocket to the client & Must have & Person & Hours \\
+Integrate Google Blockly as the block editor & Must have & David & 4 \\
+Set up Blockly with relevant block types & Must have & David & 8 \\
+Set up Blockly to generate Java code & Must have & David & 2 \\
+Find art assets for the world map & Must have & David & 2 \\
+Render the map using Phaser.js & Must have & David & 4 \\
+Implement functions to be injected via Blockly, which update the execution state & Must have & Andy & 8 \\
+Implement ``shim'' functions to be called by user code, which update the game state & Must have & Andy & 8 \\
+Launch a JVM and execute user code & Must have & Andy & 4 \\
+Implement the game state (server-side) & Must have & Michael & 12 \\
+Implement the game state (client-side) & Must have & Michael & 6 \\
+Relay the game state via WebSocket to the client & Must have & Michael & 2 \\
 \bottomrule
 \end{tabu}
 
 \subsection{Beta}
 
 \begin{itemize}
-\item Level creation tools (to develop content and lessons quickly)
+\item Level creation tools (to develop content and lessons quickly) \&
+  level definition format, i.e.\ for a given level, creating a file
+  format that defines what blocks are available, what map to use, what
+  tutorial popups to show when, the victory conditions, etc.
+\item Class design/creation interface
+\item Implement concreteness fading: new block types/code editor
 \item Tutorial/hint capability (to guide players through a lesson)
 \item More lessons
 \item Savegame capability
 \end{itemize}
 
-\begin{tabu}{lXXl}
+\begin{tabu}{Xlll}
 \toprule
 Task & Priority & Person & Hours \\
 \midrule
-Task description & Must/should/could have & Person & Hours \\
+Level definition format & Must have & Andy & 12 \\
+Interpreting level definitions & Must have & David & 8 \\
+Class hierarchy interface & Should have & Michael & 15 \\
+Concrete-faded block definitions & Must have & Andy & 2 \\
+Writing tutorials demonstrating the block fading & Should have & Andy & 6 \\
+Integrated code editor & Should have & David & 4 \\
+Tutorial/popup library & Must have & David & 8 \\
+Savegame capability & Must have & Michael & 3 \\
+UI polishing & Could have & Anyone\footnote{Pull requests appreciated.}  & Spare time \\
+Misc.\ backend features as needed & Should have & Michael & 2 \\
+Writing more levels (up to writing methods) & Should have & Everyone & 10 \\
+Storyline & Could have & Michael & Spare time \\
 \bottomrule
 \end{tabu}
 
@@ -303,11 +339,18 @@ Task description & Must/should/could have & Person & Hours \\
 \item Data collection
 \end{itemize}
 
-\begin{tabu}{lXXl}
+\begin{tabu}{Xlll}
 \toprule
 Task & Priority & Person & Hours \\
 \midrule
-Task description & Must/should/could have & Person & Hours \\
+Pre/post test & Must have & Andy & 10 \\
+Server-side data collection & Must have & Michael & 4 \\
+Client-side data collection & Must have & David & 4 \\
+Inheritance/hierarchy lessons & Must have & Michael & 16 \\
+Revamping earlier lessons from Beta feedback & Must have & Andy/David & 25 \\
+Polymorphism/more advanced lessons & Could have & Anyone & Spare time \\
+UI polishing & Could have & Anyone & Spare time \\
+Storyline & Could have & Michael & Spare time \\
 \bottomrule
 \end{tabu}
 
