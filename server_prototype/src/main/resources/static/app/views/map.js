@@ -1,53 +1,3 @@
-'use strict';
-
-var GameWidget = {
-    controller: function(args) {
-        var controller = {
-            executing: m.prop(false),
-        };
-
-        return controller;
-    },
-
-    view: function(controller) {
-        return m(".container", [
-            m.component(MapComponent, {
-                executing: controller.executing,
-            }),
-            m.component(EditorComponent, {
-                executing: controller.executing,
-            }),
-        ]);
-    },
-};
-
-var EditorComponent = {
-    controller: function(args) {
-
-    },
-
-    view: function(controller, args) {
-        console.log("Editor", args.executing());
-        return m("div#editor", {
-            class: args.executing() ? "executing" : "",
-            config: function(element, isInitialized) {
-                if (isInitialized) {
-                    // https://groups.google.com/forum/#!topic/blockly/WE7x-HPh81A
-                    // According to above link, window resize event is
-                    // needed for Blockly to resize itself
-                    window.dispatchEvent(new Event("resize"));
-                    return;
-                }
-
-                var workspace = Blockly.inject(element, {
-                    toolbox: document.getElementById("toolbox").textContent,
-                    trashcan: true,
-                });
-            },
-        });
-    },
-};
-
 var MapComponent = {
     controller: function(args) {
         var controller = {
@@ -56,6 +6,7 @@ var MapComponent = {
             create: create,
             update: update,
             render: render,
+            scale: scale,
         };
 
         var game = null;
@@ -100,6 +51,15 @@ var MapComponent = {
             game.debug.cameraInfo(game.camera, 32, 32);
         }
 
+        function scale(zoomed) {
+            if (zoomed) {
+                game.world.scale.setTo(2, 2);
+            }
+            else {
+                game.world.scale.setTo(1, 1);
+            }
+        }
+
         return controller;
     },
 
@@ -133,6 +93,7 @@ var MapComponent = {
                     onclick: function() {
                         console.log("click");
                         args.executing(true);
+                        controller.scale(true);
                     }
                 }, "Run"),
             ]),
@@ -140,4 +101,6 @@ var MapComponent = {
     },
 };
 
-m.mount(document.body, GameWidget);
+module.exports = {
+    MapComponent: MapComponent,
+};
