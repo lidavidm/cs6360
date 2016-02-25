@@ -73,7 +73,6 @@ var MapComponent = {
             m("div#worldMap", {
                 config: function(element, isInitialized) {
                     if (!isInitialized) {
-                        // TODO: figure out how to get this to scale properly
                         controller.phaser = new Phaser.Game("100", "100", Phaser.CANVAS, element, {
                             preload: controller.preload,
                             create: controller.create,
@@ -83,6 +82,7 @@ var MapComponent = {
                     }
                 },
             }),
+            // TODO: move this to separate views
             m("div#objectives", m("ul", [
                 m("h2", "Objectives"),
                 m("li", "Get our proposal done"),
@@ -92,8 +92,8 @@ var MapComponent = {
                 m("button", {
                     onclick: function() {
                         console.log("click");
-                        args.executing(true);
-                        controller.scale(true);
+                        args.executing(!args.executing());
+                        controller.scale(args.executing());
                     }
                 }, "Run"),
             ]),
