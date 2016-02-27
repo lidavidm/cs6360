@@ -1,3 +1,5 @@
+var camera = require("../camera");
+
 var MapComponent = {
     controller: function(args) {
         var controller = {
@@ -10,6 +12,7 @@ var MapComponent = {
         };
 
         var game = null;
+        var camera = null;
         var cursors = null;
 
         function preload() {
@@ -19,6 +22,8 @@ var MapComponent = {
             game.load.image("tiles", "assets/tilesets/cave.png");
 
             game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
+
+            camera = new camera.ZoomCamera(game);
         }
 
         function create() {
