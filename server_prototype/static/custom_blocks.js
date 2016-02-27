@@ -45,14 +45,14 @@ Blockly.Blocks["tell"] = {
                 },
                 {
                     "type": "input_value",
-                    "name": "object"
+                    "name": "OBJECT"
                 },
                 {
                     "type": "input_dummy"
                 },
                 {
                     "type": "input_value",
-                    "name": "method"
+                    "name": "METHOD"
                 }
             ],
             "inputsInline": true,

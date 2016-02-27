@@ -38,8 +38,8 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     if (args.executing()) {
                         root.style.display = "none";
 
-                        var interpreter = new PyPyJS.Interpreter("print 'hello, world!'");
-                        interpreter.run();
+                        // var interpreter = new PyPyJS.Interpreter("print 'hello, world!'");
+                        // interpreter.run();
                     }
                     else {
                         root.style.display = "block";
@@ -50,6 +50,10 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 controller.workspace = Blockly.inject(element, {
                     toolbox: controller.toolbox(),
                     trashcan: true,
+                });
+
+                controller.workspace.addChangeListener(function() {
+                    console.log(Blockly.Python.workspaceToCode(controller.workspace));
                 });
             },
         });
