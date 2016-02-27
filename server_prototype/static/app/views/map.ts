@@ -33,12 +33,14 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
             game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
 
             camera = new Camera.ZoomCamera(game);
+            game.world.add(camera);
         }
 
         function create() {
             var map = game.add.tilemap("prototype");
             map.addTilesetImage("cave", "tiles");
-            var layer = map.createLayer("Tile Layer 1");
+            var layer = map.createLayer("Tile Layer 1",
+                                        game.width, game.height, camera);
             layer.resizeWorld();
 
             cursors = game.input.keyboard.createCursorKeys();
@@ -47,22 +49,24 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
         function update() {
             if (!game.input.activePointer.withinGame) return;
 
+            if (!camera) return;
+
+            // TODO: factor this into ZoomCamera
             if (cursors.up.isDown) {
-                game.camera.y -= 4;
+                game.camera.bounds.y -= 4;
             }
             else if (cursors.down.isDown) {
-                game.camera.y += 4;
+                game.camera.bounds.y += 4;
             }
             else if (cursors.left.isDown) {
-                game.camera.x -= 4;
+                game.camera.bounds.x -= 4;
             }
             else if (cursors.right.isDown) {
-                game.camera.x += 4;
+                game.camera.bounds.x += 4;
             }
         }
 
         function render() {
-            game.debug.cameraInfo(game.camera, 32, 32);
         }
 
         function scale(zoomed: boolean) {

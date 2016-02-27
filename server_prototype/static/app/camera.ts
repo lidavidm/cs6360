@@ -19,7 +19,7 @@ module Camera {
             return this;
         }
 
-        zoomTo(scale: number, duration: number) {
+        zoomTo(scale: number, duration?: number) {
             var bounds = this.bounds;
             var cameraBounds = this.game.camera.bounds;
 
@@ -31,7 +31,10 @@ module Camera {
             var height = bounds.height * scale;
 
             if (duration) {
-
+                this.game.add.tween(cameraBounds)
+                    .to({ x, y, width, height }, duration).start();
+                return this.game.add.tween(this.scale)
+                    .to({ x: scale, y: scale }, duration).start();
             }
             else {
                 cameraBounds.x = x;
