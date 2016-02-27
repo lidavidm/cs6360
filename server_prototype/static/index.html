@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Test Game</title>
     <link rel="stylesheet" type="text/css" href="main.css">
-    <link rel="stylesheet" type="text/css" href="dragula.css">
     <script type="toolbox" id="toolbox">
       <xml style="display: none">
         <category name="Toolbox">
@@ -59,6 +58,10 @@
     <script src="custom_blocks.js"></script>
     <script src="mithril.js"></script>
     <script src="phaser.js"></script>
+    <script src="require.js"></script>
     <script src="bundle.js"></script>
+    <script>
+      require(["main"]);
+    </script>
   </body>
 </html>

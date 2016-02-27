@@ -3,3 +3,5 @@ out/
 *.class
 lib/
 target/
+node_modules/
+*.map

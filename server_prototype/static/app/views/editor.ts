@@ -1,6 +1,15 @@
-var EditorComponent = {
-    controller: function(args) {
-        var controller = {
+declare var Blockly: any;
+
+interface EditorController extends _mithril.MithrilController {
+    toolbox: _mithril.MithrilProperty<_mithril.MithrilVirtualElement<EditorController>>,
+    workspace: any,
+}
+
+// The Mithril type definition is incomplete and doesn't handle
+// the args parameter to view().
+export const Component: _mithril.MithrilComponent<EditorController> = <any> {
+    controller: function(): EditorController {
+        var controller: EditorController = {
             toolbox: m.prop(document.getElementById("toolbox").textContent),
             workspace: null,
         };
@@ -8,14 +17,14 @@ var EditorComponent = {
         return controller;
     },
 
-    view: function(controller, args) {
+    view: function(controller: EditorController, args: any) {
         console.log("Editor", args.executing());
         if (controller.workspace) {
             controller.workspace.options.readOnly = args.executing();
         }
         return m("div#editor", {
             class: args.executing() ? "executing" : "",
-            config: function(element, isInitialized) {
+            config: function(element: HTMLElement, isInitialized: boolean) {
                 if (isInitialized) {
                     // https://groups.google.com/forum/#!topic/blockly/WE7x-HPh81A
                     // According to above link, window resize event is
@@ -23,13 +32,13 @@ var EditorComponent = {
                     window.dispatchEvent(new Event("resize"));
 
                     // Hide the toolbox if we're running code
+                    var root =
+                        <HTMLElement> document.querySelector(".blocklyTreeRoot");
                     if (args.executing()) {
-                        document.querySelector(".blocklyTreeRoot")
-                            .style.display = "none";
+                        root.style.display = "none";
                     }
                     else {
-                        document.querySelector(".blocklyTreeRoot")
-                            .style.display = "block";
+                        root.style.display = "block";
                     }
                     return;
                 }
@@ -41,8 +50,4 @@ var EditorComponent = {
             },
         });
     },
-};
-
-module.exports = {
-    EditorComponent: EditorComponent,
 };

@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "noImplicitAny": true,
+        "preserveConstEnums": true,
+        "sourceMap": true,
+        "outFile": "bundle.js",
+        "module": "amd"
+    },
+    "exclude": [
+        "node_modules",
+        "blockly",
+        "closure-library",
+        "bundle.js",
+        "custom_blocks.js",
+        "mithril.js",
+        "phaser.js"
+    ]
+}

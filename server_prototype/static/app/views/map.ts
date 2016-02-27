@@ -1,8 +1,17 @@
-var camera = require("../camera");
+interface MapController extends _mithril.MithrilController {
+    phaser: Phaser.Game,
+    preload: () => void,
+    create: () => void,
+    update: () => void,
+    render: () => void,
+    scale: (zoomed: boolean) => void,
+}
 
-var MapComponent = {
-    controller: function(args) {
-        var controller = {
+// The Mithril type definition is incomplete and doesn't handle
+// the args parameter to view().
+export const Component: _mithril.MithrilComponent<MapController> = <any> {
+    controller: function(): MapController {
+        var controller: MapController = {
             phaser: null,
             preload: preload,
             create: create,
@@ -11,9 +20,9 @@ var MapComponent = {
             scale: scale,
         };
 
-        var game = null;
-        var camera = null;
-        var cursors = null;
+        var game: Phaser.Game = null;
+        var camera: Camera.ZoomCamera = null;
+        var cursors: any = null;
 
         function preload() {
             game = controller.phaser;
@@ -23,7 +32,7 @@ var MapComponent = {
 
             game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
 
-            camera = new camera.ZoomCamera(game);
+            camera = new Camera.ZoomCamera(game);
         }
 
         function create() {
@@ -56,7 +65,7 @@ var MapComponent = {
             game.debug.cameraInfo(game.camera, 32, 32);
         }
 
-        function scale(zoomed) {
+        function scale(zoomed: boolean) {
             if (zoomed) {
                 game.world.scale.setTo(2, 2);
             }
@@ -68,7 +77,7 @@ var MapComponent = {
         return controller;
     },
 
-    view: function(controller, args) {
+    view: function(controller: MapController, args: any) {
         var style = "";
         if (args.executing()) {
             style = ".executing";
@@ -76,7 +85,7 @@ var MapComponent = {
 
         return m("div#map" + style, [
             m("div#worldMap", {
-                config: function(element, isInitialized) {
+                config: function(element: HTMLElement, isInitialized: boolean) {
                     if (!isInitialized) {
                         controller.phaser = new Phaser.Game("100", "100", Phaser.CANVAS, element, {
                             preload: controller.preload,
@@ -94,18 +103,15 @@ var MapComponent = {
                 m("li", "Make this game"),
             ])),
             m("nav#gameControls", [
-                m("button", {
+                // Mithril type definition seems to be off here
+                m(<any> "button", {
                     onclick: function() {
                         console.log("click");
                         args.executing(!args.executing());
                         controller.scale(args.executing());
-                    }
+                    },
                 }, "Run"),
             ]),
         ]);
     },
-};
-
-module.exports = {
-    MapComponent: MapComponent,
 };
