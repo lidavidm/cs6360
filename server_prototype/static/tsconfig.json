@@ -10,6 +10,7 @@
         "node_modules",
         "blockly",
         "closure-library",
+        "pypyjs",
         "bundle.js",
         "custom_blocks.js",
         "mithril.js",

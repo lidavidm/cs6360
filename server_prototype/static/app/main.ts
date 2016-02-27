@@ -5,7 +5,7 @@ interface GameController extends _mithril.MithrilController {
     executing: _mithril.MithrilBasicProperty<boolean>,
 }
 
-var GameWidget = {
+export const GameWidget = {
     controller: function(): GameController {
         var controller = {
             executing: m.prop(false),
@@ -26,5 +26,4 @@ var GameWidget = {
     },
 };
 
-console.log("Mount", document.body);
 m.mount(document.body, GameWidget);

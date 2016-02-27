@@ -1,5 +1,7 @@
 declare var Blockly: any;
 
+import PyPyJS = require("../execution/python");
+
 interface EditorController extends _mithril.MithrilController {
     toolbox: _mithril.MithrilProperty<_mithril.MithrilVirtualElement<EditorController>>,
     workspace: any,
@@ -18,7 +20,6 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
     },
 
     view: function(controller: EditorController, args: any) {
-        console.log("Editor", args.executing());
         if (controller.workspace) {
             controller.workspace.options.readOnly = args.executing();
         }
@@ -36,6 +37,9 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                         <HTMLElement> document.querySelector(".blocklyTreeRoot");
                     if (args.executing()) {
                         root.style.display = "none";
+
+                        var interpreter = new PyPyJS.Interpreter("print 'hello, world!'");
+                        interpreter.run();
                     }
                     else {
                         root.style.display = "block";

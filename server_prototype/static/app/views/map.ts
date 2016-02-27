@@ -106,7 +106,6 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                 // Mithril type definition seems to be off here
                 m(<any> "button", {
                     onclick: function() {
-                        console.log("click");
                         args.executing(!args.executing());
                         controller.scale(args.executing());
                     },
