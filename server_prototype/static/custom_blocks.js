@@ -1,39 +1,23 @@
-// https://blockly-demo.appspot.com/static/demos/blockfactory/index.html#y95qk2
+'use strict';
+
+goog.provide('Blockly.Blocks.oop');
+
+goog.require('Blockly.Blocks');
+
 Blockly.Blocks["method"] = {
     init: function() {
-        this.jsonInit({
-            "id": "method",
-            "message0": "%1",
-            "args0": [
-                {
-                    "type": "field_dropdown",
-                    "name": "METHOD_NAME",
-                    "options": [
-                        [
-                            "turn left",
-                            "turnLeft"
-                        ],
-                        [
-                            "move forward",
-                            "moveForward"
-                        ],
-                        [
-                            "self destruct",
-                            "selfDestruct"
-                        ]
-                    ]
-                }
-            ],
-            "inputsInline": true,
-            "output": "method",
-            "colour": 260,
-            "tooltip": "",
-            "helpUrl": "http://www.example.com/"
-        });
+        this.setColour(260);
+        this.setOutput(true, "method");
+        this.setInputsInline(true);
+        this.appendDummyInput()
+            .appendField(new Blockly.FieldDropdown([
+                ["turn left", "turnLeft"],
+                ["move forward", "moveForward"],
+                ["self destruct", "selfDestruct"],
+            ]), "METHOD_NAME");
     },
 };
 
-// https://blockly-demo.appspot.com/static/demos/blockfactory/index.html#85mctt
 Blockly.Blocks["tell"] = {
     init: function() {
         this.jsonInit({

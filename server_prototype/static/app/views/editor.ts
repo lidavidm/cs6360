@@ -52,7 +52,12 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     trashcan: true,
                 });
 
-                controller.workspace.addChangeListener(function() {
+                controller.workspace.addChangeListener(function(event) {
+                    // TODO: when a method block is created, update
+                    // its method list
+                    // TODO: when a method block or variable block is
+                    // moved, check class compatibility
+                    console.log(event);
                     console.log(Blockly.Python.workspaceToCode(controller.workspace));
                 });
             },
