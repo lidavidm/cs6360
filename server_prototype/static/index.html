@@ -11,7 +11,10 @@
           <block type="math_number"></block>
           <block type="tell"></block>
         </category>
-        <category name="Variables" colour="330" custom="VARIABLE">
+        <category name="Objects" colour="330">
+          <block type="variables_get">
+            <field name="VAR">robot</field>
+          </block>
         </category>
         <category name="class Robot" class="blueprint">
           <block type="method"></block>
@@ -29,16 +32,16 @@
     <script src="closure-library/closure/goog/base.js"></script>
     <!-- <script src="blockly/blockly_compressed.js"></script> -->
     <script src="blockly/blockly_uncompressed.js"></script>
-    <script src="blockly/blocks_compressed.js"></script>
+    <!-- <script src="blockly/blocks_compressed.js"></script> -->
     <script src="blockly/javascript_compressed.js"></script>
     <script src="blockly/msg/js/en.js"></script>
-    <!-- <script src="blockly/blocks/logic.js"></script> -->
-    <!-- <script src="blockly/blocks/loops.js"></script> -->
-    <!-- <script src="blockly/blocks/math.js"></script> -->
-    <!-- <script src="blockly/blocks/text.js"></script> -->
-    <!-- <script src="blockly/blocks/lists.js"></script> -->
-    <!-- <script src="blockly/blocks/colour.js"></script> -->
-    <!-- <script src="blockly/blocks/variables.js"></script> -->
+    <script src="blockly/blocks/logic.js"></script>
+    <script src="blockly/blocks/loops.js"></script>
+    <script src="blockly/blocks/math.js"></script>
+    <script src="blockly/blocks/text.js"></script>
+    <script src="blockly/blocks/lists.js"></script>
+    <script src="blockly/blocks/colour.js"></script>
+    <script src="blockly/blocks/variables.js"></script>
     <!-- <script src="blockly/blocks/procedures.js"></script> -->
     <script src="blockly/generators/python.js"></script>
     <script src="blockly/generators/python/logic.js"></script>
