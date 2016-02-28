@@ -25,7 +25,7 @@ Blockly.Blocks["method"] = {
                 }
             ],
             "inputsInline": true,
-            "output": null,
+            "output": "method",
             "colour": 260,
             "tooltip": "",
             "helpUrl": "http://www.example.com/"
@@ -52,7 +52,8 @@ Blockly.Blocks["tell"] = {
                 },
                 {
                     "type": "input_value",
-                    "name": "METHOD"
+                    "name": "METHOD",
+                    "check": "method",
                 }
             ],
             "inputsInline": true,
