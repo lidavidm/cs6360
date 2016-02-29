@@ -75,11 +75,30 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 });
 
                 controller.workspace.addChangeListener(function(event) {
+                    var block = Blockly.Block.getById(event.blockId);
+                    if (event.newParentId) {
+                        var parent = Blockly.Block.getById(event.newParentId);
+                        if (parent["type"] === "tell") {
+                            if (parent.childBlocks_.length === 2) {
+                                var child1 = parent.childBlocks_[0];
+                                var child2 = parent.childBlocks_[1];
+                                var object = (child1.type === "variables_get") ?
+                                    child1 : child2;
+                                var method = (child1.type === "variables_get") ?
+                                    child2 : child1;
+                                var class_name = object.inputList[0].fieldRow[0].value_;
+                                var method_class = method.data;
+                                if (class_name !== method_class) {
+                                    alert("Class/method mismatch!");
+                                    block.unplug(true, true);
+                                }
+                            }
+                        }
+                    }
                     // TODO: when a method block is created, update
                     // its method list
                     // TODO: when a method block or variable block is
                     // moved, check class compatibility
-                    console.log(event);
                     console.log(Blockly.Python.workspaceToCode(controller.workspace));
                 });
             },
