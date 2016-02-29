@@ -1,5 +1,8 @@
 declare var pypyjs: any;
 
+/**
+ * An instance of a PyPy.js interpreter.
+ */
 export class Interpreter {
     private _vm: any;
     private _code: string;

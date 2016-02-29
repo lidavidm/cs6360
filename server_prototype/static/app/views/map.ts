@@ -7,8 +7,10 @@ interface MapController extends _mithril.MithrilController {
     scale: (zoomed: boolean) => void,
 }
 
-// The Mithril type definition is incomplete and doesn't handle
-// the args parameter to view().
+/**
+ * The map component handles interactions with Phaser and contains the
+ * execution controls and objectives.
+ */
 export const Component: _mithril.MithrilComponent<MapController> = <any> {
     controller: function(): MapController {
         var controller: MapController = {

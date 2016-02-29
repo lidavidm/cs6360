@@ -7,6 +7,10 @@ interface EditorController extends _mithril.MithrilController {
     workspace: any,
 }
 
+/**
+ * An abstraction of the Blockly toolbox, i.e. what blocks and
+ * categories to show to the user.
+ */
 class Toolbox {
     private _tree: Document;
 
@@ -20,6 +24,9 @@ class Toolbox {
         }
     }
 
+    /**
+     * Add the methods of a class to the toolbox.
+     */
     addClass(className: string, methods: string[]) {
         let category = this._tree.createElement("category");
         let method_type = "method_" + className;
@@ -34,17 +41,26 @@ class Toolbox {
         this._tree.documentElement.appendChild(category);
     }
 
+    /**
+     * Draw this toolbox into the given workspace.
+     */
     render(workspace: any) {
         workspace.updateToolbox(this._tree.documentElement);
     }
 
+    /**
+     * Get the XML representation of this toolbox.
+     */
     xml() {
         return this._tree.documentElement;
     }
 }
 
+/**
+ * The editor component, which handles interactions with Blockly.
+ */
 // The Mithril type definition is incomplete and doesn't handle
-// the args parameter to view().
+// the args parameter to view(), so we cast to `any` to satisfy the typechecker.
 export const Component: _mithril.MithrilComponent<EditorController> = <any> {
     controller: function(): EditorController {
         var controller: EditorController = {
@@ -97,8 +113,8 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
 
                 var toolbox = new Toolbox(controller.toolbox());
                 toolbox.addClass("number", [
-                    ["make negative copy", "invert"],
-                    ["make positive copy", "abs"],
+                    "invert",
+                    "abs",
                 ]);
 
                 controller.workspace = Blockly.inject(element, {
@@ -137,4 +153,55 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             },
         });
     },
+
+    // TODO: factor this into separate classes.
+    /**
+     * Determine the class of a variable or method block.
+     */
+    getClass: function(block: any): string {
+        if (block["type"] === "variables_get") {
+            return block.inputList[0].fieldRow[0].value_;
+        }
+        else if (block["type"] === "math_number") {
+            return "number";
+        }
+        else if (block["type"].slice(0, 6) === "method") {
+            return block.data;
+        }
+        return null;
+    },
+
+    /**
+     * Given a `tell` block, return the object and method blocks
+     * within.
+     */
+    destructureTell: function(tellBlock: any): {
+        object: any,
+        method: any,
+    } {
+        if (tellBlock.childBlocks_.length === 0) {
+            return {
+                object: null,
+                method: null,
+            };
+        }
+        else if (tellBlock.childBlocks_.length === 1) {
+            var child = tellBlock.childBlocks_[0];
+            if (child["type"].slice(0, 6) === "method") {
+                return {
+                    object: null,
+                    method: child,
+                };
+            }
+            else {
+                return {
+                    object: child,
+                    method: null,
+                };
+            }
+        }
+        else {
+
+        }
+    }
 };
