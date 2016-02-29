@@ -3,9 +3,11 @@
 goog.provide('Blockly.Blocks.oop');
 
 goog.require('Blockly.Blocks');
+goog.require('Blockly.Python');
 
 Blockly.Blocks.setClassMethods = function(class_name, method_list) {
-    Blockly.Blocks["method_" + class_name] = {
+    var block_type = "method_" + class_name;
+    Blockly.Blocks[block_type] = {
         init: function() {
             this.setColour(260);
             this.setOutput(true, "method");
@@ -15,6 +17,11 @@ Blockly.Blocks.setClassMethods = function(class_name, method_list) {
                              "METHOD_NAME");
             this.data = class_name;
         }
+    };
+
+    Blockly.Python[block_type] = function(block) {
+        var code = block.getFieldValue("METHOD_NAME");
+        return [code, Blockly.Python.ORDER_ATOMIC];
     };
 };
 
