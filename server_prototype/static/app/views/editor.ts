@@ -47,8 +47,30 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     return;
                 }
 
+                // TODO: factor this into a set of classes
+                Blockly.Blocks.setClassMethods("Robot", [
+                    ["turn left", "turnLeft"],
+                    ["move forward", "moveForward"],
+                    ["self destruct", "selfDestruct"],
+                ]);
+
+                Blockly.Blocks.setClassMethods("number", [
+                    ["invert", "invert"],
+                ]);
+
+                var parser = new DOMParser();
+                var toolbox = parser.parseFromString(controller.toolbox(), "text/xml");
+                var category = toolbox.createElement("category");
+                category.setAttribute("name", "class number");
+                category.setAttribute("class", "blueprint");
+                var block = toolbox.createElement("block");
+                block.setAttribute("type", "method_number");
+                category.appendChild(block);
+                toolbox.documentElement.appendChild(category);
+                console.log(toolbox);
+
                 controller.workspace = Blockly.inject(element, {
-                    toolbox: controller.toolbox(),
+                    toolbox: toolbox.documentElement,
                     trashcan: true,
                 });
 

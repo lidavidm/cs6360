@@ -4,18 +4,18 @@ goog.provide('Blockly.Blocks.oop');
 
 goog.require('Blockly.Blocks');
 
-Blockly.Blocks["method"] = {
-    init: function() {
-        this.setColour(260);
-        this.setOutput(true, "method");
-        this.setInputsInline(true);
-        this.appendDummyInput()
-            .appendField(new Blockly.FieldDropdown([
-                ["turn left", "turnLeft"],
-                ["move forward", "moveForward"],
-                ["self destruct", "selfDestruct"],
-            ]), "METHOD_NAME");
-    },
+Blockly.Blocks.setClassMethods = function(class_name, method_list) {
+    Blockly.Blocks["method_" + class_name] = {
+        init: function() {
+            this.setColour(260);
+            this.setOutput(true, "method");
+            this.setInputsInline(true);
+            this.appendDummyInput()
+                .appendField(new Blockly.FieldDropdown(method_list),
+                             "METHOD_NAME");
+            this.data = class_name;
+        }
+    };
 };
 
 Blockly.Blocks["tell"] = {
