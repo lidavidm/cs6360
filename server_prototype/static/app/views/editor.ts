@@ -3,8 +3,44 @@ declare var Blockly: any;
 import PyPyJS = require("../execution/python");
 
 interface EditorController extends _mithril.MithrilController {
-    toolbox: _mithril.MithrilProperty<_mithril.MithrilVirtualElement<EditorController>>,
+    toolbox: _mithril.MithrilProperty<string>,
     workspace: any,
+}
+
+class Toolbox {
+    private _tree: Document;
+
+    constructor(toolbox?: string) {
+        var _parser = new DOMParser();
+        if (toolbox) {
+            this._tree = _parser.parseFromString(toolbox, "text/xml");
+        }
+        else {
+            this._tree = _parser.parseFromString("<xml></xml>", "text/xml");
+        }
+    }
+
+    addClass(className: string, methods: string[]) {
+        let category = this._tree.createElement("category");
+        let method_type = "method_" + className;
+        category.setAttribute("name", "class " + className);
+        category.setAttribute("class", "blueprint");
+
+        for (let method of methods) {
+            var block = this._tree.createElement("block");
+            block.setAttribute("type", method_type);
+            category.appendChild(block);
+        }
+        this._tree.documentElement.appendChild(category);
+    }
+
+    render(workspace: any) {
+        workspace.updateToolbox(this._tree.documentElement);
+    }
+
+    xml() {
+        return this._tree.documentElement;
+    }
 }
 
 // The Mithril type definition is incomplete and doesn't handle
@@ -55,26 +91,22 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 ]);
 
                 Blockly.Blocks.setClassMethods("number", [
-                    ["invert", "invert"],
+                    ["make negative copy", "invert"],
+                    ["make positive copy", "abs"],
                 ]);
 
-                var parser = new DOMParser();
-                var toolbox = parser.parseFromString(controller.toolbox(), "text/xml");
-                var category = toolbox.createElement("category");
-                category.setAttribute("name", "class number");
-                category.setAttribute("class", "blueprint");
-                var block = toolbox.createElement("block");
-                block.setAttribute("type", "method_number");
-                category.appendChild(block);
-                toolbox.documentElement.appendChild(category);
-                console.log(toolbox);
+                var toolbox = new Toolbox(controller.toolbox());
+                toolbox.addClass("number", [
+                    ["make negative copy", "invert"],
+                    ["make positive copy", "abs"],
+                ]);
 
                 controller.workspace = Blockly.inject(element, {
-                    toolbox: toolbox.documentElement,
+                    toolbox: toolbox.xml(),
                     trashcan: true,
                 });
 
-                controller.workspace.addChangeListener(function(event) {
+                controller.workspace.addChangeListener(function(event: any) {
                     var block = Blockly.Block.getById(event.blockId);
                     if (event.newParentId) {
                         var parent = Blockly.Block.getById(event.newParentId);
@@ -88,6 +120,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                                     child2 : child1;
                                 var class_name = object.inputList[0].fieldRow[0].value_;
                                 var method_class = method.data;
+                                // TODO: account for primitives (str/int)
                                 if (class_name !== method_class) {
                                     alert("Class/method mismatch!");
                                     block.unplug(true, true);
