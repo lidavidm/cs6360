@@ -124,8 +124,8 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
 
                 controller.workspace.addChangeListener(function(event: any) {
                     var block = Blockly.Block.getById(event.blockId);
-                    if (event.newParentId) {
-                        var parent = Blockly.Block.getById(event.newParentId);
+                    if (block.parentBlock_) {
+                        var parent = block.parentBlock_;
                         if (parent["type"] === "tell") {
                             if (parent.childBlocks_.length === 2) {
                                 var child1 = parent.childBlocks_[0];
