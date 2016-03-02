@@ -7,3 +7,6 @@
 [submodule "server_prototype/static/pypyjs-release"]
 	path = server_prototype/static/pypyjs
 	url = https://github.com/pypyjs/pypyjs-release.git
+[submodule "server_prototype/static/assets"]
+	path = server_prototype/static/assets
+	url = git@github.com:lidavidm/cs6360-assets.git
