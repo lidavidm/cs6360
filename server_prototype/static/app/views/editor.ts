@@ -77,7 +77,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         }
         return m("div#editor", {
             class: args.executing() ? "executing" : "",
-            config: function(element: HTMLElement, isInitialized: boolean) {
+            config: (element: HTMLElement, isInitialized: boolean) => {
                 if (isInitialized) {
                     // https://groups.google.com/forum/#!topic/blockly/WE7x-HPh81A
                     // According to above link, window resize event is
@@ -122,32 +122,22 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     trashcan: true,
                 });
 
-                controller.workspace.addChangeListener(function(event: any) {
+                controller.workspace.addChangeListener((event: any) => {
                     var block = Blockly.Block.getById(event.blockId);
                     if (block.parentBlock_) {
                         var parent = block.parentBlock_;
                         if (parent["type"] === "tell") {
-                            if (parent.childBlocks_.length === 2) {
-                                var child1 = parent.childBlocks_[0];
-                                var child2 = parent.childBlocks_[1];
-                                var object = (child1.type === "variables_get") ?
-                                    child1 : child2;
-                                var method = (child1.type === "variables_get") ?
-                                    child2 : child1;
-                                var class_name = object.inputList[0].fieldRow[0].value_;
-                                var method_class = method.data;
-                                // TODO: account for primitives (str/int)
-                                if (class_name !== method_class) {
-                                    alert("Class/method mismatch!");
+                            let children = this.destructureTell(parent);
+                            if (children.object && children.method) {
+                                var childClass = this.getClass(children.object);
+                                var methodClass = this.getClass(children.method);
+                                if (childClass !== methodClass) {
+                                    alert(`Class/method mismatch: ${childClass} vs ${methodClass}!`);
                                     block.unplug(true, true);
                                 }
                             }
                         }
                     }
-                    // TODO: when a method block is created, update
-                    // its method list
-                    // TODO: when a method block or variable block is
-                    // moved, check class compatibility
                     console.log(Blockly.Python.workspaceToCode(controller.workspace));
                 });
             },
@@ -186,7 +176,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             };
         }
         else if (tellBlock.childBlocks_.length === 1) {
-            var child = tellBlock.childBlocks_[0];
+            let child = tellBlock.childBlocks_[0];
             if (child["type"].slice(0, 6) === "method") {
                 return {
                     object: null,
@@ -201,7 +191,21 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             }
         }
         else {
+            let child1 = tellBlock.childBlocks_[0];
+            let child2 = tellBlock.childBlocks_[1];
 
+            if (child1["type"].slice(0, 6) === "method") {
+                return {
+                    object: child2,
+                    method: child1,
+                };
+            }
+            else {
+                 return {
+                    object: child1,
+                    method: child2,
+                };
+            }
         }
     }
 };
