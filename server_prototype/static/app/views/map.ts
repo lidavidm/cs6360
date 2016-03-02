@@ -31,6 +31,7 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
 
             game.load.tilemap("prototype", "assets/maps/prototype.json", null, Phaser.Tilemap.TILED_JSON);
             game.load.image("tiles", "assets/tilesets/cave.png");
+            game.load.image("robot", "assets/sprites/robot_3Dblue.png");
 
             game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
 
@@ -44,6 +45,10 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
             var layer = map.createLayer("Tile Layer 1",
                                         game.width, game.height, camera);
             layer.resizeWorld();
+
+            var robot = game.add.sprite(16, 16, "robot");
+            robot.width = robot.height = 16;
+            camera.add(robot);
 
             cursors = game.input.keyboard.createCursorKeys();
         }
