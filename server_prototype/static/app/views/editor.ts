@@ -2,9 +2,12 @@ declare var Blockly: any;
 
 import PyPyJS = require("../execution/python");
 
+import block_utils = require("../block_utils");
+
 interface EditorController extends _mithril.MithrilController {
     toolbox: _mithril.MithrilProperty<string>,
     workspace: any,
+    changeListener: (event: any) => void,
 }
 
 /**
@@ -66,10 +69,23 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         var controller: EditorController = {
             toolbox: m.prop(document.getElementById("toolbox").textContent),
             workspace: null,
+            changeListener: function(event: any) {
+                var block = Blockly.Block.getById(event.blockId);
+                if (block.parentBlock_) {
+                    var parent = block.parentBlock_;
+                    var result = block_utils.typecheckTell(parent);
+                    if (result) {
+                        block.unplug(true);
+                        alert(result.message);
+                    }
+                }
+                console.log(Blockly.Python.workspaceToCode(controller.workspace));
+            },
         };
 
         return controller;
     },
+
 
     view: function(controller: EditorController, args: any) {
         if (controller.workspace) {
@@ -122,90 +138,8 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     trashcan: true,
                 });
 
-                controller.workspace.addChangeListener((event: any) => {
-                    var block = Blockly.Block.getById(event.blockId);
-                    if (block.parentBlock_) {
-                        var parent = block.parentBlock_;
-                        if (parent["type"] === "tell") {
-                            let children = this.destructureTell(parent);
-                            if (children.object && children.method) {
-                                var childClass = this.getClass(children.object);
-                                var methodClass = this.getClass(children.method);
-                                if (childClass !== methodClass) {
-                                    alert(`Class/method mismatch: ${childClass} vs ${methodClass}!`);
-                                    block.unplug(true, true);
-                                }
-                            }
-                        }
-                    }
-                    console.log(Blockly.Python.workspaceToCode(controller.workspace));
-                });
+                controller.workspace.addChangeListener(controller.changeListener);
             },
         });
     },
-
-    // TODO: factor this into separate classes.
-    /**
-     * Determine the class of a variable or method block.
-     */
-    getClass: function(block: any): string {
-        if (block["type"] === "variables_get") {
-            return block.inputList[0].fieldRow[0].value_;
-        }
-        else if (block["type"] === "math_number") {
-            return "number";
-        }
-        else if (block["type"].slice(0, 6) === "method") {
-            return block.data;
-        }
-        return null;
-    },
-
-    /**
-     * Given a `tell` block, return the object and method blocks
-     * within.
-     */
-    destructureTell: function(tellBlock: any): {
-        object: any,
-        method: any,
-    } {
-        if (tellBlock.childBlocks_.length === 0) {
-            return {
-                object: null,
-                method: null,
-            };
-        }
-        else if (tellBlock.childBlocks_.length === 1) {
-            let child = tellBlock.childBlocks_[0];
-            if (child["type"].slice(0, 6) === "method") {
-                return {
-                    object: null,
-                    method: child,
-                };
-            }
-            else {
-                return {
-                    object: child,
-                    method: null,
-                };
-            }
-        }
-        else {
-            let child1 = tellBlock.childBlocks_[0];
-            let child2 = tellBlock.childBlocks_[1];
-
-            if (child1["type"].slice(0, 6) === "method") {
-                return {
-                    object: child2,
-                    method: child1,
-                };
-            }
-            else {
-                 return {
-                    object: child1,
-                    method: child2,
-                };
-            }
-        }
-    }
 };
