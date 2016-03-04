@@ -1,8 +1,8 @@
 [submodule "server_prototype/static/blockly"]
 	path = server_prototype/static/blockly
-	url = https://github.com/google/blockly.git
+	url = https://github.com/lidavidm/blockly.git
 [submodule "server_prototype/static/closure-library"]
-	path = server_prototype/closure-library
+	path = server_prototype/static/closure-library
 	url = https://github.com/google/closure-library.git
 [submodule "server_prototype/static/pypyjs-release"]
 	path = server_prototype/static/pypyjs
