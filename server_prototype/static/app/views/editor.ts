@@ -71,17 +71,28 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             workspace: null,
             changeListener: function(event: any) {
                 var block = Blockly.Block.getById(event.blockId);
-                if (block.parentBlock_) {
-                    var parent = block.parentBlock_;
-                    var result = block_utils.typecheckTell(parent);
-                    if (result) {
-                        block.unplug(true);
-                        alert(result.message);
-                    }
-                }
+                typecheck(event, block);
+                updateObjectImage(event, block);
                 console.log(Blockly.Python.workspaceToCode(controller.workspace));
             },
         };
+
+        function typecheck(event: any, block: any) {
+            if (block.parentBlock_) {
+                var parent = block.parentBlock_;
+                var result = block_utils.typecheckTell(parent);
+                if (result) {
+                    block.unplug(true);
+                    alert(result.message);
+                }
+            }
+        }
+
+        function updateObjectImage(event: any, block: any) {
+            if (block["type"] === "variables_get") {
+                block.validate();
+            }
+        }
 
         return controller;
     },
