@@ -3,7 +3,7 @@
  */
 export function getClass(block: any): string {
     if (block["type"] === "variables_get") {
-        return block.inputList[0].fieldRow[0].value_;
+        return block.getField("CLASS").getValue();
     }
     else if (block["type"] === "math_number") {
         return "number";
@@ -22,14 +22,14 @@ export function destructureTell(tellBlock: any): {
     object: any,
     method: any,
 } {
-    if (tellBlock.childBlocks_.length === 0) {
+    if (tellBlock.getChildren().length === 0) {
         return {
             object: null,
             method: null,
         };
     }
-    else if (tellBlock.childBlocks_.length === 1) {
-        let child = tellBlock.childBlocks_[0];
+    else if (tellBlock.getChildren().length === 1) {
+        let child = tellBlock.getChildren()[0];
         if (child["type"].slice(0, 6) === "method") {
             return {
                 object: null,
@@ -44,8 +44,8 @@ export function destructureTell(tellBlock: any): {
         }
     }
     else {
-        let child1 = tellBlock.childBlocks_[0];
-        let child2 = tellBlock.childBlocks_[1];
+        let child1 = tellBlock.getChildren()[0];
+        let child2 = tellBlock.getChildren()[1];
 
         if (child1["type"].slice(0, 6) === "method") {
             return {
