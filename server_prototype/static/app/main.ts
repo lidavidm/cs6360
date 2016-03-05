@@ -26,4 +26,4 @@ export const GameWidget = {
     },
 };
 
-m.mount(document.body, GameWidget);
+m.mount(document.getElementById("main"), GameWidget);
