@@ -8,6 +8,8 @@ interface MapController extends _mithril.MithrilController {
 }
 
 import Camera = require("camera");
+import Objectives = require("views/objectives");
+import Controls = require("views/controls");
 
 /**
  * The map component handles interactions with Phaser and contains the
@@ -113,23 +115,14 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                     }
                 },
             }),
-            // TODO: move this to separate views
-            m("div#objectives", [
-                m("h2", "Objectives"),
-                m("ul", [
-                    m("li", "Get our proposal done"),
-                    m("li", "Make this game"),
-                ])
+            m.component(Objectives.Component, [
+                [false, "Make this game"],
+                [false, "Set up a data model"],
             ]),
-            m("nav#gameControls", [
-                // Mithril type definition seems to be off here
-                m(<any> "button", {
-                    onclick: function() {
-                        args.executing(!args.executing());
-                        controller.scale(args.executing());
-                    },
-                }, "Run"),
-            ]),
+            m.component(Controls.Component, {
+                executing: args.executing,
+                scale: controller.scale,
+            }),
         ]);
     },
 };
