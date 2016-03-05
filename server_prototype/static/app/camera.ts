@@ -1,49 +1,21 @@
-module Camera {
-    /**
-     * A faux camera that allows zooming and object tracking via adding
-     * relevant objects to a group.
-     */
-    export class ZoomCamera extends Phaser.Group {
-        // Based on https://gist.github.com/netcell/60097d0661ad2f74a258
+/**
+ * A faux camera that allows zooming and object tracking via adding
+ * relevant objects to a group.
+ */
+export class ZoomCamera {
+    public group: Phaser.Group;
+    public position: Phaser.Point;
+    public scale: Phaser.Point;
 
-        private bounds: Phaser.Rectangle;
+    constructor(game: Phaser.Game) {
+        this.group = game.add.group();
+        this.position = new Phaser.Point(0, 0);
+        this.scale = new Phaser.Point(1, 1);
+    }
 
-        ZoomCamera(game: Phaser.Game) {
-            var world = game.world;
-
-            this.scale.setTo(1, 1);
-            this.position.setTo(0, 0);
-
-            this.bounds = Phaser.Rectangle.clone(world.bounds);
-
-            return this;
-        }
-
-        zoomTo(scale: number, duration?: number) {
-            var bounds = this.bounds;
-            var cameraBounds = this.game.camera.bounds;
-
-            var positionScale = (1 - scale) / 2;
-
-            var x = bounds.width * positionScale;
-            var y = bounds.height * positionScale;
-            var width = bounds.width * scale;
-            var height = bounds.height * scale;
-
-            if (duration) {
-                this.game.add.tween(cameraBounds)
-                    .to({ x, y, width, height }, duration).start();
-                return this.game.add.tween(this.scale)
-                    .to({ x: scale, y: scale }, duration).start();
-            }
-            else {
-                cameraBounds.x = x;
-                cameraBounds.y = y;
-                cameraBounds.width = width;
-                cameraBounds.height = height;
-
-                this.scale.setTo(scale);
-            }
-        };
+    update() {
+        this.group.position.x = -this.position.x;
+        this.group.position.y = -this.position.y;
+        this.group.scale = this.scale;
     }
 }

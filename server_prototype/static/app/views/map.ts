@@ -7,6 +7,8 @@ interface MapController extends _mithril.MithrilController {
     scale: (zoomed: boolean) => void,
 }
 
+import Camera = require("camera");
+
 /**
  * The map component handles interactions with Phaser and contains the
  * execution controls and objectives.
@@ -28,7 +30,7 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
         // Creating our own groups and scaling them fixes an issue
         // where scaling the world and moving the camera would create
         // an undesired parallax effect
-        var world: Phaser.Group = null;
+        var camera: Camera.ZoomCamera = null;
         var bg: Phaser.Group = null;
         var fg: Phaser.Group = null;
 
@@ -43,9 +45,9 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
         }
 
         function create() {
-            world = game.add.group();
-            bg = game.add.group(world);
-            fg = game.add.group(world);
+            camera = new Camera.ZoomCamera(game);
+            bg = game.add.group(camera.group);
+            fg = game.add.group(camera.group);
 
             var map = game.add.tilemap("prototype");
             map.addTilesetImage("cave", "tiles");
@@ -62,17 +64,19 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
             if (!game.input.activePointer.withinGame) return;
 
             if (cursors.up.isDown) {
-                world.y += 4;
+                camera.position.y -= 4;
             }
             else if (cursors.down.isDown) {
-                world.y -= 4;
+                camera.position.y += 4;
             }
             else if (cursors.left.isDown) {
-                world.x += 4;
+                camera.position.x -= 4;
             }
             else if (cursors.right.isDown) {
-                world.x -= 4;
+                camera.position.x += 4;
             }
+
+            camera.update();
         }
 
         function render() {
@@ -80,11 +84,10 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
 
         function scale(zoomed: boolean) {
             if (zoomed) {
-                world.scale.set(2, 2);
-                game.camera.bounds = null;
+                camera.scale.set(2, 2);
             }
             else {
-                world.scale.set(1, 1);
+                camera.scale.set(1, 1);
             }
         }
 
