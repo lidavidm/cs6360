@@ -23,8 +23,14 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
         };
 
         var game: Phaser.Game = null;
-        var camera: Camera.ZoomCamera = null;
         var cursors: any = null;
+
+        // Creating our own groups and scaling them fixes an issue
+        // where scaling the world and moving the camera would create
+        // an undesired parallax effect
+        var world: Phaser.Group = null;
+        var bg: Phaser.Group = null;
+        var fg: Phaser.Group = null;
 
         function preload() {
             game = controller.phaser;
@@ -34,21 +40,20 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
             game.load.image("robot", "assets/sprites/robot_3Dblue.png");
 
             game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
-
-            camera = new Camera.ZoomCamera(game);
-            game.world.add(camera);
         }
 
         function create() {
+            world = game.add.group();
+            bg = game.add.group(world);
+            fg = game.add.group(world);
+
             var map = game.add.tilemap("prototype");
             map.addTilesetImage("cave", "tiles");
-            var layer = map.createLayer("Tile Layer 1",
-                                        game.width, game.height, camera);
-            layer.resizeWorld();
+            var layer = map.createLayer(
+                "Tile Layer 1", game.width, game.height, bg);
 
-            var robot = game.add.sprite(16, 16, "robot");
+            var robot = fg.create(16, 16, "robot");
             robot.width = robot.height = 16;
-            camera.add(robot);
 
             cursors = game.input.keyboard.createCursorKeys();
         }
@@ -56,20 +61,17 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
         function update() {
             if (!game.input.activePointer.withinGame) return;
 
-            if (!camera) return;
-
-            // TODO: factor this into ZoomCamera
             if (cursors.up.isDown) {
-                game.camera.bounds.y -= 4;
+                world.y += 4;
             }
             else if (cursors.down.isDown) {
-                game.camera.bounds.y += 4;
+                world.y -= 4;
             }
             else if (cursors.left.isDown) {
-                game.camera.bounds.x -= 4;
+                world.x += 4;
             }
             else if (cursors.right.isDown) {
-                game.camera.bounds.x += 4;
+                world.x -= 4;
             }
         }
 
@@ -78,10 +80,11 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
 
         function scale(zoomed: boolean) {
             if (zoomed) {
-                game.world.scale.setTo(2, 2);
+                world.scale.set(2, 2);
+                game.camera.bounds = null;
             }
             else {
-                game.world.scale.setTo(1, 1);
+                world.scale.set(1, 1);
             }
         }
 
@@ -108,11 +111,13 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                 },
             }),
             // TODO: move this to separate views
-            m("div#objectives", m("ul", [
+            m("div#objectives", [
                 m("h2", "Objectives"),
-                m("li", "Get our proposal done"),
-                m("li", "Make this game"),
-            ])),
+                m("ul", [
+                    m("li", "Get our proposal done"),
+                    m("li", "Make this game"),
+                ])
+            ]),
             m("nav#gameControls", [
                 // Mithril type definition seems to be off here
                 m(<any> "button", {
