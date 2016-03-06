@@ -98,10 +98,30 @@ body {
 #gameControls button {
     border: 0;
     width: 100%;
-    height: 100%;
-    background: green;
     color: #FFF;
-    font-size: 3rem;
+    font-size: 2rem;
+}
+
+#gameControls button.run {
+    background: green;
+    height: 100%;
+}
+
+#gameControls button.abort {
+    background: red;
+    height: 50%;
+}
+
+#gameControls button.pause {
+    background: purple;
+    width: 50%;
+    height: 50%;
+}
+
+#gameControls button.step {
+    background: orange;
+    width: 50%;
+    height: 50%;
 }
 
 #editor.executing {
