@@ -30,15 +30,22 @@ class Toolbox {
     /**
      * Add the methods of a class to the toolbox.
      */
-    addClass(className: string, methods: string[]) {
+    addClass(className: string, image: string, methods: string[]) {
+        Blockly.Blocks.variables.addClass(className, image);
+
         let category = this._tree.createElement("category");
         let method_type = "method_" + className;
         category.setAttribute("name", "class " + className);
         category.setAttribute("class", "blueprint");
 
         for (let method of methods) {
-            var block = this._tree.createElement("block");
+            let block = this._tree.createElement("block");
             block.setAttribute("type", method_type);
+            let methodName = this._tree.createElement("field");
+            methodName.setAttribute("name", "METHOD_NAME");
+            methodName.textContent = method;
+            console.log(methodName);
+            block.appendChild(methodName);
             category.appendChild(block);
         }
         this._tree.documentElement.appendChild(category);
@@ -97,7 +104,6 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         return controller;
     },
 
-
     view: function(controller: EditorController, args: any) {
         if (controller.workspace) {
             controller.workspace.options.readOnly = args.executing();
@@ -106,11 +112,6 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             class: args.executing() ? "executing" : "",
             config: (element: HTMLElement, isInitialized: boolean) => {
                 if (isInitialized) {
-                    // https://groups.google.com/forum/#!topic/blockly/WE7x-HPh81A
-                    // According to above link, window resize event is
-                    // needed for Blockly to resize itself
-                    window.dispatchEvent(new Event("resize"));
-
                     // Hide the toolbox if we're running code
                     var root =
                         <HTMLElement> document.querySelector(".blocklyTreeRoot");
@@ -123,6 +124,8 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     else {
                         root.style.display = "block";
                     }
+
+                    this.resizeBlockly();
                     return;
                 }
 
@@ -130,18 +133,12 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 Blockly.Blocks.setClassMethods("Robot", [
                     ["turn left", "turnLeft"],
                     ["move forward", "moveForward"],
-                    ["self destruct", "selfDestruct"],
-                ]);
-
-                Blockly.Blocks.setClassMethods("number", [
-                    ["make negative copy", "invert"],
-                    ["make positive copy", "abs"],
                 ]);
 
                 var toolbox = new Toolbox(controller.toolbox());
-                toolbox.addClass("number", [
-                    "invert",
-                    "abs",
+                toolbox.addClass("Robot", "assets/sprites/robot_3Dblue.png", [
+                    "turnLeft",
+                    "moveForward",
                 ]);
 
                 controller.workspace = Blockly.inject(element, {
@@ -153,4 +150,11 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             },
         });
     },
+
+    resizeBlockly: function() {
+        // https://groups.google.com/forum/#!topic/blockly/WE7x-HPh81A
+        // According to above link, window resize event is needed for
+        // Blockly to resize itself
+        window.dispatchEvent(new Event("resize"));
+    }
 };
