@@ -35,6 +35,21 @@ export const GameWidget = {
     },
 };
 
-m.mount(document.getElementById("main"), GameWidget);
-m.mount(document.getElementById("tooltip"),
-        m.component(TooltipView.Component, tooltips));
+interface MainController {
+
+}
+
+export const MainComponent = {
+    controller: function(): MainController {
+        return {};
+    },
+
+    view: function(controller: MainController) {
+        return m("div", [
+            m("div#main", m.component(GameWidget)),
+            m("div#tooltip", m.component(TooltipView.Component, tooltips)),
+        ])
+    }
+}
+
+m.mount(document.getElementById("container"), MainComponent);
