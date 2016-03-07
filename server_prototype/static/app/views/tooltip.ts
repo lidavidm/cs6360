@@ -28,9 +28,9 @@ export const Component: _mithril.MithrilComponent<TooltipController> = <any> {
 
     view: function(
         controller: TooltipController,
-        args: _mithril.MithrilProperty<Tooltip[]>
+        tooltips: Tooltip[]
     ): any {
-        return m("div", args().map((tooltip: Tooltip) => {
+        return m("div", tooltips.map((tooltip: Tooltip) => {
             return m("div.tooltip." + Region[tooltip.region].toLowerCase(),
                      tooltip.message);
         }));
