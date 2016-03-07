@@ -162,30 +162,33 @@ body {
 #gameControls button {
     border: 0;
     width: 100%;
+    height: 100%;
     color: #FFF;
     font-size: 2rem;
 }
 
+.executing #gameControls {
+    height: 60px;
+}
+
+.executing #gameControls button {
+    width: 33.333%;
+}
+
 #gameControls button.run {
     background: green;
-    height: 100%;
 }
 
 #gameControls button.abort {
     background: red;
-    height: 50%;
 }
 
 #gameControls button.pause {
     background: purple;
-    width: 50%;
-    height: 50%;
 }
 
 #gameControls button.step {
     background: orange;
-    width: 50%;
-    height: 50%;
 }
 
 #editor.executing {
@@ -194,4 +197,12 @@ body {
 
 #sidebar.executing {
     width: 480px;
+}
+
+.executing #worldMap {
+    height: 380px;
+}
+
+.executing #objectives {
+    height: calc(100% - 380px - 60px);
 }
