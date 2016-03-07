@@ -118,7 +118,22 @@ body {
 }
 
 #objectives ul {
-    padding-left: 1.5em;
+    padding-left: 0.5em;
+    list-style-type: none;
+}
+
+.checkbox {
+    display: inline-block;
+    width: 0.75em;
+    height: 0.75em;
+    margin-right: 0.5em;
+    border: 1px solid #FFF;
+    content: " ";
+    transition: 0.3s background-color ease-in-out;
+}
+
+.checkbox.checked {
+    background: green;
 }
 
 #objectives h2 {

@@ -11,7 +11,11 @@ export const Component: _mithril.MithrilComponent<ObjectivesController> = <any> 
         return m("div#objectives", [
             m("h2", "Objectives"),
             m("ul", args.map(function(objective) {
-                return m("li", objective[1]);
+                return m("li", [
+                    // CSS won't let us style an actual checkbox
+                    m("span.checkbox"),
+                    objective[1],
+                ]);
             })),
         ]);
     }
