@@ -102,7 +102,7 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
             style = ".executing";
         }
 
-        return m("div#map" + style, [
+        return m("div#sidebar" + style, [
             m("div#worldMap", {
                 config: function(element: HTMLElement, isInitialized: boolean) {
                     if (!isInitialized) {

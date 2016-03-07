@@ -109,21 +109,21 @@ body {
     background-color: #00A;
 }
 
-#map {
+#sidebar {
     float: left;
     width: 320px;
     height: 100%;
 }
 
 #worldMap {
-    height: 35.5556%;
+    height: 320px;
     width: 100%;
     float: left;
 }
 
 #objectives {
     background: #000;
-    height: 49.4444%;
+    height: calc(100% - 320px - 120px);
     width: 100%;
     float: left;
 }
@@ -154,7 +154,7 @@ body {
 }
 
 #gameControls {
-    height: 15%;
+    height: 120px;
     width: 100%;
     float: left;
 }
@@ -192,14 +192,6 @@ body {
     width: calc(100% - 480px);
 }
 
-#map.executing {
+#sidebar.executing {
     width: 480px;
-}
-
-.executing #worldMap {
-    height: 60%;
-}
-
-.executing #objectives {
-    height: 25%;
 }
