@@ -132,6 +132,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 Blockly.Blocks.setClassMethods("Robot", [
                     ["turn left", "turnLeft"],
                     ["move forward", "moveForward"],
+                    ["pick up object underneath", "pickUpUnder"],
                 ]);
 
                 var toolbox = new Toolbox(controller.toolbox());
