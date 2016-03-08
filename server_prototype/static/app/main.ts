@@ -18,8 +18,10 @@ export const GameWidget: _mithril.MithrilComponent<GameController> = <any> {
 
     view: function(controller: GameController, args: any) {
         return m(".container", [
+            // TODO: change args into an interface
             m.component(MapView.Component, {
                 executing: controller.executing,
+                level: args.level,
             }),
             m.component(EditorView.Component, {
                 executing: controller.executing,

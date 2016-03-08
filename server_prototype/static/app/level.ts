@@ -2,6 +2,10 @@ declare var Blockly: any;
 
 import TooltipView = require("./views/tooltip");
 
+export interface Objectives {
+    [objective: string]: boolean,
+}
+
 /**
  * An abstraction of the Blockly toolbox, i.e. what blocks and
  * categories to show to the user.
@@ -66,10 +70,21 @@ export class Level {
     private _classes: any;
     private _tooltips: TooltipView.Tooltip[][];
     private _tooltipIndex: number;
+    private _objectives: Objectives;
 
     constructor() {
         let initialToolbox = document.getElementById("toolbox").textContent;
         this._toolbox = new Toolbox(initialToolbox);
+
+        this._objectives = {
+            "Move the robot to the iron": false,
+            "Take the iron": false,
+            "Move the robot back to base": false,
+        };
+    }
+
+    public objectives(): Objectives {
+        return this._objectives;
     }
 
     public toolbox(): Toolbox {

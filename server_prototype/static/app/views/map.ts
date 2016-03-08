@@ -115,11 +115,7 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                     }
                 },
             }),
-            m.component(Objectives.Component, [
-                [false, "Move the robot to the iron"],
-                [false, "Take the iron"],
-                [false, "Move the robot back to base"],
-            ]),
+            m.component(Objectives.Component, args.level.objectives()),
             m.component(Controls.Component, {
                 executing: args.executing,
                 scale: controller.scale,
