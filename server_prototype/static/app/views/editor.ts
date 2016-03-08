@@ -3,9 +3,10 @@ declare var Blockly: any;
 import PyPyJS = require("../execution/python");
 
 import block_utils = require("../block_utils");
+import level = require("../level");
 
 interface EditorController extends _mithril.MithrilController {
-    toolbox: _mithril.MithrilProperty<string>,
+    level: level.Level,
     workspace: any,
     changeListener: (event: any) => void,
 }
@@ -18,7 +19,7 @@ interface EditorController extends _mithril.MithrilController {
 export const Component: _mithril.MithrilComponent<EditorController> = <any> {
     controller: function(): EditorController {
         var controller: EditorController = {
-            toolbox: m.prop(document.getElementById("toolbox").textContent),
+            level: null,
             workspace: null,
             changeListener: function(event: any) {
                 var block = Blockly.Block.getById(event.blockId);
@@ -49,9 +50,12 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
     },
 
     view: function(controller: EditorController, args: any) {
+        controller.level = args.level;
+
         if (controller.workspace) {
             controller.workspace.options.readOnly = args.executing();
         }
+
         return m("div#editor", {
             class: args.executing() ? "executing" : "",
             config: (element: HTMLElement, isInitialized: boolean) => {
@@ -73,21 +77,8 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     return;
                 }
 
-                // TODO: factor this into a set of classes
-                Blockly.Blocks.setClassMethods("Robot", [
-                    ["turn left", "turnLeft"],
-                    ["move forward", "moveForward"],
-                    ["pick up object underneath", "pickUpUnder"],
-                ]);
-
-                var toolbox = new Toolbox(controller.toolbox());
-                toolbox.addClass("Robot", "assets/sprites/robot_3Dblue.png", [
-                    "turnLeft",
-                    "moveForward",
-                ]);
-
                 controller.workspace = Blockly.inject(element, {
-                    toolbox: toolbox.xml(),
+                    toolbox: controller.level.toolbox().xml(),
                     trashcan: true,
                 });
 

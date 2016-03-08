@@ -1,5 +1,20 @@
 declare var Blockly: any;
 
+import TooltipView = require("./views/tooltip");
+
+// m.prop(document.getElementById("toolbox").textContent)
+// var toolbox = new Toolbox(controller.toolbox());
+// toolbox.addClass("Robot", "assets/sprites/robot_3Dblue.png", [
+//     "turnLeft",
+//     "moveForward",
+// ]);
+// Blockly.Blocks.setClassMethods("Robot", [
+//     ["turn left", "turnLeft"],
+//     ["move forward", "moveForward"],
+//     ["pick up object underneath", "pickUpUnder"],
+// ]);
+
+
 /**
  * An abstraction of the Blockly toolbox, i.e. what blocks and
  * categories to show to the user.
@@ -59,11 +74,23 @@ export class Toolbox {
  *
  */
 export class Level {
-    private map: string;
-    private toolbox: Toolbox;
+    private _map: string;
+    private _toolbox: Toolbox;
+    private _classes: any;
+    private _tooltips: TooltipView.Tooltip[];
 
     constructor(test: typeof Level) {
 
+    }
+
+    public toolbox(): Toolbox {
+        return this._toolbox;
+    }
+
+    public addClass(classObject: any) {
+        this._toolbox.addClass();
+        Blockly.Blocks.setClassMethods();
+        // TODO: broadcast event indicating toolbox has been updated
     }
 }
 
