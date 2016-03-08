@@ -54,6 +54,28 @@ body {
     background: rgba(0,75,200,0.8);
 }
 
+.tooltip button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 1em;
+    height: 1em;
+    font-size: 1.5em;
+    line-height: 1em;
+
+    border: 0;
+    margin: 0;
+    padding: 0;
+    color: #999;
+    background: none;
+
+    transition: 0.3s color ease-in-out;
+}
+
+.tooltip button:hover {
+    color: #FFF;
+}
+
 .tooltip.map {
     top: 3em;
 }

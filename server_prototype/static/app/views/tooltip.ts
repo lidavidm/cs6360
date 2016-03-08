@@ -11,12 +11,22 @@ export enum Region {
 }
 
 export class Tooltip {
-    region: Region;
-    message: string;
+    _region: Region;
+    _message: string;
+    _visible: boolean;
 
     constructor(region: Region, message: string) {
-        this.region = region;
-        this.message = message;
+        this._region = region;
+        this._message = message;
+        this._visible = true;
+    }
+
+    visible() {
+        return this._visible;
+    }
+
+    toggle() {
+        this._visible = !this._visible;
     }
 }
 
@@ -31,8 +41,16 @@ export const Component: _mithril.MithrilComponent<TooltipController> = <any> {
         tooltips: Tooltip[]
     ): any {
         return m("div", tooltips.map((tooltip: Tooltip) => {
-            return m("div.tooltip." + Region[tooltip.region].toLowerCase(),
-                     tooltip.message);
+            if (!tooltip.visible()) return null;
+            return m("div.tooltip." + Region[tooltip._region].toLowerCase(),
+                     [
+                         tooltip._message,
+                         m(<any> "button", {
+                             onclick: () => {
+                                 tooltip.toggle();
+                             }
+                         }, "×"),
+                     ]);
         }));
     }
 }
