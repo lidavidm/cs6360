@@ -11,6 +11,7 @@
         "blockly",
         "closure-library",
         "pypyjs",
+        "assets",
         "bundle.js",
         "custom_blocks.js",
         "mithril.js",
