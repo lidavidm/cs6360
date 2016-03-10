@@ -35,6 +35,7 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
         // an undesired parallax effect
         var camera: Camera.ZoomCamera = null;
         var bg: Phaser.Group = null;
+        var items: Phaser.Group = null;
         var fg: Phaser.Group = null;
 
         function preload() {
@@ -43,6 +44,7 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
             game.load.tilemap("prototype", "assets/maps/prototype.json", null, Phaser.Tilemap.TILED_JSON);
             game.load.image("tiles", "assets/tilesets/cave.png");
             game.load.image("robot", "assets/sprites/robot_3Dblue.png");
+            game.load.image("iron", "assets/sprites/iron.png");
 
             game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
         }
@@ -50,6 +52,7 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
         function create() {
             camera = new Camera.ZoomCamera(game);
             bg = game.add.group(camera.group);
+            items = game.add.group(camera.group);
             fg = game.add.group(camera.group);
 
             var map = game.add.tilemap("prototype");
@@ -59,6 +62,8 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
 
             var robot = fg.create(16, 16, "robot");
             robot.width = robot.height = 16;
+
+            var iron = fg.create(80, 16, "iron");
 
             cursors = game.input.keyboard.createCursorKeys();
         }
