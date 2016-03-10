@@ -2,8 +2,9 @@ declare var Blockly: any;
 
 import TooltipView = require("./views/tooltip");
 
-export interface Objectives {
-    [objective: string]: boolean,
+export interface Objective {
+    objective: string,
+    completed: boolean,
 }
 
 /**
@@ -70,20 +71,33 @@ export class Level {
     private _classes: any;
     private _tooltips: TooltipView.Tooltip[][];
     private _tooltipIndex: number;
-    private _objectives: Objectives;
+    private _objectives: Objective[];
 
     constructor() {
         let initialToolbox = document.getElementById("toolbox").textContent;
         this._toolbox = new Toolbox(initialToolbox);
 
-        this._objectives = {
-            "Move the robot to the iron": false,
-            "Take the iron": false,
-            "Move the robot back to base": false,
-        };
+        this._objectives = [
+            {
+                objective: "Move the robot to the iron",
+                completed: false,
+            },
+            {
+                objective: "Take the iron",
+                completed: false,
+            },
+            {
+                objective: "Move the robot back to base",
+                completed: false,
+            },
+        ];
     }
 
-    public objectives(): Objectives {
+    public setObjectives(objectives: Objective[]) {
+        this._objectives = objectives;
+    }
+
+    public objectives(): Objective[] {
         return this._objectives;
     }
 

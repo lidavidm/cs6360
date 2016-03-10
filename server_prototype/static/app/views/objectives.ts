@@ -9,14 +9,14 @@ export const Component: _mithril.MithrilComponent<ObjectivesController> = <any> 
         return {};
     },
 
-    view: function(controller: ObjectivesController, args: level.Objectives): any {
+    view: function(controller: ObjectivesController, args: level.Objective[]): any {
         return m("div#objectives", [
             m("h2", "Objectives"),
-            m("ul", Object.keys(args).map(function(objective) {
+            m("ul", args.map(function(objective) {
                 return m("li", [
                     // CSS won't let us style an actual checkbox
                     m("span.checkbox"),
-                    objective,
+                    objective.objective,
                 ]);
             })),
         ]);
