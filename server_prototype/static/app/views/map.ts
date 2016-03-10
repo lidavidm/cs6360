@@ -10,6 +10,7 @@ interface MapController extends _mithril.MithrilController {
 import Camera = require("camera");
 import Objectives = require("views/objectives");
 import Controls = require("views/controls");
+import level = require("level");
 
 /**
  * The map component handles interactions with Phaser and contains the
@@ -96,7 +97,10 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
         return controller;
     },
 
-    view: function(controller: MapController, args: any) {
+    view: function(controller: MapController, args: {
+        level: level.Level,
+        executing: _mithril.MithrilProperty<boolean>,
+    }) {
         var style = "";
         if (args.executing()) {
             style = ".executing";
@@ -119,6 +123,14 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
             m.component(Controls.Component, {
                 executing: args.executing,
                 scale: controller.scale,
+
+                onabort: () => {
+                    args.level.objectives().map((objective) => {
+                        objective.completed = true;
+                    })
+
+                    args.level.event.broadcast(level.Level.OBJECTIVES_UPDATED);
+                },
             }),
         ]);
     },

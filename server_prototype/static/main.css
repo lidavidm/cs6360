@@ -228,3 +228,67 @@ body {
 .executing #objectives {
     height: calc(100% - 380px - 60px);
 }
+
+#congratulationsContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 10000;
+}
+
+#congratulations {
+    font-size: 1.5em;
+    margin: 5em auto 0;
+    width: 600px;
+    background: #000;
+    color: #FFF;
+    padding: 1em;
+    box-shadow: 0px 1px 20px rgba(255, 255, 255, 0.8);
+}
+
+#congratulations h2 {
+    font-size: 2.25em;
+    letter-spacing: 0.1em;
+    font-weight: 200;
+    text-transform: uppercase;
+    margin: 0 auto;
+    text-align: center;
+}
+
+/** UI Widgets **/
+
+button.ui {
+    border: 1px solid #FFF;
+    background: none;
+    padding: 0.25em 0.5em;
+    margin: 0;
+    font-family: inherit;
+    text-transform: uppercase;
+    color: #FFF;
+    font-size: 1em;
+}
+
+@keyframes loading-animation {
+    0% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.ui.loading {
+    animation: loading-animation 2s ease-in-out infinite alternate;
+}
+
+.right {
+    float: right;
+}
+
+.clearfix {
+    clear: both;
+}

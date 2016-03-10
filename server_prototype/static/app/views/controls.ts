@@ -1,3 +1,5 @@
+import PubSub = require("pubsub");
+
 interface ControlsController extends _mithril.MithrilController {
 }
 
@@ -9,6 +11,10 @@ export const Component: _mithril.MithrilComponent<ControlsController> = <any> {
     view: function(controller: ControlsController, args: {
         executing: _mithril.MithrilProperty<boolean>,
         scale: _mithril.MithrilProperty<boolean>,
+        onrun?: () => void,
+        onabort?: () => void,
+        onpause?: () => void,
+        onstep?: () => void,
     }): _mithril.MithrilVirtualElement<ControlsController> {
         let buttons: _mithril.MithrilVirtualElement<ControlsController>[] = [];
         if (!args.executing()) {
@@ -17,6 +23,10 @@ export const Component: _mithril.MithrilComponent<ControlsController> = <any> {
                 onclick: function() {
                     args.executing(!args.executing());
                     args.scale(args.executing());
+
+                    if (args.onrun) {
+                        args.onrun();
+                    }
                 },
             }, "Run"));
         }
@@ -25,18 +35,30 @@ export const Component: _mithril.MithrilComponent<ControlsController> = <any> {
                 onclick: function() {
                     args.executing(!args.executing());
                     args.scale(args.executing());
+
+                    if (args.onabort) {
+                        args.onabort();
+                    }
                 },
             }, "Abort"));
             buttons.push(m(<any> "button.pause", {
                 onclick: function() {
                     args.executing(!args.executing());
                     args.scale(args.executing());
+
+                    if (args.onpause) {
+                        args.onpause();
+                    }
                 },
             }, "Pause"));
             buttons.push(m(<any> "button.step", {
                 onclick: function() {
                     args.executing(!args.executing());
                     args.scale(args.executing());
+
+                    if (args.onstep) {
+                        args.onstep();
+                    }
                 },
             }, "Step"));
         }

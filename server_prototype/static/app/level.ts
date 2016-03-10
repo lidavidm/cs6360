@@ -1,10 +1,12 @@
 declare var Blockly: any;
 
-import TooltipView = require("./views/tooltip");
+import TooltipView = require("views/tooltip");
+import PubSub = require("pubsub");
 
 export interface Objective {
     objective: string,
     completed: boolean,
+    // predicate: (level: Level): boolean,
 }
 
 /**
@@ -73,7 +75,16 @@ export class Level {
     private _tooltipIndex: number;
     private _objectives: Objective[];
 
+    public event: PubSub.PubSub;
+
+    /**
+     * The event that should be fired if objectives are updated.
+     */
+    public static OBJECTIVES_UPDATED = "objectivesUpdated";
+
     constructor() {
+        this.event = new PubSub.PubSub();
+
         let initialToolbox = document.getElementById("toolbox").textContent;
         this._toolbox = new Toolbox(initialToolbox);
 
@@ -91,6 +102,15 @@ export class Level {
                 completed: false,
             },
         ];
+    }
+
+    public isComplete(): boolean {
+        for (let objective of this._objectives) {
+            if (!objective.completed) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public setObjectives(objectives: Objective[]) {

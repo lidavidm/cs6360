@@ -28,6 +28,10 @@ export class Tooltip {
     toggle() {
         this._visible = !this._visible;
     }
+
+    hide() {
+        this._visible = false;
+    }
 }
 
 // TODO: have this just be DOM manipulation instead?

@@ -1,6 +1,7 @@
-import MapView = require("./views/map");
-import EditorView = require("./views/editor");
-import TooltipView = require("./views/tooltip");
+import MapView = require("views/map");
+import EditorView = require("views/editor");
+import TooltipView = require("views/tooltip");
+import CongratulationsView = require("views/congratulations");
 import level = require("level");
 
 interface GameController extends _mithril.MithrilController {
@@ -37,6 +38,21 @@ interface MainController {
 
 export const MainComponent = {
     controller: function(): MainController {
+        let controller = Object.create(null);
+
+        controller.setLevel = function(newLevel: level.Level) {
+            newLevel.event.on(level.Level.OBJECTIVES_UPDATED, () => {
+                if (newLevel.isComplete()) {
+                    newLevel.tooltips().forEach((tooltip) => {
+                        tooltip.hide();
+                    })
+                }
+                // TODO: victory screen should load the next level
+            });
+
+            controller.level = newLevel;
+        };
+
         let initLevel = new level.Level();
         initLevel.addClass(null);  // TODO: dependent on Michael's data model
         initLevel.setTooltips([
@@ -49,9 +65,9 @@ export const MainComponent = {
             ]
         ]);
 
-        return {
-            level: initLevel,
-        };
+        controller.setLevel(initLevel);
+
+        return controller;
     },
 
     view: function(controller: MainController) {
@@ -61,6 +77,12 @@ export const MainComponent = {
             })),
             m("div#tooltip",
               m.component(TooltipView.Component, controller.level.tooltips())),
+            (function() {
+                if (controller.level.isComplete()) {
+                    return m.component(CongratulationsView.Component, controller.level);
+                }
+                return null;
+            })(),
         ])
     }
 }
