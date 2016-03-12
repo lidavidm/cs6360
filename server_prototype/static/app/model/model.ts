@@ -114,7 +114,10 @@ export abstract class WorldObject {
         return this.y;
     }
 
-
+    /*These set functions probably don't need animations/promises on them because
+    * they probably aren't called by the user to move something. They just drop
+    * something in its place
+    */
     setX(x: number) {
         if (x >= 0 && x < this.world.getMaxX()) {
             this.world.removeObject(this);
@@ -216,7 +219,7 @@ export class Robot extends WorldObject {
     }
 
     @blocklyMethod("moveBackward", "Move backward")
-    moveBackward() {
+    moveBackward(): Promise<{}> {
         switch (this.orientation) {
         case Direction.NORTH:
             this.setLoc(this.x, this.y+1);
@@ -231,14 +234,27 @@ export class Robot extends WorldObject {
             this.setLoc(this.x+1, this.y);
             break;
         }
+
+        // Copied from moveForward. Should be the same.
+        return new Promise((resolve, reject) => {
+            var tween = this.sprite.game.add.tween(this.sprite).to({
+                x: this.x * TILE_WIDTH,
+                y: this.y * TILE_HEIGHT,
+            }, 800, Phaser.Easing.Quadratic.InOut);
+            tween.onComplete.add(() => {
+                resolve();
+            });
+            tween.start();
+        });
     }
 
     /*
-     * picks up 1 object on the same tile as this robot. which object or what
-     * kind of object is unspecified.
+     * Tries to pick up one obeject on the same tile as this Robot. Which object
+     * is unspecified. Returns a promise that is resolved once the target object's
+     * pick up animation plays, or rejects if the object is not Iron
      */
     @blocklyMethod("pickUpUnderneath", "Pick up what's underneath me")
-    pickUpUnderneath() {
+    pickUpUnderneath(): Promise<{}> {
         let targets: WorldObject[] = this.world.getObject(this.x, this.y);
         let target: WorldObject = null;
 
@@ -252,6 +268,20 @@ export class Robot extends WorldObject {
         if (target != null) {
             this.holding.push(target);
         }
+
+        return new Promise((resolve, reject) => {
+            if (!(target instanceof Iron)){
+                reject();
+            }
+            let spr = (<Iron>target).sprite;
+            var tween = spr.game.add.tween(spr.visible).to(
+                false, 200, Phaser.Easing.Quadratic.InOut);
+            tween.onComplete.add(() => {
+                this.world.removeObject(target);
+                resolve();
+            });
+            tween.start();
+        });
     }
 }
 
@@ -260,8 +290,11 @@ export class Robot extends WorldObject {
  * and will probably need to be refactored as gameplay elements are ironed out
  */
 export class Iron extends WorldObject {
+    sprite: Phaser.Sprite;
+
     constructor(name:string, id:number, x:number, y:number,
                 sprite:Phaser.Sprite, world: World) {
         super(name, id, x, y, world);
+        this.sprite = sprite;
     }
 }
