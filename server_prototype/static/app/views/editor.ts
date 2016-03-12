@@ -6,7 +6,7 @@ import block_utils = require("../block_utils");
 import level = require("../level");
 
 interface EditorController extends _mithril.MithrilController {
-    level: level.Level,
+    level: level.BaseLevel,
     workspace: any,
     changeListener: (event: any) => void,
 }
@@ -78,7 +78,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 }
 
                 controller.workspace = Blockly.inject(element, {
-                    toolbox: controller.level.toolbox().xml(),
+                    toolbox: controller.level.toolbox.xml(),
                     trashcan: true,
                 });
 

@@ -21,7 +21,7 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
     },
 
     view: function(controller: MapController, args: {
-        state: level.BaseState,
+        level: level.BaseLevel,
         executing: _mithril.MithrilProperty<boolean>,
     }) {
         var style = "";
@@ -36,26 +36,26 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                     if (!isInitialized) {
                         controller.phaser = new Phaser.Game(
                             "100", "100", Phaser.CANVAS, element);
-                        controller.phaser.state.add("Main", args.state);
+                        controller.phaser.state.add("Main", args.level);
                         controller.phaser.state.start("Main");
                     }
                 },
             }),
-            m.component(Objectives.Component, args.state.level.objectives()),
+            m.component(Objectives.Component, args.level.objectives),
             m.component(Controls.Component, {
                 executing: args.executing,
 
                 onrun: () => {
                     args.executing(true);
-                    args.state.zoom(args.executing());
+                    args.level.zoom(args.executing());
                 },
 
                 onabort: () => {
-                    args.state.level.objectives().map((objective) => {
+                    args.level.objectives.map((objective) => {
                         objective.completed = true;
                     })
 
-                    args.state.level.event.broadcast(level.Level.OBJECTIVES_UPDATED);
+                    args.level.event.broadcast(level.BaseLevel.OBJECTIVES_UPDATED);
                 },
             }),
         ]);
