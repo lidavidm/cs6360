@@ -64,6 +64,93 @@ export class Toolbox {
     }
 }
 
+import Camera = require("camera");
+export class BaseState extends Phaser.State {
+    public level: Level;
+
+    protected cursors: any;
+    protected zoomCamera: Camera.ZoomCamera;
+
+    protected background: Phaser.Group;
+    protected middle: Phaser.Group;
+    protected foreground: Phaser.Group;
+
+    constructor(level: Level) {
+        super();
+
+        this.level = level;
+    }
+
+    preload() {
+        this.game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
+    }
+
+    create() {
+        this.zoomCamera = new Camera.ZoomCamera(this.game);
+        this.background = this.game.add.group(this.zoomCamera.group);
+        this.middle = this.game.add.group(this.zoomCamera.group);
+        this.foreground = this.game.add.group(this.zoomCamera.group);
+    }
+
+    update() {
+        if (!this.game.input.activePointer.withinGame) return;
+
+        if (this.cursors.up.isDown) {
+            this.zoomCamera.position.y -= 4;
+        }
+        else if (this.cursors.down.isDown) {
+            this.zoomCamera.position.y += 4;
+        }
+        else if (this.cursors.left.isDown) {
+            this.zoomCamera.position.x -= 4;
+        }
+        else if (this.cursors.right.isDown) {
+            this.zoomCamera.position.x += 4;
+        }
+
+        this.zoomCamera.update();
+    }
+
+    render() {
+    }
+
+    zoom(zoomed: boolean) {
+        if (zoomed) {
+            this.zoomCamera.scale.set(2, 2);
+        }
+        else {
+            this.zoomCamera.scale.set(1, 1);
+        }
+    }
+}
+
+export class StateAlpha extends BaseState {
+    preload() {
+        super.preload();
+
+        this.game.load.tilemap("prototype", "assets/maps/prototype.json", null, Phaser.Tilemap.TILED_JSON);
+        this.game.load.image("tiles", "assets/tilesets/cave.png");
+        this.game.load.image("robot", "assets/sprites/robot_3Dblue.png");
+        this.game.load.image("iron", "assets/sprites/iron.png");
+    }
+
+    create() {
+        super.create();
+
+        var map = this.game.add.tilemap("prototype");
+        map.addTilesetImage("cave", "tiles");
+        var layer = map.createLayer(
+            "Tile Layer 1", this.game.width, this.game.height, this.background);
+
+        var robot = this.foreground.create(16, 16, "robot");
+        robot.width = robot.height = 16;
+
+        var iron = this.foreground.create(80, 16, "iron");
+
+        this.cursors = this.game.input.keyboard.createCursorKeys();
+    }
+}
+
 /**
  *
  */

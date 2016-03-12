@@ -10,7 +10,6 @@ export const Component: _mithril.MithrilComponent<ControlsController> = <any> {
 
     view: function(controller: ControlsController, args: {
         executing: _mithril.MithrilProperty<boolean>,
-        scale: _mithril.MithrilProperty<boolean>,
         onrun?: () => void,
         onabort?: () => void,
         onpause?: () => void,
@@ -21,9 +20,6 @@ export const Component: _mithril.MithrilComponent<ControlsController> = <any> {
             // Mithril type definition seems to be off here
             buttons.push(m(<any> "button.run", {
                 onclick: function() {
-                    args.executing(!args.executing());
-                    args.scale(args.executing());
-
                     if (args.onrun) {
                         args.onrun();
                     }
@@ -33,9 +29,6 @@ export const Component: _mithril.MithrilComponent<ControlsController> = <any> {
         else {
             buttons.push(m(<any> "button.abort", {
                 onclick: function() {
-                    args.executing(!args.executing());
-                    args.scale(args.executing());
-
                     if (args.onabort) {
                         args.onabort();
                     }
@@ -43,9 +36,6 @@ export const Component: _mithril.MithrilComponent<ControlsController> = <any> {
             }, "Abort"));
             buttons.push(m(<any> "button.pause", {
                 onclick: function() {
-                    args.executing(!args.executing());
-                    args.scale(args.executing());
-
                     if (args.onpause) {
                         args.onpause();
                     }
@@ -53,9 +43,6 @@ export const Component: _mithril.MithrilComponent<ControlsController> = <any> {
             }, "Pause"));
             buttons.push(m(<any> "button.step", {
                 onclick: function() {
-                    args.executing(!args.executing());
-                    args.scale(args.executing());
-
                     if (args.onstep) {
                         args.onstep();
                     }
