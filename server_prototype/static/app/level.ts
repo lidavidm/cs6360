@@ -3,10 +3,10 @@ declare var Blockly: any;
 import TooltipView = require("views/tooltip");
 import PubSub = require("pubsub");
 
-export interface Objective {
+export interface Objective<T> {
     objective: string,
     completed: boolean,
-    // predicate: (level: Level): boolean,
+    predicate: (level: T) => boolean,
 }
 
 /**
@@ -70,7 +70,7 @@ export class BaseLevel extends Phaser.State {
 
     public event: PubSub.PubSub;
 
-    public objectives: Objective[];
+    public objectives: Objective<this>[];
     public toolbox: Toolbox;
 
     protected allTooltips: TooltipView.Tooltip[][];
@@ -195,14 +195,25 @@ export class AlphaLevel extends BaseLevel {
             {
                 objective: "Move the robot to the iron",
                 completed: false,
+                predicate: (level) => {
+                    return level.robot.getX() === 5 && level.robot.getY() === 1;
+                }
             },
             {
                 objective: "Take the iron",
                 completed: false,
+                predicate: (level) => {
+                    let inventory = level.robot.inventory();
+                    return inventory.length > 0 && inventory[0] === level.iron;
+                }
             },
             {
                 objective: "Move the robot back to base",
                 completed: false,
+                predicate: (level) => {
+                    return level.objectives[1].completed &&
+                        level.robot.getX() === 1 && level.robot.getY() === 1;
+                }
             },
         ];
 
@@ -258,19 +269,32 @@ export class AlphaLevel extends BaseLevel {
             this.robot.moveForward.bind(this.robot),
             this.robot.moveForward.bind(this.robot),
             this.robot.pickUpUnderneath.bind(this.robot),
+            this.robot.moveBackward.bind(this.robot),
+            this.robot.moveBackward.bind(this.robot),
+            this.robot.moveBackward.bind(this.robot),
+            this.robot.moveBackward.bind(this.robot),
             // this.robot.pickUpUnderneath.bind(this.robot),
         ];
         let programCounter = 0;
         let executor = () => {
             console.log(program[programCounter], programCounter);
             var promise = program[programCounter++]();
+
+            m.startComputation();
+            for (let objective of this.objectives) {
+                if (!objective.completed) {
+                    objective.completed = objective.predicate(this);
+                }
+            }
+
+            this.event.broadcast(BaseLevel.OBJECTIVES_UPDATED);
+            m.endComputation();
+
             if (programCounter >= program.length) {
-                console.log("Done");
                 return;
             }
 
             promise.then(() => {
-                console.log("executed");
                 executor();
             }, (err: string) => {
                 alert("Error! " + err);

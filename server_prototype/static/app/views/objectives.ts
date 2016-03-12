@@ -9,7 +9,7 @@ export const Component: _mithril.MithrilComponent<ObjectivesController> = <any> 
         return {};
     },
 
-    view: function(controller: ObjectivesController, args: level.Objective[]): any {
+    view: function<T>(controller: ObjectivesController, args: level.Objective<T>[]): any {
         return m("div#objectives", [
             m("h2", "Objectives"),
             m("ul", args.map(function(objective) {

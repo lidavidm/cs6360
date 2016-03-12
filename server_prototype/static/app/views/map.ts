@@ -51,11 +51,6 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                 },
 
                 onabort: () => {
-                    args.level.objectives.map((objective) => {
-                        objective.completed = true;
-                    })
-
-                    args.level.event.broadcast(level.BaseLevel.OBJECTIVES_UPDATED);
                 },
             }),
         ]);
