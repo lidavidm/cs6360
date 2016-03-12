@@ -17,16 +17,18 @@ export const GameWidget: _mithril.MithrilComponent<GameController> = <any> {
         return controller;
     },
 
-    view: function(controller: GameController, args: any) {
+    view: function(controller: GameController, args: {
+        state: level.BaseState,
+    }) {
         return m(".container", [
             // TODO: change args into an interface
             m.component(MapView.Component, {
                 executing: controller.executing,
-                level: args.level,
+                state: args.state,
             }),
             m.component(EditorView.Component, {
                 executing: controller.executing,
-                level: args.level,
+                level: args.state.level,
             }),
         ]);
     },
@@ -34,13 +36,15 @@ export const GameWidget: _mithril.MithrilComponent<GameController> = <any> {
 
 interface MainController {
     level: level.Level,
+    state: level.BaseState;
 }
 
 export const MainComponent = {
     controller: function(): MainController {
         let controller = Object.create(null);
 
-        controller.setLevel = function(newLevel: level.Level) {
+        controller.setLevel = function(state: level.BaseState) {
+            let newLevel = state.level;
             newLevel.event.on(level.Level.OBJECTIVES_UPDATED, () => {
                 if (newLevel.isComplete()) {
                     newLevel.tooltips().forEach((tooltip) => {
@@ -51,6 +55,7 @@ export const MainComponent = {
             });
 
             controller.level = newLevel;
+            controller.state = state;
         };
 
         let initLevel = new level.Level();
@@ -65,7 +70,9 @@ export const MainComponent = {
             ]
         ]);
 
-        controller.setLevel(initLevel);
+        let initState = new level.StateAlpha(initLevel);
+
+        controller.setLevel(initState);
 
         return controller;
     },
@@ -73,7 +80,7 @@ export const MainComponent = {
     view: function(controller: MainController) {
         return m("div", [
             m("div#main", m.component(GameWidget, {
-                level: controller.level
+                state: controller.state,
             })),
             m("div#tooltip",
               m.component(TooltipView.Component, controller.level.tooltips())),
