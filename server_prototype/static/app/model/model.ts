@@ -10,8 +10,8 @@ function blocklyMethod(funcName: string, friendlyName:string){
 * Works in a 2D coordinate grid from 0 to max_x-1 and max_y-1
 */
 export class World {
-  max_x:number = 0;
-  max_y:number = 0;
+  private max_x:number = 0;
+  private max_y:number = 0;
   private nextID = 0;
   //things might be on top of each other.
   private map: WorldObject[][][];
@@ -28,6 +28,14 @@ export class World {
 
   getNewID() {
     return this.nextID++;
+  }
+
+  getMaxX() {
+    return this.max_x;
+  }
+
+  getMaxY() {
+    return this.max_y;
   }
 
   addObject(obj: WorldObject) {
@@ -98,22 +106,41 @@ export abstract class WorldObject {
 
 
   setX(x: number) {
-    this.world.removeObject(this);
-    this.x = x;
-    this.world.addObject(this);
+    if (x >= 0 && x < this.world.getMaxX()) {
+      this.world.removeObject(this);
+      this.x = x;
+      this.world.addObject(this);
+    }
+    else {
+      throw new RangeError("Trying to move object to invalid x coordinate: " + x);
+    }
   }
 
   setY(y: number) {
-    this.world.removeObject(this);
-    this.y = y;
-    this.world.addObject(this);
+    if (y >= 0 && y < this.world.getMaxY()) {
+      this.world.removeObject(this);
+      this.y = y;
+      this.world.addObject(this);
+    }
+    else {
+      throw new RangeError("Trying to move object to invalid y coordinate: " + y);
+    }
+
+
   }
 
   setLoc(x: number, y: number) {
-    this.world.removeObject(this);
-    this.x = x;
-    this.y = y;
-    this.world.addObject(this);
+    if (y >= 0 && y < this.world.getMaxY() &&
+        x >= 0 && x < this.world.getMaxX()){
+      this.world.removeObject(this);
+      this.x = x;
+      this.y = y;
+      this.world.addObject(this);
+    }
+    else {
+      throw new RangeError("Trying to move object to invalid location: (" + x + ", " + y + ")");
+    }
+
   }
 }
 
