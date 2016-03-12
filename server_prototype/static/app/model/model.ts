@@ -58,7 +58,6 @@ export class World {
         else {
             throw new RangeError("Trying to add object at invalid location: (" + x + ", " + y + ")");
         }
-
     }
 
     getObject(x:number, y: number): WorldObject[] {
@@ -104,6 +103,8 @@ export abstract class WorldObject {
         this.x = x;
         this.y = y;
         this.world = world;
+
+        this.world.addObject(this);
     }
 
     getX(): number {
@@ -180,8 +181,11 @@ export class Robot extends WorldObject {
         super(name, id, x, y, world);
         this.orientation = orientation;
         this.sprite = sprite;
-        if (holding){
+        if (holding) {
             this.holding = holding;
+        }
+        else {
+            this.holding = [];
         }
     }
 
@@ -258,8 +262,8 @@ export class Robot extends WorldObject {
         let targets: WorldObject[] = this.world.getObject(this.x, this.y);
         let target: WorldObject = null;
 
-        for ( let i = 0; i < targets.length; i++ ) {
-            if ( targets[i] != this ) {
+        for (let i = 0; i < targets.length; i++) {
+            if (targets[i] !== this) {
                 target = targets[i];
                 break;
             }
@@ -270,18 +274,24 @@ export class Robot extends WorldObject {
         }
 
         return new Promise((resolve, reject) => {
-            if (!(target instanceof Iron)){
-                reject();
+            if (target === null) {
+                reject("Nothing to pick up");
             }
-            let spr = (<Iron>target).sprite;
-            var tween = spr.game.add.tween(spr).to({
-                alpha: 0
-            }, 200, Phaser.Easing.Quadratic.InOut);
-            tween.onComplete.add(() => {
-                this.world.removeObject(target);
-                resolve();
-            });
-            tween.start();
+            else if (!(target instanceof Iron)){
+                reject("I can only pick up iron");
+            }
+            else {
+                let spr = (<Iron>target).sprite;
+                var tween = spr.game.add.tween(spr).to({
+                    alpha: 0,
+                }, 800, Phaser.Easing.Quadratic.InOut);
+                tween.onComplete.add(() => {
+                    this.world.removeObject(target);
+                    spr.visible = false;
+                    resolve();
+                });
+                tween.start();
+            }
         });
     }
 }

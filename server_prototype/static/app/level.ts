@@ -183,7 +183,7 @@ import model = require("model/model");
 export class AlphaLevel extends BaseLevel {
     public modelWorld: model.World;
     public robot: model.Robot;
-    public iron: model.Resource;
+    public iron: model.Iron;
 
     init() {
         super.init();
@@ -237,7 +237,7 @@ export class AlphaLevel extends BaseLevel {
         let robot = this.foreground.create(16, 16, "robot");
         robot.width = robot.height = 16;
 
-        let iron = this.foreground.create(80, 16, "iron");
+        let iron = this.middle.create(80, 16, "iron");
 
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
