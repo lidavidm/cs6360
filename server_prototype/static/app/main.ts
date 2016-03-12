@@ -18,34 +18,32 @@ export const GameWidget: _mithril.MithrilComponent<GameController> = <any> {
     },
 
     view: function(controller: GameController, args: {
-        state: level.BaseState,
+        level: level.BaseLevel,
     }) {
         return m(".container", [
             // TODO: change args into an interface
             m.component(MapView.Component, {
                 executing: controller.executing,
-                state: args.state,
+                level: args.level,
             }),
             m.component(EditorView.Component, {
                 executing: controller.executing,
-                level: args.state.level,
+                level: args.level,
             }),
         ]);
     },
 };
 
 interface MainController {
-    level: level.Level,
-    state: level.BaseState;
+    level: level.BaseLevel,
 }
 
 export const MainComponent = {
     controller: function(): MainController {
         let controller = Object.create(null);
 
-        controller.setLevel = function(state: level.BaseState) {
-            let newLevel = state.level;
-            newLevel.event.on(level.Level.OBJECTIVES_UPDATED, () => {
+        controller.setLevel = function(newLevel: level.BaseLevel) {
+            newLevel.event.on(level.BaseLevel.OBJECTIVES_UPDATED, () => {
                 if (newLevel.isComplete()) {
                     newLevel.tooltips().forEach((tooltip) => {
                         tooltip.hide();
@@ -55,24 +53,10 @@ export const MainComponent = {
             });
 
             controller.level = newLevel;
-            controller.state = state;
         };
 
-        let initLevel = new level.Level();
-        initLevel.addClass(null);  // TODO: dependent on Michael's data model
-        initLevel.setTooltips([
-            [
-                new TooltipView.Tooltip(TooltipView.Region.Map, "Use the arrow keys to look around the map and see what's going on."),
-                new TooltipView.Tooltip(TooltipView.Region.Objectives, "Here's what Mission Control said to do."),
-                new TooltipView.Tooltip(TooltipView.Region.Controls, "Load your code onto the robot and run it."),
-                new TooltipView.Tooltip(TooltipView.Region.Toolbox, "Pick blocks from here…"),
-                new TooltipView.Tooltip(TooltipView.Region.Workspace, "…and drop them here to control the robot."),
-            ]
-        ]);
-
-        let initState = new level.StateAlpha(initLevel);
-
-        controller.setLevel(initState);
+        let initLevel = new level.AlphaLevel();
+        controller.setLevel(initLevel);
 
         return controller;
     },
@@ -80,7 +64,7 @@ export const MainComponent = {
     view: function(controller: MainController) {
         return m("div", [
             m("div#main", m.component(GameWidget, {
-                state: controller.state,
+                level: controller.level,
             })),
             m("div#tooltip",
               m.component(TooltipView.Component, controller.level.tooltips())),

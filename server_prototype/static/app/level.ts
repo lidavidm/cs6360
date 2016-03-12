@@ -65,8 +65,16 @@ export class Toolbox {
 }
 
 import Camera = require("camera");
-export class BaseState extends Phaser.State {
-    public level: Level;
+export class BaseLevel extends Phaser.State {
+    private classes: any[];
+
+    public event: PubSub.PubSub;
+
+    public objectives: Objective[];
+    public toolbox: Toolbox;
+
+    protected allTooltips: TooltipView.Tooltip[][];
+    private _tooltipIndex: number;
 
     protected cursors: any;
     protected zoomCamera: Camera.ZoomCamera;
@@ -75,10 +83,19 @@ export class BaseState extends Phaser.State {
     protected middle: Phaser.Group;
     protected foreground: Phaser.Group;
 
-    constructor(level: Level) {
+    /**
+     * The event that should be fired if objectives are updated.
+     */
+    public static OBJECTIVES_UPDATED = "objectivesUpdated";
+
+    constructor() {
         super();
 
-        this.level = level;
+        this._tooltipIndex = 0;
+        this.objectives = [];
+        this.event = new PubSub.PubSub();
+
+        this.init();
     }
 
     preload() {
@@ -114,6 +131,39 @@ export class BaseState extends Phaser.State {
     render() {
     }
 
+    // TODO: move this to toolbox
+    addClass(classObject: any) {
+        Blockly.Blocks.setClassMethods("Robot", [
+            ["turn left", "turnLeft"],
+            ["move forward", "moveForward"],
+            ["pick up object underneath", "pickUpUnder"],
+        ]);
+        this.toolbox.addClass("Robot", "assets/sprites/robot_3Dblue.png", [
+            "turnLeft",
+            "moveForward",
+            "pickUpUnder",
+        ]);
+        // TODO: broadcast event indicating toolbox has been updated
+    }
+
+    isComplete(): boolean {
+        for (let objective of this.objectives) {
+            if (!objective.completed) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    nextTooltips() {
+        this._tooltipIndex =
+            (this._tooltipIndex + 1) % this.allTooltips.length;
+    }
+
+    tooltips(): TooltipView.Tooltip[] {
+        return this.allTooltips[this._tooltipIndex];
+    }
+
     zoom(zoomed: boolean) {
         if (zoomed) {
             this.zoomCamera.scale.set(2, 2);
@@ -124,7 +174,39 @@ export class BaseState extends Phaser.State {
     }
 }
 
-export class StateAlpha extends BaseState {
+export class AlphaLevel extends BaseLevel {
+    init() {
+        super.init();
+
+        let initialToolbox = document.getElementById("toolbox").textContent;
+        this.toolbox = new Toolbox(initialToolbox);
+
+        this.objectives = [
+            {
+                objective: "Move the robot to the iron",
+                completed: false,
+            },
+            {
+                objective: "Take the iron",
+                completed: false,
+            },
+            {
+                objective: "Move the robot back to base",
+                completed: false,
+            },
+        ];
+
+        this.allTooltips = [
+            [
+                new TooltipView.Tooltip(TooltipView.Region.Map, "Use the arrow keys to look around the map and see what's going on."),
+                new TooltipView.Tooltip(TooltipView.Region.Objectives, "Here's what Mission Control said to do."),
+                new TooltipView.Tooltip(TooltipView.Region.Controls, "Load your code onto the robot and run it."),
+                new TooltipView.Tooltip(TooltipView.Region.Toolbox, "Pick blocks from here…"),
+                new TooltipView.Tooltip(TooltipView.Region.Workspace, "…and drop them here to control the robot."),
+            ]
+        ];
+    }
+
     preload() {
         super.preload();
 
@@ -132,6 +214,7 @@ export class StateAlpha extends BaseState {
         this.game.load.image("tiles", "assets/tilesets/cave.png");
         this.game.load.image("robot", "assets/sprites/robot_3Dblue.png");
         this.game.load.image("iron", "assets/sprites/iron.png");
+
     }
 
     create() {
@@ -148,98 +231,5 @@ export class StateAlpha extends BaseState {
         var iron = this.foreground.create(80, 16, "iron");
 
         this.cursors = this.game.input.keyboard.createCursorKeys();
-    }
-}
-
-/**
- *
- */
-export class Level {
-    private _map: string;
-    private _toolbox: Toolbox;
-    private _classes: any;
-    private _tooltips: TooltipView.Tooltip[][];
-    private _tooltipIndex: number;
-    private _objectives: Objective[];
-
-    public event: PubSub.PubSub;
-
-    /**
-     * The event that should be fired if objectives are updated.
-     */
-    public static OBJECTIVES_UPDATED = "objectivesUpdated";
-
-    constructor() {
-        this.event = new PubSub.PubSub();
-
-        let initialToolbox = document.getElementById("toolbox").textContent;
-        this._toolbox = new Toolbox(initialToolbox);
-
-        this._objectives = [
-            {
-                objective: "Move the robot to the iron",
-                completed: false,
-            },
-            {
-                objective: "Take the iron",
-                completed: false,
-            },
-            {
-                objective: "Move the robot back to base",
-                completed: false,
-            },
-        ];
-    }
-
-    public isComplete(): boolean {
-        for (let objective of this._objectives) {
-            if (!objective.completed) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public setObjectives(objectives: Objective[]) {
-        this._objectives = objectives;
-    }
-
-    public objectives(): Objective[] {
-        return this._objectives;
-    }
-
-    public toolbox(): Toolbox {
-        return this._toolbox;
-    }
-
-    public setTooltips(tooltips: TooltipView.Tooltip[][]) {
-        this._tooltips = tooltips;
-        this._tooltipIndex = 0;
-    }
-
-    public tooltips(): TooltipView.Tooltip[] {
-        return this._tooltips[this._tooltipIndex];
-    }
-
-    public nextTooltips() {
-        this._tooltipIndex = (this._tooltipIndex + 1) % this._tooltips.length;
-    }
-
-    public addClass(classObject: any) {
-        Blockly.Blocks.setClassMethods("Robot", [
-            ["turn left", "turnLeft"],
-            ["move forward", "moveForward"],
-            ["pick up object underneath", "pickUpUnder"],
-        ]);
-        this._toolbox.addClass("Robot", "assets/sprites/robot_3Dblue.png", [
-            "turnLeft",
-            "moveForward",
-            "pickUpUnder",
-        ]);
-        // TODO: broadcast event indicating toolbox has been updated
-    }
-
-    public removeClass() {
-
     }
 }
