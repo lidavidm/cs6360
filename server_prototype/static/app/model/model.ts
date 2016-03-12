@@ -10,7 +10,8 @@ export const TILE_HEIGHT = 16;
 
 /**
  * Represents the enviornment of a single level.
- * Works in a 2D coordinate grid from 0 to max_x-1 and max_y-1
+ * Works in a 2D coordinate grid from 0 to maxX-1 and maxY-1
+ * (0, 0) is in top left corner
  */
 export class World {
     private maxX: number = 0;
@@ -52,7 +53,7 @@ export class World {
         let y:number = obj.getY();
 
         if (this.boundsOkay(x, y)) {
-            this.map[obj.getX()][obj.getY()].push(obj);
+            this.map[x][y].push(obj);
         }
         else {
             throw new RangeError("Trying to add object at invalid location: (" + x + ", " + y + ")");
@@ -185,10 +186,10 @@ export class Robot extends WorldObject {
     moveForward(): Promise<{}> {
         switch (this.orientation) {
         case Direction.NORTH:
-            this.setLoc(this.x, this.y+1);
+            this.setLoc(this.x, this.y-1);
             break;
         case Direction.SOUTH:
-            this.setLoc(this.x, this.y-1);
+            this.setLoc(this.x, this.y+1);
             break;
         case Direction.EAST:
             this.setLoc(this.x+1, this.y);
@@ -214,10 +215,10 @@ export class Robot extends WorldObject {
     moveBackward() {
         switch (this.orientation) {
         case Direction.NORTH:
-            this.setLoc(this.x, this.y-1);
+            this.setLoc(this.x, this.y+1);
             break;
         case Direction.SOUTH:
-            this.setLoc(this.x, this.y+1);
+            this.setLoc(this.x, this.y-1);
             break;
         case Direction.EAST:
             this.setLoc(this.x-1, this.y);
