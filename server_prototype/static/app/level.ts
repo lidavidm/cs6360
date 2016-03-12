@@ -245,12 +245,37 @@ export class AlphaLevel extends BaseLevel {
         this.robot = new model.Robot("Robot", this.modelWorld.getNewID(),
                                      1, 1, model.Direction.EAST,
                                      robot, this.modelWorld);
+        this.iron = new model.Iron("iron", this.modelWorld.getNewID(),
+                                   5, 1, iron, this.modelWorld);
     }
 
     run() {
         super.run();
-        window.setTimeout(() => {
-            this.robot.moveForward();
-        }, 1000);
+
+        let program = [
+            this.robot.moveForward.bind(this.robot),
+            this.robot.moveForward.bind(this.robot),
+            this.robot.moveForward.bind(this.robot),
+            this.robot.moveForward.bind(this.robot),
+            this.robot.pickUpUnderneath.bind(this.robot),
+            // this.robot.pickUpUnderneath.bind(this.robot),
+        ];
+        let programCounter = 0;
+        let executor = () => {
+            console.log(program[programCounter], programCounter);
+            var promise = program[programCounter++]();
+            if (programCounter >= program.length) {
+                console.log("Done");
+                return;
+            }
+
+            promise.then(() => {
+                console.log("executed");
+                executor();
+            }, (err: string) => {
+                alert("Error! " + err);
+            });
+        };
+        window.setTimeout(executor, 1000);
     }
 }
