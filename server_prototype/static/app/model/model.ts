@@ -13,20 +13,20 @@ export const TILE_HEIGHT = 16;
  * Works in a 2D coordinate grid from 0 to max_x-1 and max_y-1
  */
 export class World {
-    private max_x: number = 0;
-    private max_y: number = 0;
+    private maxX: number = 0;
+    private maxY: number = 0;
     private nextID = 0;
     //things might be on top of each other.
     private map: WorldObject[][][];
     private tilemap: Phaser.Tilemap;
 
     constructor(tilemap: Phaser.Tilemap) {
-        this.max_x = tilemap.width;
-        this.max_y = tilemap.height;
+        this.maxX = tilemap.width;
+        this.maxY = tilemap.height;
         this.map = [];
-        for (let x = 0; x < this.max_x; x++) {
+        for (let x = 0; x < this.maxX; x++) {
             let col: WorldObject[][] = [];
-            for (let y = 0; y < this.max_y; y++) {
+            for (let y = 0; y < this.maxY; y++) {
                 let cell: WorldObject[] = [];
                 col.push(cell);
             }
@@ -40,11 +40,11 @@ export class World {
     }
 
     getMaxX() {
-        return this.max_x;
+        return this.maxX;
     }
 
     getMaxY() {
-        return this.max_y;
+        return this.maxY;
     }
 
     addObject(obj: WorldObject) {
@@ -82,7 +82,7 @@ export class World {
     }
 
     private boundsOkay(x: number, y: number) {
-        return ( x < this.max_x && y < this.max_y && x >= 0 && y >= 0);
+        return ( x < this.maxX && y < this.maxY && x >= 0 && y >= 0);
     }
 }
 
@@ -170,7 +170,6 @@ export class Robot extends WorldObject {
     //This robot's "inventory". TODO: size restrictions etc?
     protected holding: WorldObject[];
 
-    //TODO: this needs to take in the robot's code i think?
     constructor(name: string, id: number, x: number, y: number,
                 orientation: Direction, sprite: Phaser.Sprite, world: World,
                 holding?: WorldObject[]) {
@@ -252,10 +251,10 @@ export class Robot extends WorldObject {
 }
 
 /**
- * Superclass for any type of resource object. Doesn't really do much right now
+ * Iron object (basic resource). Doesn't really do much right now
  * and will probably need to be refactored as gameplay elements are ironed out
  */
-export class Resource extends WorldObject {
+export class Iron extends WorldObject {
     constructor(name:string, id:number, x:number, y:number,
                 sprite:Phaser.Sprite, world: World) {
         super(name, id, x, y, world);
