@@ -119,13 +119,18 @@ export enum Direction {
 export class Robot extends WorldObject {
   sprite: Phaser.Sprite;
   orientation: Direction;
+  protected holding: WorldObject[];
 
   //TODO: this needs to take in the robot's code i think?
   constructor(name: string, id: number, x: number, y: number,
-              orientation: Direction, sprite: Phaser.Sprite, world: World) {
+              orientation: Direction, sprite: Phaser.Sprite, world: World,
+              holding?: WorldObject[]) {
       super(name, id, x, y, world);
       this.orientation = orientation;
       this.sprite = sprite;
+      if (holding){
+        this.holding = holding;
+      }
   }
 
   @blocklyMethod("moveForward", "Move forward")
@@ -168,7 +173,19 @@ export class Robot extends WorldObject {
 
   @blocklyMethod("pickUpUnderneath", "Pick up what's underneath me")
   pickUpUnderneath() {
-    //TODO
+    let targets: WorldObject[] = this.world.getObject(this.x, this.y);
+    let target: WorldObject = null;
+
+    for ( let i = 0; i < targets.length; i++ ) {
+      if ( targets[i] != this ) {
+        target = targets[i];
+        break;
+      }
+    }
+    //TODO: this will need to choose WHICH thing to pick up?
+    if (target != null) {
+        this.holding.push(target);
+    }
   }
 }
 
