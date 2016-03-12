@@ -5,6 +5,9 @@ function blocklyMethod(funcName: string, friendlyName: string): PropertyDecorato
     };
 }
 
+export const TILE_WIDTH = 16;
+export const TILE_HEIGHT = 16;
+
 /**
  * Represents the enviornment of a single level.
  * Works in a 2D coordinate grid from 0 to max_x-1 and max_y-1
@@ -17,12 +20,18 @@ export class World {
     private map: WorldObject[][][];
     private tilemap: Phaser.Tilemap;
 
-    constructor(max_x: number, max_y: number, tilemap: Phaser.Tilemap) {
-        if (max_x < 0 || max_y < 0) {
-            throw new RangeError("Invalid map size: (" + max_x + ", " + max_y + ")");
+    constructor(tilemap: Phaser.Tilemap) {
+        this.max_x = tilemap.width;
+        this.max_y = tilemap.height;
+        this.map = [];
+        for (let x = 0; x < this.max_x; x++) {
+            let col: WorldObject[][] = [];
+            for (let y = 0; y < this.max_y; y++) {
+                let cell: WorldObject[] = [];
+                col.push(cell);
+            }
+            this.map.push(col);
         }
-        this.max_x = max_x;
-        this.max_y = max_y;
         this.tilemap = tilemap;
     }
 
@@ -125,8 +134,6 @@ export abstract class WorldObject {
         else {
             throw new RangeError("Trying to move object to invalid y coordinate: " + y);
         }
-
-
     }
 
     setLoc(x: number, y: number) {
@@ -176,7 +183,7 @@ export class Robot extends WorldObject {
     }
 
     @blocklyMethod("moveForward", "Move forward")
-    moveForward() {
+    moveForward(): Promise<{}> {
         switch (this.orientation) {
         case Direction.NORTH:
             this.setLoc(this.x, this.y+1);
@@ -191,6 +198,17 @@ export class Robot extends WorldObject {
             this.setLoc(this.x-1, this.y);
             break;
         }
+
+        return new Promise((resolve, reject) => {
+            var tween = this.sprite.game.add.tween(this.sprite).to({
+                x: this.x * TILE_WIDTH,
+                y: this.y * TILE_HEIGHT,
+            }, 800, Phaser.Easing.Quadratic.InOut);
+            tween.onComplete.add(() => {
+                resolve();
+            });
+            tween.start();
+        });
     }
 
     @blocklyMethod("moveBackward", "Move backward")
