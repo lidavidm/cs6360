@@ -1,7 +1,7 @@
 function blocklyMethod(funcName: string, friendlyName: string): PropertyDecorator {
     return function(target: any, propertyKey: string) {
-        target.funcName = funcName;
-        target.friendlyName = friendlyName;
+        target[propertyKey].funcName = funcName;
+        target[propertyKey].friendlyName = friendlyName;
     };
 }
 
@@ -193,7 +193,7 @@ export class Robot extends WorldObject {
         return this.holding;
     }
 
-    @blocklyMethod("moveForward", "Move forward")
+    @blocklyMethod("moveForward", "move forward")
     moveForward(): Promise<{}> {
         switch (this.orientation) {
         case Direction.NORTH:
@@ -222,7 +222,7 @@ export class Robot extends WorldObject {
         });
     }
 
-    @blocklyMethod("moveBackward", "Move backward")
+    @blocklyMethod("moveBackward", "move backward")
     moveBackward(): Promise<{}> {
         switch (this.orientation) {
         case Direction.NORTH:
@@ -257,7 +257,7 @@ export class Robot extends WorldObject {
      * is unspecified. Returns a promise that is resolved once the target object's
      * pick up animation plays, or rejects if the object is not Iron
      */
-    @blocklyMethod("pickUpUnderneath", "Pick up what's underneath me")
+    @blocklyMethod("pickUpUnderneath", "pick up what's underneath me")
     pickUpUnderneath(): Promise<{}> {
         let targets: WorldObject[] = this.world.getObject(this.x, this.y);
         let target: WorldObject = null;

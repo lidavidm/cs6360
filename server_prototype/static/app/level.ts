@@ -29,8 +29,20 @@ export class Toolbox {
     /**
      * Add the methods of a class to the toolbox.
      */
-    addClass(className: string, image: string, methods: string[]) {
+    addClass(className: string, image: string, classObject: any) {
+        let methods: [string, string][] = [];
+        Object.getOwnPropertyNames(classObject.prototype)
+            .sort()
+            .forEach(function(property) {
+                let method = classObject.prototype[property];
+                if (method.friendlyName) {
+                    methods.push([method.friendlyName, method.funcName]);
+                }
+            });
         Blockly.Blocks.variables.addClass(className, image);
+        Blockly.Blocks.setClassMethods(className, methods);
+
+        // TODO: broadcast event indicating toolbox has been updated
 
         let category = this._tree.createElement("category");
         let method_type = "method_" + className;
@@ -42,7 +54,7 @@ export class Toolbox {
             block.setAttribute("type", method_type);
             let methodName = this._tree.createElement("field");
             methodName.setAttribute("name", "METHOD_NAME");
-            methodName.textContent = method;
+            methodName.textContent = method[0];
             block.appendChild(methodName);
             category.appendChild(block);
         }
@@ -131,21 +143,6 @@ export class BaseLevel extends Phaser.State {
     render() {
     }
 
-    // TODO: move this to toolbox
-    addClass(classObject: any) {
-        Blockly.Blocks.setClassMethods("Robot", [
-            ["turn left", "turnLeft"],
-            ["move forward", "moveForward"],
-            ["pick up object underneath", "pickUpUnder"],
-        ]);
-        this.toolbox.addClass("Robot", "assets/sprites/robot_3Dblue.png", [
-            "turnLeft",
-            "moveForward",
-            "pickUpUnder",
-        ]);
-        // TODO: broadcast event indicating toolbox has been updated
-    }
-
     isComplete(): boolean {
         for (let objective of this.objectives) {
             if (!objective.completed) {
@@ -190,6 +187,7 @@ export class AlphaLevel extends BaseLevel {
 
         let initialToolbox = document.getElementById("toolbox").textContent;
         this.toolbox = new Toolbox(initialToolbox);
+        this.toolbox.addClass("Robot", "assets/sprites/robot_3Dblue.png", model.Robot);
 
         this.objectives = [
             {
