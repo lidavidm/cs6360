@@ -6,16 +6,19 @@ function blocklyMethod(funcName: string, friendlyName:string){
 }
 
 export class World {
-  x:number = 0;
-  y:number = 0;
+  max_x:number = 0;
+  max_y:number = 0;
   private nextID = 0;
   //things might be on top of each other.
   private map: WorldObject[][][];
   private tilemap: Phaser.Tilemap;
 
-  constructor(x: number, y: number, tilemap: Phaser.Tilemap) {
-    this.x = x;
-    this.y = y;
+  constructor(max_x: number, max_y: number, tilemap: Phaser.Tilemap) {
+    if (max_x < 0 || max_y < 0) {
+      throw new RangeError("Invalid map size: (" + max_x + ", " + max_y + ")");
+    }
+    this.max_x = max_x;
+    this.max_y = max_y;
     this.tilemap = tilemap;
   }
 
@@ -24,17 +27,41 @@ export class World {
   }
 
   addObject(obj: WorldObject) {
-    this.map[obj.getX()][obj.getY()].push(obj);
+    let x:number = obj.getX();
+    let y:number = obj.getY();
+
+    if (this.boundsOkay(x, y)) {
+      this.map[obj.getX()][obj.getY()].push(obj);
+    }
+    else {
+      throw new RangeError("Trying to add object at invalid location: (" + x + ", " + y + ")");
+    }
+
   }
 
   getObject(x:number, y: number): WorldObject[] {
-    return this.map[x][y];
+    if (this.boundsOkay(x, y)) {
+        return this.map[x][y];
+    }
+    else {
+      throw new RangeError("Trying to get object at invalid location: (" + x + ", " + y + ")");
+    }
   }
 
   removeObject(obj: WorldObject) {
     let x:number = obj.getX();
     let y:number = obj.getY();
-    this.map[x][y].splice(this.map[x][y].indexOf(obj), 1);
+
+    if (this.boundsOkay(x,y)) {
+        this.map[x][y].splice(this.map[x][y].indexOf(obj), 1);
+    }
+    else {
+      throw new RangeError("Trying to remove object at invalid location: (" + x + ", " + y + ")");
+    }
+  }
+
+  private boundsOkay(x: number, y: number) {
+    return ( x < this.max_x && y < this.max_y && x >= 0 && y >= 0);
   }
 }
 
@@ -111,5 +138,15 @@ export class Robot extends WorldObject {
   @blocklyMethod("pickUpUnderneath", "Pick up what's underneath me")
   pickUpUnderneath() {
     //TODO
+  }
+}
+
+export class Resource extends WorldObject {
+
+  //additionally this could have methods for picking up?
+
+  constructor(name:string, id:number, x:number, y:number,
+              sprite:Phaser.Sprite, world: World) {
+    super(name, id, x, y, world);
   }
 }
