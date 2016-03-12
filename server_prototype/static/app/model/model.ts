@@ -5,6 +5,10 @@ function blocklyMethod(funcName: string, friendlyName:string){
   };
 }
 
+/**
+* Represents the enviornment of a single level.
+* Works in a 2D coordinate grid from 0 to max_x-1 and max_y-1
+*/
 export class World {
   max_x:number = 0;
   max_y:number = 0;
@@ -65,6 +69,10 @@ export class World {
   }
 }
 
+/**
+* Superclass for anything appearing in the world at some location.
+* All world objects have a name and a unique id.
+*/
 export abstract class WorldObject {
   protected name: string;
   protected id: number;
@@ -88,7 +96,7 @@ export abstract class WorldObject {
     return this.y;
   }
 
-  //TODO check location/orientation
+
   setX(x: number) {
     this.world.removeObject(this);
     this.x = x;
@@ -116,9 +124,16 @@ export enum Direction {
   WEST
 };
 
+/**
+* Superclass for any types of robots appearing in the world which can be
+* controlled by the player
+* Can optionally be constructed as holding something(s)
+*/
 export class Robot extends WorldObject {
   sprite: Phaser.Sprite;
   orientation: Direction;
+
+  //This robot's "inventory". TODO: size restrictions etc?
   protected holding: WorldObject[];
 
   //TODO: this needs to take in the robot's code i think?
@@ -135,7 +150,6 @@ export class Robot extends WorldObject {
 
   @blocklyMethod("moveForward", "Move forward")
   moveForward() {
-    //TODO
     switch (this.orientation) {
       case Direction.NORTH:
         this.setLoc(this.x, this.y+1);
@@ -154,7 +168,6 @@ export class Robot extends WorldObject {
 
   @blocklyMethod("moveBackward", "Move backward")
   moveBackward() {
-    //TODO
     switch (this.orientation) {
       case Direction.NORTH:
         this.setLoc(this.x, this.y-1);
@@ -171,6 +184,10 @@ export class Robot extends WorldObject {
     }
   }
 
+  /*
+  * picks up 1 object on the same tile as this robot. which object or what
+  * kind of object is unspecified.
+  */
   @blocklyMethod("pickUpUnderneath", "Pick up what's underneath me")
   pickUpUnderneath() {
     let targets: WorldObject[] = this.world.getObject(this.x, this.y);
@@ -189,10 +206,11 @@ export class Robot extends WorldObject {
   }
 }
 
+/**
+* Superclass for any type of resource object. Doesn't really do much right now
+* and will probably need to be refactored as gameplay elements are ironed out
+*/
 export class Resource extends WorldObject {
-
-  //additionally this could have methods for picking up?
-
   constructor(name:string, id:number, x:number, y:number,
               sprite:Phaser.Sprite, world: World) {
     super(name, id, x, y, world);
