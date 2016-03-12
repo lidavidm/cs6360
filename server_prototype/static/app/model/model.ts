@@ -284,7 +284,14 @@ export class Robot extends WorldObject {
                 let spr = (<Iron>target).sprite;
                 var tween = spr.game.add.tween(spr).to({
                     alpha: 0,
+                    width: 64,
+                    height: 64
                 }, 800, Phaser.Easing.Quadratic.InOut);
+                spr.game.add.tween(spr.position).to({
+                    x: spr.position.x - 24,
+                    y: spr.position.y - 24,
+                }, 800, Phaser.Easing.Quadratic.InOut).start();
+
                 tween.onComplete.add(() => {
                     this.world.removeObject(target);
                     spr.visible = false;
