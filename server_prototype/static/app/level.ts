@@ -164,6 +164,10 @@ export class BaseLevel extends Phaser.State {
         return this.allTooltips[this._tooltipIndex];
     }
 
+    run() {
+        this.zoom(true);
+    }
+
     zoom(zoomed: boolean) {
         if (zoomed) {
             this.zoomCamera.scale.set(2, 2);
@@ -174,7 +178,13 @@ export class BaseLevel extends Phaser.State {
     }
 }
 
+import model = require("model/model");
+
 export class AlphaLevel extends BaseLevel {
+    public modelWorld: model.World;
+    public robot: model.Robot;
+    public iron: model.Resource;
+
     init() {
         super.init();
 
@@ -214,22 +224,33 @@ export class AlphaLevel extends BaseLevel {
         this.game.load.image("tiles", "assets/tilesets/cave.png");
         this.game.load.image("robot", "assets/sprites/robot_3Dblue.png");
         this.game.load.image("iron", "assets/sprites/iron.png");
-
     }
 
     create() {
         super.create();
 
-        var map = this.game.add.tilemap("prototype");
+        let map = this.game.add.tilemap("prototype");
         map.addTilesetImage("cave", "tiles");
-        var layer = map.createLayer(
+        let layer = map.createLayer(
             "Tile Layer 1", this.game.width, this.game.height, this.background);
 
-        var robot = this.foreground.create(16, 16, "robot");
+        let robot = this.foreground.create(16, 16, "robot");
         robot.width = robot.height = 16;
 
-        var iron = this.foreground.create(80, 16, "iron");
+        let iron = this.foreground.create(80, 16, "iron");
 
         this.cursors = this.game.input.keyboard.createCursorKeys();
+
+        this.modelWorld = new model.World(map);
+        this.robot = new model.Robot("Robot", this.modelWorld.getNewID(),
+                                     1, 1, model.Direction.EAST,
+                                     robot, this.modelWorld);
+    }
+
+    run() {
+        super.run();
+        window.setTimeout(() => {
+            this.robot.moveForward();
+        }, 1000);
     }
 }
