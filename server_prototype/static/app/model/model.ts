@@ -109,8 +109,11 @@ export abstract class WorldObject {
   }
 }
 
-export enum Direction{
-  NORTH, SOUTH, EAST, WEST
+export enum Direction {
+  NORTH,
+  SOUTH,
+  EAST,
+  WEST
 };
 
 export class Robot extends WorldObject {
@@ -128,11 +131,39 @@ export class Robot extends WorldObject {
   @blocklyMethod("moveForward", "Move forward")
   moveForward() {
     //TODO
+    switch (this.orientation) {
+      case Direction.NORTH:
+        this.setLoc(this.x, this.y+1);
+        break;
+      case Direction.SOUTH:
+        this.setLoc(this.x, this.y-1);
+        break;
+      case Direction.EAST:
+        this.setLoc(this.x+1, this.y);
+        break;
+      case Direction.WEST:
+        this.setLoc(this.x-1, this.y);
+        break;
+    }
   }
 
   @blocklyMethod("moveBackward", "Move backward")
   moveBackward() {
     //TODO
+    switch (this.orientation) {
+      case Direction.NORTH:
+        this.setLoc(this.x, this.y-1);
+        break;
+      case Direction.SOUTH:
+        this.setLoc(this.x, this.y+1);
+        break;
+      case Direction.EAST:
+        this.setLoc(this.x-1, this.y);
+        break;
+      case Direction.WEST:
+        this.setLoc(this.x+1, this.y);
+        break;
+    }
   }
 
   @blocklyMethod("pickUpUnderneath", "Pick up what's underneath me")
