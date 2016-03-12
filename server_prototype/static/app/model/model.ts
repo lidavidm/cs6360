@@ -1,5 +1,5 @@
-function blocklyMethod(funcName: string, friendlyName:string){
-    return function (target:any, propertyKey:string, descriptor:PropertyDescriptor) {
+function blocklyMethod(funcName: string, friendlyName: string): PropertyDecorator {
+    return function(target: any, propertyKey: string) {
         target.funcName = funcName;
         target.friendlyName = friendlyName;
     };
@@ -10,8 +10,8 @@ function blocklyMethod(funcName: string, friendlyName:string){
  * Works in a 2D coordinate grid from 0 to max_x-1 and max_y-1
  */
 export class World {
-    private max_x:number = 0;
-    private max_y:number = 0;
+    private max_x: number = 0;
+    private max_y: number = 0;
     private nextID = 0;
     //things might be on top of each other.
     private map: WorldObject[][][];
