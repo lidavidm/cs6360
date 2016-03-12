@@ -182,6 +182,10 @@ export class Robot extends WorldObject {
         }
     }
 
+    inventory(): WorldObject[] {
+        return this.holding;
+    }
+
     @blocklyMethod("moveForward", "Move forward")
     moveForward(): Promise<{}> {
         switch (this.orientation) {
