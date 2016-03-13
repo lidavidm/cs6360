@@ -7,6 +7,7 @@ function blocklyMethod(funcName: string, friendlyName: string): PropertyDecorato
 
 export const TILE_WIDTH = 16;
 export const TILE_HEIGHT = 16;
+export const ANIM_DURATION = 800;
 
 /**
  * Represents the enviornment of a single level.
@@ -173,7 +174,6 @@ export abstract class WorldObject {
         else {
             throw new RangeError("Trying to move object to invalid location: (" + x + ", " + y + ")");
         }
-
     }
 }
 
@@ -235,7 +235,7 @@ export class Robot extends WorldObject {
             var tween = this.sprite.game.add.tween(this.sprite).to({
                 x: this.x * TILE_WIDTH,
                 y: this.y * TILE_HEIGHT,
-            }, 800, Phaser.Easing.Quadratic.InOut);
+            }, ANIM_DURATION, Phaser.Easing.Quadratic.InOut);
             tween.onComplete.add(() => {
                 resolve();
             });
@@ -260,12 +260,11 @@ export class Robot extends WorldObject {
             break;
         }
 
-        // Copied from moveForward. Should be the same.
         return new Promise((resolve, reject) => {
             var tween = this.sprite.game.add.tween(this.sprite).to({
                 x: this.x * TILE_WIDTH,
                 y: this.y * TILE_HEIGHT,
-            }, 800, Phaser.Easing.Quadratic.InOut);
+            }, ANIM_DURATION, Phaser.Easing.Quadratic.InOut);
             tween.onComplete.add(() => {
                 resolve();
             });
@@ -307,11 +306,11 @@ export class Robot extends WorldObject {
                     alpha: 0,
                     width: 64,
                     height: 64
-                }, 800, Phaser.Easing.Quadratic.InOut);
+                }, ANIM_DURATION, Phaser.Easing.Quadratic.InOut);
                 spr.game.add.tween(spr.position).to({
                     x: spr.position.x - 24,
                     y: spr.position.y - 24,
-                }, 800, Phaser.Easing.Quadratic.InOut).start();
+                }, ANIM_DURATION, Phaser.Easing.Quadratic.InOut).start();
 
                 tween.onComplete.add(() => {
                     this.world.removeObject(target);
