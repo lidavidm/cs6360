@@ -269,7 +269,7 @@ export class Robot extends WorldObject {
             }
         }
         //TODO: this will need to choose WHICH thing to pick up?
-        if (target != null) {
+        if (target !== null) {
             this.holding.push(target);
         }
 
