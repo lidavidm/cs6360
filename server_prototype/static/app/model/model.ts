@@ -95,6 +95,24 @@ export class World {
         }
     }
 
+    passable(x: number, y: number) {
+        let tile = (<any> this.tilemap.layer).data[x][y];
+
+        // Need explicit check because property may not be defined
+        if (tile.properties.passable === "false") {
+            return false;
+        }
+
+        let objects = this.getObjectByLoc(x, y);
+        for (let object of objects) {
+            if (!object.passable()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     private boundsOkay(x: number, y: number) {
         return ( x < this.maxX && y < this.maxY && x >= 0 && y >= 0);
     }
@@ -135,6 +153,10 @@ export abstract class WorldObject {
 
     getY(): number {
         return this.y;
+    }
+
+    passable(): boolean {
+        return true;
     }
 
     /*These set functions probably don't need animations/promises on them because
@@ -181,7 +203,22 @@ export enum Direction {
     NORTH,
     SOUTH,
     EAST,
-    WEST
+    WEST,
+};
+
+function offsetDirection(x: number, y: number,
+                         direction: Direction, distance=1):
+[number, number] {
+    switch (direction) {
+    case Direction.NORTH:
+        return [x, y - distance];
+    case Direction.SOUTH:
+        return [x, y + distance];
+    case Direction.EAST:
+        return [x + distance, y];
+    case Direction.WEST:
+        return [x - distance, y];
+    }
 };
 
 /**
@@ -214,21 +251,21 @@ export class Robot extends WorldObject {
         return this.holding;
     }
 
+    passable(): boolean {
+        return false;
+    }
+
     @blocklyMethod("moveForward", "move forward")
     moveForward(): Promise<{}> {
-        switch (this.orientation) {
-        case Direction.NORTH:
-            this.setLoc(this.x, this.y-1);
-            break;
-        case Direction.SOUTH:
-            this.setLoc(this.x, this.y+1);
-            break;
-        case Direction.EAST:
-            this.setLoc(this.x+1, this.y);
-            break;
-        case Direction.WEST:
-            this.setLoc(this.x-1, this.y);
-            break;
+        let [x, y] = offsetDirection(this.x, this.y, this.orientation, 1);
+
+        if (this.world.passable(x, y)) {
+            this.setLoc(x, y);
+        }
+        else {
+            return new Promise((resolve, reject) => {
+                reject("Can't move forward!");
+            });
         }
 
         return new Promise((resolve, reject) => {
@@ -245,19 +282,15 @@ export class Robot extends WorldObject {
 
     @blocklyMethod("moveBackward", "move backward")
     moveBackward(): Promise<{}> {
-        switch (this.orientation) {
-        case Direction.NORTH:
-            this.setLoc(this.x, this.y+1);
-            break;
-        case Direction.SOUTH:
-            this.setLoc(this.x, this.y-1);
-            break;
-        case Direction.EAST:
-            this.setLoc(this.x-1, this.y);
-            break;
-        case Direction.WEST:
-            this.setLoc(this.x+1, this.y);
-            break;
+        let [x, y] = offsetDirection(this.x, this.y, this.orientation, -1);
+
+        if (this.world.passable(x, y)) {
+            this.setLoc(x, y);
+        }
+        else {
+            return new Promise((resolve, reject) => {
+                reject("Can't move backward!");
+            });
         }
 
         return new Promise((resolve, reject) => {

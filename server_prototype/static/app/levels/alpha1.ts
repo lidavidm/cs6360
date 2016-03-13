@@ -87,6 +87,7 @@ export class Alpha1Level extends BaseLevel {
         super.run();
 
         let program = [
+            // this.robot.moveBackward.bind(this.robot),
             this.robot.moveForward.bind(this.robot),
             this.robot.moveForward.bind(this.robot),
             this.robot.moveForward.bind(this.robot),
