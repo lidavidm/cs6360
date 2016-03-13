@@ -20,6 +20,8 @@ export class World {
     //things might be on top of each other.
     private map: WorldObject[][][];
     private tilemap: Phaser.Tilemap;
+    //list of all objects by ID
+    private objects: { [id: number] : WorldObject} = {};
 
     constructor(tilemap: Phaser.Tilemap) {
         this.maxX = tilemap.width;
@@ -54,19 +56,30 @@ export class World {
 
         if (this.boundsOkay(x, y)) {
             this.map[x][y].push(obj);
+            this.objects[obj.getID()] = obj;
         }
         else {
             throw new RangeError("Trying to add object at invalid location: (" + x + ", " + y + ")");
         }
     }
 
-    getObject(x:number, y: number): WorldObject[] {
+    getObjectByLoc(x:number, y: number): WorldObject[] {
         if (this.boundsOkay(x, y)) {
             return this.map[x][y];
         }
         else {
             throw new RangeError("Trying to get object at invalid location: (" + x + ", " + y + ")");
         }
+    }
+
+    getObjectByID(id: number) {
+      let obj = this.objects[id];
+      if (typeof obj !== "undefined") {
+          return obj;
+      }
+      else {
+          throw new Error("Attempting to find invalid object id.");
+      }
     }
 
     removeObject(obj: WorldObject) {
@@ -98,13 +111,21 @@ export abstract class WorldObject {
 
     protected world: World;
 
-    constructor(name:string, id:number, x: number, y: number, world: World) {
+    constructor(name:string, x: number, y: number, world: World) {
         this.name = name;
+
+        //TODO: Validation
         this.x = x;
         this.y = y;
         this.world = world;
 
+        this.id = this.world.getNewID();
+
         this.world.addObject(this);
+    }
+
+    getID(): number {
+        return this.id;
     }
 
     getX(): number {
@@ -175,10 +196,10 @@ export class Robot extends WorldObject {
     //This robot's "inventory". TODO: size restrictions etc?
     protected holding: WorldObject[];
 
-    constructor(name: string, id: number, x: number, y: number,
+    constructor(name: string, x: number, y: number,
                 orientation: Direction, sprite: Phaser.Sprite, world: World,
                 holding?: WorldObject[]) {
-        super(name, id, x, y, world);
+        super(name, x, y, world);
         this.orientation = orientation;
         this.sprite = sprite;
         if (holding) {
@@ -259,7 +280,7 @@ export class Robot extends WorldObject {
      */
     @blocklyMethod("pickUpUnderneath", "pick up what's underneath me")
     pickUpUnderneath(): Promise<{}> {
-        let targets: WorldObject[] = this.world.getObject(this.x, this.y);
+        let targets: WorldObject[] = this.world.getObjectByLoc(this.x, this.y);
         let target: WorldObject = null;
 
         for (let i = 0; i < targets.length; i++) {
@@ -310,9 +331,9 @@ export class Robot extends WorldObject {
 export class Iron extends WorldObject {
     sprite: Phaser.Sprite;
 
-    constructor(name:string, id:number, x:number, y:number,
+    constructor(name:string, x:number, y:number,
                 sprite:Phaser.Sprite, world: World) {
-        super(name, id, x, y, world);
+        super(name, x, y, world);
         this.sprite = sprite;
     }
 }
