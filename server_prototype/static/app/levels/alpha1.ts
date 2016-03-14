@@ -118,6 +118,15 @@ export class Alpha1Level extends BaseLevel {
                     }
                     else if (diff === model.SpecialDiff.EndOfBlock) {
                         console.log("Block end");
+                        m.startComputation();
+                        for (let objective of this.objectives) {
+                            if (!objective.completed) {
+                                objective.completed = objective.predicate(this);
+                            }
+                        }
+
+                        this.event.broadcast(BaseLevel.OBJECTIVES_UPDATED);
+                        m.endComputation();
                     }
                     resolve();
                 }
@@ -129,15 +138,6 @@ export class Alpha1Level extends BaseLevel {
                         return;
                     }
                     tween.onComplete.add(() => {
-                        m.startComputation();
-                        for (let objective of this.objectives) {
-                            if (!objective.completed) {
-                                objective.completed = objective.predicate(this);
-                            }
-                        }
-
-                        this.event.broadcast(BaseLevel.OBJECTIVES_UPDATED);
-                        m.endComputation();
                         resolve();
                     });
                     tween.start();
