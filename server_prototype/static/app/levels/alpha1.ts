@@ -28,8 +28,8 @@ export class Alpha1Level extends BaseLevel {
                 objective: "Take the iron",
                 completed: false,
                 predicate: (level) => {
-                    let inventory = level.robot.inventory();
-                    return inventory.length > 0 && inventory[0] === level.iron;
+                    console.log("Robot is holding: ", level.robot.holding());
+                    return level.robot.holding() === level.iron;
                 }
             },
             {
@@ -81,50 +81,72 @@ export class Alpha1Level extends BaseLevel {
         this.robot = new model.Robot("Robot", 1, 1, model.Direction.EAST,
                                      robot, this.modelWorld);
         this.iron = new model.Iron("iron", 5, 1, iron, this.modelWorld);
+
+        this.modelWorld.log.recordInitEnd();
     }
 
     run() {
         super.run();
 
-        let program = [
-            // this.robot.moveBackward.bind(this.robot),
-            this.robot.moveForward.bind(this.robot),
-            this.robot.moveForward.bind(this.robot),
-            this.robot.moveForward.bind(this.robot),
-            this.robot.moveForward.bind(this.robot),
-            this.robot.pickUpUnderneath.bind(this.robot),
-            this.robot.moveBackward.bind(this.robot),
-            this.robot.moveBackward.bind(this.robot),
-            this.robot.moveBackward.bind(this.robot),
-            this.robot.moveBackward.bind(this.robot),
-            // this.robot.pickUpUnderneath.bind(this.robot),
-        ];
-        let programCounter = 0;
-        let executor = () => {
-            console.log(program[programCounter], programCounter);
-            var promise = program[programCounter++]();
+        this.robot.moveForward();
+        this.modelWorld.log.recordBlockEnd();
+        this.robot.moveForward();
+        this.modelWorld.log.recordBlockEnd();
+        this.robot.moveForward();
+        this.modelWorld.log.recordBlockEnd();
+        this.robot.moveForward();
+        this.modelWorld.log.recordBlockEnd();
+        this.robot.pickUpUnderneath();
+        this.modelWorld.log.recordBlockEnd();
+        this.robot.moveBackward();
+        this.modelWorld.log.recordBlockEnd();
+        this.robot.moveBackward();
+        this.modelWorld.log.recordBlockEnd();
+        this.robot.moveBackward();
+        this.modelWorld.log.recordBlockEnd();
+        this.robot.moveBackward();
+        this.modelWorld.log.recordBlockEnd();
 
-            m.startComputation();
-            for (let objective of this.objectives) {
-                if (!objective.completed) {
-                    objective.completed = objective.predicate(this);
+        console.log(this.modelWorld.log);
+        let reset = false;
+        this.modelWorld.log.replay((diff) => {
+            console.log(diff);
+            return new Promise((resolve, reject) => {
+                if (typeof diff === "number") {
+                    if (diff === model.SpecialDiff.EndOfInit) {
+                        reset = true;
+                    }
+                    else if (diff === model.SpecialDiff.EndOfBlock) {
+                        console.log("Block end");
+                    }
+                    resolve();
                 }
-            }
+                else if (reset) {
+                    let object = this.modelWorld.getObjectByID(diff.id);
+                    let tween = diff.tween(object);
+                    if (!tween) {
+                        resolve();
+                        return;
+                    }
+                    tween.onComplete.add(() => {
+                        m.startComputation();
+                        for (let objective of this.objectives) {
+                            if (!objective.completed) {
+                                objective.completed = objective.predicate(this);
+                            }
+                        }
 
-            this.event.broadcast(BaseLevel.OBJECTIVES_UPDATED);
-            m.endComputation();
-
-            if (programCounter >= program.length) {
-                return;
-            }
-
-            promise.then(() => {
-                executor();
-            }, (err: string) => {
-                alert("Error! " + err);
+                        this.event.broadcast(BaseLevel.OBJECTIVES_UPDATED);
+                        m.endComputation();
+                        resolve();
+                    });
+                    tween.start();
+                }
+                else {
+                    resolve();
+                }
             });
-        };
-        window.setTimeout(executor, 1000);
+        });
     }
 
     nextLevel(): Alpha2Level {

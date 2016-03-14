@@ -9,6 +9,154 @@ export const TILE_WIDTH = 16;
 export const TILE_HEIGHT = 16;
 export const ANIM_DURATION = 800;
 
+export interface SerializedObject {
+
+}
+
+export interface Serializable {
+    serialize(): SerializedObject;
+    deserialize(state: SerializedObject): void;
+}
+
+export interface PropertyDiff {
+    [property: string]: [any, any],
+}
+
+export enum SpecialDiff {
+    // When a block finishes executing.
+    EndOfBlock,
+    // When we have finished initializing world objects.
+    EndOfInit,
+}
+
+export interface ObjectDiff<T extends WorldObject> {
+    id: number,
+    properties: PropertyDiff,
+
+    tween: (object: T) => Phaser.Tween;
+    apply: (world: World, object: T) => void;
+}
+
+export type Diff<T extends WorldObject> = ObjectDiff<T> | SpecialDiff;
+
+abstract class BaseObjectDiff<T extends WorldObject> implements ObjectDiff<T> {
+    id: number;
+    properties: PropertyDiff;
+
+    constructor(id: number, properties: PropertyDiff) {
+        this.id = id;
+        this.properties = properties;
+    }
+
+    tween(object: T): Phaser.Tween {
+        return null;
+    }
+
+    apply(world: World, object: T) {
+        Object.keys(this.properties).forEach((property) => {
+            let change = this.properties[property];
+            (<any> object)[property] = change[1];
+            console.log("Setting (id: " + object.getID() + ")." + property + " to " + change[1]);
+        });
+    }
+}
+
+class MovementDiff<T extends WorldObject> extends BaseObjectDiff<T> {
+    constructor(id: number, properties: PropertyDiff) {
+        super(id, properties);
+    }
+
+    tween(object: T): Phaser.Tween {
+        let p = object.phaserObject();
+        if (p === null) return null;
+        return p.game.add.tween(p).to({
+            x: object.getX() * 16,
+            y: object.getY() * 16,
+        }, 800, Phaser.Easing.Quadratic.InOut);
+    }
+}
+
+class OrientationDiff<T extends WorldObject> extends BaseObjectDiff<T> {
+    constructor(id: number, properties: PropertyDiff) {
+        super(id, properties);
+    }
+
+    tween(object: T): Phaser.Tween {
+        return null;
+    }
+}
+
+class HoldingDiff extends BaseObjectDiff<Robot> {
+    constructor(id: number, properties: PropertyDiff) {
+        super(id, properties);
+    }
+
+    tween(object: Robot): Phaser.Tween {
+        let holding = object.holding();
+        if (holding === null) return;
+
+        let p = holding.phaserObject();
+        if (p === null) return;
+
+        return p.game.add.tween(p).to({
+            x: p.position.x - 16,
+            y: p.position.y - 16,
+            width: p.width + 32,
+            height: p.height + 32,
+            alpha: 0,
+        }, 800, Phaser.Easing.Quadratic.InOut);
+    }
+}
+
+export class Log {
+    log: Diff<any>[];
+    world: World;
+
+    constructor(world: World) {
+        this.log = [];
+        this.world = world;
+    }
+
+    record<T extends WorldObject>(diff: ObjectDiff<T>) {
+        this.log.push(diff);
+    }
+
+    recordInitEnd() {
+        this.log.push(SpecialDiff.EndOfInit);
+    }
+
+    recordBlockEnd() {
+        this.log.push(SpecialDiff.EndOfBlock);
+    }
+
+    replay(callback: (diff: Diff<any>) => Promise<{}>) {
+        let programCounter = 0;
+
+        let executor = () => {
+            let diff = this.log[programCounter];
+
+            if (typeof diff === "number") {
+                switch (diff) {
+                case SpecialDiff.EndOfBlock:
+                    break;
+                case SpecialDiff.EndOfInit:
+                    break;
+                }
+            }
+            else {
+                let object = this.world.getObjectByID(diff.id);
+                diff.apply(this.world, object);
+            }
+            callback(diff).then(() => {
+                programCounter++;
+                executor();
+            });
+        };
+
+        executor();
+    }
+}
+
 /**
  * Represents the enviornment of a single level.
  * Works in a 2D coordinate grid from 0 to maxX-1 and maxY-1
@@ -24,7 +172,11 @@ export class World {
     //list of all objects by ID
     private objects: { [id: number] : WorldObject} = {};
 
+    log: Log;
+
     constructor(tilemap: Phaser.Tilemap) {
+        this.log = new Log(this);
+
         this.maxX = tilemap.width;
         this.maxY = tilemap.height;
         this.map = [];
@@ -74,13 +226,13 @@ export class World {
     }
 
     getObjectByID(id: number) {
-      let obj = this.objects[id];
-      if (typeof obj !== "undefined") {
-          return obj;
-      }
-      else {
-          throw new Error("Attempting to find invalid object id.");
-      }
+        let obj = this.objects[id];
+        if (typeof obj !== "undefined") {
+            return obj;
+        }
+        else {
+            throw new Error("Attempting to find invalid object id.");
+        }
     }
 
     removeObject(obj: WorldObject) {
@@ -114,7 +266,7 @@ export class World {
     }
 
     private boundsOkay(x: number, y: number) {
-        return ( x < this.maxX && y < this.maxY && x >= 0 && y >= 0);
+        return x < this.maxX && y < this.maxY && x >= 0 && y >= 0;
     }
 }
 
@@ -132,15 +284,20 @@ export abstract class WorldObject {
 
     constructor(name:string, x: number, y: number, world: World) {
         this.name = name;
-
-        //TODO: Validation
-        this.x = x;
-        this.y = y;
         this.world = world;
-
         this.id = this.world.getNewID();
 
+        this.x = x;
+        this.y = y;
         this.world.addObject(this);
+
+
+        // Record ourselves in the log
+        this.setLoc(x, y);
+    }
+
+    phaserObject(): any {
+        return null;
     }
 
     getID(): number {
@@ -165,9 +322,14 @@ export abstract class WorldObject {
     */
     setX(x: number) {
         if (x >= 0 && x < this.world.getMaxX()) {
+            let origX = this.x;
             this.world.removeObject(this);
             this.x = x;
             this.world.addObject(this);
+
+            this.world.log.record(new MovementDiff(this.id, {
+                x: [origX, x],
+            }));
         }
         else {
             throw new RangeError("Trying to move object to invalid x coordinate: " + x);
@@ -176,9 +338,15 @@ export abstract class WorldObject {
 
     setY(y: number) {
         if (y >= 0 && y < this.world.getMaxY()) {
+            let origY = this.y;
+
             this.world.removeObject(this);
             this.y = y;
             this.world.addObject(this);
+
+            this.world.log.record(new MovementDiff(this.id, {
+                y: [origY, y],
+            }));
         }
         else {
             throw new RangeError("Trying to move object to invalid y coordinate: " + y);
@@ -188,10 +356,17 @@ export abstract class WorldObject {
     setLoc(x: number, y: number) {
         if (y >= 0 && y < this.world.getMaxY() &&
             x >= 0 && x < this.world.getMaxX()){
+            let origX = this.x, origY = this.y;
+
             this.world.removeObject(this);
             this.x = x;
             this.y = y;
             this.world.addObject(this);
+
+            this.world.log.record(new MovementDiff(this.id, {
+                x: [origX, x],
+                y: [origY, y],
+            }));
         }
         else {
             throw new RangeError("Trying to move object to invalid location: (" + x + ", " + y + ")");
@@ -230,25 +405,48 @@ export class Robot extends WorldObject {
     sprite: Phaser.Sprite;
     orientation: Direction;
 
-    //This robot's "inventory". TODO: size restrictions etc?
-    protected holding: WorldObject[];
+    protected holdingID: number;
 
     constructor(name: string, x: number, y: number,
-                orientation: Direction, sprite: Phaser.Sprite, world: World,
-                holding?: WorldObject[]) {
+                orientation: Direction, sprite: Phaser.Sprite, world: World) {
         super(name, x, y, world);
-        this.orientation = orientation;
         this.sprite = sprite;
-        if (holding) {
-            this.holding = holding;
-        }
-        else {
-            this.holding = [];
-        }
+
+        this.setOrientation(orientation);
+        this.holdingID = null;
+        this.hold(null);
     }
 
-    inventory(): WorldObject[] {
-        return this.holding;
+    phaserObject(): Phaser.Sprite {
+        return this.sprite;
+    }
+
+    setOrientation(orientation: Direction) {
+        this.world.log.record(new OrientationDiff(this.id, {
+            orientation: [this.orientation, orientation],
+        }));
+        this.orientation = orientation;
+    }
+
+    hold(object: WorldObject | number) {
+        let origID = this.holdingID;
+        if (typeof object === "number") {
+            this.holdingID = object;
+        }
+        else if (object === null) {
+            this.holdingID = null;
+        }
+        else {
+            this.holdingID = object.getID();
+        }
+        this.world.log.record(new HoldingDiff(this.id, {
+            holdingID: [origID, this.holdingID],
+        }));
+    }
+
+    holding(): WorldObject {
+        if (this.holdingID === null) return null;
+        return this.world.getObjectByID(this.holdingID);
     }
 
     passable(): boolean {
@@ -256,53 +454,21 @@ export class Robot extends WorldObject {
     }
 
     @blocklyMethod("moveForward", "move forward")
-    moveForward(): Promise<{}> {
+    moveForward() {
         let [x, y] = offsetDirection(this.x, this.y, this.orientation, 1);
 
         if (this.world.passable(x, y)) {
             this.setLoc(x, y);
         }
-        else {
-            return new Promise((resolve, reject) => {
-                reject("Can't move forward!");
-            });
-        }
-
-        return new Promise((resolve, reject) => {
-            var tween = this.sprite.game.add.tween(this.sprite).to({
-                x: this.x * TILE_WIDTH,
-                y: this.y * TILE_HEIGHT,
-            }, ANIM_DURATION, Phaser.Easing.Quadratic.InOut);
-            tween.onComplete.add(() => {
-                resolve();
-            });
-            tween.start();
-        });
     }
 
     @blocklyMethod("moveBackward", "move backward")
-    moveBackward(): Promise<{}> {
+    moveBackward() {
         let [x, y] = offsetDirection(this.x, this.y, this.orientation, -1);
 
         if (this.world.passable(x, y)) {
             this.setLoc(x, y);
         }
-        else {
-            return new Promise((resolve, reject) => {
-                reject("Can't move backward!");
-            });
-        }
-
-        return new Promise((resolve, reject) => {
-            var tween = this.sprite.game.add.tween(this.sprite).to({
-                x: this.x * TILE_WIDTH,
-                y: this.y * TILE_HEIGHT,
-            }, ANIM_DURATION, Phaser.Easing.Quadratic.InOut);
-            tween.onComplete.add(() => {
-                resolve();
-            });
-            tween.start();
-        });
     }
 
     /*
@@ -311,7 +477,7 @@ export class Robot extends WorldObject {
      * pick up animation plays, or rejects if the object is not Iron
      */
     @blocklyMethod("pickUpUnderneath", "pick up what's underneath me")
-    pickUpUnderneath(): Promise<{}> {
+    pickUpUnderneath() {
         let targets: WorldObject[] = this.world.getObjectByLoc(this.x, this.y);
         let target: WorldObject = null;
 
@@ -322,37 +488,9 @@ export class Robot extends WorldObject {
             }
         }
         //TODO: this will need to choose WHICH thing to pick up?
-        if (target !== null) {
-            this.holding.push(target);
+        if (target !== null && this.holdingID === null) {
+            this.hold(target);
         }
-
-        return new Promise((resolve, reject) => {
-            if (target === null) {
-                reject("Nothing to pick up");
-            }
-            else if (!(target instanceof Iron)){
-                reject("I can only pick up iron");
-            }
-            else {
-                let spr = (<Iron>target).sprite;
-                var tween = spr.game.add.tween(spr).to({
-                    alpha: 0,
-                    width: 64,
-                    height: 64
-                }, ANIM_DURATION, Phaser.Easing.Quadratic.InOut);
-                spr.game.add.tween(spr.position).to({
-                    x: spr.position.x - 24,
-                    y: spr.position.y - 24,
-                }, ANIM_DURATION, Phaser.Easing.Quadratic.InOut).start();
-
-                tween.onComplete.add(() => {
-                    this.world.removeObject(target);
-                    spr.visible = false;
-                    resolve();
-                });
-                tween.start();
-            }
-        });
     }
 }
 
@@ -367,5 +505,9 @@ export class Iron extends WorldObject {
                 sprite:Phaser.Sprite, world: World) {
         super(name, x, y, world);
         this.sprite = sprite;
+    }
+
+    phaserObject(): Phaser.Sprite {
+        return this.sprite;
     }
 }

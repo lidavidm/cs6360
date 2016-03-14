@@ -26,8 +26,7 @@ export class Alpha2Level extends BaseLevel {
                 objective: "Take the iron",
                 completed: false,
                 predicate: (level) => {
-                    let inventory = level.robot.inventory();
-                    return inventory.length > 0 && inventory[0] === level.iron;
+                    return level.robot.holding() === level.iron;
                 }
             },
             {
