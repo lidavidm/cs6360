@@ -25,7 +25,11 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 var block = Blockly.Block.getById(event.blockId);
                 typecheck(event, block);
                 updateObjectImage(event, block);
-                console.log(Blockly.Python.workspaceToCode(controller.workspace));
+                let code = Blockly.Python.workspaceToCode(controller.workspace);
+                if (controller.level) {
+                    controller.level.setCode(code);
+                    console.log(code);
+                }
             },
         };
 

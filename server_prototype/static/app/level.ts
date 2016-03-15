@@ -95,6 +95,8 @@ export class BaseLevel extends Phaser.State {
     protected middle: Phaser.Group;
     protected foreground: Phaser.Group;
 
+    protected code: string;
+
     /**
      * The event that should be fired if objectives are updated.
      */
@@ -160,6 +162,10 @@ export class BaseLevel extends Phaser.State {
     nextTooltips() {
         this._tooltipIndex =
             (this._tooltipIndex + 1) % this.allTooltips.length;
+    }
+
+    setCode(code: string) {
+        this.code = code;
     }
 
     tooltips(): TooltipView.Tooltip[] {

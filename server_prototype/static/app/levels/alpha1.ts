@@ -109,34 +109,10 @@ export class Alpha1Level extends BaseLevel {
         // this.robot.moveBackward();
         // this.modelWorld.log.recordBlockEnd();
 
-        var initCode = `class Robot:
-    def __init__(self, id):
-        self.id = id
-    def moveForward(self):
-        methodCall(self.id, "moveForward", [])
-    def moveBackward(self):
-        methodCall(self.id, "moveBackward", [])
-    def pickUpUnderneath(self):
-        methodCall(self.id, "pickUpUnderneath", [])`
+        var initCode = ``
 
-        var code = `robot.moveForward()
-recordBlockEnd()
-robot.moveForward()
-recordBlockEnd()
-robot.moveForward()
-recordBlockEnd()
-robot.moveForward()
-recordBlockEnd()
-robot.pickUpUnderneath()
-recordBlockEnd()
-robot.moveBackward()
-recordBlockEnd()
-robot.moveBackward()
-recordBlockEnd()
-robot.moveBackward()
-recordBlockEnd()
-robot.moveBackward()
-recordBlockEnd()`
+        var code = this.code;
+        console.log(code);
 
         this.interpreter = new python.Interpreter(initCode, code, this.modelWorld);
         this.interpreter.instantiateObject('robot', 'Robot', 0);

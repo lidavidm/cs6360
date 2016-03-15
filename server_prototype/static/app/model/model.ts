@@ -117,6 +117,13 @@ export class Log {
         this.world = world;
     }
 
+    /**
+     * Clears log entries after the end of initialization.
+     */
+    reset() {
+        // TODO:
+    }
+
     record<T extends WorldObject>(diff: ObjectDiff<T>) {
         this.log.push(diff);
     }
@@ -125,7 +132,8 @@ export class Log {
         this.log.push(SpecialDiff.EndOfInit);
     }
 
-    recordBlockEnd() {
+    recordBlockEnd(block_id?: any) {
+        // TODO: record the block ID
         this.log.push(SpecialDiff.EndOfBlock);
     }
 
