@@ -24,14 +24,10 @@ export class Interpreter {
     // for example, class definitions go here
     private _initCode: string;
 
-    // the player's program
-    private _code: string;
-
     // the world that this interpreter updates
     private _world: model.World;
 
-    constructor(initCode: string, code: string, world: model.World) {
-        this._code = code;
+    constructor(initCode: string, world: model.World) {
         this._world = world;
 
         var recordBlockEndDef = 'def recordBlockEnd(block_id=None):\n\tjsRecordBlockEnd(block_id)\n'
@@ -75,12 +71,11 @@ export class Interpreter {
      * Run the player's program to generate a diff log for
      * this interpreter's world
      */
-    run() {
-        var program = this._initCode + '\n' + this._code;
+    run(code: string) {
+        var program = this._initCode + '\n' + code;
         console.log("Running:", program);
-        var myPromise = Sk.misceval.asyncToPromise(function() {
+        return Sk.misceval.asyncToPromise(function() {
             return Sk.importMainWithBody("<stdin>", false, program, true);
         });
-        return myPromise;
     }
 }

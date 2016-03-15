@@ -85,60 +85,52 @@ export class Alpha1Level extends BaseLevel {
         this.iron = new model.Iron("iron", 5, 1, iron, this.modelWorld);
 
         this.modelWorld.log.recordInitEnd();
+
+        this.interpreter = new python.Interpreter("", this.modelWorld);
+        this.interpreter.instantiateObject("robot", "Robot", this.robot.getID());
     }
 
     run() {
         super.run();
+        this.modelWorld.log.reset();
 
-        var initCode = ``
-
-        var code = this.code;
-        console.log(code);
-
-        this.interpreter = new python.Interpreter(initCode, code, this.modelWorld);
-        this.interpreter.instantiateObject('robot', 'Robot', 0);
-        this.interpreter.run().then(() => {
-            console.log(this.modelWorld.log);
-            let reset = false;
-            this.modelWorld.log.replay((diff) => {
-                console.log(diff);
-                return new Promise((resolve, reject) => {
-                    if (typeof diff === "number") {
-                        if (diff === model.SpecialDiff.EndOfInit) {
-                            reset = true;
-                        }
-                        else if (diff === model.SpecialDiff.EndOfBlock) {
-                            console.log("Block end");
-                            m.startComputation();
-                            for (let objective of this.objectives) {
-                                if (!objective.completed) {
-                                    objective.completed = objective.predicate(this);
-                                }
-                            }
-
-                            this.event.broadcast(BaseLevel.OBJECTIVES_UPDATED);
-                            m.endComputation();
-                        }
-                        console.log("Resolved");
-                        resolve();
-                    }
-                    else if (reset) {
-                        let object = this.modelWorld.getObjectByID(diff.id);
-                        let tween = diff.tween(object);
-                        if (!tween) {
-                            resolve();
-                            return;
-                        }
-                        tween.onComplete.add(() => {
-                            resolve();
-                        });
-                        tween.start();
-                    }
-                    else {
-                        resolve();
-                    }
-                });
+        return new Promise((resolveOuter, rejectOuter) => {
+            this.interpreter.run(this.code).then(() => {
+                console.log(this.modelWorld.log);
+                let reset = false;
+                this.modelWorld.log.replay(this.runDiff.bind(this));
             });
+        });
+    }
+
+    runDiff(diff: model.Diff<any>) {
+        return new Promise((resolve, reject) => {
+            if (typeof diff === "number") {
+                if (diff === model.SpecialDiff.EndOfBlock) {
+                    m.startComputation();
+                    for (let objective of this.objectives) {
+                        if (!objective.completed) {
+                            objective.completed = objective.predicate(this);
+                        }
+                    }
+
+                    this.event.broadcast(BaseLevel.OBJECTIVES_UPDATED);
+                    m.endComputation();
+                }
+                resolve();
+            }
+            else {
+                let object = this.modelWorld.getObjectByID(diff.id);
+                let tween = diff.tween(object);
+                if (!tween) {
+                    resolve();
+                    return;
+                }
+                tween.onComplete.add(() => {
+                    resolve();
+                });
+                tween.start();
+            }
         });
     }
 

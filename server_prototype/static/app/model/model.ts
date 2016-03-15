@@ -121,7 +121,7 @@ export class Log {
      * Clears log entries after the end of initialization.
      */
     reset() {
-        // TODO:
+        this.log.splice(this.log.indexOf(SpecialDiff.EndOfInit) + 1);
     }
 
     record<T extends WorldObject>(diff: ObjectDiff<T>) {
@@ -139,6 +139,7 @@ export class Log {
 
     replay(callback: (diff: Diff<any>) => Promise<{}>) {
         let programCounter = 0;
+        let reset = false;
 
         let executor = () => {
             let diff = this.log[programCounter];
@@ -148,6 +149,7 @@ export class Log {
                 case SpecialDiff.EndOfBlock:
                     break;
                 case SpecialDiff.EndOfInit:
+                    reset = true;
                     break;
                 }
             }
@@ -155,12 +157,21 @@ export class Log {
                 let object = this.world.getObjectByID(diff.id);
                 diff.apply(this.world, object);
             }
-            callback(diff).then(() => {
+
+            if (reset) {
+                callback(diff).then(() => {
+                    programCounter++;
+                    if (programCounter < this.log.length) {
+                        executor();
+                    }
+                });
+            }
+            else {
                 programCounter++;
                 if (programCounter < this.log.length) {
                     executor();
                 }
-            });
+            }
         };
 
         executor();
