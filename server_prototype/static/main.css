@@ -206,6 +206,11 @@ body {
     background: red;
 }
 
+#gameControls button.reset {
+    background: red;
+    width: 100%;
+}
+
 #gameControls button.pause {
     background: purple;
 }

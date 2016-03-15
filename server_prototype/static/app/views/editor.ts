@@ -23,8 +23,23 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             workspace: null,
             changeListener: function(event: any) {
                 var block = Blockly.Block.getById(event.blockId);
-                typecheck(event, block);
-                updateObjectImage(event, block);
+                if (block) {
+                    typecheck(event, block);
+                    updateObjectImage(event, block);
+                    console.log(block);
+                    if (block["type"].slice(0, 6) === "method") {
+                        if (block.getParent()) {
+                            if (block.comment) {
+                                block.comment.setVisible(false);
+                            }
+                            block.setCommentText(null);
+                        }
+                        else {
+                            block.setCommentText("This method is lonely! Help it with the tell block.");
+                            block.comment.setVisible(true);
+                        }
+                    }
+                }
                 let code = Blockly.Python.workspaceToCode(controller.workspace);
                 if (controller.level) {
                     controller.level.setCode(code);

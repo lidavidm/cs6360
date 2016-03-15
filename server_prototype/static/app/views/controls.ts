@@ -29,7 +29,7 @@ export const Component: _mithril.MithrilComponent<ControlsController> = <any> {
             }, "Run"));
         }
         else if (args.doneExecuting()) {
-            buttons.push(m(<any> "button.abort", {
+            buttons.push(m(<any> "button.reset", {
                 onclick: function() {
                     if (args.onreset) {
                         args.onreset();
