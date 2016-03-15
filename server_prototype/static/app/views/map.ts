@@ -47,10 +47,15 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
 
                 onrun: () => {
                     args.executing(true);
-                    args.level.run();
+                    args.level.run().then(() => {
+                        m.startComputation();
+                        args.executing(false);
+                        m.endComputation();
+                    });
                 },
 
                 onabort: () => {
+                    args.level.abort();
                 },
             }),
         ]);

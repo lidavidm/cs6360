@@ -9,7 +9,6 @@ export class Alpha1Level extends BaseLevel {
     public modelWorld: model.World;
     public robot: model.Robot;
     public iron: model.Iron;
-    public interpreter: python.Interpreter
 
     init() {
         super.init();
@@ -88,50 +87,6 @@ export class Alpha1Level extends BaseLevel {
 
         this.interpreter = new python.Interpreter("", this.modelWorld);
         this.interpreter.instantiateObject("robot", "Robot", this.robot.getID());
-    }
-
-    run() {
-        super.run();
-        this.modelWorld.log.reset();
-
-        return new Promise((resolveOuter, rejectOuter) => {
-            this.interpreter.run(this.code).then(() => {
-                console.log(this.modelWorld.log);
-                let reset = false;
-                this.modelWorld.log.replay(this.runDiff.bind(this));
-            });
-        });
-    }
-
-    runDiff(diff: model.Diff<any>) {
-        return new Promise((resolve, reject) => {
-            if (typeof diff === "number") {
-                if (diff === model.SpecialDiff.EndOfBlock) {
-                    m.startComputation();
-                    for (let objective of this.objectives) {
-                        if (!objective.completed) {
-                            objective.completed = objective.predicate(this);
-                        }
-                    }
-
-                    this.event.broadcast(BaseLevel.OBJECTIVES_UPDATED);
-                    m.endComputation();
-                }
-                resolve();
-            }
-            else {
-                let object = this.modelWorld.getObjectByID(diff.id);
-                let tween = diff.tween(object);
-                if (!tween) {
-                    resolve();
-                    return;
-                }
-                tween.onComplete.add(() => {
-                    resolve();
-                });
-                tween.start();
-            }
-        });
     }
 
     nextLevel(): Alpha2Level {

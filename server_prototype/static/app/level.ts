@@ -2,6 +2,7 @@ declare var Blockly: any;
 
 import TooltipView = require("views/tooltip");
 import PubSub = require("pubsub");
+import * as python from "./execution/python";
 
 export interface Objective<T> {
     objective: string,
@@ -95,7 +96,11 @@ export class BaseLevel extends Phaser.State {
     protected middle: Phaser.Group;
     protected foreground: Phaser.Group;
 
+    protected modelWorld: model.World;
     protected code: string;
+    protected interpreter: python.Interpreter
+
+    private _abort: boolean;
 
     /**
      * The event that should be fired if objectives are updated.
@@ -109,6 +114,8 @@ export class BaseLevel extends Phaser.State {
         this._tooltipIndex = 0;
         this.objectives = [];
         this.event = new PubSub.PubSub();
+        this._abort = false;
+        this.code = "";
 
         this.init();
     }
@@ -172,8 +179,65 @@ export class BaseLevel extends Phaser.State {
         return this.allTooltips[this._tooltipIndex];
     }
 
-    run() {
+    abort() {
+        this._abort = true;
+    }
+
+    run(): Promise<{}> {
         this.zoom(true);
+
+        this.modelWorld.log.reset();
+
+        return new Promise((resolveOuter, rejectOuter) => {
+            this.interpreter.run(this.code).then(() => {
+                console.log(this.modelWorld.log);
+                let reset = false;
+                this.modelWorld.log.replay(this.runDiff.bind(this)).then(() => {
+                    console.log("Done with replay");
+                    this.zoom(false);
+                    resolveOuter();
+                });
+            }, (err: any) => {
+                console.log(err);
+                resolveOuter();
+            });
+        });
+    }
+
+    runDiff(diff: model.Diff<any>) {
+        return new Promise((resolve, reject) => {
+            if (this._abort) {
+                reject();
+                this._abort = false;
+            }
+
+            if (typeof diff === "number") {
+                if (diff === model.SpecialDiff.EndOfBlock) {
+                    m.startComputation();
+                    for (let objective of this.objectives) {
+                        if (!objective.completed) {
+                            objective.completed = objective.predicate(this);
+                        }
+                    }
+
+                    this.event.broadcast(BaseLevel.OBJECTIVES_UPDATED);
+                    m.endComputation();
+                }
+                resolve();
+            }
+            else {
+                let object = this.modelWorld.getObjectByID(diff.id);
+                let tween = diff.tween(object);
+                if (!tween) {
+                    resolve();
+                    return;
+                }
+                tween.onComplete.add(() => {
+                    resolve();
+                });
+                tween.start();
+            }
+        });
     }
 
     zoom(zoomed: boolean) {

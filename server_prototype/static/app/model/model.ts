@@ -137,44 +137,51 @@ export class Log {
         this.log.push(SpecialDiff.EndOfBlock);
     }
 
-    replay(callback: (diff: Diff<any>) => Promise<{}>) {
-        let programCounter = 0;
-        let reset = false;
+    replay(callback: (diff: Diff<any>) => Promise<{}>): Promise<{}> {
+        return new Promise((resolve, reject) => {
+            let programCounter = 0;
+            let reset = false;
 
-        let executor = () => {
-            let diff = this.log[programCounter];
-
-            if (typeof diff === "number") {
-                switch (diff) {
-                case SpecialDiff.EndOfBlock:
-                    break;
-                case SpecialDiff.EndOfInit:
-                    reset = true;
-                    break;
-                }
-            }
-            else {
-                let object = this.world.getObjectByID(diff.id);
-                diff.apply(this.world, object);
-            }
-
-            if (reset) {
-                callback(diff).then(() => {
-                    programCounter++;
-                    if (programCounter < this.log.length) {
-                        executor();
-                    }
-                });
-            }
-            else {
+            let advanceStep = () => {
                 programCounter++;
                 if (programCounter < this.log.length) {
                     executor();
                 }
-            }
-        };
+                else {
+                    resolve();
+                }
+            };
 
-        executor();
+            let executor = () => {
+                let diff = this.log[programCounter];
+
+                if (typeof diff === "number") {
+                    switch (diff) {
+                    case SpecialDiff.EndOfBlock:
+                        break;
+                    case SpecialDiff.EndOfInit:
+                        reset = true;
+                        break;
+                    }
+                }
+                else {
+                    let object = this.world.getObjectByID(diff.id);
+                    diff.apply(this.world, object);
+                }
+
+                if (reset) {
+                    callback(diff).then(advanceStep, () => {
+                        resolve();
+                        // aborted. do nothing.
+                    });
+                }
+                else {
+                    advanceStep();
+                }
+            };
+
+            executor();
+        });
     }
 }
 
