@@ -34,7 +34,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         };
 
         function typecheck(event: any, block: any) {
-            if (block.parentBlock_) {
+            if (block && block.parentBlock_) {
                 var parent = block.parentBlock_;
                 var result = block_utils.typecheckTell(parent);
                 if (result) {
@@ -45,7 +45,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         }
 
         function updateObjectImage(event: any, block: any) {
-            if (block["type"] === "variables_get") {
+            if (block && block["type"] === "variables_get") {
                 block.validate();
             }
         }
