@@ -12,6 +12,6 @@ Blockly.Python['method'] = function(block) {
 Blockly.Python['tell'] = function(block) {
     var object = Blockly.Python.valueToCode(block, "OBJECT", Blockly.Python.ORDER_NONE) || 'None';
     var method = Blockly.Python.valueToCode(block, "METHOD", Blockly.Python.ORDER_NONE) || 'id';
-    var code = object + "." + method + "()";
+    var code = object + "." + method + "()\n";
     return code;
 };
