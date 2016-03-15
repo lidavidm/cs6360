@@ -149,7 +149,9 @@ export class Log {
             }
             callback(diff).then(() => {
                 programCounter++;
-                executor();
+                if (programCounter < this.log.length) {
+                    executor();
+                }
             });
         };
 

@@ -4,9 +4,6 @@
 [submodule "server_prototype/static/closure-library"]
 	path = server_prototype/static/closure-library
 	url = https://github.com/google/closure-library.git
-[submodule "server_prototype/static/pypyjs-release"]
-	path = server_prototype/static/pypyjs
-	url = https://github.com/pypyjs/pypyjs-release.git
 [submodule "server_prototype/static/assets"]
 	path = server_prototype/static/assets
 	url = https://github.com/lidavidm/cs6360-assets.git

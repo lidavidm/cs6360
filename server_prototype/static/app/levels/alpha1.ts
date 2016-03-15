@@ -1,6 +1,7 @@
 import * as model from "../model/model";
 import {BaseLevel, Toolbox} from "../level";
 import * as TooltipView from "../views/tooltip";
+import * as python from "../execution/python";
 
 import {Alpha2Level} from "./alpha2";
 
@@ -8,6 +9,7 @@ export class Alpha1Level extends BaseLevel {
     public modelWorld: model.World;
     public robot: model.Robot;
     public iron: model.Iron;
+    public interpreter: python.Interpreter
 
     init() {
         super.init();
@@ -88,24 +90,57 @@ export class Alpha1Level extends BaseLevel {
     run() {
         super.run();
 
-        this.robot.moveForward();
-        this.modelWorld.log.recordBlockEnd();
-        this.robot.moveForward();
-        this.modelWorld.log.recordBlockEnd();
-        this.robot.moveForward();
-        this.modelWorld.log.recordBlockEnd();
-        this.robot.moveForward();
-        this.modelWorld.log.recordBlockEnd();
-        this.robot.pickUpUnderneath();
-        this.modelWorld.log.recordBlockEnd();
-        this.robot.moveBackward();
-        this.modelWorld.log.recordBlockEnd();
-        this.robot.moveBackward();
-        this.modelWorld.log.recordBlockEnd();
-        this.robot.moveBackward();
-        this.modelWorld.log.recordBlockEnd();
-        this.robot.moveBackward();
-        this.modelWorld.log.recordBlockEnd();
+        // this.robot.moveForward();
+        // this.modelWorld.log.recordBlockEnd();
+        // this.robot.moveForward();
+        // this.modelWorld.log.recordBlockEnd();
+        // this.robot.moveForward();
+        // this.modelWorld.log.recordBlockEnd();
+        // this.robot.moveForward();
+        // this.modelWorld.log.recordBlockEnd();
+        // this.robot.pickUpUnderneath();
+        // this.modelWorld.log.recordBlockEnd();
+        // this.robot.moveBackward();
+        // this.modelWorld.log.recordBlockEnd();
+        // this.robot.moveBackward();
+        // this.modelWorld.log.recordBlockEnd();
+        // this.robot.moveBackward();
+        // this.modelWorld.log.recordBlockEnd();
+        // this.robot.moveBackward();
+        // this.modelWorld.log.recordBlockEnd();
+
+        var initCode = `class Robot:
+    def __init__(self, id):
+        self.id = id
+    def moveForward(self):
+        methodCall(self.id, "moveForward", [])
+    def moveBackward(self):
+        methodCall(self.id, "moveBackward", [])
+    def pickUpUnderneath(self):
+        methodCall(self.id, "pickUpUnderneath", [])`
+
+        var code = `robot.moveForward()
+recordBlockEnd()
+robot.moveForward()
+recordBlockEnd()
+robot.moveForward()
+recordBlockEnd()
+robot.moveForward()
+recordBlockEnd()
+robot.pickUpUnderneath()
+recordBlockEnd()
+robot.moveBackward()
+recordBlockEnd()
+robot.moveBackward()
+recordBlockEnd()
+robot.moveBackward()
+recordBlockEnd()
+robot.moveBackward()
+recordBlockEnd()`
+
+        this.interpreter = new python.Interpreter(initCode, code, this.modelWorld);
+        this.interpreter.instantiateObject('robot', 'Robot', 0);
+        this.interpreter.run();
 
         console.log(this.modelWorld.log);
         let reset = false;

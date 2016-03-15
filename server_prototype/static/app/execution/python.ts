@@ -1,50 +1,72 @@
-declare var pypyjs: any;
+declare var Sk: any;
+import * as model from "../model/model";
 
 /**
- * An instance of a PyPy.js interpreter.
+ * An instance of a Skulpt interpreter.
  */
 export class Interpreter {
-    private _vm: any;
+    // code that is run before the player's program is executed
+    // for example, class definitions go here
+    private _initCode: string;
+
+    // the player's program
     private _code: string;
 
-    constructor(code: string) {
+    // the world that this interpreter updates
+    private _world: model.World;
+
+    constructor(initCode: string, code: string, world: model.World) {
         this._code = code;
+        this._world = world;
 
-        this._vm = new pypyjs({
-            totalMemory: 128 * 1024 * 1024,
-            stdout: this._handle_stdout,
-        });
+        var recordBlockEndDef = 'def recordBlockEnd():\n\tjsRecordBlockEnd()\n'
+        this._initCode = recordBlockEndDef + initCode;
 
-        this._vm.ready().then(() => {
-            this._vm.exec(`
-# Workaround for lack of __main__. See last commit in
-# https://github.com/pypyjs/pypyjs/issues/161
-import bdb
-import types
+        /**
+         * Executes a method call with an object (identified by id) in this 
+         * interpreter's world. Called by interpreted python code.
+         */
+        Sk.builtins.methodCall = new Sk.builtin.func(
+            function (id: number, methodName: string, args: any[]) {
+                id = Sk.ffi.remapToJs(id);
+                methodName = Sk.ffi.remapToJs(methodName);
+                args = Sk.ffi.remapToJs(args);
 
-scope = {'__name__': '__main__', '__package__': None}
-main = types.ModuleType('__main__')
-main.__dict__.update(scope)
+                var obj: any = world.getObjectByID(id);
+                obj[methodName].apply(obj, args);
+            }
+        );
 
-import sys
-sys.modules['__main__'] = main
-`);
+        /**
+         * Records the end of a block in the world's log. Called by python
+         * code that is injected during the code generation phase.
+         */
+        Sk.builtins.jsRecordBlockEnd = new Sk.builtin.func(function () {
+            world.log.recordBlockEnd();
         });
     }
 
-    step() {
-        this._vm.ready().then(() => {
-
-        });
+    /**
+     * A method for initializing objects that exist at the start of the level.
+     */
+    instantiateObject(varName: string, className: string, id: number) {
+        var line = '\n' + varName + ' = ' + className + '(' + id + ')';
+        this._initCode = this._initCode + line;
     }
 
+    /**
+     * Run the player's program to generate a diff log for 
+     * this interpreter's world
+     */
     run() {
-        this._vm.ready().then(() => {
-            this._vm.exec(this._code);
+        var program = this._initCode + '\n' + this._code;
+        var myPromise = Sk.misceval.asyncToPromise(function() {
+            return Sk.importMainWithBody("<stdin>", false, program, true);
         });
-    }
-
-    _handle_stdout(data: string) {
-        console.log(data);
+        myPromise.then(function(mod: any) {
+            console.log('success');
+        }, function(err: any) {
+            console.log(err.toString());
+        });
     }
 }
