@@ -34,7 +34,7 @@ export class Interpreter {
         this._code = code;
         this._world = world;
 
-        var recordBlockEndDef = 'def recordBlockEnd():\n\tjsRecordBlockEnd()\n'
+        var recordBlockEndDef = 'def recordBlockEnd(block_id=None):\n\tjsRecordBlockEnd(block_id)\n'
         this._initCode = PROXY_CLASS + recordBlockEndDef + initCode;
 
         /**
@@ -57,8 +57,9 @@ export class Interpreter {
          * Records the end of a block in the world's log. Called by python
          * code that is injected during the code generation phase.
          */
-        Sk.builtins.jsRecordBlockEnd = new Sk.builtin.func(function(block_id) {
-            world.log.recordBlockEnd(block_id);
+        Sk.builtins.jsRecordBlockEnd = new Sk.builtin.func(function(blockID: any) {
+            blockID = Sk.ffi.remapToJs(blockID);
+            world.log.recordBlockEnd(blockID);
         });
     }
 
@@ -76,13 +77,10 @@ export class Interpreter {
      */
     run() {
         var program = this._initCode + '\n' + this._code;
+        console.log("Running:", program);
         var myPromise = Sk.misceval.asyncToPromise(function() {
             return Sk.importMainWithBody("<stdin>", false, program, true);
         });
-        myPromise.then(function(mod: any) {
-            console.log('success');
-        }, function(err: any) {
-            console.log(err.toString());
-        });
+        return myPromise;
     }
 }

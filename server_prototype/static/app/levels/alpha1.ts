@@ -90,25 +90,6 @@ export class Alpha1Level extends BaseLevel {
     run() {
         super.run();
 
-        // this.robot.moveForward();
-        // this.modelWorld.log.recordBlockEnd();
-        // this.robot.moveForward();
-        // this.modelWorld.log.recordBlockEnd();
-        // this.robot.moveForward();
-        // this.modelWorld.log.recordBlockEnd();
-        // this.robot.moveForward();
-        // this.modelWorld.log.recordBlockEnd();
-        // this.robot.pickUpUnderneath();
-        // this.modelWorld.log.recordBlockEnd();
-        // this.robot.moveBackward();
-        // this.modelWorld.log.recordBlockEnd();
-        // this.robot.moveBackward();
-        // this.modelWorld.log.recordBlockEnd();
-        // this.robot.moveBackward();
-        // this.modelWorld.log.recordBlockEnd();
-        // this.robot.moveBackward();
-        // this.modelWorld.log.recordBlockEnd();
-
         var initCode = ``
 
         var code = this.code;
@@ -116,46 +97,47 @@ export class Alpha1Level extends BaseLevel {
 
         this.interpreter = new python.Interpreter(initCode, code, this.modelWorld);
         this.interpreter.instantiateObject('robot', 'Robot', 0);
-        this.interpreter.run();
-
-        console.log(this.modelWorld.log);
-        let reset = false;
-        this.modelWorld.log.replay((diff) => {
-            console.log(diff);
-            return new Promise((resolve, reject) => {
-                if (typeof diff === "number") {
-                    if (diff === model.SpecialDiff.EndOfInit) {
-                        reset = true;
-                    }
-                    else if (diff === model.SpecialDiff.EndOfBlock) {
-                        console.log("Block end");
-                        m.startComputation();
-                        for (let objective of this.objectives) {
-                            if (!objective.completed) {
-                                objective.completed = objective.predicate(this);
-                            }
+        this.interpreter.run().then(() => {
+            console.log(this.modelWorld.log);
+            let reset = false;
+            this.modelWorld.log.replay((diff) => {
+                console.log(diff);
+                return new Promise((resolve, reject) => {
+                    if (typeof diff === "number") {
+                        if (diff === model.SpecialDiff.EndOfInit) {
+                            reset = true;
                         }
+                        else if (diff === model.SpecialDiff.EndOfBlock) {
+                            console.log("Block end");
+                            m.startComputation();
+                            for (let objective of this.objectives) {
+                                if (!objective.completed) {
+                                    objective.completed = objective.predicate(this);
+                                }
+                            }
 
-                        this.event.broadcast(BaseLevel.OBJECTIVES_UPDATED);
-                        m.endComputation();
-                    }
-                    resolve();
-                }
-                else if (reset) {
-                    let object = this.modelWorld.getObjectByID(diff.id);
-                    let tween = diff.tween(object);
-                    if (!tween) {
+                            this.event.broadcast(BaseLevel.OBJECTIVES_UPDATED);
+                            m.endComputation();
+                        }
+                        console.log("Resolved");
                         resolve();
-                        return;
                     }
-                    tween.onComplete.add(() => {
+                    else if (reset) {
+                        let object = this.modelWorld.getObjectByID(diff.id);
+                        let tween = diff.tween(object);
+                        if (!tween) {
+                            resolve();
+                            return;
+                        }
+                        tween.onComplete.add(() => {
+                            resolve();
+                        });
+                        tween.start();
+                    }
+                    else {
                         resolve();
-                    });
-                    tween.start();
-                }
-                else {
-                    resolve();
-                }
+                    }
+                });
             });
         });
     }
