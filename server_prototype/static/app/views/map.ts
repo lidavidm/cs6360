@@ -1,5 +1,6 @@
 interface MapController extends _mithril.MithrilController {
     phaser: Phaser.Game,
+    doneExecuting: _mithril.MithrilProperty<boolean>,
 }
 
 import Camera = require("camera");
@@ -15,6 +16,7 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
     controller: function(): MapController {
         var controller: MapController = {
             phaser: null,
+            doneExecuting: m.prop(false),
         };
 
         return controller;
@@ -44,12 +46,24 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
             m.component(Objectives.Component, args.level.objectives),
             m.component(Controls.Component, {
                 executing: args.executing,
+                doneExecuting: controller.doneExecuting,
 
                 onrun: () => {
+                    args.level.zoom(true);
                     args.executing(true);
                     args.level.run().then(() => {
                         m.startComputation();
+                        controller.doneExecuting(true);
+                        m.endComputation();
+                    });
+                },
+
+                onreset: () => {
+                    args.level.zoom(false);
+                    args.level.runReset().then(() => {
+                        m.startComputation();
                         args.executing(false);
+                        controller.doneExecuting(false);
                         m.endComputation();
                     });
                 },

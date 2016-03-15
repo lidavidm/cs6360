@@ -74,6 +74,12 @@ class MovementDiff<T extends WorldObject> extends BaseObjectDiff<T> {
             y: object.getY() * 16,
         }, 800, Phaser.Easing.Quadratic.InOut);
     }
+
+    apply(world: World, object: T) {
+        world.removeObject(object);
+        super.apply(world, object);
+        world.addObject(object);
+    }
 }
 
 class OrientationDiff<T extends WorldObject> extends BaseObjectDiff<T> {
@@ -137,10 +143,11 @@ export class Log {
         this.log.push(SpecialDiff.EndOfBlock);
     }
 
-    replay(callback: (diff: Diff<any>) => Promise<{}>): Promise<{}> {
+    replay(callback: (diff: Diff<any>) => Promise<{}>, replayInit=false): Promise<{}> {
         return new Promise((resolve, reject) => {
             let programCounter = 0;
-            let reset = false;
+            // Whether we are done with the reset steps.
+            let reset = replayInit;
 
             let advanceStep = () => {
                 programCounter++;
@@ -488,6 +495,9 @@ export class Robot extends WorldObject {
         if (this.world.passable(x, y)) {
             this.setLoc(x, y);
         }
+        else {
+            throw new RangeError("Can't move forward! Tried: " + x + ", " + y);
+        }
     }
 
     @blocklyMethod("moveBackward", "move backward")
@@ -496,6 +506,9 @@ export class Robot extends WorldObject {
 
         if (this.world.passable(x, y)) {
             this.setLoc(x, y);
+        }
+        else {
+            throw new RangeError("Can't move backward! Tried: " + x + ", " + y);
         }
     }
 
@@ -533,6 +546,10 @@ export class Iron extends WorldObject {
                 sprite:Phaser.Sprite, world: World) {
         super(name, x, y, world);
         this.sprite = sprite;
+    }
+
+    passable(): boolean {
+        return true;
     }
 
     phaserObject(): Phaser.Sprite {

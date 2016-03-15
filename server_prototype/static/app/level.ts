@@ -184,8 +184,6 @@ export class BaseLevel extends Phaser.State {
     }
 
     run(): Promise<{}> {
-        this.zoom(true);
-
         this.modelWorld.log.reset();
 
         return new Promise((resolveOuter, rejectOuter) => {
@@ -194,12 +192,24 @@ export class BaseLevel extends Phaser.State {
                 let reset = false;
                 this.modelWorld.log.replay(this.runDiff.bind(this)).then(() => {
                     console.log("Done with replay");
-                    this.zoom(false);
                     resolveOuter();
                 });
             }, (err: any) => {
                 console.log(err);
                 resolveOuter();
+            });
+        });
+    }
+
+
+    runReset(): Promise<{}> {
+        this._abort = false;
+        this.modelWorld.log.reset();
+
+        return new Promise((resolve, reject) => {
+            this.modelWorld.log.replay(this.runDiff.bind(this), true).then(() => {
+                console.log("Done with reset");
+                resolve();
             });
         });
     }

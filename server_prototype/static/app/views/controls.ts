@@ -10,7 +10,9 @@ export const Component: _mithril.MithrilComponent<ControlsController> = <any> {
 
     view: function(controller: ControlsController, args: {
         executing: _mithril.MithrilProperty<boolean>,
+        doneExecuting: _mithril.MithrilProperty<boolean>,
         onrun?: () => void,
+        onreset?: () => void,
         onabort?: () => void,
         onpause?: () => void,
         onstep?: () => void,
@@ -25,6 +27,15 @@ export const Component: _mithril.MithrilComponent<ControlsController> = <any> {
                     }
                 },
             }, "Run"));
+        }
+        else if (args.doneExecuting()) {
+            buttons.push(m(<any> "button.abort", {
+                onclick: function() {
+                    if (args.onreset) {
+                        args.onreset();
+                    }
+                },
+            }, "Reset"));
         }
         else {
             buttons.push(m(<any> "button.abort", {
