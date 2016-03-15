@@ -168,6 +168,9 @@ export class Log {
                         break;
                     case SpecialDiff.EndOfInit:
                         reset = true;
+                        Object.keys(this.world.objects).forEach((id) => {
+                            this.world.getObjectByID(<any> id).phaserReset();
+                        });
                         break;
                     }
                 }
@@ -205,7 +208,7 @@ export class World {
     private map: WorldObject[][][];
     private tilemap: Phaser.Tilemap;
     //list of all objects by ID
-    private objects: { [id: number] : WorldObject} = {};
+    objects: { [id: number] : WorldObject} = {};
 
     log: Log;
 
@@ -326,13 +329,20 @@ export abstract class WorldObject {
         this.y = y;
         this.world.addObject(this);
 
-
         // Record ourselves in the log
         this.setLoc(x, y);
     }
 
     phaserObject(): any {
         return null;
+    }
+
+    /**
+     * Reset the Phaser object of this world object.
+     *
+     * Intended to undo transformations after running user code.
+     */
+    phaserReset() {
     }
 
     getID(): number {
@@ -554,5 +564,11 @@ export class Iron extends WorldObject {
 
     phaserObject(): Phaser.Sprite {
         return this.sprite;
+    }
+
+    phaserReset() {
+        this.sprite.width = TILE_WIDTH;
+        this.sprite.height = TILE_HEIGHT;
+        this.sprite.alpha = 1.0;
     }
 }

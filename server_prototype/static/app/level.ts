@@ -195,6 +195,7 @@ export class BaseLevel extends Phaser.State {
                     resolveOuter();
                 });
             }, (err: any) => {
+                // TODO: show the error to the user
                 console.log(err);
                 resolveOuter();
             });
@@ -205,6 +206,10 @@ export class BaseLevel extends Phaser.State {
     runReset(): Promise<{}> {
         this._abort = false;
         this.modelWorld.log.reset();
+        // TODO: clean reset world by recreating map array?
+        this.objectives.forEach((objective) => {
+            objective.completed = false;
+        });
 
         return new Promise((resolve, reject) => {
             this.modelWorld.log.replay(this.runDiff.bind(this), true).then(() => {

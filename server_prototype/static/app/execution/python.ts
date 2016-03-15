@@ -33,6 +33,11 @@ export class Interpreter {
         var recordBlockEndDef = 'def recordBlockEnd(block_id=None):\n\tjsRecordBlockEnd(block_id)\n'
         this._initCode = PROXY_CLASS + recordBlockEndDef + initCode;
 
+        // Set up Python output to go to the console (for debugging needs)
+        Sk.configure({output: (arg: any) => {
+            console.log(arg);
+        }});
+
         /**
          * Executes a method call with an object (identified by id) in this
          * interpreter's world. Called by interpreted python code.
