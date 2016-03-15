@@ -54,7 +54,7 @@ export class Toolbox {
             block.setAttribute("type", method_type);
             let methodName = this._tree.createElement("field");
             methodName.setAttribute("name", "METHOD_NAME");
-            methodName.textContent = method[0];
+            methodName.textContent = method[1];
             block.appendChild(methodName);
             category.appendChild(block);
         }
