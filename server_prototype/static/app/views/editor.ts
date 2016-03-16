@@ -26,20 +26,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 if (block) {
                     typecheck(event, block);
                     updateObjectImage(event, block);
-
-                    // TODO: refactor this into a method - perhaps even pass to level
-                    if (block["type"].slice(0, 6) === "method") {
-                        if (block.getParent()) {
-                            if (block.comment) {
-                                block.comment.setVisible(false);
-                            }
-                            block.setCommentText(null);
-                        }
-                        else {
-                            block.setCommentText("This method is lonely! Help it with the tell block.");
-                            block.comment.setVisible(true);
-                        }
-                    }
+                    addHints(block);
                 }
                 let code = Blockly.Python.workspaceToCode(controller.workspace);
                 if (controller.level) {
@@ -63,6 +50,46 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         function updateObjectImage(event: any, block: any) {
             if (block && block["type"] === "variables_get") {
                 block.validate();
+            }
+        }
+
+        function addHints(block: any) {
+            let parent = block.getParent();
+            // TODO: register tell blocks that are created, and go
+            // back and check them later, since the event doesn't
+            // necessarily fire on parent blocks
+            // TODO: refactor this into a method - perhaps even pass to level
+            if (block["type"].slice(0, 6) === "method") {
+                if (parent) {
+                    if (block.comment) {
+                        block.comment.setVisible(false);
+                    }
+                    block.setCommentText(null);
+                }
+                else {
+                    block.setCommentText("This method is lonely! Help it with the tell block.");
+                    block.comment.setVisible(true);
+                }
+            }
+
+            if (!parent) return;
+
+            if (parent["type"] === "tell") {
+                let children = parent.getChildren();
+                if (children.length === 1) {
+                    if (children[0]["type"].slice(0, 6) === "method") {
+                        let method = children[0].getField("METHOD_NAME").getText();
+                        parent.setCommentText(`Who do I tell to ${method}? Grab an object for me!`);
+                    }
+                    else {
+                        let name = children[0].getField("VAR").getValue();
+                        parent.setCommentText(`What do I tell the ${name}? Grab a method from ${name}'s blueprint!`);
+                    }
+                    parent.comment.setVisible(true);
+                }
+                else {
+                    parent.setCommentText(null);
+                }
             }
         }
 
