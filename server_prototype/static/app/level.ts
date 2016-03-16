@@ -197,7 +197,13 @@ export class BaseLevel extends Phaser.State {
             }, (err: any) => {
                 // TODO: show the error to the user
                 console.log(err);
-                resolveOuter();
+                this.modelWorld.log.record(new model.Diff(model.DiffKind.Error, err.toString()));
+                console.log(this.modelWorld.log);
+                let reset = false;
+                this.modelWorld.log.replay(this.runDiff.bind(this)).then(() => {
+                    console.log("Done with replay");
+                    resolveOuter();
+                });
             });
         });
     }
@@ -245,7 +251,8 @@ export class BaseLevel extends Phaser.State {
                 break;
 
             case model.DiffKind.Error:
-                resolve();
+                alert(diff.data);
+                reject();
                 break;
 
             case model.DiffKind.Property:
