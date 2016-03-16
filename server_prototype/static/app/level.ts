@@ -125,6 +125,10 @@ export class BaseLevel extends Phaser.State {
 
     }
 
+    initWorld(map: Phaser.Tilemap) {
+        this.modelWorld = new model.World(map);
+    }
+
     preload() {
         this.game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
     }
@@ -134,6 +138,8 @@ export class BaseLevel extends Phaser.State {
         this.background = this.game.add.group(this.zoomCamera.group);
         this.middle = this.game.add.group(this.zoomCamera.group);
         this.foreground = this.game.add.group(this.zoomCamera.group);
+        this.cursors = this.game.input.keyboard.createCursorKeys();
+        this.zoom(true);
     }
 
     update() {

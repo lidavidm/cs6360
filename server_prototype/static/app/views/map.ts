@@ -49,7 +49,6 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                 doneExecuting: controller.doneExecuting,
 
                 onrun: () => {
-                    args.level.zoom(true);
                     args.executing(true);
                     args.level.run().then(() => {
                         m.startComputation();
@@ -59,7 +58,6 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                 },
 
                 onreset: () => {
-                    args.level.zoom(false);
                     args.level.runReset().then(() => {
                         m.startComputation();
                         args.executing(false);

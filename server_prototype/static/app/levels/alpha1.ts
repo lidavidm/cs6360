@@ -78,7 +78,7 @@ export class Alpha1Level extends BaseLevel {
 
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
-        this.modelWorld = new model.World(map);
+        this.initWorld(map);
         this.robot = new model.Robot("Robot", 1, 1, model.Direction.EAST,
                                      robot, this.modelWorld);
         this.iron = new model.Iron("iron", 5, 1, iron, this.modelWorld);
