@@ -22,28 +22,28 @@ export interface PropertyDiff {
     [property: string]: [any, any],
 }
 
-export enum SpecialDiff {
+export enum DiffKind {
     // When a block finishes executing.
     EndOfBlock,
     // When we have finished initializing world objects.
     EndOfInit,
+    // When an error is raised.
+    Error,
+    // When a property is changed
+    Property,
 }
 
-export interface ObjectDiff<T extends WorldObject> {
-    id: number,
-    properties: PropertyDiff,
-
-    tween: (object: T) => Phaser.Tween;
-    apply: (world: World, object: T) => void;
-}
-
-export type Diff<T extends WorldObject> = ObjectDiff<T> | SpecialDiff;
-
-abstract class BaseObjectDiff<T extends WorldObject> implements ObjectDiff<T> {
+export class Diff<T extends WorldObject> {
+    kind: DiffKind;
+    data: any;
     id: number;
     properties: PropertyDiff;
 
-    constructor(id: number, properties: PropertyDiff) {
+    static EndOfInit = new Diff(DiffKind.EndOfInit);
+
+    constructor(kind: DiffKind, data?: any, id?: number, properties?: PropertyDiff) {
+        this.kind = kind;
+        this.data = data;
         this.id = id;
         this.properties = properties;
     }
@@ -61,9 +61,9 @@ abstract class BaseObjectDiff<T extends WorldObject> implements ObjectDiff<T> {
     }
 }
 
-class MovementDiff<T extends WorldObject> extends BaseObjectDiff<T> {
+class MovementDiff<T extends WorldObject> extends Diff<T> {
     constructor(id: number, properties: PropertyDiff) {
-        super(id, properties);
+        super(DiffKind.Property, null, id, properties);
     }
 
     tween(object: T): Phaser.Tween {
@@ -82,9 +82,9 @@ class MovementDiff<T extends WorldObject> extends BaseObjectDiff<T> {
     }
 }
 
-class OrientationDiff<T extends WorldObject> extends BaseObjectDiff<T> {
+class OrientationDiff<T extends WorldObject> extends Diff<T> {
     constructor(id: number, properties: PropertyDiff) {
-        super(id, properties);
+        super(DiffKind.Property, null, id, properties);
     }
 
     tween(object: T): Phaser.Tween {
@@ -92,9 +92,9 @@ class OrientationDiff<T extends WorldObject> extends BaseObjectDiff<T> {
     }
 }
 
-class HoldingDiff extends BaseObjectDiff<Robot> {
+class HoldingDiff extends Diff<Robot> {
     constructor(id: number, properties: PropertyDiff) {
-        super(id, properties);
+        super(DiffKind.Property, null, id, properties);
     }
 
     tween(object: Robot): Phaser.Tween {
@@ -127,20 +127,22 @@ export class Log {
      * Clears log entries after the end of initialization.
      */
     reset() {
-        this.log.splice(this.log.indexOf(SpecialDiff.EndOfInit) + 1);
+        let index = this.log.indexOf(Diff.EndOfInit);
+        if (index >= 0) {
+            this.log.splice(index + 1);
+        }
     }
 
-    record<T extends WorldObject>(diff: ObjectDiff<T>) {
+    record<T extends WorldObject>(diff: Diff<T>) {
         this.log.push(diff);
     }
 
     recordInitEnd() {
-        this.log.push(SpecialDiff.EndOfInit);
+        this.log.push(Diff.EndOfInit);
     }
 
-    recordBlockEnd(block_id?: any) {
-        // TODO: record the block ID
-        this.log.push(SpecialDiff.EndOfBlock);
+    recordBlockEnd(blockID: any) {
+        this.log.push(new Diff(DiffKind.EndOfBlock, blockID));
     }
 
     replay(callback: (diff: Diff<any>) => Promise<{}>, replayInit=false): Promise<{}> {
@@ -162,21 +164,21 @@ export class Log {
             let executor = () => {
                 let diff = this.log[programCounter];
 
-                if (typeof diff === "number") {
-                    switch (diff) {
-                    case SpecialDiff.EndOfBlock:
-                        break;
-                    case SpecialDiff.EndOfInit:
-                        reset = true;
-                        Object.keys(this.world.objects).forEach((id) => {
-                            this.world.getObjectByID(<any> id).phaserReset();
-                        });
-                        break;
-                    }
-                }
-                else {
+                switch (diff.kind) {
+                case DiffKind.EndOfBlock:
+                    break;
+                case DiffKind.EndOfInit:
+                    reset = true;
+                    Object.keys(this.world.objects).forEach((id) => {
+                        this.world.getObjectByID(<any> id).phaserReset();
+                    });
+                    break;
+                case DiffKind.Error:
+                    break;
+                case DiffKind.Property:
                     let object = this.world.getObjectByID(diff.id);
                     diff.apply(this.world, object);
+                    break;
                 }
 
                 if (reset) {

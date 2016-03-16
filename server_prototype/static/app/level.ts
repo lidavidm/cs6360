@@ -226,21 +226,29 @@ export class BaseLevel extends Phaser.State {
                 this._abort = false;
             }
 
-            if (typeof diff === "number") {
-                if (diff === model.SpecialDiff.EndOfBlock) {
-                    m.startComputation();
-                    for (let objective of this.objectives) {
-                        if (!objective.completed) {
-                            objective.completed = objective.predicate(this);
-                        }
+            switch (diff.kind) {
+            case model.DiffKind.EndOfBlock:
+                m.startComputation();
+                for (let objective of this.objectives) {
+                    if (!objective.completed) {
+                        objective.completed = objective.predicate(this);
                     }
-
-                    this.event.broadcast(BaseLevel.OBJECTIVES_UPDATED);
-                    m.endComputation();
                 }
+
+                this.event.broadcast(BaseLevel.OBJECTIVES_UPDATED);
+                m.endComputation();
                 resolve();
-            }
-            else {
+                break;
+
+            case model.DiffKind.EndOfInit:
+                resolve();
+                break;
+
+            case model.DiffKind.Error:
+                resolve();
+                break;
+
+            case model.DiffKind.Property:
                 let object = this.modelWorld.getObjectByID(diff.id);
                 let tween = diff.tween(object);
                 if (!tween) {
@@ -251,6 +259,7 @@ export class BaseLevel extends Phaser.State {
                     resolve();
                 });
                 tween.start();
+                break;
             }
         });
     }
