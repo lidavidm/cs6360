@@ -107,6 +107,7 @@ export class BaseLevel extends Phaser.State {
      */
     public static OBJECTIVES_UPDATED = "objectivesUpdated";
     public static NEXT_LEVEL_LOADED = "nextLevelLoaded";
+    public static BLOCK_EXECUTED = "blockExecuted";
 
     constructor() {
         super();
@@ -201,7 +202,6 @@ export class BaseLevel extends Phaser.State {
                 console.log(this.modelWorld.log);
                 let reset = false;
                 this.modelWorld.log.replay(this.runDiff.bind(this)).then(() => {
-                    console.log("Done with replay");
                     resolveOuter();
                 });
             });
@@ -233,6 +233,11 @@ export class BaseLevel extends Phaser.State {
             }
 
             switch (diff.kind) {
+            case model.DiffKind.BeginningOfBlock:
+                this.event.broadcast(BaseLevel.BLOCK_EXECUTED, diff.data);
+                resolve();
+                break;
+
             case model.DiffKind.EndOfBlock:
                 m.startComputation();
                 for (let objective of this.objectives) {

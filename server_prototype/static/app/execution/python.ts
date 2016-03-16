@@ -62,6 +62,11 @@ export class Interpreter {
             blockID = Sk.ffi.remapToJs(blockID);
             world.log.recordBlockEnd(blockID);
         });
+
+        Sk.builtins.recordBlockBegin = new Sk.builtin.func(function(blockID: any) {
+            blockID = Sk.ffi.remapToJs(blockID);
+            world.log.recordBlockBegin(blockID);
+        });
     }
 
     /**

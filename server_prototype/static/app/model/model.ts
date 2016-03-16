@@ -23,6 +23,8 @@ export interface PropertyDiff {
 }
 
 export enum DiffKind {
+    // When a block starts executing.
+    BeginningOfBlock,
     // When a block finishes executing.
     EndOfBlock,
     // When we have finished initializing world objects.
@@ -141,6 +143,10 @@ export class Log {
         this.log.push(Diff.EndOfInit);
     }
 
+    recordBlockBegin(blockID: any) {
+        this.log.push(new Diff(DiffKind.BeginningOfBlock, blockID));
+    }
+
     recordBlockEnd(blockID: any) {
         this.log.push(new Diff(DiffKind.EndOfBlock, blockID));
     }
@@ -165,6 +171,8 @@ export class Log {
                 let diff = this.log[programCounter];
 
                 switch (diff.kind) {
+                case DiffKind.BeginningOfBlock:
+                    break;
                 case DiffKind.EndOfBlock:
                     break;
                 case DiffKind.EndOfInit:

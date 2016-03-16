@@ -5,7 +5,7 @@ goog.provide('Blockly.Blocks.oop');
 goog.require('Blockly.Blocks');
 goog.require('Blockly.Python');
 
-// Blockly.Python.STATEMENT_PREFIX = "recordBlockEnd(%1)\n"
+Blockly.Python.STATEMENT_PREFIX = "recordBlockBegin(%1)\n"
 Blockly.Python.STATEMENT_POSTFIX = "recordBlockEnd(%1)\n"
 
 Blockly.Blocks.setClassMethods = function(class_name, method_list) {

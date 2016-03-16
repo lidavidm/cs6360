@@ -26,7 +26,8 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 if (block) {
                     typecheck(event, block);
                     updateObjectImage(event, block);
-                    console.log(block);
+
+                    // TODO: refactor this into a method - perhaps even pass to level
                     if (block["type"].slice(0, 6) === "method") {
                         if (block.getParent()) {
                             if (block.comment) {
@@ -84,9 +85,6 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                         <HTMLElement> document.querySelector(".blocklyTreeRoot");
                     if (args.executing()) {
                         root.style.display = "none";
-
-                        // var interpreter = new PyPyJS.Interpreter("print 'hello, world!'");
-                        // interpreter.run();
                     }
                     else {
                         root.style.display = "block";
@@ -95,6 +93,16 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     this.resizeBlockly();
                     return;
                 }
+
+                // TODO: rebind this when the level changes
+                controller.level.event.on(level.BaseLevel.BLOCK_EXECUTED, (blockID) => {
+                    // Enable trace so that block highlighting works -
+                    // needs to be reset before each highlight call
+                    // because Blockly resets it
+                    controller.workspace.traceOn(true);
+                    console.log(blockID);
+                    controller.workspace.highlightBlock(blockID);
+                });
 
                 controller.workspace = Blockly.inject(element, {
                     toolbox: controller.level.toolbox.xml(),
