@@ -58,4 +58,12 @@ Blockly.Blocks["tell"] = {
             "helpUrl": "http://www.example.com/"
         });
     },
+
+    childObject: function() {
+
+    },
+
+    childMethod: function() {
+
+    },
 }

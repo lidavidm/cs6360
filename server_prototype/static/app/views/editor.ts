@@ -76,6 +76,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
 
             if (parent["type"] === "tell") {
                 let children = parent.getChildren();
+                console.log(children);
                 if (children.length === 1) {
                     if (children[0]["type"].slice(0, 6) === "method") {
                         let method = children[0].getField("METHOD_NAME").getText();
