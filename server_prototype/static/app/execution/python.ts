@@ -14,6 +14,13 @@ class JSProxyClass(object):
         def _proxy(*args):
             methodCall(jsid, attribute, args)
         return _proxy
+class BlocklyError(Exception):
+    """
+    An exception indicating the user did something wrong in Blockly.
+    """
+    def __init__(self, blockID, message):
+        self.blockID = blockID
+        self.message = message
 `
 
 /**

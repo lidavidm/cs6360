@@ -10,8 +10,21 @@ Blockly.Python['method'] = function(block) {
 };
 
 Blockly.Python['tell'] = function(block) {
-    var object = Blockly.Python.valueToCode(block, "OBJECT", Blockly.Python.ORDER_NONE) || 'None';
-    var method = Blockly.Python.valueToCode(block, "METHOD", Blockly.Python.ORDER_NONE) || 'id';
+    var object = Blockly.Python.valueToCode(block, "OBJECT", Blockly.Python.ORDER_NONE);
+    var method = Blockly.Python.valueToCode(block, "METHOD", Blockly.Python.ORDER_NONE);
+    var id = block.id;
+    var excTemplate = function(msg) {
+        return "raise BlocklyError('" + id + "', '" + msg + "')\n";
+    }
+    if (!object && !method) {
+        return excTemplate("This block needs an object and a method!");
+    }
+    else if (!object) {
+        return excTemplate("This block needs an object!");
+    }
+    else if (!method) {
+        return excTemplate("This block needs a method!");
+    }
     var code = object + "." + method + "()\n";
     return code;
 };

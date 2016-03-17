@@ -14,54 +14,6 @@ export function getClass(block: any): string {
     return null;
 }
 
-/**
- * Given a `tell` block, return the object and method blocks
- * within.
- */
-export function destructureTell(tellBlock: any): {
-    object: any,
-    method: any,
-} {
-    if (tellBlock.getChildren().length === 0) {
-        return {
-            object: null,
-            method: null,
-        };
-    }
-    else if (tellBlock.getChildren().length === 1) {
-        let child = tellBlock.getChildren()[0];
-        if (child["type"].slice(0, 6) === "method") {
-            return {
-                object: null,
-                method: child,
-            };
-        }
-        else {
-            return {
-                object: child,
-                method: null,
-            };
-        }
-    }
-    else {
-        let child1 = tellBlock.getChildren()[0];
-        let child2 = tellBlock.getChildren()[1];
-
-        if (child1["type"].slice(0, 6) === "method") {
-            return {
-                object: child2,
-                method: child1,
-            };
-        }
-        else {
-            return {
-                object: child1,
-                method: child2,
-            };
-        }
-    }
-}
-
 interface TypeError {
     message: string,
 }
@@ -73,10 +25,11 @@ export function typecheckTell(block: any): TypeError {
     // TODO: accept an interpreter object and use that to typecheck,
     // or, accept a class hierarchy
     if (block["type"] === "tell") {
-        let children = destructureTell(block);
-        if (children.object && children.method) {
-            var childClass = getClass(children.object);
-            var methodClass = getClass(children.method);
+        let object = block.childObject();
+        let method = block.childMethod();
+        if (object && method) {
+            var childClass = getClass(object);
+            var methodClass = getClass(method);
             if (childClass !== methodClass) {
                 return {
                     message: `Class/method mismatch: ${childClass} vs ${methodClass}!`,

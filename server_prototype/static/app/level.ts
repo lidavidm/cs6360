@@ -195,7 +195,6 @@ export class BaseLevel extends Phaser.State {
 
         return new Promise((resolveOuter, rejectOuter) => {
             this.interpreter.run(this.code).then(() => {
-                console.log(this.modelWorld.log);
                 let reset = false;
                 this.modelWorld.log.replay(this.runDiff.bind(this)).then(() => {
                     console.log("Done with replay");
@@ -204,8 +203,9 @@ export class BaseLevel extends Phaser.State {
             }, (err: any) => {
                 // TODO: show the error to the user
                 console.log(err);
+                // TODO: if the error type is BlocklyError, highlight
+                // the block and add to it the error message
                 this.modelWorld.log.record(new model.Diff(model.DiffKind.Error, err.toString()));
-                console.log(this.modelWorld.log);
                 let reset = false;
                 this.modelWorld.log.replay(this.runDiff.bind(this)).then(() => {
                     resolveOuter();

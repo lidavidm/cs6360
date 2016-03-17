@@ -38,7 +38,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
 
         function typecheck(event: any, block: any) {
             if (block && block.parentBlock_) {
-                var parent = block.parentBlock_;
+                var parent = block.getParent();
                 var result = block_utils.typecheckTell(parent);
                 if (result) {
                     block.unplug(true);
@@ -55,6 +55,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
 
         function addHints(block: any) {
             let parent = block.getParent();
+            console.log(block, parent);
             // TODO: register tell blocks that are created, and go
             // back and check them later, since the event doesn't
             // necessarily fire on parent blocks
@@ -75,16 +76,14 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             if (!parent) return;
 
             if (parent["type"] === "tell") {
-                let children = parent.getChildren();
-                if (children.length === 1) {
-                    if (children[0]["type"].slice(0, 6) === "method") {
-                        let method = children[0].getField("METHOD_NAME").getText();
-                        parent.setCommentText(`Who do I tell to ${method}? Grab an object for me!`);
-                    }
-                    else {
-                        let name = children[0].getField("VAR").getValue();
-                        parent.setCommentText(`What do I tell the ${name}? Grab a method from ${name}'s blueprint!`);
-                    }
+                let object = parent.childObject();
+                let method = parent.childMethod();
+                if (object && !method) {
+                    parent.setCommentText(`I still need a method! Look at the blueprints on the left.`);
+                    parent.comment.setVisible(true);
+                }
+                else if (!object && method) {
+                    parent.setCommentText(`I still need an object!`);
                     parent.comment.setVisible(true);
                 }
                 else {

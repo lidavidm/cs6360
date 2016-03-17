@@ -58,4 +58,26 @@ Blockly.Blocks["tell"] = {
             "helpUrl": "http://www.example.com/"
         });
     },
+
+    childObject: function() {
+        var children = this.getChildren();
+        for (var i = 0; i < children.length; i++) {
+            var child = children[i];
+            if (child["type"] === "math_number" || child["type"] === "variables_get") {
+                return child;
+            }
+        }
+        return null;
+    },
+
+    childMethod: function() {
+        var children = this.getChildren();
+        for (var i = 0; i < children.length; i++) {
+            var child = children[i];
+            if (child["type"].slice(0, 6) === "method") {
+                return child;
+            }
+        }
+        return null;
+    },
 }
