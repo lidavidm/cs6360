@@ -95,10 +95,13 @@ export class BaseLevel extends Phaser.State {
     protected background: Phaser.Group;
     protected middle: Phaser.Group;
     protected foreground: Phaser.Group;
+    protected overlay: Phaser.Group;
 
     protected modelWorld: model.World;
     protected code: string;
     protected interpreter: python.Interpreter
+
+    protected grid: Phaser.TileSprite;
 
     private _abort: boolean;
 
@@ -131,6 +134,7 @@ export class BaseLevel extends Phaser.State {
 
     preload() {
         this.game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
+        this.game.load.image("grid", "assets/sprites/grid.png");
     }
 
     create() {
@@ -138,12 +142,19 @@ export class BaseLevel extends Phaser.State {
         this.background = this.game.add.group(this.zoomCamera.group);
         this.middle = this.game.add.group(this.zoomCamera.group);
         this.foreground = this.game.add.group(this.zoomCamera.group);
+        this.overlay = this.game.add.group(this.zoomCamera.group);
         this.cursors = this.game.input.keyboard.createCursorKeys();
         this.zoom(true);
+
+        this.grid = this.overlay.add(this.game.add.tileSprite(0, 0, this.game.width, this.game.height, "grid"));
     }
 
     update() {
         if (!this.game.input.activePointer.withinGame) return;
+
+        // TODO: update the grid offset to match the camera (so that
+        // we don't have to create a grid that covers the entire map,
+        // which hurts performance)
 
         if (this.cursors.up.isDown) {
             this.zoomCamera.position.y -= 4;
