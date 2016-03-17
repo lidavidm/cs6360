@@ -133,7 +133,10 @@ export class BaseLevel extends Phaser.State {
     }
 
     preload() {
+        // Resize the game when the layout changes
         this.game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
+        // Let the game update even when it has no input focus
+        this.game.stage.disableVisibilityChange = true;
         this.game.load.image("grid", "assets/sprites/grid.png");
     }
 
@@ -145,11 +148,14 @@ export class BaseLevel extends Phaser.State {
         this.overlay = this.game.add.group(this.zoomCamera.group);
         this.cursors = this.game.input.keyboard.createCursorKeys();
         this.zoom(true);
+        this.zoomCamera.update();
 
         this.grid = this.overlay.add(this.game.add.tileSprite(0, 0, this.game.width, this.game.height, "grid"));
     }
 
     update() {
+        this.zoomCamera.update();
+
         if (!this.game.input.activePointer.withinGame) return;
 
         // TODO: update the grid offset to match the camera (so that
@@ -168,8 +174,6 @@ export class BaseLevel extends Phaser.State {
         else if (this.cursors.right.isDown) {
             this.zoomCamera.position.x += 4;
         }
-
-        this.zoomCamera.update();
     }
 
     render() {
