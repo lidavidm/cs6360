@@ -5,6 +5,9 @@ import * as python from "../execution/python";
 
 import {Alpha2Level} from "./alpha2";
 
+// Define the toolbox here. See documentation at
+// https://developers.google.com/blockly/installation/toolbox
+// This does NOT include methods - see below
 const INITIAL_TOOLBOX = `
 <xml style="display: none">
   <category name="Toolbox" colour="210">
@@ -22,16 +25,25 @@ const INITIAL_TOOLBOX = `
 `;
 
 export class Alpha1Level extends BaseLevel {
-    public modelWorld: model.World;
+    // Any model objects you need (besides the world, which is defined
+    // as modelWorld. NOTE: this.world is the Phaser world!)
     public robot: model.Robot;
     public iron: model.Iron;
 
     init() {
         super.init();
 
+        // Create the toolbox and add the class. The toolbox object
+        // scrapes the methods from the class - just specify the name
+        // and the image to use to symbolize it
         this.toolbox = new Toolbox(INITIAL_TOOLBOX);
         this.toolbox.addClass("Robot", "assets/sprites/robot_3Dblue.png", model.Robot);
 
+        // Define the objectives. The predicate is checked after
+        // executing each block. It will be run if and only if the
+        // objective is not completed; once completed the predicate
+        // won't be rechecked (so an objective, once completed, cannot
+        // become uncompleted unless the user resets the level)
         this.objectives = [
             {
                 objective: "Move the robot to the iron",
@@ -58,6 +70,7 @@ export class Alpha1Level extends BaseLevel {
             },
         ];
 
+        // List of lists of tooltips.
         this.allTooltips = [
             [
                 new TooltipView.Tooltip(TooltipView.Region.Map, "Use the arrow keys to look around the map and see what's going on."),
@@ -70,6 +83,9 @@ export class Alpha1Level extends BaseLevel {
     }
 
     preload() {
+        // Preload any Phaser assets you need. See the methods of
+        // Phaser.Loader (this.game.load):
+        // http://phaser.io/docs/2.4.6/Phaser.Loader.html
         super.preload();
 
         this.game.load.tilemap("prototype", "assets/maps/prototype.json", null, Phaser.Tilemap.TILED_JSON);
@@ -79,6 +95,7 @@ export class Alpha1Level extends BaseLevel {
     }
 
     create() {
+        // Create the world objects here.
         super.create();
 
         let map = this.game.add.tilemap("prototype");
@@ -100,11 +117,16 @@ export class Alpha1Level extends BaseLevel {
 
         this.modelWorld.log.recordInitEnd();
 
+        // The only reason why this isn't created for you is because
+        // of its dependence on the world.
         this.interpreter = new python.Interpreter("", this.modelWorld);
         this.interpreter.instantiateObject("robot", "Robot", this.robot.getID());
     }
 
     nextLevel(): Alpha2Level {
+        // Return the level that should be loaded after this one. Add
+        // it to the state manager so that Phaser will begin
+        // preloading it while the congratulations screen displays.
         let level = new Alpha2Level();
         this.game.state.add("Next", level, true);
         return level;
