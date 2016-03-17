@@ -75,6 +75,14 @@ export const MainComponent = {
             });
 
             controller.level = newLevel;
+            (<any> window)["cheat_finish"] = () => {
+                m.startComputation();
+                controller.level.objectives.forEach((objective: any) => {
+                    objective.completed = true;
+                });
+                controller.level.event.broadcast(level.BaseLevel.OBJECTIVES_UPDATED);
+                m.endComputation();
+            };
         };
 
         let initLevel = new Alpha1Level();
