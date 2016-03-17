@@ -7,6 +7,7 @@ import Camera = require("camera");
 import Objectives = require("views/objectives");
 import Controls = require("views/controls");
 import level = require("level");
+import pubsub = require("pubsub");
 
 /**
  * The map component handles interactions with Phaser and contains the
@@ -25,6 +26,7 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
     view: function(controller: MapController, args: {
         level: level.BaseLevel,
         executing: _mithril.MithrilProperty<boolean>,
+        event: pubsub.PubSub,
     }) {
         var style = "";
         if (args.executing()) {

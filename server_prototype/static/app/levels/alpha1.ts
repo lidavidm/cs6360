@@ -5,6 +5,22 @@ import * as python from "../execution/python";
 
 import {Alpha2Level} from "./alpha2";
 
+const INITIAL_TOOLBOX = `
+<xml style="display: none">
+  <category name="Toolbox" colour="210">
+    <block type="controls_repeat_ext"></block>
+    <block type="tell"></block>
+  </category>
+  <category name="Objects" colour="330">
+    <block type="math_number"></block>
+    <block type="variables_get">
+      <field name="CLASS">Robot</field>
+      <field name="VAR">robot</field>
+    </block>
+  </category>
+</xml>
+`;
+
 export class Alpha1Level extends BaseLevel {
     public modelWorld: model.World;
     public robot: model.Robot;
@@ -13,8 +29,7 @@ export class Alpha1Level extends BaseLevel {
     init() {
         super.init();
 
-        let initialToolbox = document.getElementById("toolbox").textContent;
-        this.toolbox = new Toolbox(initialToolbox);
+        this.toolbox = new Toolbox(INITIAL_TOOLBOX);
         this.toolbox.addClass("Robot", "assets/sprites/robot_3Dblue.png", model.Robot);
 
         this.objectives = [

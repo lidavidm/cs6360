@@ -3,6 +3,7 @@ import EditorView = require("views/editor");
 import TooltipView = require("views/tooltip");
 import CongratulationsView = require("views/congratulations");
 import level = require("level");
+import pubsub = require("pubsub");
 
 import {Alpha1Level} from "levels/alpha1";
 
@@ -19,16 +20,19 @@ export const GameWidget: _mithril.MithrilComponent<GameController> = <any> {
     view: function(controller: GameController, args: {
         level: level.BaseLevel,
         executing: _mithril.MithrilProperty<boolean>,
+        event: pubsub.PubSub,
     }) {
         return m(".container", [
             // TODO: change args into an interface
             m.component(MapView.Component, {
                 executing: args.executing,
                 level: args.level,
+                event: args.event,
             }),
             m.component(EditorView.Component, {
                 executing: args.executing,
                 level: args.level,
+                event: args.event,
             }),
         ]);
     },
@@ -38,6 +42,7 @@ interface MainController extends _mithril.MithrilController {
     level: level.BaseLevel,
     loadScreenOldLevel: level.BaseLevel,
     executing: _mithril.MithrilBasicProperty<boolean>,
+    event: pubsub.PubSub,
 }
 
 export const MainComponent = {
@@ -46,6 +51,7 @@ export const MainComponent = {
         controller.loadScreen = m.prop(false);
         controller.loadScreenOldLevel = null;
         controller.executing = m.prop(false);
+        controller.event = new pubsub.PubSub();
 
         controller.setLevel = function(newLevel: level.BaseLevel) {
             newLevel.event.on(level.BaseLevel.OBJECTIVES_UPDATED, () => {
@@ -61,6 +67,7 @@ export const MainComponent = {
                         controller.executing(false);
                         m.startComputation();
                         controller.setLevel(nextLevel);
+                        controller.event.broadcast(level.BaseLevel.NEXT_LEVEL_LOADED, nextLevel);
                         controller.loadScreenOldLevel.event.broadcast(level.BaseLevel.NEXT_LEVEL_LOADED);
                         m.endComputation();
                     });
@@ -83,6 +90,7 @@ export const MainComponent = {
             }, m.component(GameWidget, {
                 level: controller.level,
                 executing: controller.executing,
+                event: controller.event,
             })),
             m(<any> "div#tooltip", {
                 key: "tooltip",
@@ -92,6 +100,7 @@ export const MainComponent = {
                 onContinue: () => {
                     controller.loadScreenOldLevel = null;
                 },
+                event: controller.event,
             }),
         ])
     }

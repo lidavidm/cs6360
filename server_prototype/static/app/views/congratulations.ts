@@ -1,12 +1,13 @@
 import level = require("level");
+import pubsub = require("pubsub");
 
 interface CongratulationsController extends _mithril.MithrilController {
     loaded: _mithril.MithrilProperty<boolean>,
-    registeredLoadEvent: _mithril.MithrilProperty<boolean>,
 }
 
 interface Args {
     level: level.BaseLevel,
+    event: pubsub.PubSub,
     onContinue: () => void,
 }
 
@@ -14,7 +15,10 @@ export const Component: _mithril.MithrilComponent<CongratulationsController> = <
     controller: function(args: Args): CongratulationsController {
         let controller = Object.create(null);
         controller.loaded = m.prop(false);
-        controller.registeredLoadEvent = m.prop(false);
+
+        args.event.on(level.BaseLevel.NEXT_LEVEL_LOADED, () => {
+            controller.loaded(true);
+        });
 
         return controller;
     },
@@ -26,18 +30,11 @@ export const Component: _mithril.MithrilComponent<CongratulationsController> = <
             });
         }
 
-        if (!controller.registeredLoadEvent()) {
-            args.level.event.on(level.BaseLevel.NEXT_LEVEL_LOADED, () => {
-                controller.loaded(true);
-            })
-        }
-
         let button: _mithril.MithrilVirtualElement<CongratulationsController> = null;
         if (controller.loaded()) {
             button = m(<any> "button.ui.right", {
                 onclick: () => {
                     controller.loaded(false);
-                    controller.registeredLoadEvent(false);
                     args.onContinue();
                 }
             }, "Continue");

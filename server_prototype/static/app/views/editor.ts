@@ -1,9 +1,8 @@
 declare var Blockly: any;
 
-import PyPyJS = require("../execution/python");
-
-import block_utils = require("../block_utils");
-import level = require("../level");
+import block_utils = require("block_utils");
+import level = require("level");
+import pubsub = require("pubsub");
 
 interface EditorController extends _mithril.MithrilController {
     level: level.BaseLevel,
@@ -17,7 +16,9 @@ interface EditorController extends _mithril.MithrilController {
 // The Mithril type definition is incomplete and doesn't handle
 // the args parameter to view(), so we cast to `any` to satisfy the typechecker.
 export const Component: _mithril.MithrilComponent<EditorController> = <any> {
-    controller: function(): EditorController {
+    controller: function(args: {
+        event: pubsub.PubSub,
+    }): EditorController {
         var controller: EditorController = {
             level: null,
             workspace: null,
@@ -91,6 +92,11 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 }
             }
         }
+
+        args.event.on(level.BaseLevel.NEXT_LEVEL_LOADED, (nextLevel: level.BaseLevel) => {
+            controller.level = nextLevel;
+            controller.workspace.updateToolbox(nextLevel.toolbox.xml());
+        });
 
         return controller;
     },
