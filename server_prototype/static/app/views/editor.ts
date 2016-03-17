@@ -96,6 +96,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         args.event.on(level.BaseLevel.NEXT_LEVEL_LOADED, (nextLevel: level.BaseLevel) => {
             controller.level = nextLevel;
             controller.workspace.updateToolbox(nextLevel.toolbox.xml());
+            controller.workspace.clear();
         });
 
         return controller;
