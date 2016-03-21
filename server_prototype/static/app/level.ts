@@ -30,10 +30,12 @@ export class Toolbox {
     /**
      * Add the methods of a class to the toolbox.
      */
-    addClass(className: string, image: string, classObject: any) {
+    addClass(className: string, image: string, classObject: any, methodList?: string[]) {
         let methods: [string, string][] = [];
-        Object.getOwnPropertyNames(classObject.prototype)
-            .sort()
+        if (!methodList) {
+            methodList = Object.getOwnPropertyNames(classObject.prototype).sort();
+        }
+        methodList
             .forEach(function(property) {
                 let method = classObject.prototype[property];
                 if (method.friendlyName) {

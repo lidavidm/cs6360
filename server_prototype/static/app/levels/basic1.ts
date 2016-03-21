@@ -31,7 +31,9 @@ export class BasicsLevel1 extends BaseLevel {
         super.init();
 
         this.toolbox = new Toolbox(INITIAL_TOOLBOX);
-        this.toolbox.addClass("Robot", "assets/sprites/robot_3Dblue.png", model.Robot);
+        this.toolbox.addClass("Robot", "assets/sprites/robot_3Dblue.png", model.Robot, [
+            "moveForward",
+        ]);
 
         this.objectives = [
             {
