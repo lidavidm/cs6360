@@ -2,7 +2,8 @@ declare var Blockly: any;
 
 import TooltipView = require("views/tooltip");
 import PubSub = require("pubsub");
-import * as python from "./execution/python";
+import * as python from "execution/python";
+import {Session} from "execution/session";
 
 export interface Objective<T> {
     objective: string,
@@ -108,8 +109,6 @@ export class BaseLevel extends Phaser.State {
 
     protected grid: Phaser.TileSprite;
 
-    private _abort: boolean;
-
     /**
      * The event that should be fired if objectives are updated.
      */
@@ -123,7 +122,6 @@ export class BaseLevel extends Phaser.State {
         this._tooltipIndex = 0;
         this.objectives = [];
         this.event = new PubSub.PubSub();
-        this._abort = false;
         this.code = "";
 
         this.init();
@@ -206,37 +204,11 @@ export class BaseLevel extends Phaser.State {
         return this.allTooltips[this._tooltipIndex];
     }
 
-    abort() {
-        this._abort = true;
+    run(): Session {
+        return new Session(this.interpreter, this.modelWorld.log, this.code, this.runDiff.bind(this));
     }
-
-    run(): Promise<{}> {
-        this.modelWorld.log.reset();
-
-        return new Promise((resolveOuter, rejectOuter) => {
-            this.interpreter.run(this.code).then(() => {
-                let reset = false;
-                this.modelWorld.log.replay(this.runDiff.bind(this)).then(() => {
-                    console.log("Done with replay");
-                    resolveOuter();
-                });
-            }, (err: any) => {
-                // TODO: show the error to the user
-                console.log(err);
-                // TODO: if the error type is BlocklyError, highlight
-                // the block and add to it the error message
-                this.modelWorld.log.record(new model.Diff(model.DiffKind.Error, err.toString()));
-                let reset = false;
-                this.modelWorld.log.replay(this.runDiff.bind(this)).then(() => {
-                    resolveOuter();
-                });
-            });
-        });
-    }
-
 
     runReset(): Promise<{}> {
-        this._abort = false;
         this.modelWorld.log.reset();
         // TODO: clean reset world by recreating map array?
         this.objectives.forEach((objective) => {
@@ -244,62 +216,59 @@ export class BaseLevel extends Phaser.State {
         });
 
         return new Promise((resolve, reject) => {
-            this.modelWorld.log.replay(this.runDiff.bind(this), true).then(() => {
+            this.modelWorld.log.replay((diff) => {
+                return new Promise((resolve, reject) => {
+                    this.runDiff(diff, resolve, reject);
+                });
+            }, true).then(() => {
                 console.log("Done with reset");
                 resolve();
             });
         });
     }
 
-    runDiff(diff: model.Diff<any>) {
-        return new Promise((resolve, reject) => {
-            if (this._abort) {
-                reject();
-                this._abort = false;
+    runDiff(diff: model.Diff<any>, resolve: () => void, reject: () => void) {
+        switch (diff.kind) {
+        case model.DiffKind.BeginningOfBlock:
+            this.event.broadcast(BaseLevel.BLOCK_EXECUTED, diff.data);
+            resolve();
+            break;
+
+        case model.DiffKind.EndOfBlock:
+            m.startComputation();
+            for (let objective of this.objectives) {
+                if (!objective.completed) {
+                    objective.completed = objective.predicate(this);
+                }
             }
 
-            switch (diff.kind) {
-            case model.DiffKind.BeginningOfBlock:
-                this.event.broadcast(BaseLevel.BLOCK_EXECUTED, diff.data);
+            this.event.broadcast(BaseLevel.OBJECTIVES_UPDATED);
+            m.endComputation();
+            resolve();
+            break;
+
+        case model.DiffKind.EndOfInit:
+            resolve();
+            break;
+
+        case model.DiffKind.Error:
+            alert(diff.data);
+            reject();
+            break;
+
+        case model.DiffKind.Property:
+            let object = this.modelWorld.getObjectByID(diff.id);
+            let tween = diff.tween(object);
+            if (!tween) {
                 resolve();
-                break;
-
-            case model.DiffKind.EndOfBlock:
-                m.startComputation();
-                for (let objective of this.objectives) {
-                    if (!objective.completed) {
-                        objective.completed = objective.predicate(this);
-                    }
-                }
-
-                this.event.broadcast(BaseLevel.OBJECTIVES_UPDATED);
-                m.endComputation();
-                resolve();
-                break;
-
-            case model.DiffKind.EndOfInit:
-                resolve();
-                break;
-
-            case model.DiffKind.Error:
-                alert(diff.data);
-                reject();
-                break;
-
-            case model.DiffKind.Property:
-                let object = this.modelWorld.getObjectByID(diff.id);
-                let tween = diff.tween(object);
-                if (!tween) {
-                    resolve();
-                    return;
-                }
-                tween.onComplete.add(() => {
-                    resolve();
-                });
-                tween.start();
-                break;
+                return;
             }
-        });
+            tween.onComplete.add(() => {
+                resolve();
+            });
+            tween.start();
+            break;
+        }
     }
 
     zoom(zoomed: boolean) {

@@ -1,13 +1,15 @@
-interface MapController extends _mithril.MithrilController {
-    phaser: Phaser.Game,
-    doneExecuting: _mithril.MithrilProperty<boolean>,
-}
-
 import Camera = require("camera");
 import Objectives = require("views/objectives");
 import Controls = require("views/controls");
 import level = require("level");
 import pubsub = require("pubsub");
+import {Session} from "../execution/session";
+
+interface MapController extends _mithril.MithrilController {
+    phaser: Phaser.Game,
+    doneExecuting: _mithril.MithrilProperty<boolean>,
+    session: Session,
+}
 
 /**
  * The map component handles interactions with Phaser and contains the
@@ -18,6 +20,7 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
         var controller: MapController = {
             phaser: null,
             doneExecuting: m.prop(false),
+            session: null,
         };
 
         return controller;
@@ -52,7 +55,11 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
 
                 onrun: () => {
                     args.executing(true);
-                    args.level.run().then(() => {
+                    let session = args.level.run();
+                    controller.session = session;
+                    session.then(() => {
+                        console.log("Done");
+                        controller.session = null;
                         m.startComputation();
                         controller.doneExecuting(true);
                         m.endComputation();
@@ -69,8 +76,27 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                 },
 
                 onabort: () => {
-                    args.level.abort();
+                    if (controller.session) {
+                        controller.session.abort();
+                    }
                 },
+
+                onpause: () => {
+                    if (controller.session) {
+                        if (controller.session.paused) {
+                            controller.session.unpause();
+                        }
+                        else {
+                            controller.session.pause();
+                        }
+                    }
+                },
+
+                onstep: () => {
+                    if (controller.session && controller.session.paused) {
+                        controller.session.step();
+                    }
+                }
             }),
         ]);
     },
