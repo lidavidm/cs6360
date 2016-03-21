@@ -25,7 +25,6 @@ const INITIAL_TOOLBOX = `
 export class BasicsLevel1 extends BaseLevel {
     public robot: model.Robot;
     public iron: model.Iron;
-    public iron2: model.Iron;
 
     init() {
         super.init();
@@ -72,19 +71,13 @@ export class BasicsLevel1 extends BaseLevel {
         let layer = map.createLayer(
             "Tile Layer 1", this.game.width, this.game.height, this.background);
 
-        let robot = this.foreground.create(16, 16, "robot");
-        robot.width = robot.height = 16;
-
-        let iron = this.middle.create(80, 16, "iron");
-        let iron2 = this.middle.create(160, 16, "iron");
-
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
         this.initWorld(map);
         this.robot = new model.Robot("Robot", 1, 1, model.Direction.EAST,
-                                     robot, this.modelWorld);
-        this.iron = new model.Iron("iron", 5, 1, iron, this.modelWorld);
-        this.iron2 = new model.Iron("iron2", 10, 1, iron2, this.modelWorld);
+                                     this.modelWorld, this.foreground, "robot");
+        this.iron = new model.Iron("iron", 5, 1,
+                                   this.modelWorld, this.middle, "iron");
 
         this.modelWorld.log.recordInitEnd();
 
