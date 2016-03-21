@@ -69,7 +69,7 @@ class MovementDiff<T extends WorldObject> extends Diff<T> {
     }
 
     tween(object: T): Phaser.Tween {
-        let p = object.phaserObject();
+        let p = object.getPhaserObject();
         if (p === null) return null;
         return p.game.add.tween(p).to({
             x: object.getX() * 16,
@@ -103,7 +103,7 @@ class HoldingDiff extends Diff<Robot> {
         let holding = object.holding();
         if (holding === null) return;
 
-        let p = holding.phaserObject();
+        let p = holding.getPhaserObject();
         if (p === null) return;
 
         return p.game.add.tween(p).to({
@@ -220,9 +220,11 @@ export class World {
     //list of all objects by ID
     objects: { [id: number] : WorldObject} = {};
 
+    game: Phaser.Game;
     log: Log;
 
-    constructor(tilemap: Phaser.Tilemap) {
+    constructor(game: Phaser.Game, tilemap: Phaser.Tilemap) {
+        this.game = game;
         this.log = new Log(this);
 
         this.maxX = tilemap.width;
@@ -330,7 +332,9 @@ export abstract class WorldObject {
 
     protected world: World;
 
-    constructor(name:string, x: number, y: number, world: World) {
+    protected phaserObject: any;
+
+    constructor(name: string, x: number, y: number, world: World) {
         this.name = name;
         this.world = world;
         this.id = this.world.getNewID();
@@ -343,8 +347,8 @@ export abstract class WorldObject {
         this.setLoc(x, y);
     }
 
-    phaserObject(): any {
-        return null;
+    getPhaserObject(): any {
+        return this.phaserObject;
     }
 
     /**
@@ -461,18 +465,22 @@ export class Robot extends WorldObject {
     orientation: Direction;
 
     protected holdingID: number;
+    protected phaserObject: Phaser.Group;
 
-    constructor(name: string, x: number, y: number,
-                orientation: Direction, sprite: Phaser.Sprite, world: World) {
+    constructor(name: string, x: number, y: number, orientation: Direction,
+                world: World, group: Phaser.Group, sprite: string) {
         super(name, x, y, world);
-        this.sprite = sprite;
+        this.phaserObject = world.game.add.group(group);
+        this.phaserObject.position.x = TILE_WIDTH * x;
+        this.phaserObject.position.y = TILE_HEIGHT * y;
+        this.sprite = this.phaserObject.create(0, 0, sprite);
 
         this.setOrientation(orientation);
         this.holdingID = null;
         this.hold(null);
     }
 
-    phaserObject(): Phaser.Sprite {
+    getPhaserObject(): Phaser.Sprite {
         return this.sprite;
     }
 
@@ -572,7 +580,7 @@ export class Iron extends WorldObject {
         return true;
     }
 
-    phaserObject(): Phaser.Sprite {
+    getPhaserObject(): Phaser.Sprite {
         return this.sprite;
     }
 

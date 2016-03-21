@@ -103,16 +103,15 @@ export class Alpha1Level extends BaseLevel {
         let layer = map.createLayer(
             "Tile Layer 1", this.game.width, this.game.height, this.background);
 
-        let robot = this.foreground.create(16, 16, "robot");
-        robot.width = robot.height = 16;
-
         let iron = this.middle.create(80, 16, "iron");
 
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
         this.initWorld(map);
         this.robot = new model.Robot("Robot", 1, 1, model.Direction.EAST,
-                                     robot, this.modelWorld);
+                                     this.modelWorld, this.foreground, "robot");
+
+
         this.iron = new model.Iron("iron", 5, 1, iron, this.modelWorld);
 
         this.modelWorld.log.recordInitEnd();

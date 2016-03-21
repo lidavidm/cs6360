@@ -134,7 +134,7 @@ export class BaseLevel extends Phaser.State {
     }
 
     initWorld(map: Phaser.Tilemap) {
-        this.modelWorld = new model.World(map);
+        this.modelWorld = new model.World(this.game, map);
     }
 
     preload() {
