@@ -15,7 +15,7 @@ const INITIAL_TOOLBOX = `
   </category>
   <category name="Objects" colour="330">
     <block type="variables_get">
-      <field name="CLASS">Robot</field>
+      <data>Robot</data>
       <field name="VAR">robot</field>
     </block>
   </category>

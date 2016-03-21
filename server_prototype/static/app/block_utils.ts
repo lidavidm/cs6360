@@ -3,7 +3,7 @@
  */
 export function getClass(block: any): string {
     if (block["type"] === "variables_get") {
-        return block.getField("CLASS").getValue();
+        return block.data;
     }
     else if (block["type"] === "math_number") {
         return "number";
