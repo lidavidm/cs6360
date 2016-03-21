@@ -4,7 +4,7 @@ import * as TooltipView from "../views/tooltip";
 import * as python from "../execution/python";
 
 //will need some changes
-import {BasicsLevel1} from "./basic1";
+import {Alpha1Level} from "./alpha1";
 
 // Just put the robot and action into the box?
 // Reason: lots of scaffolding at first, break it down later?
@@ -39,7 +39,7 @@ export class BasicsLevel2 extends BaseLevel {
                 predicate: (level) => {
                     return level.robot.getX() === 3 && level.robot.getY() === 1;
                 }
-            }
+            },
             {
                 objective: "Move the robot all the way to the iron.",
                 completed: false,
@@ -51,7 +51,7 @@ export class BasicsLevel2 extends BaseLevel {
 
         this.allTooltips = [
             [
-                new TooltipView.Tooltip(TooltipView.Region.Objectives, "Here's what Mission Control said to do.")
+                new TooltipView.Tooltip(TooltipView.Region.Objectives, "Here's what Mission Control said to do."),
                 new TooltipView.Tooltip(TooltipView.Region.Workspace, "Right click a block and select duplicate to copy it.")
             ]
         ];
@@ -84,7 +84,7 @@ export class BasicsLevel2 extends BaseLevel {
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
         this.initWorld(map);
-        this.robot = new model.Robot("Robot", 1, 1, model.Direction.EAST,
+        this.robot = new model.Robot("Robot", 2, 1, model.Direction.EAST,
                                      robot, this.modelWorld);
         this.iron = new model.Iron("iron", 5, 1, iron, this.modelWorld);
 
@@ -94,11 +94,11 @@ export class BasicsLevel2 extends BaseLevel {
         this.interpreter.instantiateObject("robot", "Robot", this.robot.getID());
     }
 
-    nextLevel(): Alpha2Level {
+    nextLevel(): Alpha1Level {
         // Return the level that should be loaded after this one. Add
         // it to the state manager so that Phaser will begin
         // preloading it while the congratulations screen displays.
-        let level = new Alpha2Level();
+        let level = new Alpha1Level();
         this.game.state.add("Next", level, true);
         return level;
     }
