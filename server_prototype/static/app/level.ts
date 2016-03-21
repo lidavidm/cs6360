@@ -210,6 +210,13 @@ export class BaseLevel extends Phaser.State {
         this._abort = true;
     }
 
+    pause() {
+    }
+
+    step() {
+
+    }
+
     run(): Promise<{}> {
         this.modelWorld.log.reset();
 
