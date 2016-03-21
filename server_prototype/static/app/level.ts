@@ -30,14 +30,17 @@ export class Toolbox {
     /**
      * Add the methods of a class to the toolbox.
      */
-    addClass(className: string, image: string, classObject: any, methodList?: string[]) {
+    addClass(className: string, image: string, classObject: any, methodList?: any[]) {
         let methods: [string, string][] = [];
         if (!methodList) {
-            methodList = Object.getOwnPropertyNames(classObject.prototype).sort();
+            methodList = Object.getOwnPropertyNames(classObject.prototype)
+                .sort()
+                .map(function(property) {
+                    return classObject.prototype[property];
+                });
         }
         methodList
-            .forEach(function(property) {
-                let method = classObject.prototype[property];
+            .forEach(function(method) {
                 if (method.friendlyName) {
                     methods.push([method.friendlyName, method.funcName]);
                 }
