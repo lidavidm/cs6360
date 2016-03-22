@@ -58,7 +58,6 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                     let session = args.level.run();
                     controller.session = session;
                     session.then(() => {
-                        console.log("Done");
                         controller.session = null;
                         m.startComputation();
                         controller.doneExecuting(true);

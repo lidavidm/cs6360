@@ -58,7 +58,6 @@ export class Diff<T extends WorldObject> {
         Object.keys(this.properties).forEach((property) => {
             let change = this.properties[property];
             (<any> object)[property] = change[1];
-            console.log("Setting (id: " + object.getID() + ")." + property + " to " + change[1]);
         });
     }
 }
@@ -71,16 +70,10 @@ class MovementDiff<T extends WorldObject> extends Diff<T> {
     tween(object: T): Phaser.Tween {
         let p = object.getPhaserObject();
         if (p === null) return null;
-        console.log(`Tweening to ${object.getX() * TILE_WIDTH} and ${object.getY() * TILE_HEIGHT}`);
-        console.log(p);
         let tween = p.game.add.tween(p.position).to({
             x: object.getX() * TILE_WIDTH,
             y: object.getY() * TILE_HEIGHT,
         }, 800, Phaser.Easing.Quadratic.InOut);
-
-        tween.onComplete.add(() => {
-            console.log(`Final position: ${p} ${p.position.x}, ${p.position.y}`);
-        });
 
         return tween;
     }

@@ -42,7 +42,6 @@ export class Session {
 
     private replay(resolveOuter: () => void) {
         this.log.replay(this.runDiffWrapper.bind(this)).then(() => {
-            console.log("Finished replay");
             resolveOuter();
         });
     }
@@ -54,7 +53,7 @@ export class Session {
                 this.aborted = false;
                 return;
             }
-            else if (this.paused) {
+            else if (this.paused && diff.kind === DiffKind.BeginningOfBlock) {
                 this.pauseContext = () => {
                     this.runDiff(diff, resolve, reject);
                 };
