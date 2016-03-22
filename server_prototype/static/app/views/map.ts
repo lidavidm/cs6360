@@ -3,11 +3,13 @@ import Objectives = require("views/objectives");
 import Controls = require("views/controls");
 import level = require("level");
 import pubsub = require("pubsub");
-import {Session} from "../execution/session";
+import {Session} from "execution/session";
+import {PubSub} from "pubsub";
 
 interface MapController extends _mithril.MithrilController {
     phaser: Phaser.Game,
     doneExecuting: _mithril.MithrilProperty<boolean>,
+    paused: _mithril.MithrilProperty<boolean>,
     session: Session,
 }
 
@@ -16,12 +18,20 @@ interface MapController extends _mithril.MithrilController {
  * execution controls and objectives.
  */
 export const Component: _mithril.MithrilComponent<MapController> = <any> {
-    controller: function(): MapController {
+    controller: function(args: {
+        event: PubSub,
+    }): MapController {
         var controller: MapController = {
             phaser: null,
             doneExecuting: m.prop(false),
+            paused: m.prop(false),
             session: null,
         };
+
+        args.event.on(level.BaseLevel.NEXT_LEVEL_LOADED, () => {
+            controller.doneExecuting(false);
+            controller.paused(false);
+        });
 
         return controller;
     },
@@ -52,6 +62,7 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
             m.component(Controls.Component, {
                 executing: args.executing,
                 doneExecuting: controller.doneExecuting,
+                paused: controller.paused,
 
                 onrun: () => {
                     args.executing(true);
@@ -70,6 +81,7 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                         m.startComputation();
                         args.executing(false);
                         controller.doneExecuting(false);
+                        controller.paused(false);
                         m.endComputation();
                     });
                 },
@@ -83,9 +95,11 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                 onpause: () => {
                     if (controller.session) {
                         if (controller.session.paused) {
+                            controller.paused(false);
                             controller.session.unpause();
                         }
                         else {
+                            controller.paused(true);
                             controller.session.pause();
                         }
                     }

@@ -198,6 +198,10 @@ body {
     width: 33.333%;
 }
 
+#gameControls button[disabled] {
+    background: gray !important;
+}
+
 #gameControls button.run {
     background: green;
 }

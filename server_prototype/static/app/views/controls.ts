@@ -11,6 +11,7 @@ export const Component: _mithril.MithrilComponent<ControlsController> = <any> {
     view: function(controller: ControlsController, args: {
         executing: _mithril.MithrilProperty<boolean>,
         doneExecuting: _mithril.MithrilProperty<boolean>,
+        paused: _mithril.MithrilProperty<boolean>,
         onrun?: () => void,
         onreset?: () => void,
         onabort?: () => void,
@@ -51,13 +52,14 @@ export const Component: _mithril.MithrilComponent<ControlsController> = <any> {
                         args.onpause();
                     }
                 },
-            }, "Pause"));
+            }, args.paused() ? "Resume" : "Pause"));
             buttons.push(m(<any> "button.step", {
                 onclick: function() {
                     if (args.onstep) {
                         args.onstep();
                     }
                 },
+                disabled: !args.paused(),
             }, "Step"));
         }
         return m("nav#gameControls", buttons);
