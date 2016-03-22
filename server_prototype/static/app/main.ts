@@ -5,8 +5,6 @@ import CongratulationsView = require("views/congratulations");
 import level = require("level");
 import pubsub = require("pubsub");
 
-//import {Alpha1Level} from "levels/alpha1";
-
 import {BasicsLevel1} from "./levels/basic1";
 
 interface GameController extends _mithril.MithrilController {
@@ -87,8 +85,7 @@ export const MainComponent = {
             };
         };
 
-        //let initLevel = new Alpha1Level();
-        let initLevel = new BasicsLevel1
+        let initLevel = new BasicsLevel1();
         controller.setLevel(initLevel);
 
         return controller;

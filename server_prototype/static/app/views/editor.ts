@@ -8,6 +8,7 @@ interface EditorController extends _mithril.MithrilController {
     level: level.BaseLevel,
     workspace: any,
     changeListener: (event: any) => void,
+    setupLevel: () => void,
 }
 
 /**
@@ -35,6 +36,8 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     console.log(code);
                 }
             },
+
+            setupLevel: setupLevel,
         };
 
         function typecheck(event: any, block: any) {
@@ -93,10 +96,22 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             }
         }
 
+        function setupLevel() {
+            controller.workspace.updateToolbox(controller.level.toolbox.xml());
+            controller.workspace.clear();
+
+            controller.level.event.on(level.BaseLevel.BLOCK_EXECUTED, (blockID) => {
+                // Enable trace so that block highlighting works -
+                // needs to be reset before each highlight call
+                // because Blockly resets it
+                controller.workspace.traceOn(true);
+                controller.workspace.highlightBlock(blockID);
+            });
+        }
+
         args.event.on(level.BaseLevel.NEXT_LEVEL_LOADED, (nextLevel: level.BaseLevel) => {
             controller.level = nextLevel;
-            controller.workspace.updateToolbox(nextLevel.toolbox.xml());
-            controller.workspace.clear();
+            setupLevel();
         });
 
         return controller;
@@ -127,22 +142,14 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     return;
                 }
 
-                // TODO: rebind this when the level changes
-                controller.level.event.on(level.BaseLevel.BLOCK_EXECUTED, (blockID) => {
-                    // Enable trace so that block highlighting works -
-                    // needs to be reset before each highlight call
-                    // because Blockly resets it
-                    controller.workspace.traceOn(true);
-                    console.log(blockID);
-                    controller.workspace.highlightBlock(blockID);
-                });
-
                 controller.workspace = Blockly.inject(element, {
                     toolbox: controller.level.toolbox.xml(),
                     trashcan: true,
                 });
 
                 controller.workspace.addChangeListener(controller.changeListener);
+
+                controller.setupLevel();
             },
         });
     },
