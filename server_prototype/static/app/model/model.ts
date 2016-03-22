@@ -596,8 +596,8 @@ export class Iron extends WorldObject {
     }
 
     phaserReset() {
-        this.sprite.width = TILE_WIDTH;
-        this.sprite.height = TILE_HEIGHT;
-        this.sprite.alpha = 1.0;
+        this.phaserObject.width = TILE_WIDTH;
+        this.phaserObject.height = TILE_HEIGHT;
+        this.phaserObject.alpha = 1.0;
     }
 }
