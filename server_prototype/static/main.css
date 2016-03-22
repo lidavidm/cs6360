@@ -176,6 +176,20 @@ body {
     font-weight: 300;
 }
 
+#objectives li .checkbox {
+    float: left;
+    margin-top: 0.25em;
+}
+
+#objectives li .description {
+    display: inline-block;
+    width: calc(100% - 1.5em);
+}
+
+#objectives li.completed .description {
+    animation: completed 1.25s ease-in-out;
+}
+
 #gameControls {
     height: 120px;
     width: 100%;
@@ -335,6 +349,24 @@ button.ui {
     100% {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+@keyframes completed {
+    0% {
+        background: #000;
+    }
+
+    30% {
+        background: green;
+    }
+
+    70% {
+        background: green;
+    }
+
+    100% {
+        background: #000;
     }
 }
 

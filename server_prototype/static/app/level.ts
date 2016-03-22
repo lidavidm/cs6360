@@ -244,15 +244,25 @@ export class BaseLevel extends Phaser.State {
 
         case model.DiffKind.EndOfBlock:
             m.startComputation();
+            let objectiveCompleted = false;
+
             for (let objective of this.objectives) {
                 if (!objective.completed) {
                     objective.completed = objective.predicate(this);
+                    objectiveCompleted = objectiveCompleted || objective.completed;
                 }
             }
 
-            this.event.broadcast(BaseLevel.OBJECTIVES_UPDATED);
+            if (objectiveCompleted) {
+                setTimeout(() => {
+                    this.event.broadcast(BaseLevel.OBJECTIVES_UPDATED);
+                    resolve();
+                }, 1500);
+            }
+            else {
+                resolve();
+            }
             m.endComputation();
-            resolve();
             break;
 
         case model.DiffKind.EndOfInit:
