@@ -1,7 +1,7 @@
-import * as model from "../model/model";
-import {BaseLevel, Toolbox} from "../level";
-import * as TooltipView from "../views/tooltip";
-import * as python from "../execution/python";
+import * as model from "model/model";
+import {BaseLevel, Toolbox} from "level";
+import * as TooltipView from "views/tooltip";
+import * as python from "execution/python";
 
 //will need some changes
 import {BasicsLevel2} from "./basic2";
@@ -49,7 +49,7 @@ export class BasicsLevel1 extends BaseLevel {
                 new TooltipView.Tooltip(TooltipView.Region.Controls, "Load your code onto the robot and run it."),
                 new TooltipView.Tooltip(TooltipView.Region.Toolbox, "Pick blocks from here…"),
                 new TooltipView.Tooltip(TooltipView.Region.Workspace, "…and drop them here to control the robot."),
-            ]
+            ],
         ];
     }
 

@@ -478,6 +478,10 @@ export class Robot extends WorldObject {
         this.sprite.width = TILE_WIDTH;
         this.sprite.height = TILE_HEIGHT;
 
+        let circle = world.game.add.graphics(0, 0, this.phaserObject);
+        circle.lineStyle(0.5, 0x22FF22, 0.5);
+        circle.drawCircle(TILE_WIDTH / 2, TILE_HEIGHT / 2, 1.41 * TILE_WIDTH);
+
         this.setOrientation(orientation);
         this.holdingID = null;
         this.hold(null);
@@ -580,6 +584,11 @@ export class Iron extends WorldObject {
         this.sprite = this.phaserObject.create(0, 0, sprite);
         this.sprite.width = TILE_WIDTH;
         this.sprite.height = TILE_HEIGHT;
+
+        let circle = world.game.add.graphics(0, 0, this.phaserObject);
+        circle.lineStyle(0.5, 0xFFA500, 0.5);
+        circle.drawCircle(TILE_WIDTH / 2, TILE_HEIGHT / 2, 1.41 * TILE_WIDTH);
+        circle.drawCircle(TILE_WIDTH / 2, TILE_HEIGHT / 2, 1.63 * TILE_WIDTH);
     }
 
     passable(): boolean {

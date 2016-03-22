@@ -196,6 +196,14 @@ export class BaseLevel extends Phaser.State {
             (this._tooltipIndex + 1) % this.allTooltips.length;
     }
 
+    setTooltipIndex(index: number) {
+        if (index < 0 || index >= this.allTooltips.length) {
+            throw new RangeError(`Invalid tooltip index: ${index}`);
+        }
+
+        this._tooltipIndex = index;
+    }
+
     setCode(code: string) {
         this.code = code;
     }
