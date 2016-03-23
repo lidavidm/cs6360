@@ -219,7 +219,8 @@ export class World {
     private map: WorldObject[][][];
     private tilemap: Phaser.Tilemap;
     //list of all objects by ID
-    objects: { [id: number] : WorldObject} = {};
+    objects: { [id: number]: WorldObject} = {};
+    objectsByName: { [name: string]: WorldObject } = {};
 
     game: Phaser.Game;
     log: Log;
@@ -255,12 +256,13 @@ export class World {
     }
 
     addObject(obj: WorldObject) {
-        let x:number = obj.getX();
-        let y:number = obj.getY();
+        let x: number = obj.getX();
+        let y: number = obj.getY();
 
         if (this.boundsOkay(x, y)) {
             this.map[x][y].push(obj);
             this.objects[obj.getID()] = obj;
+            this.objectsByName[obj.getName()] = obj;
         }
         else {
             throw new RangeError("Trying to add object at invalid location: (" + x + ", " + y + ")");
@@ -276,13 +278,23 @@ export class World {
         }
     }
 
-    getObjectByID(id: number) {
+    getObjectByID(id: number): WorldObject {
         let obj = this.objects[id];
         if (typeof obj !== "undefined") {
             return obj;
         }
         else {
-            throw new Error("Attempting to find invalid object id.");
+            throw new Error(`No object with id ${id} found.`);
+        }
+    }
+
+    getObjectByName(name: string): WorldObject {
+        let obj = this.objectsByName[name];
+        if (typeof obj !== "undefined") {
+            return obj;
+        }
+        else {
+            throw new Error(`No object with name ${name} found.`);
         }
     }
 
@@ -362,6 +374,10 @@ export abstract class WorldObject {
 
     getID(): number {
         return this.id;
+    }
+
+    getName(): string {
+        return this.name;
     }
 
     getX(): number {
