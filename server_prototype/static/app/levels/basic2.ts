@@ -14,10 +14,6 @@ const INITIAL_TOOLBOX = `
     <block type="tell"></block>
   </category>
   <category name="Objects" colour="330">
-    <block type="variables_get">
-      <data>Robot</data>
-      <field name="VAR">robot</field>
-    </block>
   </category>
 </xml>
 `;
@@ -31,6 +27,7 @@ export class BasicsLevel2 extends BaseLevel {
 
         this.toolbox = new Toolbox(INITIAL_TOOLBOX);
         this.toolbox.addClass("Robot", "assets/sprites/robot_3Dblue.png", model.Robot);
+        this.toolbox.addObject("robot", "Robot");
 
         this.objectives = [
             {
@@ -78,15 +75,15 @@ export class BasicsLevel2 extends BaseLevel {
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
         this.initWorld(map);
-        this.robot = new model.Robot("Robot", 2, 1, model.Direction.EAST,
+        this.robot = new model.Robot("robot", 2, 1, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
         this.iron = new model.Iron("iron", 5, 1,
                                    this.modelWorld, this.middle, "iron");
 
         this.modelWorld.log.recordInitEnd();
 
-        this.interpreter = new python.Interpreter("", this.modelWorld);
-        this.interpreter.instantiateObject("robot", "Robot", this.robot.getID());
+        this.interpreter = new python.Interpreter("", this.modelWorld, this.toolbox);
+        this.interpreter.instantiateAll();
     }
 
     nextLevel(): Alpha1Level {

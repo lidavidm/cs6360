@@ -11,10 +11,6 @@ const TOOLBOX = `
   </category>
   <category name="Objects" colour="330">
     <block type="math_number"></block>
-    <block type="variables_get">
-      <data>Robot</data>
-      <field name="VAR">robot</field>
-    </block>
   </category>
 </xml>
 `;
@@ -29,6 +25,7 @@ export class Alpha2Level extends BaseLevel {
 
         this.toolbox = new Toolbox(TOOLBOX);
         this.toolbox.addClass("Robot", "assets/sprites/robot_3Dblue.png", model.Robot);
+        this.toolbox.addObject("robot", "Robot");
 
         this.objectives = [
             {
@@ -86,7 +83,7 @@ export class Alpha2Level extends BaseLevel {
         this.cursors = this.game.input.keyboard.createCursorKeys();
         this.initWorld(map);
 
-        this.robot = new model.Robot("Robot", 1, 1, model.Direction.EAST,
+        this.robot = new model.Robot("robot", 1, 1, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
         this.iron = new model.Iron("iron", 5, 1,
                                    this.modelWorld, this.middle, "iron");

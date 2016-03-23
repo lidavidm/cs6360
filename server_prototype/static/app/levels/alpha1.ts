@@ -38,6 +38,7 @@ export class Alpha1Level extends BaseLevel {
         // and the image to use to symbolize it
         this.toolbox = new Toolbox(INITIAL_TOOLBOX);
         this.toolbox.addClass("Robot", "assets/sprites/robot_3Dblue.png", model.Robot);
+        this.toolbox.addObject("robot", "Robot");
 
         // Define the objectives. The predicate is checked after
         // executing each block. It will be run if and only if the
@@ -106,7 +107,7 @@ export class Alpha1Level extends BaseLevel {
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
         this.initWorld(map);
-        this.robot = new model.Robot("Robot", 1, 1, model.Direction.EAST,
+        this.robot = new model.Robot("robot", 1, 1, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
 
 
@@ -117,8 +118,8 @@ export class Alpha1Level extends BaseLevel {
 
         // The only reason why this isn't created for you is because
         // of its dependence on the world.
-        this.interpreter = new python.Interpreter("", this.modelWorld);
-        this.interpreter.instantiateObject("robot", "Robot", this.robot.getID());
+        this.interpreter = new python.Interpreter("", this.modelWorld, this.toolbox);
+        this.interpreter.instantiateAll();
     }
 
     nextLevel(): Alpha2Level {

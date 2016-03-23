@@ -78,11 +78,8 @@ export class BasicsLevel1 extends BaseLevel {
 
         this.modelWorld.log.recordInitEnd();
 
-        this.interpreter = new python.Interpreter("", this.modelWorld);
-        for (let [name, className] of this.toolbox.getObjects()) {
-            let modelObject = this.modelWorld.getObjectByName(name);
-            this.interpreter.instantiateObject(name, className, modelObject.getID());
-        }
+        this.interpreter = new python.Interpreter("", this.modelWorld, this.toolbox);
+        this.interpreter.instantiateAll();
     }
 
     nextLevel(): BasicsLevel2 {

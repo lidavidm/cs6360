@@ -1,5 +1,6 @@
 declare var Sk: any;
-import * as model from "../model/model";
+import * as model from "model/model";
+import * as level from "level";
 
 const PROXY_CLASS = `
 class JSProxyClass(object):
@@ -34,8 +35,12 @@ export class Interpreter {
     // the world that this interpreter updates
     private _world: model.World;
 
-    constructor(initCode: string, world: model.World) {
+    // the toolbox for the level
+    private _toolbox: level.Toolbox;
+
+    constructor(initCode: string, world: model.World, toolbox: level.Toolbox) {
         this._world = world;
+        this._toolbox = toolbox;
 
         var recordBlockEndDef = 'def recordBlockEnd(block_id=None):\n\tjsRecordBlockEnd(block_id)\n'
         this._initCode = PROXY_CLASS + recordBlockEndDef + initCode;
@@ -82,6 +87,19 @@ export class Interpreter {
     instantiateObject(varName: string, className: string, id: number) {
         var line = '\n' + varName + ' = JSProxyClass(' + id + ')';
         this._initCode = this._initCode + line;
+    }
+
+    /**
+     * Initialize all objects defined in the toolbox.
+     */
+    instantiateAll() {
+        for (let [name, className] of this._toolbox.getObjects()) {
+            let modelObject = this._world.getObjectByName(name);
+            if (!modelObject) {
+                throw new Error(`Model object ${name} not found.`);
+            }
+            this.instantiateObject(name, className, modelObject.getID());
+        }
     }
 
     /**
