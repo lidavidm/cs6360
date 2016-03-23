@@ -19,6 +19,16 @@ Blockly.Blocks.setClassMethods = function(class_name, method_list) {
                 .appendField(new Blockly.FieldDropdown(method_list),
                              "METHOD_NAME");
             this.data = class_name;
+        },
+
+        onchange: function(event) {
+            if (this.getSurroundParent()) {
+                this.setWarningText(null);
+            }
+            else {
+                this.setWarningText("Put me in a tell block!");
+                this.warning.setVisible(true);
+            }
         }
     };
 
@@ -57,6 +67,24 @@ Blockly.Blocks["tell"] = {
             "tooltip": "",
             "helpUrl": "http://www.example.com/"
         });
+    },
+
+    onchange: function(event) {
+        var object = this.childObject();
+        var method = this.childMethod();
+
+        if (!object && !method) {
+            this.setWarningText("I still need a method and an object!");
+        }
+        else if (!object) {
+            this.setWarningText("I still need an object! Look at the toolbox.");
+        }
+        else if (!method) {
+            this.setWarningText("I still need a method! Look at the blueprints in the toolbox.");
+        }
+        else {
+            this.setWarningText(null);
+        }
     },
 
     childObject: function() {

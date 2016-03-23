@@ -28,7 +28,6 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 if (block) {
                     typecheck(event, block);
                     updateObjectImage(event, block);
-                    addHints(block);
                 }
                 let code = Blockly.Python.workspaceToCode(controller.workspace);
                 if (controller.level) {
@@ -54,45 +53,6 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         function updateObjectImage(event: any, block: any) {
             if (block && block["type"] === "variables_get") {
                 block.validate();
-            }
-        }
-
-        function addHints(block: any) {
-            let parent = block.getParent();
-            console.log(block, parent);
-            // TODO: register tell blocks that are created, and go
-            // back and check them later, since the event doesn't
-            // necessarily fire on parent blocks
-            // TODO: refactor this into a method - perhaps even pass to level
-            if (block["type"].slice(0, 6) === "method") {
-                if (parent) {
-                    if (block.comment) {
-                        block.comment.setVisible(false);
-                    }
-                    block.setCommentText(null);
-                }
-                else {
-                    block.setCommentText("This method is lonely! Help it with the tell block.");
-                    block.comment.setVisible(true);
-                }
-            }
-
-            if (!parent) return;
-
-            if (parent["type"] === "tell") {
-                let object = parent.childObject();
-                let method = parent.childMethod();
-                if (object && !method) {
-                    parent.setCommentText(`I still need a method! Look at the blueprints on the left.`);
-                    parent.comment.setVisible(true);
-                }
-                else if (!object && method) {
-                    parent.setCommentText(`I still need an object!`);
-                    parent.comment.setVisible(true);
-                }
-                else {
-                    parent.setCommentText(null);
-                }
             }
         }
 
