@@ -27,7 +27,9 @@ Blockly.Blocks.setClassMethods = function(class_name, method_list) {
             }
             else {
                 this.setWarningText("Put me in a tell block!");
-                this.warning.setVisible(true);
+                if (this.warning) {
+                    this.warning.setVisible(true);
+                }
             }
         }
     };
