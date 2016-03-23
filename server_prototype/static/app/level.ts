@@ -251,7 +251,9 @@ export class BaseLevel extends Phaser.State {
         return new Promise((resolve, reject) => {
             this.modelWorld.log.replay((diff) => {
                 return new Promise((resolve, reject) => {
-                    this.runDiff(diff, resolve, reject);
+                    // 1, not 0, because 0 is false to JS, i.e. it's
+                    // the same as not passing the duration -.-
+                    this.runDiff(diff, resolve, reject, 1);
                 });
             }, true).then(() => {
                 console.log("Done with reset");
@@ -260,7 +262,7 @@ export class BaseLevel extends Phaser.State {
         });
     }
 
-    runDiff(diff: model.Diff<any>, resolve: () => void, reject: () => void) {
+    runDiff(diff: model.Diff<any>, resolve: () => void, reject: () => void, animDuration?: number) {
         switch (diff.kind) {
         case model.DiffKind.BeginningOfBlock:
             this.event.broadcast(BaseLevel.BLOCK_EXECUTED, diff.data);
@@ -301,7 +303,7 @@ export class BaseLevel extends Phaser.State {
 
         case model.DiffKind.Property:
             let object = this.modelWorld.getObjectByID(diff.id);
-            let tween = diff.tween(object);
+            let tween = diff.tween(object, animDuration);
             if (!tween) {
                 resolve();
                 return;

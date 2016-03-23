@@ -50,7 +50,7 @@ export class Diff<T extends WorldObject> {
         this.properties = properties;
     }
 
-    tween(object: T): Phaser.Tween {
+    tween(object: T, duration=ANIM_DURATION): Phaser.Tween {
         return null;
     }
 
@@ -67,13 +67,13 @@ class MovementDiff<T extends WorldObject> extends Diff<T> {
         super(DiffKind.Property, null, id, properties);
     }
 
-    tween(object: T): Phaser.Tween {
+    tween(object: T, duration=ANIM_DURATION): Phaser.Tween {
         let p = object.getPhaserObject();
         if (p === null) return null;
         let tween = p.game.add.tween(p.position).to({
             x: object.getX() * TILE_WIDTH,
             y: object.getY() * TILE_HEIGHT,
-        }, 800, Phaser.Easing.Quadratic.InOut);
+        }, duration, Phaser.Easing.Quadratic.InOut);
 
         return tween;
     }
@@ -100,7 +100,7 @@ class HoldingDiff extends Diff<Robot> {
         super(DiffKind.Property, null, id, properties);
     }
 
-    tween(object: Robot): Phaser.Tween {
+    tween(object: Robot, duration=ANIM_DURATION): Phaser.Tween {
         let holding = object.holding();
         if (holding === null) return;
 
@@ -113,7 +113,7 @@ class HoldingDiff extends Diff<Robot> {
             width: p.width + 32,
             height: p.height + 32,
             alpha: 0,
-        }, 800, Phaser.Easing.Quadratic.InOut);
+        }, duration, Phaser.Easing.Quadratic.InOut);
     }
 }
 
