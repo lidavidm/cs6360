@@ -1,6 +1,8 @@
 import level = require("level");
 import pubsub = require("pubsub");
 
+import {renderObjective} from "./objectives";
+
 interface CongratulationsController extends _mithril.MithrilController {
     loaded: _mithril.MithrilProperty<boolean>,
 }
@@ -48,10 +50,10 @@ export const Component: _mithril.MithrilComponent<CongratulationsController> = <
         }, m("div#congratulations", [
             m("h2", "Success"),
             m("ul", args.level.objectives.map(function(objective) {
-                return m("li", [
+                return m("li.objective", [
                     // CSS won't let us style an actual checkbox
                     m("span.checkbox.checked"),
-                    objective.objective,
+                    renderObjective(objective),
                 ]);
             })),
             button,

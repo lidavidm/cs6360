@@ -2,6 +2,7 @@ import * as model from "model/model";
 import {BaseLevel, Toolbox} from "level";
 import * as TooltipView from "views/tooltip";
 import * as python from "execution/python";
+import * as asset from "asset";
 
 //will need some changes
 import {BasicsLevel2} from "./basic2";
@@ -26,14 +27,14 @@ export class BasicsLevel1 extends BaseLevel {
         super.init();
 
         this.toolbox = new Toolbox(INITIAL_TOOLBOX);
-        this.toolbox.addClass("Robot", "assets/sprites/robot_3Dblue.png", model.Robot, [
+        this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
         ]);
         this.toolbox.addObject("robot", "Robot");
 
         this.objectives = [
             {
-                objective: "Move the robot",
+                objective: `Move the robot [${asset.Robot.Basic}] forward`,
                 completed: false,
                 predicate: (level) => {
                     return level.robot.getX() === 2 && level.robot.getY() === 1;
@@ -55,7 +56,7 @@ export class BasicsLevel1 extends BaseLevel {
 
         this.game.load.tilemap("prototype", "assets/maps/prototype.json", null, Phaser.Tilemap.TILED_JSON);
         this.game.load.image("tiles", "assets/tilesets/cave.png");
-        this.game.load.image("robot", "assets/sprites/robot_3Dblue.png");
+        this.game.load.image("robot", asset.Robot.Basic);
         this.game.load.image("iron", "assets/sprites/iron.png");
     }
 

@@ -190,6 +190,10 @@ body {
     animation: completed 1.25s ease-in-out;
 }
 
+li.objective img {
+    height: 1em;
+}
+
 #gameControls {
     height: 120px;
     width: 100%;
