@@ -17,8 +17,9 @@ export interface Objective<T> {
  */
 export class Toolbox {
     private _tree: Document;
-    private _objects: Element;
+    private _objectParent: Element;
     private _classes: string[];
+    private _objects: [string, string][];
 
     constructor(toolbox?: string) {
         var _parser = new DOMParser();
@@ -30,7 +31,8 @@ export class Toolbox {
         }
 
         this._classes = [];
-        this._objects = this._tree.querySelector("category[name='Objects']");
+        this._objects = [];
+        this._objectParent = this._tree.querySelector("category[name='Objects']");
     }
 
     /**
@@ -90,14 +92,12 @@ export class Toolbox {
         field.textContent = name;
         block.appendChild(field);
 
-        this._objects.appendChild(block);
+        this._objectParent.appendChild(block);
+        this._objects.push([name, className]);
     }
 
-    /**
-     * Draw this toolbox into the given workspace.
-     */
-    render(workspace: any) {
-        workspace.updateToolbox(this._tree.documentElement);
+    getObjects(): [string, string][] {
+        return this._objects;
     }
 
     /**

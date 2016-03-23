@@ -71,7 +71,7 @@ export class BasicsLevel1 extends BaseLevel {
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
         this.initWorld(map);
-        this.robot = new model.Robot("Robot", 1, 1, model.Direction.EAST,
+        this.robot = new model.Robot("robot", 1, 1, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
         this.iron = new model.Iron("iron", 5, 1,
                                    this.modelWorld, this.middle, "iron");
@@ -79,7 +79,10 @@ export class BasicsLevel1 extends BaseLevel {
         this.modelWorld.log.recordInitEnd();
 
         this.interpreter = new python.Interpreter("", this.modelWorld);
-        this.interpreter.instantiateObject("robot", "Robot", this.robot.getID());
+        for (let [name, className] of this.toolbox.getObjects()) {
+            let modelObject = this.modelWorld.getObjectByName(name);
+            this.interpreter.instantiateObject(name, className, modelObject.getID());
+        }
     }
 
     nextLevel(): BasicsLevel2 {
