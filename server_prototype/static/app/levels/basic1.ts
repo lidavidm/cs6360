@@ -14,10 +14,6 @@ const INITIAL_TOOLBOX = `
     <block type="tell"></block>
   </category>
   <category name="Objects" colour="330">
-    <block type="variables_get">
-      <data>Robot</data>
-      <field name="VAR">robot</field>
-    </block>
   </category>
 </xml>
 `;
@@ -33,6 +29,7 @@ export class BasicsLevel1 extends BaseLevel {
         this.toolbox.addClass("Robot", "assets/sprites/robot_3Dblue.png", model.Robot, [
             model.Robot.prototype.moveForward,
         ]);
+        this.toolbox.addObject("robot", "Robot");
 
         this.objectives = [
             {

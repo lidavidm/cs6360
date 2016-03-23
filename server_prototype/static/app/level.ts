@@ -17,6 +17,8 @@ export interface Objective<T> {
  */
 export class Toolbox {
     private _tree: Document;
+    private _objects: Element;
+    private _classes: string[];
 
     constructor(toolbox?: string) {
         var _parser = new DOMParser();
@@ -26,12 +28,17 @@ export class Toolbox {
         else {
             this._tree = _parser.parseFromString("<xml></xml>", "text/xml");
         }
+
+        this._classes = [];
+        this._objects = this._tree.querySelector("category[name='Objects']");
     }
 
     /**
      * Add the methods of a class to the toolbox.
      */
     addClass(className: string, image: string, classObject: any, methodList?: any[]) {
+        this._classes.push(className);
+
         let methods: [string, string][] = [];
         if (!methodList) {
             methodList = Object.getOwnPropertyNames(classObject.prototype)
@@ -66,6 +73,24 @@ export class Toolbox {
             category.appendChild(block);
         }
         this._tree.documentElement.appendChild(category);
+    }
+
+    addObject(name: string, className: string) {
+        if (this._classes.indexOf(className) < 0) {
+            throw new ReferenceError(`Toolbox error: class ${className} does not exist.`);
+        }
+
+        let block = this._tree.createElement("block");
+        block.setAttribute("type", "variables_get");
+        let data = this._tree.createElement("data");
+        data.textContent = className;
+        block.appendChild(data);
+        let field = this._tree.createElement("field");
+        field.setAttribute("name", "VAR");
+        field.textContent = name;
+        block.appendChild(field);
+
+        this._objects.appendChild(block);
     }
 
     /**
