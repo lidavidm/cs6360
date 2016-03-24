@@ -70,16 +70,6 @@ export class BasicsLevel1 extends BaseLevel {
         let layer = map.createLayer(
             "Tile Layer 1", this.game.width, this.game.height, this.background);
 
-        let image = this.game.cache.getImage("tiles");
-        if (image.width === 0 || image.height === 0) {
-            console.log("Image not yet loaded...");
-            image.onload = () => {
-                console.log("Loaded image");
-                map.tilesets[0].setImage(this.game.cache.getImage("tiles"));
-                layer.dirty = true;
-            };
-        }
-
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
         this.initWorld(map);
