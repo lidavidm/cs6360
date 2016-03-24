@@ -5,7 +5,7 @@ import CongratulationsView = require("views/congratulations");
 import level = require("level");
 import pubsub = require("pubsub");
 
-import {BasicsLevel1} from "./levels/basic1";
+import {DEFAULT_PROGRESSION} from "progression";
 
 interface GameController extends _mithril.MithrilController {
 }
@@ -47,6 +47,8 @@ interface MainController extends _mithril.MithrilController {
 
 export const MainComponent = {
     controller: function(): MainController {
+        let levelName: string = DEFAULT_PROGRESSION.getLevelName(0);
+
         let controller = Object.create(null);
         controller.loadScreen = m.prop(false);
         controller.loadScreenOldLevel = null;
@@ -61,7 +63,13 @@ export const MainComponent = {
                         tooltip.hide();
                     });
 
-                    let nextLevel = newLevel.nextLevel();
+                    levelName = DEFAULT_PROGRESSION.nextLevel(levelName);
+                    if (!levelName) {
+                        // TODO: victory screen!
+                    }
+                    let nextLevelProto = DEFAULT_PROGRESSION.getLevel(levelName);
+                    let nextLevel = new nextLevelProto;
+                    newLevel.game.state.add("Next", nextLevel, true);
                     newLevel.game.load.onLoadComplete.add(() => {
                         newLevel.game.load.onLoadComplete.removeAll();
                         controller.executing(false);
@@ -85,7 +93,9 @@ export const MainComponent = {
             };
         };
 
-        let initLevel = new BasicsLevel1();
+        // TYPE SYSTEM SHENANNIGANS
+        let initLevelProto = DEFAULT_PROGRESSION.getLevel(levelName);
+        let initLevel: level.BaseLevel = new initLevelProto;
         controller.setLevel(initLevel);
 
         return controller;

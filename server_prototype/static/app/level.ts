@@ -110,8 +110,6 @@ export class Toolbox {
 
 import Camera = require("camera");
 export class BaseLevel extends Phaser.State {
-    private classes: any[];
-
     public event: PubSub.PubSub;
 
     public objectives: Objective<this>[];
@@ -324,10 +322,6 @@ export class BaseLevel extends Phaser.State {
         else {
             this.zoomCamera.scale.set(1, 1);
         }
-    }
-
-    nextLevel(): BaseLevel {
-        return this;
     }
 }
 

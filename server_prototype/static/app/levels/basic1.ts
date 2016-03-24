@@ -4,9 +4,6 @@ import * as TooltipView from "views/tooltip";
 import * as python from "execution/python";
 import * as asset from "asset";
 
-//will need some changes
-import {BasicsLevel2} from "./basic2";
-
 // Just put the robot and action into the box?
 // Reason: lots of scaffolding at first, break it down later?
 const INITIAL_TOOLBOX = `
@@ -82,14 +79,5 @@ export class BasicsLevel1 extends BaseLevel {
 
         this.interpreter = new python.Interpreter("", this.modelWorld, this.toolbox);
         this.interpreter.instantiateAll();
-    }
-
-    nextLevel(): BasicsLevel2 {
-        // Return the level that should be loaded after this one. Add
-        // it to the state manager so that Phaser will begin
-        // preloading it while the congratulations screen displays.
-        let level = new BasicsLevel2();
-        this.game.state.add("Next", level, true);
-        return level;
     }
 }

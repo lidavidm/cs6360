@@ -3,8 +3,6 @@ import {BaseLevel, Toolbox} from "../level";
 import * as TooltipView from "../views/tooltip";
 import * as python from "../execution/python";
 
-import {Alpha2Level} from "./alpha2";
-
 // Define the toolbox here. See documentation at
 // https://developers.google.com/blockly/installation/toolbox
 // This does NOT include methods - see below
@@ -120,14 +118,5 @@ export class Alpha1Level extends BaseLevel {
         // of its dependence on the world.
         this.interpreter = new python.Interpreter("", this.modelWorld, this.toolbox);
         this.interpreter.instantiateAll();
-    }
-
-    nextLevel(): Alpha2Level {
-        // Return the level that should be loaded after this one. Add
-        // it to the state manager so that Phaser will begin
-        // preloading it while the congratulations screen displays.
-        let level = new Alpha2Level();
-        this.game.state.add("Next", level, true);
-        return level;
     }
 }
