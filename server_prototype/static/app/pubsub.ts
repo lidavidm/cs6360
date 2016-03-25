@@ -1,4 +1,4 @@
-type PubSubHandler = (event?: any) => void;
+type PubSubHandler = (event?: any, ...args: any[]) => void;
 
 export class PubSub {
     _handlers: { [event: string]: PubSubHandler[] };
@@ -23,13 +23,13 @@ export class PubSub {
         this._handlers[event].splice(index, 1);
     }
 
-    broadcast(event: string, args?: any) {
+    broadcast(event: string, ...args: any[]) {
         if (!this._handlers[event]) {
             return;
         }
 
         this._handlers[event].forEach((handler) => {
-            handler(args);
+            handler.apply(null, args);
         });
     }
 }

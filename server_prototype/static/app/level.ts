@@ -138,6 +138,7 @@ export class BaseLevel extends Phaser.State {
     public static OBJECTIVES_UPDATED = "objectivesUpdated";
     public static NEXT_LEVEL_LOADED = "nextLevelLoaded";
     public static BLOCK_EXECUTED = "blockExecuted";
+    public static WORKSPACE_UPDATED = "workspaceUpdated";
 
     constructor() {
         super();

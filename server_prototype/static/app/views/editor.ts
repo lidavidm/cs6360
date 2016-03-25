@@ -8,7 +8,7 @@ interface EditorController extends _mithril.MithrilController {
     level: level.BaseLevel,
     workspace: any,
     changeListener: (event: any) => void,
-    setupLevel: () => void,
+    setupLevel: (blocks?: HTMLElement) => void,
 }
 
 /**
@@ -24,6 +24,9 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             level: null,
             workspace: null,
             changeListener: function(event: any) {
+                controller.level.event.broadcast(
+                    level.BaseLevel.WORKSPACE_UPDATED,
+                    Blockly.Xml.workspaceToDom(controller.workspace));
                 var block = Blockly.Block.getById(event.blockId);
                 if (block) {
                     typecheck(event, block);
@@ -56,9 +59,13 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             }
         }
 
-        function setupLevel() {
+        function setupLevel(blocks: HTMLElement) {
             controller.workspace.updateToolbox(controller.level.toolbox.xml());
             controller.workspace.clear();
+
+            if (blocks) {
+                Blockly.Xml.domToWorkspace(controller.workspace, blocks);
+            }
 
             controller.level.event.on(level.BaseLevel.BLOCK_EXECUTED, (blockID) => {
                 // Enable trace so that block highlighting works -
@@ -69,9 +76,9 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             });
         }
 
-        args.event.on(level.BaseLevel.NEXT_LEVEL_LOADED, (nextLevel: level.BaseLevel) => {
+        args.event.on(level.BaseLevel.NEXT_LEVEL_LOADED, (nextLevel: level.BaseLevel, blocks: HTMLElement) => {
             controller.level = nextLevel;
-            setupLevel();
+            setupLevel(blocks);
         });
 
         return controller;
@@ -107,9 +114,9 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     trashcan: true,
                 });
 
-                controller.workspace.addChangeListener(controller.changeListener);
+                controller.setupLevel(args.savegame.load());
 
-                controller.setupLevel();
+                controller.workspace.addChangeListener(controller.changeListener);
             },
         });
     },

@@ -6,6 +6,7 @@ import level = require("level");
 import pubsub = require("pubsub");
 
 import {DEFAULT_PROGRESSION} from "progression";
+import {Savegame} from "savegame";
 
 interface GameController extends _mithril.MithrilController {
 }
@@ -21,6 +22,7 @@ export const GameWidget: _mithril.MithrilComponent<GameController> = <any> {
         level: level.BaseLevel,
         executing: _mithril.MithrilProperty<boolean>,
         event: pubsub.PubSub,
+        savegame: Savegame,
     }) {
         return m(".container", [
             // TODO: change args into an interface
@@ -33,6 +35,7 @@ export const GameWidget: _mithril.MithrilComponent<GameController> = <any> {
                 executing: args.executing,
                 level: args.level,
                 event: args.event,
+                savegame: args.savegame,
             }),
         ]);
     },
@@ -43,19 +46,29 @@ interface MainController extends _mithril.MithrilController {
     loadScreenOldLevel: level.BaseLevel,
     executing: _mithril.MithrilBasicProperty<boolean>,
     event: pubsub.PubSub,
+    savegame: Savegame,
 }
 
 export const MainComponent = {
     controller: function(): MainController {
-        let levelName: string = DEFAULT_PROGRESSION.getLevelName(0);
+        let firstLevelName = DEFAULT_PROGRESSION.getLevelName(0);
+        let savegame = Savegame.newGame(firstLevelName);
+        if (window.localStorage["0"]) {
+            savegame = Savegame.parse(window.localStorage["0"]);
+            savegame.currentLevel = firstLevelName;
+        }
 
         let controller = Object.create(null);
         controller.loadScreen = m.prop(false);
         controller.loadScreenOldLevel = null;
         controller.executing = m.prop(false);
         controller.event = new pubsub.PubSub();
+        controller.savegame = savegame;
 
         controller.setLevel = function(newLevel: level.BaseLevel) {
+            newLevel.event.on(level.BaseLevel.WORKSPACE_UPDATED, (blocks: HTMLElement) => {
+                savegame.save(blocks);
+            });
             newLevel.event.on(level.BaseLevel.OBJECTIVES_UPDATED, () => {
                 if (newLevel.isComplete()) {
                     controller.loadScreenOldLevel = newLevel;
@@ -63,11 +76,13 @@ export const MainComponent = {
                         tooltip.hide();
                     });
 
-                    levelName = DEFAULT_PROGRESSION.nextLevel(levelName);
-                    if (!levelName) {
+                    let newLevelName = DEFAULT_PROGRESSION.nextLevel(savegame.currentLevel);
+                    if (!newLevelName) {
                         // TODO: victory screen!
                     }
-                    let nextLevelProto = DEFAULT_PROGRESSION.getLevel(levelName);
+                    // TODO: save workspace
+                    savegame.currentLevel = newLevelName;
+                    let nextLevelProto = DEFAULT_PROGRESSION.getLevel(newLevelName);
                     let nextLevel = new nextLevelProto;
                     newLevel.game.state.add("Next", nextLevel, true);
                     newLevel.game.load.onLoadComplete.add(() => {
@@ -75,8 +90,15 @@ export const MainComponent = {
                         controller.executing(false);
                         m.startComputation();
                         controller.setLevel(nextLevel);
-                        controller.event.broadcast(level.BaseLevel.NEXT_LEVEL_LOADED, nextLevel);
-                        controller.loadScreenOldLevel.event.broadcast(level.BaseLevel.NEXT_LEVEL_LOADED);
+
+                        let saved = savegame.load();
+                        controller.event.broadcast(level.BaseLevel.NEXT_LEVEL_LOADED, nextLevel, saved);
+
+                        // TODO: get rid of this (get rid of level events?)
+                        if (controller.loadScreenOldLevel) {
+                            controller.loadScreenOldLevel.event.broadcast(level.BaseLevel.NEXT_LEVEL_LOADED);
+                        }
+
                         m.endComputation();
                     });
                 }
@@ -94,7 +116,7 @@ export const MainComponent = {
         };
 
         // TYPE SYSTEM SHENANNIGANS
-        let initLevelProto = DEFAULT_PROGRESSION.getLevel(levelName);
+        let initLevelProto = DEFAULT_PROGRESSION.getLevel(savegame.currentLevel);
         let initLevel: level.BaseLevel = new initLevelProto;
         controller.setLevel(initLevel);
 
@@ -109,6 +131,7 @@ export const MainComponent = {
                 level: controller.level,
                 executing: controller.executing,
                 event: controller.event,
+                savegame: controller.savegame,
             })),
             m(<any> "div#tooltip", {
                 key: "tooltip",
