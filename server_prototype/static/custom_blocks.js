@@ -5,6 +5,12 @@ goog.provide('Blockly.Blocks.oop');
 goog.require('Blockly.Blocks');
 goog.require('Blockly.Python');
 
+Blockly.Blocks.oop.faded = {};
+
+Blockly.Blocks.oop.isFaded = function(block_name) {
+    return Blockly.Blocks.oop.faded[block_name] === true;
+};
+
 Blockly.Python.STATEMENT_PREFIX = "recordBlockBegin(%1)\n"
 Blockly.Python.STATEMENT_POSTFIX = "recordBlockEnd(%1)\n"
 
@@ -42,19 +48,17 @@ Blockly.Blocks.setClassMethods = function(class_name, method_list) {
 
 Blockly.Blocks["tell"] = {
     init: function() {
+        var message = "tell %1 to %2";
+        if (Blockly.Blocks.oop.isFaded("tell")) {
+            message = "%1.(%2)";
+        }
         this.jsonInit({
             "id": "tell",
-            "message0": "tell %1 %2 to %3 %4",
+            "message0": message,
             "args0": [
-                {
-                    "type": "input_dummy"
-                },
                 {
                     "type": "input_value",
                     "name": "OBJECT"
-                },
-                {
-                    "type": "input_dummy"
                 },
                 {
                     "type": "input_value",
