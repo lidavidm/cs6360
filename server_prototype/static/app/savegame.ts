@@ -1,3 +1,5 @@
+declare var Blockly: any;
+
 export class Savegame {
     currentLevel: string;
     savedBlocks: { [level: string]: HTMLElement };
@@ -13,7 +15,7 @@ export class Savegame {
         json["savedBlocks"] = Object.create(null);
 
         for (let level in this.savedBlocks) {
-            json["savedBlocks"][level] = this.savedBlocks[level].outerHTML;
+            json["savedBlocks"][level] = Blockly.Xml.domToPrettyText(this.savedBlocks[level]);
         }
 
         return JSON.stringify(json);
@@ -32,9 +34,8 @@ export class Savegame {
     static parse(json: string): Savegame {
         let parsed = JSON.parse(json);
         let game = new Savegame(parsed["currentLevel"]);
-        let parser = new DOMParser();
         for (let level in parsed["savedBlocks"]) {
-            game.savedBlocks[level] = parser.parseFromString(parsed["savedBlocks"][level], "text/xml").documentElement;
+            game.savedBlocks[level] = Blockly.Xml.textToDom(parsed["savedBlocks"][level]);
         }
 
         return game;
