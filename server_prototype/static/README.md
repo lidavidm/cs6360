@@ -16,8 +16,16 @@
         ./node_modules/.bin/tsc --pretty --watch
 
   This will auto-recompile when something is changed.
-5. In another shell, fire up a dev server:
+5. Build Blockly:
+
+        cd assets
+        ./build_blockly.sh
+
+  This needs to be repeated each time you modify the Blockly
+  submodule.
+
+6. In another shell, fire up a dev server:
 
         python2 -m SimpleHTTPServer 8000
 
-6. Visit localhost:8000
+7. Visit localhost:8000
