@@ -3,18 +3,6 @@ import {BaseLevel, Toolbox} from "../level";
 import * as TooltipView from "../views/tooltip";
 import * as python from "../execution/python";
 
-// Just put the robot and action into the box?
-// Reason: lots of scaffolding at first, break it down later?
-const INITIAL_TOOLBOX = `
-<xml style="display: none">
-  <category name="Toolbox" colour="210">
-    <block type="tell"></block>
-  </category>
-  <category name="Objects" colour="330">
-  </category>
-</xml>
-`;
-
 export class BasicsLevel2 extends BaseLevel {
     public robot: model.Robot;
     public iron: model.Iron;
@@ -22,7 +10,8 @@ export class BasicsLevel2 extends BaseLevel {
     init() {
         super.init();
 
-        this.toolbox = new Toolbox(INITIAL_TOOLBOX);
+        this.toolbox = new Toolbox(false);
+        this.toolbox.addControl("tell");
         this.toolbox.addClass("Robot", "assets/sprites/robot_3Dblue.png", model.Robot);
         this.toolbox.addObject("robot", "Robot");
 

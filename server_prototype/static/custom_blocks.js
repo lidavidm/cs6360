@@ -50,7 +50,7 @@ Blockly.Blocks["tell"] = {
     init: function() {
         var message = "tell %1 to %2";
         if (Blockly.Blocks.oop.isFaded("tell")) {
-            message = "%1.(%2)";
+            message = "%1.%2()";
         }
         this.jsonInit({
             "id": "tell",

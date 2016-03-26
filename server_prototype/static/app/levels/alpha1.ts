@@ -3,25 +3,6 @@ import {BaseLevel, Toolbox} from "../level";
 import * as TooltipView from "../views/tooltip";
 import * as python from "../execution/python";
 
-// Define the toolbox here. See documentation at
-// https://developers.google.com/blockly/installation/toolbox
-// This does NOT include methods - see below
-const INITIAL_TOOLBOX = `
-<xml style="display: none">
-  <category name="Toolbox" colour="210">
-    <block type="controls_repeat_ext"></block>
-    <block type="tell"></block>
-  </category>
-  <category name="Objects" colour="330">
-    <block type="math_number"></block>
-    <block type="variables_get">
-      <data>Robot</data>
-      <field name="VAR">robot</field>
-    </block>
-  </category>
-</xml>
-`;
-
 export class Alpha1Level extends BaseLevel {
     // Any model objects you need (besides the world, which is defined
     // as modelWorld. NOTE: this.world is the Phaser world!)
@@ -34,9 +15,12 @@ export class Alpha1Level extends BaseLevel {
         // Create the toolbox and add the class. The toolbox object
         // scrapes the methods from the class - just specify the name
         // and the image to use to symbolize it
-        this.toolbox = new Toolbox(INITIAL_TOOLBOX);
+        this.toolbox = new Toolbox();
+        this.toolbox.addControl("tell");
+        this.toolbox.addControl("controls_repeat_ext");
         this.toolbox.addClass("Robot", "assets/sprites/robot_3Dblue.png", model.Robot);
         this.toolbox.addObject("robot", "Robot");
+        this.toolbox.addNumber(4);
 
         // Define the objectives. The predicate is checked after
         // executing each block. It will be run if and only if the

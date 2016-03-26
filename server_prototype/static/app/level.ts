@@ -17,28 +17,36 @@ export interface Objective<T> {
  */
 export class Toolbox {
     private _tree: Document;
+    private _inline: boolean;
     private _objectParent: Element;
+    private _controlParent: Element;
     private _classes: string[];
     private _objects: [string, string][];
 
-    constructor(toolbox?: string) {
-        var _parser = new DOMParser();
-        if (toolbox) {
-            this._tree = _parser.parseFromString(toolbox, "text/xml");
-        }
-        else {
-            this._tree = _parser.parseFromString("<xml></xml>", "text/xml");
-        }
+    private static INLINE_XML: string = `<xml></xml>`;
+    private static CATEGORY_XML: string = `
+<xml>
+  <category name="Toolbox" colour="210">
+  </category>
+  <category name="Objects" colour="330">
+  </category>
+</xml>
+`;
 
+    constructor(inline=false) {
+        let parser = new DOMParser();
+        this._tree = parser.parseFromString(inline ? Toolbox.INLINE_XML : Toolbox.CATEGORY_XML, "text/xml");
+        this._inline = inline;
         this._classes = [];
         this._objects = [];
-        this._objectParent = this._tree.querySelector("category[name='Objects']");
+        this._objectParent = inline ? this._tree.documentElement : this._tree.querySelector("category[name='Objects']");
+        this._controlParent = inline ? this._tree.documentElement : this._tree.querySelector("category[name='Toolbox']");
     }
 
     /**
      * Add the methods of a class to the toolbox.
      */
-    addClass(className: string, image: string, classObject: any, methodList?: any[]) {
+    addClass(className: string, image: string, classObject: any, methodList?: any[]): HTMLElement[] {
         this._classes.push(className);
 
         let methods: [string, string][] = [];
@@ -61,10 +69,18 @@ export class Toolbox {
         // TODO: broadcast event indicating toolbox has been updated
 
         let category = this._tree.createElement("category");
+        if (this._inline) {
+            category = this._tree.documentElement;
+        }
+        else {
+            this._tree.documentElement.appendChild(category);
+        }
+
         let method_type = "method_" + className;
         category.setAttribute("name", "class " + className);
         category.setAttribute("class", "blueprint");
 
+        let method_blocks: HTMLElement[] = [];
         for (let method of methods) {
             let block = this._tree.createElement("block");
             block.setAttribute("type", method_type);
@@ -73,11 +89,13 @@ export class Toolbox {
             methodName.textContent = method[1];
             block.appendChild(methodName);
             category.appendChild(block);
+            method_blocks.push(block);
         }
-        this._tree.documentElement.appendChild(category);
+
+        return method_blocks;
     }
 
-    addObject(name: string, className: string) {
+    addObject(name: string, className: string): HTMLElement {
         if (this._classes.indexOf(className) < 0) {
             throw new ReferenceError(`Toolbox error: class ${className} does not exist.`);
         }
@@ -94,6 +112,64 @@ export class Toolbox {
 
         this._objectParent.appendChild(block);
         this._objects.push([name, className]);
+
+        return block;
+    }
+
+    addControl(name: string, insert=true, fields?: [string, any][], values?: [string, any][], data?: string) {
+        let block = this._tree.createElement("block");
+        block.setAttribute("type", name);
+
+        if (fields) {
+            fields.forEach(([name, val]) => {
+                let field = this._tree.createElement("field");
+                field.setAttribute("name", name);
+                if (val instanceof Element) {
+                    field.appendChild(val);
+                }
+                else {
+                    field.innerHTML = val;
+                }
+                block.appendChild(field);
+            });
+        }
+        if (values) {
+            values.forEach(([name, val]) => {
+                let value = this._tree.createElement("value");
+                value.setAttribute("name", name);
+                if (val instanceof Element) {
+                    value.appendChild(val);
+                }
+                else {
+                    value.innerHTML = val;
+                }
+                block.appendChild(value);
+            });
+        }
+
+        if (data) {
+            let dataEl = this._tree.createElement("data");
+            dataEl.textContent = data;
+            block.appendChild(dataEl);
+        }
+
+        if (insert) {
+            this._controlParent.appendChild(block);
+        }
+        return block;
+    }
+
+    addNumber(value=0): HTMLElement {
+        let block = this._tree.createElement("block");
+        block.setAttribute("type", "math_number");
+        let field = this._tree.createElement("field");
+        field.setAttribute("name", "NUM");
+        field.textContent = value.toString();
+        block.appendChild(field);
+
+        this._objectParent.appendChild(block);
+
+        return block;
     }
 
     getObjects(): [string, string][] {

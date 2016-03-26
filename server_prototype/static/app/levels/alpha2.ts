@@ -2,19 +2,6 @@ import * as model from "../model/model";
 import {BaseLevel, Toolbox} from "../level";
 import * as TooltipView from "../views/tooltip";
 
-const TOOLBOX = `
-<xml style="display: none">
-  <category name="Toolbox" colour="210">
-    <block type="controls_repeat_ext"></block>
-    <block type="controls_if"></block>
-    <block type="tell"></block>
-  </category>
-  <category name="Objects" colour="330">
-    <block type="math_number"></block>
-  </category>
-</xml>
-`;
-
 export class Alpha2Level extends BaseLevel {
     public modelWorld: model.World;
     public robot: model.Robot;
@@ -23,9 +10,13 @@ export class Alpha2Level extends BaseLevel {
     init() {
         super.init();
 
-        this.toolbox = new Toolbox(TOOLBOX);
+        this.toolbox = new Toolbox();
+        this.toolbox.addControl("tell");
+        this.toolbox.addControl("controls_repeat_ext");
+        this.toolbox.addControl("controls_if");
         this.toolbox.addClass("Robot", "assets/sprites/robot_3Dblue.png", model.Robot);
         this.toolbox.addObject("robot", "Robot");
+        this.toolbox.addNumber();
 
         this.objectives = [
             {

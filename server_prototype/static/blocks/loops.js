@@ -27,7 +27,6 @@
 goog.provide('Blockly.Blocks.loops');
 
 goog.require('Blockly.Blocks');
-goog.require('Blockly.Blocks.oop');
 
 
 /**

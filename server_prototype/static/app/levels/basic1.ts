@@ -6,15 +6,6 @@ import * as asset from "asset";
 
 // Just put the robot and action into the box?
 // Reason: lots of scaffolding at first, break it down later?
-const INITIAL_TOOLBOX = `
-<xml style="display: none">
-  <category name="Toolbox" colour="210">
-    <block type="tell"></block>
-  </category>
-  <category name="Objects" colour="330">
-  </category>
-</xml>
-`;
 
 export class BasicsLevel1 extends BaseLevel {
     public robot: model.Robot;
@@ -23,11 +14,17 @@ export class BasicsLevel1 extends BaseLevel {
     init() {
         super.init();
 
-        this.toolbox = new Toolbox(INITIAL_TOOLBOX);
-        this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
+        this.toolbox = new Toolbox(true);
+        this.toolbox.addControl("tell");
+        let methods = this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
         ]);
-        this.toolbox.addObject("robot", "Robot");
+        let object = this.toolbox.addObject("robot", "Robot");
+
+        this.toolbox.addControl("tell", true, [], [
+            ["OBJECT", object.cloneNode(true)],
+            ["METHOD", methods[0].cloneNode(true)],
+        ]);
 
         this.objectives = [
             {

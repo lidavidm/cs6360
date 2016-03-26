@@ -6,6 +6,7 @@ import pubsub = require("pubsub");
 
 interface EditorController extends _mithril.MithrilController {
     level: level.BaseLevel,
+    element: HTMLElement,
     workspace: any,
     changeListener: (event: any) => void,
     setupLevel: (blocks?: HTMLElement) => void,
@@ -22,6 +23,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
     }): EditorController {
         var controller: EditorController = {
             level: null,
+            element: null,
             workspace: null,
             changeListener: function(event: any) {
                 controller.level.event.broadcast(
@@ -60,9 +62,8 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         }
 
         function setupLevel(blocks: HTMLElement) {
-            controller.workspace.updateToolbox(controller.level.toolbox.xml());
             controller.workspace.clear();
-
+            controller.workspace.updateToolbox(controller.level.toolbox.xml());
             if (blocks) {
                 Blockly.Xml.domToWorkspace(controller.workspace, blocks);
             }
@@ -78,6 +79,14 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
 
         args.event.on(level.BaseLevel.NEXT_LEVEL_LOADED, (nextLevel: level.BaseLevel, blocks: HTMLElement) => {
             controller.level = nextLevel;
+            controller.workspace.dispose();
+            controller.workspace = Blockly.inject(controller.element, {
+                toolbox: controller.level.toolbox.xml(),
+                trashcan: true,
+            });
+
+            controller.workspace.addChangeListener(controller.changeListener);
+
             setupLevel(blocks);
         });
 
@@ -94,17 +103,8 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         return m("div#editor", {
             class: args.executing() ? "executing" : "",
             config: (element: HTMLElement, isInitialized: boolean) => {
+                controller.element = element;
                 if (isInitialized) {
-                    // Hide the toolbox if we're running code
-                    var root =
-                        <HTMLElement> document.querySelector(".blocklyTreeRoot");
-                    if (args.executing()) {
-                        root.style.display = "none";
-                    }
-                    else {
-                        root.style.display = "block";
-                    }
-
                     this.resizeBlockly();
                     return;
                 }
