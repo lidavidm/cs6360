@@ -284,8 +284,10 @@ Blockly.Blocks['logic_compare'] = {
     this.setHelpUrl(Blockly.Msg.LOGIC_COMPARE_HELPURL);
     this.setColour(Blockly.Blocks.logic.HUE);
     this.setOutput(true, 'Boolean');
-    this.appendValueInput('A');
+    this.appendValueInput('A')
+        .setCheck(["Number", "Boolean"]);
     this.appendValueInput('B')
+        .setCheck(["Number", "Boolean"])
         .appendField(new Blockly.FieldDropdown(OPERATORS), 'OP');
     this.setInputsInline(true);
     // Assign 'this' to a variable for use in the tooltip closure below.
