@@ -349,6 +349,10 @@ export class BaseLevel extends Phaser.State {
         this.code = code;
     }
 
+    isCodeValid(): boolean {
+        return this.code.indexOf("BlocklyError") == -1;
+    }
+
     tooltips(): TooltipView.Tooltip[] {
         return this.allTooltips[this._tooltipIndex];
     }

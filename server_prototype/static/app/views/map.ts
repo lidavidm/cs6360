@@ -63,6 +63,7 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                 executing: args.executing,
                 doneExecuting: controller.doneExecuting,
                 paused: controller.paused,
+                valid: args.level.isCodeValid(),
 
                 onrun: () => {
                     args.executing(true);
@@ -74,6 +75,10 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                         controller.doneExecuting(true);
                         m.endComputation();
                     });
+                },
+
+                onruninvalid: () => {
+                    args.event.broadcast("runInvalid");
                 },
 
                 onreset: () => {

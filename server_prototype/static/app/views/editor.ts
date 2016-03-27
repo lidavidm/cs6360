@@ -36,13 +36,23 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 }
                 let code = Blockly.Python.workspaceToCode(controller.workspace);
                 if (controller.level) {
+                    m.startComputation();
                     controller.level.setCode(code);
                     console.log(code);
+                    m.endComputation();
                 }
             },
 
             setupLevel: setupLevel,
         };
+
+        args.event.on("runInvalid", () => {
+            controller.workspace.getAllBlocks().forEach((block: any) => {
+                if (block.warning) {
+                    block.warning.setVisible(true);
+                }
+            });
+        });
 
         function typecheck(event: any, block: any) {
             if (block && block.parentBlock_) {

@@ -224,6 +224,10 @@ li.objective img {
     background: green;
 }
 
+#gameControls button.runInvalid {
+    background: #FF1493;
+}
+
 #gameControls button.abort {
     background: red;
 }

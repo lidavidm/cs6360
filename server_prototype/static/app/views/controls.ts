@@ -12,7 +12,9 @@ export const Component: _mithril.MithrilComponent<ControlsController> = <any> {
         executing: _mithril.MithrilProperty<boolean>,
         doneExecuting: _mithril.MithrilProperty<boolean>,
         paused: _mithril.MithrilProperty<boolean>,
+        valid: boolean,
         onrun?: () => void,
+        onruninvalid?: () => void,
         onreset?: () => void,
         onabort?: () => void,
         onpause?: () => void,
@@ -21,13 +23,22 @@ export const Component: _mithril.MithrilComponent<ControlsController> = <any> {
         let buttons: _mithril.MithrilVirtualElement<ControlsController>[] = [];
         if (!args.executing()) {
             // Mithril type definition seems to be off here
-            buttons.push(m(<any> "button.run", {
+            let cssClass = args.valid ? ".run" : ".runInvalid";
+            let text = args.valid ? "Run" : "Invalid Code";
+            buttons.push(m(<any> ("button" + cssClass), {
                 onclick: function() {
+                    if (!args.valid) {
+                        if (args.onruninvalid) {
+                            args.onruninvalid();
+                        }
+                        return;
+                    };
+
                     if (args.onrun) {
                         args.onrun();
                     }
                 },
-            }, "Run"));
+            }, text));
         }
         else if (args.doneExecuting()) {
             buttons.push(m(<any> "button.reset", {
