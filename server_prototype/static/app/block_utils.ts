@@ -9,7 +9,7 @@ export function getClass(block: any): string {
         return "number";
     }
     else if (block["type"].slice(0, 6) === "method") {
-        return block.data;
+        return block.getClassName();
     }
     return null;
 }

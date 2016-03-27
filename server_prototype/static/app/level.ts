@@ -60,7 +60,7 @@ export class Toolbox {
         methodList
             .forEach(function(method) {
                 if (method.friendlyName) {
-                    methods.push([method.friendlyName, method.funcName]);
+                    methods.push([method.friendlyName, method.funcName, method.returnType]);
                 }
             });
         Blockly.Blocks.variables.addClass(className, image);

@@ -24,7 +24,8 @@ Blockly.Blocks.setClassMethods = function(class_name, method_list) {
             this.appendDummyInput()
                 .appendField(new Blockly.FieldDropdown(method_list),
                              "METHOD_NAME");
-            this.data = class_name;
+            this.data = JSON.stringify([class_name, method_list]);
+            this.className = class_name;
         },
 
         onchange: function(event) {
@@ -37,7 +38,14 @@ Blockly.Blocks.setClassMethods = function(class_name, method_list) {
                     this.warning.setVisible(true);
                 }
             }
-        }
+        },
+
+        getClassName: function() {
+            if (!this.className) {
+                this.className = JSON.parse(this.data)[0];
+            }
+            return this.className;
+        },
     };
 
     Blockly.Python[block_type] = function(block) {

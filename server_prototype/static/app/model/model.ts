@@ -1,7 +1,9 @@
-function blocklyMethod(funcName: string, friendlyName: string): PropertyDecorator {
+function blocklyMethod(funcName: string, friendlyName: string, returnType?: string, args?: [string, string][]): PropertyDecorator {
     return function(target: any, propertyKey: string) {
         target[propertyKey].funcName = funcName;
         target[propertyKey].friendlyName = friendlyName;
+        target[propertyKey].returnType = returnType || null;
+        target[propertyKey].args = args || [];
     };
 }
 
@@ -545,6 +547,12 @@ export class Robot extends WorldObject {
         else {
             throw new RangeError("Can't move forward! Tried: " + x + ", " + y);
         }
+    }
+
+    @blocklyMethod("canMoveForward", "can move forward", "Boolean")
+    canMoveForward(): boolean {
+        let [x, y] = offsetDirection(this.x, this.y, this.orientation, 1);
+        return this.world.passable(x, y);
     }
 
     @blocklyMethod("moveBackward", "move backward")
