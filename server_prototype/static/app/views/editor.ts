@@ -3,6 +3,7 @@ declare var Blockly: any;
 import block_utils = require("block_utils");
 import level = require("level");
 import pubsub = require("pubsub");
+import * as HierarchyView from "./hierarchy";
 
 interface EditorController extends _mithril.MithrilController {
     level: level.BaseLevel,
