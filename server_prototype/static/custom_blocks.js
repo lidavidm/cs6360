@@ -58,6 +58,10 @@ Blockly.Blocks.setClassObjects = function(classes) {
             this.setColour(330);
             this.setTooltip('');
             this.setHelpUrl('http://www.example.com/');
+            this.svgPath_.style.fill = "url(#blueprintGrid)";
+            this.svgPathLight_.style.stroke = "#007";
+            this.svgPathDark_.style.stroke = "#007";
+            this.svgPathDark_.style.fill = "#007";
         }
     };
 
