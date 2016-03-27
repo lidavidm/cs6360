@@ -46,6 +46,27 @@ Blockly.Blocks.setClassMethods = function(class_name, method_list) {
     };
 };
 
+Blockly.Blocks.setClassObjects = function(classes) {
+    var classList = classes.map(function(className) {
+        return [className, className];
+    });
+    Blockly.Blocks["class"] = {
+        init: function() {
+            this.appendDummyInput()
+                .appendField(new Blockly.FieldDropdown(classList), "CLASS_NAME");
+            this.setOutput(true, "class");
+            this.setColour(330);
+            this.setTooltip('');
+            this.setHelpUrl('http://www.example.com/');
+        }
+    };
+
+    Blockly.Python["class"] = function(block) {
+        var code = block.getFieldValue("CLASS_NAME");
+        return [code, Blockly.Python.ORDER_ATOMIC];
+    };
+};
+
 Blockly.Blocks["tell"] = {
     init: function() {
         var message = "tell %1 to %2";
@@ -114,4 +135,32 @@ Blockly.Blocks["tell"] = {
         }
         return null;
     },
-}
+};
+
+Blockly.Blocks["new"] = {
+  init: function() {
+      if (Blockly.Blocks.oop.isFaded("new")) {
+          this.appendDummyInput()
+              .appendField(new Blockly.FieldTextInput(""), "NAME");
+          this.appendValueInput("CLASS")
+              .setCheck("class")
+              .appendField("=");
+          this.appendDummyInput()
+              .appendField("()");
+      }
+      else {
+          this.appendValueInput("CLASS")
+              .setCheck("class")
+              .appendField("create a new");
+          this.appendDummyInput()
+              .appendField("called")
+              .appendField(new Blockly.FieldTextInput(""), "NAME");
+      }
+
+      this.setPreviousStatement(true);
+      this.setNextStatement(true);
+      this.setColour(120);
+      this.setTooltip("");
+      this.setHelpUrl("http://www.example.com/");
+  },
+};
