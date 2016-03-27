@@ -49,8 +49,7 @@ Blockly.Blocks.setClassMethods = function(class_name, method_list) {
     };
 
     Blockly.Python[block_type] = function(block) {
-        var code = block.getFieldValue("METHOD_NAME");
-        return [code, Blockly.Python.ORDER_ATOMIC];
+        return ["raise BlocklyError('Method block can't be by itself!')", Blockly.Python.ORDER_ATOMIC];
     };
 };
 

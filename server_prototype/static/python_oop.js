@@ -11,7 +11,7 @@ Blockly.Python['method'] = function(block) {
 
 Blockly.Python['tell'] = function(block) {
     var object = Blockly.Python.valueToCode(block, "OBJECT", Blockly.Python.ORDER_NONE);
-    var method = Blockly.Python.valueToCode(block, "METHOD", Blockly.Python.ORDER_NONE);
+    var method = block.getInputTargetBlock("METHOD");
     var id = block.id;
     var excTemplate = function(msg) {
         return "raise BlocklyError('" + id + "', '" + msg + "')\n";
@@ -25,6 +25,7 @@ Blockly.Python['tell'] = function(block) {
     else if (!method) {
         return excTemplate("This block needs a method!");
     }
+    var method = method.getFieldValue("METHOD_NAME");
     var code = object + "." + method + "()\n";
     return code;
 };
