@@ -176,7 +176,7 @@ export class Toolbox {
         let trueBlock = this._tree.createElement("block");
         trueBlock.setAttribute("type", "logic_boolean");
         let field = this._tree.createElement("field");
-        field.setAttribute("name", "NUM");
+        field.setAttribute("name", "BOOL");
         field.textContent = "TRUE";
         trueBlock.appendChild(field);
 
@@ -185,7 +185,7 @@ export class Toolbox {
         let falseBlock = this._tree.createElement("block");
         falseBlock.setAttribute("type", "logic_boolean");
         field = this._tree.createElement("field");
-        field.setAttribute("name", "NUM");
+        field.setAttribute("name", "BOOL");
         field.textContent = "FALSE";
         falseBlock.appendChild(field);
 
