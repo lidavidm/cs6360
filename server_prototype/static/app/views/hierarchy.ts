@@ -1,5 +1,6 @@
 interface HierarchyController extends _mithril.MithrilController {
     tree: d3.layout.Tree<ObjectHierarchy>,
+    diagonal: d3.svg.Diagonal<d3.layout.tree.Link<d3.layout.tree.Node>, d3.layout.tree.Node>,
     svg: d3.Selection<any>,
 }
 
@@ -16,7 +17,11 @@ export interface ObjectHierarchy extends d3.layout.tree.Node {
 
 export const Component: _mithril.MithrilComponent<HierarchyController> = <any> {
     controller: function(): HierarchyController {
-        return {};
+        return {
+            tree: null,
+            diagonal: null,
+            svg: null,
+        };
     },
 
     view: function(controller: HierarchyController, args: {
@@ -33,7 +38,7 @@ export const Component: _mithril.MithrilComponent<HierarchyController> = <any> {
 
             // Declare and create the nodes
             let node = controller.svg.selectAll("g.node")
-                .data(nodes, function(d) { return d.id || (d.id = ++i); });
+                .data<ObjectHierarchy>(nodes, function(d) { return d.id || (d.id = ++i); });
             var nodeEnter = node.enter().append("g")
                 .attr("class", "node")
                 .attr("transform", function(d) {
@@ -55,17 +60,31 @@ export const Component: _mithril.MithrilComponent<HierarchyController> = <any> {
                 .data(links, function(d) { return d.target.id; });
             link.enter().insert("path", "g")
                 .attr("class", "link")
-                .attr("d", diagonal);
+                .attr("d", controller.diagonal);
         }
 
         return m("div", {
             config: function(element: HTMLElement, isInitialized: boolean) {
-                if (isInitialized) {
+                if (!isInitialized) {
+                    let margin = {top: 20, right: 120, bottom: 20, left: 120},
+                    width = 960 - margin.right - margin.left,
+                    height = 500 - margin.top - margin.bottom;
+
+                    controller.tree = d3.layout.tree<ObjectHierarchy>()
+                        .size([height, width]);
+
+                    controller.diagonal = d3.svg.diagonal()
+                        .projection(function(d) { return [d.y, d.x]; });
+
+                    controller.svg = d3.select(element).append("svg")
+                        .attr("height", "100%")
+                        .attr("viewBox", "0 0 960 500")
+                        .append("g")
+                        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
 
                 }
-                else {
-
-                }
+                update();
             }
         });
     }
