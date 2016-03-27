@@ -73,8 +73,8 @@ class MovementDiff<T extends WorldObject> extends Diff<T> {
         let p = object.getPhaserObject();
         if (p === null) return null;
         let tween = p.game.add.tween(p.position).to({
-            x: object.getX() * TILE_WIDTH,
-            y: object.getY() * TILE_HEIGHT,
+            x: object.getX() * TILE_WIDTH + TILE_WIDTH / 2,
+            y: object.getY() * TILE_HEIGHT + TILE_HEIGHT / 2,
         }, duration, Phaser.Easing.Quadratic.InOut);
 
         return tween;
@@ -87,13 +87,41 @@ class MovementDiff<T extends WorldObject> extends Diff<T> {
     }
 }
 
-class OrientationDiff<T extends WorldObject> extends Diff<T> {
+interface HasOrientation extends WorldObject {
+    orientation: Direction;
+}
+
+class OrientationDiff<T extends HasOrientation> extends Diff<T> {
     constructor(id: number, properties: PropertyDiff) {
         super(DiffKind.Property, null, id, properties);
     }
 
-    tween(object: T): Phaser.Tween {
-        return null;
+    tween(object: T, duration=ANIM_DURATION): Phaser.Tween {
+        let p = object.getPhaserObject();
+        console.log(p);
+        if (p === null) return null;
+
+        let rotation = 0;
+        switch(object.orientation) {
+        case Direction.NORTH:
+            rotation = -Math.PI/2;
+            break;
+        case Direction.SOUTH:
+            rotation = Math.PI/2;
+            break;
+        case Direction.EAST:
+            rotation = 0;
+            break;
+        case Direction.WEST:
+            rotation = Math.PI;
+            break;
+        }
+        console.log(p.rotation, rotation);
+
+        let tween = p.game.add.tween(p).to({
+            rotation: rotation,
+        }, duration / 3, Phaser.Easing.Linear.None);
+        return tween;
     }
 }
 
@@ -347,7 +375,7 @@ export abstract class WorldObject {
 
     protected world: World;
 
-    protected phaserObject: any;
+    protected phaserObject: Phaser.Group;
 
     constructor(name: string, x: number, y: number, world: World) {
         this.name = name;
@@ -490,8 +518,10 @@ export class Robot extends WorldObject {
                 world: World, group: Phaser.Group, sprite: string) {
         super(name, x, y, world);
         this.phaserObject = world.game.add.group(group);
-        this.phaserObject.position.x = TILE_WIDTH * x;
-        this.phaserObject.position.y = TILE_HEIGHT * y;
+        this.phaserObject.position.x = TILE_WIDTH * x + TILE_WIDTH / 2;
+        this.phaserObject.position.y = TILE_HEIGHT * y + TILE_WIDTH / 2;
+        this.phaserObject.pivot.x = TILE_WIDTH / 2;
+        this.phaserObject.pivot.y = TILE_HEIGHT / 2;
         this.sprite = this.phaserObject.create(0, 0, sprite);
         this.sprite.width = TILE_WIDTH;
         this.sprite.height = TILE_HEIGHT;
@@ -567,6 +597,24 @@ export class Robot extends WorldObject {
         }
     }
 
+    @blocklyMethod("turnRight", "turn right")
+    turnRight() {
+        switch (this.orientation) {
+        case Direction.NORTH:
+            this.setOrientation(Direction.EAST);
+            break;
+        case Direction.EAST:
+            this.setOrientation(Direction.SOUTH);
+            break;
+        case Direction.SOUTH:
+            this.setOrientation(Direction.WEST);
+            break;
+        case Direction.WEST:
+            this.setOrientation(Direction.NORTH);
+            break;
+        }
+    }
+
     /*
      * Tries to pick up one obeject on the same tile as this Robot. Which object
      * is unspecified. Returns a promise that is resolved once the target object's
@@ -603,8 +651,11 @@ export class Iron extends WorldObject {
                 world: World, group: Phaser.Group, sprite: string) {
         super(name, x, y, world);
         this.phaserObject = world.game.add.group(group);
-        this.phaserObject.position.x = TILE_WIDTH * x;
-        this.phaserObject.position.y = TILE_HEIGHT * y;
+        this.phaserObject.position.x = TILE_WIDTH * x + TILE_WIDTH / 2;
+        this.phaserObject.position.y = TILE_HEIGHT * y + TILE_WIDTH / 2;
+        this.phaserObject.pivot.x = TILE_WIDTH / 2;
+        this.phaserObject.pivot.y = TILE_HEIGHT / 2;
+
         this.sprite = this.phaserObject.create(0, 0, sprite);
         this.sprite.width = TILE_WIDTH;
         this.sprite.height = TILE_HEIGHT;

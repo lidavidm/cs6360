@@ -5,6 +5,7 @@ export function getClass(block: any): string {
     if (block["type"] === "variables_get") {
         return block.data;
     }
+    // TODO: should check if method, else if object, else use output connection
     else if (block["type"] === "math_number") {
         return "number";
     }
