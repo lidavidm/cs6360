@@ -92,7 +92,7 @@ Blockly.Blocks['variables_get'] = {
     this.appendDummyInput()
         .appendField(new Blockly.FieldVariable(
         Blockly.Msg.VARIABLES_DEFAULT_NAME), 'VAR');
-    this.setOutput(true);
+    this.setOutput(true, "object");
     this.setTooltip(Blockly.Msg.VARIABLES_GET_TOOLTIP);
     this.contextMenuMsg_ = Blockly.Msg.VARIABLES_GET_CREATE_SET;
   },

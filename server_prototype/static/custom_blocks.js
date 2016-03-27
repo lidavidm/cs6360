@@ -83,7 +83,12 @@ Blockly.Blocks["tell"] = {
             "args0": [
                 {
                     "type": "input_value",
-                    "name": "OBJECT"
+                    "name": "OBJECT",
+                    "check": [
+                        "object",
+                        "Boolean",
+                        "Number",
+                    ],
                 },
                 {
                     "type": "input_value",
