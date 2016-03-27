@@ -28,3 +28,9 @@ Blockly.Python['tell'] = function(block) {
     var code = object + "." + method + "()\n";
     return code;
 };
+
+Blockly.Python["new"] = function(block) {
+    var className = Blockly.Python.valueToCode(block, "CLASS", Blockly.Python.ORDER_NONE);
+    var objectName = block.getFieldValue("NAME");
+    return objectName + " = " + className + "()\n";
+};

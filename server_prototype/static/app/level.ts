@@ -172,6 +172,23 @@ export class Toolbox {
         return block;
     }
 
+    addClasses(classNames: string[]): HTMLElement[] {
+        Blockly.Blocks.setClassObjects(classNames);
+        return classNames.map((className) => {
+            let block = this._tree.createElement("block");
+            block.setAttribute("type", "class");
+            let field = this._tree.createElement("field");
+            field.setAttribute("name", "CLASS_NAME");
+            field.textContent = className;
+            block.appendChild(field);
+
+            this._objectParent.appendChild(block);
+            // this._objects.push([name, className]);
+
+            return block;
+        });
+    }
+
     getObjects(): [string, string][] {
         return this._objects;
     }

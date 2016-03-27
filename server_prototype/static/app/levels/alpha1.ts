@@ -17,9 +17,11 @@ export class Alpha1Level extends BaseLevel {
         // and the image to use to symbolize it
         this.toolbox = new Toolbox();
         this.toolbox.addControl("tell");
+        this.toolbox.addControl("new");
         this.toolbox.addControl("controls_repeat_ext");
         this.toolbox.addClass("Robot", "assets/sprites/robot_3Dblue.png", model.Robot);
         this.toolbox.addObject("robot", "Robot");
+        this.toolbox.addClasses(["Robot", "number"]);
         this.toolbox.addNumber(4);
 
         // Define the objectives. The predicate is checked after
