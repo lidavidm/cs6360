@@ -19,10 +19,18 @@ export class Alpha1Level extends BaseLevel {
         this.toolbox.addControl("tell");
         this.toolbox.addControl("new");
         this.toolbox.addControl("controls_repeat_ext");
+        this.toolbox.addControl("controls_if");
+        this.toolbox.addControl("logic_compare");
+        this.toolbox.addControl("logic_operation");
+        this.toolbox.addControl("logic_negate");
+        this.toolbox.addControl("math_arithmetic");
+        this.toolbox.addControl("math_single");
+
         this.toolbox.addClass("Robot", "assets/sprites/robot_3Dblue.png", model.Robot);
         this.toolbox.addObject("robot", "Robot");
         this.toolbox.addClasses(["Robot", "number"]);
         this.toolbox.addNumber(4);
+        this.toolbox.addBooleans();
 
         // Define the objectives. The predicate is checked after
         // executing each block. It will be run if and only if the

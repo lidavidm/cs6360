@@ -131,64 +131,6 @@ Blockly.Blocks['math_single'] = {
   }
 };
 
-Blockly.Blocks['math_trig'] = {
-  /**
-   * Block for trigonometry operators.
-   * @this Blockly.Block
-   */
-  init: function() {
-    var OPERATORS =
-        [[Blockly.Msg.MATH_TRIG_SIN, 'SIN'],
-         [Blockly.Msg.MATH_TRIG_COS, 'COS'],
-         [Blockly.Msg.MATH_TRIG_TAN, 'TAN'],
-         [Blockly.Msg.MATH_TRIG_ASIN, 'ASIN'],
-         [Blockly.Msg.MATH_TRIG_ACOS, 'ACOS'],
-         [Blockly.Msg.MATH_TRIG_ATAN, 'ATAN']];
-    this.setHelpUrl(Blockly.Msg.MATH_TRIG_HELPURL);
-    this.setColour(Blockly.Blocks.math.HUE);
-    this.setOutput(true, 'Number');
-    this.appendValueInput('NUM')
-        .setCheck('Number')
-        .appendField(new Blockly.FieldDropdown(OPERATORS), 'OP');
-    // Assign 'this' to a variable for use in the tooltip closure below.
-    var thisBlock = this;
-    this.setTooltip(function() {
-      var mode = thisBlock.getFieldValue('OP');
-      var TOOLTIPS = {
-        'SIN': Blockly.Msg.MATH_TRIG_TOOLTIP_SIN,
-        'COS': Blockly.Msg.MATH_TRIG_TOOLTIP_COS,
-        'TAN': Blockly.Msg.MATH_TRIG_TOOLTIP_TAN,
-        'ASIN': Blockly.Msg.MATH_TRIG_TOOLTIP_ASIN,
-        'ACOS': Blockly.Msg.MATH_TRIG_TOOLTIP_ACOS,
-        'ATAN': Blockly.Msg.MATH_TRIG_TOOLTIP_ATAN
-      };
-      return TOOLTIPS[mode];
-    });
-  }
-};
-
-Blockly.Blocks['math_constant'] = {
-  /**
-   * Block for constants: PI, E, the Golden Ratio, sqrt(2), 1/sqrt(2), INFINITY.
-   * @this Blockly.Block
-   */
-  init: function() {
-    var CONSTANTS =
-        [['\u03c0', 'PI'],
-         ['e', 'E'],
-         ['\u03c6', 'GOLDEN_RATIO'],
-         ['sqrt(2)', 'SQRT2'],
-         ['sqrt(\u00bd)', 'SQRT1_2'],
-         ['\u221e', 'INFINITY']];
-    this.setHelpUrl(Blockly.Msg.MATH_CONSTANT_HELPURL);
-    this.setColour(Blockly.Blocks.math.HUE);
-    this.setOutput(true, 'Number');
-    this.appendDummyInput()
-        .appendField(new Blockly.FieldDropdown(CONSTANTS), 'CONSTANT');
-    this.setTooltip(Blockly.Msg.MATH_CONSTANT_TOOLTIP);
-  }
-};
-
 Blockly.Blocks['math_number_property'] = {
   /**
    * Block for checking if a number is even, odd, prime, whole, positive,
@@ -253,60 +195,6 @@ Blockly.Blocks['math_number_property'] = {
       }
     } else if (inputExists) {
       this.removeInput('DIVISOR');
-    }
-  }
-};
-
-Blockly.Blocks['math_change'] = {
-  /**
-   * Block for adding to a variable in place.
-   * @this Blockly.Block
-   */
-  init: function() {
-    this.jsonInit({
-      "message0": Blockly.Msg.MATH_CHANGE_TITLE,
-      "args0": [
-        {
-          "type": "field_variable",
-          "name": "VAR",
-          "variable": Blockly.Msg.MATH_CHANGE_TITLE_ITEM
-        },
-        {
-          "type": "input_value",
-          "name": "DELTA",
-          "check": "Number"
-        }
-      ],
-      "previousStatement": null,
-      "nextStatement": null,
-      "colour": Blockly.Blocks.math.HUE,
-      "helpUrl": Blockly.Msg.MATH_CHANGE_HELPURL
-    });
-    // Assign 'this' to a variable for use in the tooltip closure below.
-    var thisBlock = this;
-    this.setTooltip(function() {
-      return Blockly.Msg.MATH_CHANGE_TOOLTIP.replace('%1',
-          thisBlock.getFieldValue('VAR'));
-    });
-  },
-  /**
-   * Return all variables referenced by this block.
-   * @return {!Array.<string>} List of variable names.
-   * @this Blockly.Block
-   */
-  getVars: function() {
-    return [this.getFieldValue('VAR')];
-  },
-  /**
-   * Notification that a variable is renaming.
-   * If the name matches one of this block's variables, rename it.
-   * @param {string} oldName Previous name of variable.
-   * @param {string} newName Renamed variable.
-   * @this Blockly.Block
-   */
-  renameVar: function(oldName, newName) {
-    if (Blockly.Names.equals(oldName, this.getFieldValue('VAR'))) {
-      this.setFieldValue(newName, 'VAR');
     }
   }
 };

@@ -172,6 +172,29 @@ export class Toolbox {
         return block;
     }
 
+    addBooleans(): [HTMLElement, HTMLElement] {
+        let trueBlock = this._tree.createElement("block");
+        trueBlock.setAttribute("type", "logic_boolean");
+        let field = this._tree.createElement("field");
+        field.setAttribute("name", "NUM");
+        field.textContent = "TRUE";
+        trueBlock.appendChild(field);
+
+        this._objectParent.appendChild(trueBlock);
+
+        let falseBlock = this._tree.createElement("block");
+        falseBlock.setAttribute("type", "logic_boolean");
+        field = this._tree.createElement("field");
+        field.setAttribute("name", "NUM");
+        field.textContent = "FALSE";
+        falseBlock.appendChild(field);
+
+        this._objectParent.appendChild(falseBlock);
+
+        return [trueBlock, falseBlock];
+
+    }
+
     addClasses(classNames: string[]): HTMLElement[] {
         Blockly.Blocks.setClassObjects(classNames);
         return classNames.map((className) => {
