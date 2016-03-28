@@ -26,6 +26,7 @@ export const GameWidget: _mithril.MithrilComponent<GameController> = <any> {
         event: pubsub.PubSub,
         savegame: Savegame,
         context: EditorContext,
+        showHierarchy: _mithril.MithrilProperty<boolean>,
     }) {
         return m(".container", [
             // TODO: change args into an interface
@@ -41,6 +42,7 @@ export const GameWidget: _mithril.MithrilComponent<GameController> = <any> {
                 event: args.event,
                 savegame: args.savegame,
                 context: args.context,
+                showHierarchy: args.showHierarchy,
             }),
         ]);
     },
@@ -53,6 +55,7 @@ interface MainController extends _mithril.MithrilController {
     event: pubsub.PubSub,
     savegame: Savegame,
     context: EditorContext,
+    showHierarchy: _mithril.MithrilProperty<boolean>,
 }
 
 export const MainComponent = {
@@ -70,6 +73,7 @@ export const MainComponent = {
         controller.executing = m.prop(false);
         controller.event = new pubsub.PubSub();
         controller.savegame = savegame;
+        controller.showHierarchy = m.prop(false);
 
         controller.setLevel = function(newLevel: level.BaseLevel) {
             controller.context = {
@@ -154,24 +158,15 @@ export const MainComponent = {
                 event: controller.event,
                 savegame: controller.savegame,
                 context: controller.context,
+                showHierarchy: controller.showHierarchy,
             })),
             m(<any> "div#tooltip", {
                 key: "tooltip",
             }, m.component(TooltipView.Component, controller.level.tooltips())),
-            // m(<any> "div#hierarchy", {
-            //     key: "hierarchy",
-            // }, m.component(HierarchyView.Component, {
-            //     hierarchy: {
-            //         "name": "object",
-            //         "children": [{
-            //             name: "Robot"
-            //         }, {
-            //             name: "number"
-            //         }, {
-            //             name: "boolean"
-            //         }],
-            //     },
-            // })),
+            m.component(HierarchyView.Component, {
+                showHierarchy: controller.showHierarchy,
+                hierarchy: controller.level.hierarchy,
+            }),
             m.component(CongratulationsView.Component, {
                 level: controller.loadScreenOldLevel,
                 onContinue: () => {

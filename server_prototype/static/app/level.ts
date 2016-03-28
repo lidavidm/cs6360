@@ -5,6 +5,7 @@ import PubSub = require("pubsub");
 import * as python from "execution/python";
 import {Program} from "execution/program";
 import {Session} from "execution/session";
+import {ObjectHierarchy} from "views/hierarchy";
 
 export interface Objective<T> {
     objective: string,
@@ -233,6 +234,7 @@ import Camera = require("camera");
 export class BaseLevel extends Phaser.State {
     public event: PubSub.PubSub;
 
+    public hierarchy: ObjectHierarchy;
     public objectives: Objective<this>[];
     public program: Program;
     public toolbox: Toolbox;
