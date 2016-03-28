@@ -44,6 +44,12 @@ export class BasicsLevel1 extends BaseLevel {
                 new TooltipView.Tooltip(TooltipView.Region.Workspace, "…and drop them here to control the robot."),
             ],
         ];
+
+        this.hierarchy = {
+            name: "Robot",
+            children: [],
+            methods: ["moveForward", "turnRight"],
+        };
     }
 
     preload() {

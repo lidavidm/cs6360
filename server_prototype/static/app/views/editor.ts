@@ -18,6 +18,7 @@ interface Args {
     event: pubsub.PubSub,
     level: level.BaseLevel,
     executing: _mithril.MithrilProperty<boolean>,
+    showHierarchy: _mithril.MithrilProperty<boolean>,
     context: EditorContext,
 }
 
@@ -124,7 +125,15 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         return m("div#editor", {
             class: args.executing() ? "executing" : "",
         }, [
-            m("header", ["Editing ", m("code", args.context.className === MAIN ? "<main>" : `${args.context.className}.${args.context.method}`)]),
+            m("header", [
+                "Editing ",
+                m("code", args.context.className === MAIN ? "<main>" : `${args.context.className}.${args.context.method}`),
+                m(<any> "button", {
+                    onclick: function() {
+                        args.showHierarchy(true);
+                    },
+                }, "Object Hierarchy"),
+            ]),
             m("div#workspace", {
                 config: (element: HTMLElement, isInitialized: boolean) => {
                     controller.element = element;
