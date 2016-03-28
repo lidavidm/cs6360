@@ -52,32 +52,12 @@ export class Interpreter {
         });
     }
 
-    // /**
-    //  * A method for initializing objects that exist at the start of the level.
-    //  */
-    // instantiateObject(varName: string, className: string, id: number) {
-    //     var line = '\n' + varName + ' = JSProxyClass(' + id + ')';
-    //     this._initCode = this._initCode + line;
-    // }
-
-    // /**
-    //  * Initialize all objects defined in the toolbox.
-    //  */
-    // instantiateAll() {
-    //     for (let [name, className] of this._toolbox.getObjects()) {
-    //         let modelObject = this._world.getObjectByName(name);
-    //         if (!modelObject) {
-    //             throw new Error(`Model object ${name} not found.`);
-    //         }
-    //         this.instantiateObject(name, className, modelObject.getID());
-    //     }
-    // }
-
     /**
      * Run the player's program to generate a diff log for
      * this interpreter's world
      */
     run(program: string) {
+        console.log("Running", program);
         return Sk.misceval.asyncToPromise(function() {
             return Sk.importMainWithBody("<stdin>", false, program, true);
         });

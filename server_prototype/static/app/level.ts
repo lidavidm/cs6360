@@ -378,7 +378,6 @@ export class BaseLevel extends Phaser.State {
                     this.runDiff(diff, resolve, reject, 1);
                 });
             }, true).then(() => {
-                console.log("Done with reset");
                 resolve();
             });
         });

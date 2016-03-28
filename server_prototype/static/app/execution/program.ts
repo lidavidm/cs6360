@@ -33,6 +33,7 @@ export class Program {
 
     constructor() {
         this.globals = [];
+        this.classes = [];
     }
 
     update(savegame: Savegame) {
@@ -68,8 +69,8 @@ class ${className}(JSProxyClass):
         let globals = this.globals.map(([varName, className, modelID]) => {
             return `\n${varName} = ${className}(${modelID})`
         }).join("\n");
-        let workspace = new Blockly.Workspace();
-        Blockly.Xml.domToWorkspace(workspace, savedLevel.main);
+        // TODO: code generation always has to be done with main workspace showing main
+        let workspace = Blockly.mainWorkspace;
         let main = Blockly.Python.workspaceToCode(workspace);
         return [code, classes, globals, main].join("\n")
     }

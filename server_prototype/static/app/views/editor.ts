@@ -83,7 +83,18 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 // needs to be reset before each highlight call
                 // because Blockly resets it
                 controller.workspace.traceOn(true);
-                controller.workspace.highlightBlock(blockID);
+                try {
+                    controller.workspace.highlightBlock(blockID);
+                }
+                catch (e) {
+                    // We use headless workspaces for codegen. The
+                    // block IDs there do not exist here, and the
+                    // block is a headless block, so highlighting it
+                    // raises an exception. We catch that here so the
+                    // code will execute. For code highlighting, we
+                    // must make sure that we're always looking at
+                    // main() when executing.
+                }
             });
         }
 
