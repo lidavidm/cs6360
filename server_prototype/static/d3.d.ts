@@ -266,7 +266,7 @@ declare namespace d3 {
              * @param data the array of data to bind to this selection
              * @param key the optional function to determine the unique key for each piece of data. When unspecified, uses the index of the element.
              */
-            data<NewDatum>(data: NewDatum[], key?: (datum: NewDatum, index: number, outerIndex: number) => string): Update<NewDatum>;
+            data<NewDatum>(data: NewDatum[], key?: (datum: NewDatum) => any): Update<NewDatum>;
 
             /**
              * Derives data to bind to this selection.
