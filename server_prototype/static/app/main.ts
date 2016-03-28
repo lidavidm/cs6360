@@ -7,6 +7,8 @@ import pubsub = require("pubsub");
 
 import {DEFAULT_PROGRESSION} from "progression";
 import {Savegame} from "savegame";
+import {EditorContext, MAIN} from "model/editorcontext";
+import * as HierarchyView from "views/hierarchy";
 
 interface GameController extends _mithril.MithrilController {
 }
@@ -23,6 +25,7 @@ export const GameWidget: _mithril.MithrilComponent<GameController> = <any> {
         executing: _mithril.MithrilProperty<boolean>,
         event: pubsub.PubSub,
         savegame: Savegame,
+        context: EditorContext,
     }) {
         return m(".container", [
             // TODO: change args into an interface
@@ -30,12 +33,14 @@ export const GameWidget: _mithril.MithrilComponent<GameController> = <any> {
                 executing: args.executing,
                 level: args.level,
                 event: args.event,
+                savegame: args.savegame,
             }),
             m.component(EditorView.Component, {
                 executing: args.executing,
                 level: args.level,
                 event: args.event,
                 savegame: args.savegame,
+                context: args.context,
             }),
         ]);
     },
@@ -47,6 +52,7 @@ interface MainController extends _mithril.MithrilController {
     executing: _mithril.MithrilBasicProperty<boolean>,
     event: pubsub.PubSub,
     savegame: Savegame,
+    context: EditorContext,
 }
 
 export const MainComponent = {
@@ -66,8 +72,19 @@ export const MainComponent = {
         controller.savegame = savegame;
 
         controller.setLevel = function(newLevel: level.BaseLevel) {
+            controller.context = {
+                className: MAIN,
+                method: "",
+                workspace: null,
+            };
+            controller.context = savegame.load(controller.context);
+            savegame.save(controller.context);
             newLevel.event.on(level.BaseLevel.WORKSPACE_UPDATED, (blocks: HTMLElement) => {
-                savegame.save(blocks);
+                m.startComputation();
+                controller.context.workspace = blocks;
+                savegame.save(controller.context);
+                newLevel.program.update(savegame);
+                m.endComputation();
             });
             newLevel.event.on(level.BaseLevel.OBJECTIVES_UPDATED, () => {
                 if (newLevel.isComplete()) {
@@ -80,7 +97,7 @@ export const MainComponent = {
                     if (!newLevelName) {
                         // TODO: victory screen!
                     }
-                    // TODO: save workspace
+
                     savegame.currentLevel = newLevelName;
                     let nextLevelProto = DEFAULT_PROGRESSION.getLevel(newLevelName);
                     let nextLevel = new nextLevelProto;
@@ -91,7 +108,11 @@ export const MainComponent = {
                         m.startComputation();
                         controller.setLevel(nextLevel);
 
-                        let saved = savegame.load();
+                        let saved = savegame.load({
+                            className: MAIN,
+                            method: "",
+                            workspace: null,
+                        });
                         controller.event.broadcast(level.BaseLevel.NEXT_LEVEL_LOADED, nextLevel, saved);
 
                         // TODO: get rid of this (get rid of level events?)
@@ -132,10 +153,25 @@ export const MainComponent = {
                 executing: controller.executing,
                 event: controller.event,
                 savegame: controller.savegame,
+                context: controller.context,
             })),
             m(<any> "div#tooltip", {
                 key: "tooltip",
             }, m.component(TooltipView.Component, controller.level.tooltips())),
+            // m(<any> "div#hierarchy", {
+            //     key: "hierarchy",
+            // }, m.component(HierarchyView.Component, {
+            //     hierarchy: {
+            //         "name": "object",
+            //         "children": [{
+            //             name: "Robot"
+            //         }, {
+            //             name: "number"
+            //         }, {
+            //             name: "boolean"
+            //         }],
+            //     },
+            // })),
             m.component(CongratulationsView.Component, {
                 level: controller.loadScreenOldLevel,
                 onContinue: () => {

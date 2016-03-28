@@ -4,6 +4,7 @@ import block_utils = require("block_utils");
 import level = require("level");
 import pubsub = require("pubsub");
 import * as HierarchyView from "./hierarchy";
+import {EditorContext, MAIN} from "model/editorcontext";
 
 interface EditorController extends _mithril.MithrilController {
     level: level.BaseLevel,
@@ -13,15 +14,20 @@ interface EditorController extends _mithril.MithrilController {
     setupLevel: (blocks?: HTMLElement) => void,
 }
 
+interface Args {
+    event: pubsub.PubSub,
+    level: level.BaseLevel,
+    executing: _mithril.MithrilProperty<boolean>,
+    context: EditorContext,
+}
+
 /**
  * The editor component, which handles interactions with Blockly.
  */
 // The Mithril type definition is incomplete and doesn't handle
 // the args parameter to view(), so we cast to `any` to satisfy the typechecker.
 export const Component: _mithril.MithrilComponent<EditorController> = <any> {
-    controller: function(args: {
-        event: pubsub.PubSub,
-    }): EditorController {
+    controller: function(args: Args): EditorController {
         var controller: EditorController = {
             level: null,
             element: null,
@@ -34,13 +40,6 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 if (block) {
                     typecheck(event, block);
                     updateObjectImage(event, block);
-                }
-                let code = Blockly.Python.workspaceToCode(controller.workspace);
-                if (controller.level) {
-                    m.startComputation();
-                    controller.level.setCode(code);
-                    console.log(code);
-                    m.endComputation();
                 }
             },
 
@@ -84,11 +83,22 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 // needs to be reset before each highlight call
                 // because Blockly resets it
                 controller.workspace.traceOn(true);
-                controller.workspace.highlightBlock(blockID);
+                try {
+                    controller.workspace.highlightBlock(blockID);
+                }
+                catch (e) {
+                    // We use headless workspaces for codegen. The
+                    // block IDs there do not exist here, and the
+                    // block is a headless block, so highlighting it
+                    // raises an exception. We catch that here so the
+                    // code will execute. For code highlighting, we
+                    // must make sure that we're always looking at
+                    // main() when executing.
+                }
             });
         }
 
-        args.event.on(level.BaseLevel.NEXT_LEVEL_LOADED, (nextLevel: level.BaseLevel, blocks: HTMLElement) => {
+        args.event.on(level.BaseLevel.NEXT_LEVEL_LOADED, (nextLevel: level.BaseLevel, blocks: EditorContext) => {
             controller.level = nextLevel;
             controller.workspace.dispose();
             controller.workspace = Blockly.inject(controller.element, {
@@ -98,13 +108,13 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
 
             controller.workspace.addChangeListener(controller.changeListener);
 
-            setupLevel(blocks);
+            setupLevel(blocks.workspace);
         });
 
         return controller;
     },
 
-    view: function(controller: EditorController, args: any) {
+    view: function(controller: EditorController, args: Args) {
         controller.level = args.level;
 
         if (controller.workspace) {
@@ -113,23 +123,27 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
 
         return m("div#editor", {
             class: args.executing() ? "executing" : "",
-            config: (element: HTMLElement, isInitialized: boolean) => {
-                controller.element = element;
-                if (isInitialized) {
-                    this.resizeBlockly();
-                    return;
-                }
+        }, [
+            m("header", ["Editing ", m("code", args.context.className === MAIN ? "<main>" : `${args.context.className}.${args.context.method}`)]),
+            m("div#workspace", {
+                config: (element: HTMLElement, isInitialized: boolean) => {
+                    controller.element = element;
+                    if (isInitialized) {
+                        this.resizeBlockly();
+                        return;
+                    }
 
-                controller.workspace = Blockly.inject(element, {
-                    toolbox: controller.level.toolbox.xml(),
-                    trashcan: true,
-                });
+                    controller.workspace = Blockly.inject(element, {
+                        toolbox: controller.level.toolbox.xml(),
+                        trashcan: true,
+                    });
 
-                controller.setupLevel(args.savegame.load());
+                    controller.setupLevel(args.context.workspace);
 
-                controller.workspace.addChangeListener(controller.changeListener);
-            },
-        });
+                    controller.workspace.addChangeListener(controller.changeListener);
+                },
+            })
+        ]);
     },
 
     resizeBlockly: function() {

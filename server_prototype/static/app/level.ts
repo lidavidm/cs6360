@@ -3,6 +3,7 @@ declare var Blockly: any;
 import TooltipView = require("views/tooltip");
 import PubSub = require("pubsub");
 import * as python from "execution/python";
+import {Program} from "execution/program";
 import {Session} from "execution/session";
 
 export interface Objective<T> {
@@ -212,6 +213,10 @@ export class Toolbox {
         });
     }
 
+    getClasses(): string[] {
+        return this._classes;
+    }
+
     getObjects(): [string, string][] {
         return this._objects;
     }
@@ -229,6 +234,7 @@ export class BaseLevel extends Phaser.State {
     public event: PubSub.PubSub;
 
     public objectives: Objective<this>[];
+    public program: Program;
     public toolbox: Toolbox;
 
     protected allTooltips: TooltipView.Tooltip[][];
@@ -243,7 +249,6 @@ export class BaseLevel extends Phaser.State {
     protected overlay: Phaser.Group;
 
     protected modelWorld: model.World;
-    protected code: string;
     protected interpreter: python.Interpreter
 
     protected grid: Phaser.TileSprite;
@@ -261,8 +266,8 @@ export class BaseLevel extends Phaser.State {
 
         this._tooltipIndex = 0;
         this.objectives = [];
+        this.program = new Program();
         this.event = new PubSub.PubSub();
-        this.code = "";
 
         this.init();
     }
@@ -274,6 +279,7 @@ export class BaseLevel extends Phaser.State {
     initWorld(map: Phaser.Tilemap) {
         this.modelWorld = new model.World(this.game, map);
         this.zoomCamera.setBounds(map.widthInPixels, map.heightInPixels);
+        this.interpreter = new python.Interpreter(this.modelWorld);
     }
 
     preload() {
@@ -345,12 +351,8 @@ export class BaseLevel extends Phaser.State {
         this._tooltipIndex = index;
     }
 
-    setCode(code: string) {
-        this.code = code;
-    }
-
     isCodeValid(): boolean {
-        return this.code.indexOf("BlocklyError") == -1;
+        return this.program.getCode().indexOf("raise BlocklyError") == -1;
     }
 
     tooltips(): TooltipView.Tooltip[] {
@@ -358,7 +360,7 @@ export class BaseLevel extends Phaser.State {
     }
 
     run(): Session {
-        return new Session(this.interpreter, this.modelWorld.log, this.code, this.runDiff.bind(this));
+        return new Session(this.interpreter, this.modelWorld.log, this.program, this.runDiff.bind(this));
     }
 
     runReset(): Promise<{}> {
@@ -376,7 +378,6 @@ export class BaseLevel extends Phaser.State {
                     this.runDiff(diff, resolve, reject, 1);
                 });
             }, true).then(() => {
-                console.log("Done with reset");
                 resolve();
             });
         });
@@ -438,7 +439,7 @@ export class BaseLevel extends Phaser.State {
 
     zoom(zoomed: boolean) {
         if (zoomed) {
-            this.zoomCamera.scale.set(2, 2);
+            this.zoomCamera.scale.set(3, 3);
         }
         else {
             this.zoomCamera.scale.set(1, 1);

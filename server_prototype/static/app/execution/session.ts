@@ -1,4 +1,5 @@
 import {Interpreter} from "python";
+import {Program} from "program";
 import {Diff, DiffKind, Log} from "model/model";
 import {PubSub} from "pubsub";
 
@@ -11,15 +12,14 @@ export class Session {
 
     interpreter: Interpreter;
     log: Log;
-    code: string;
+    program: Program;
     runDiff: DiffRunner;
     promise: Promise<{}>;
 
-    constructor(interpreter: Interpreter, log: Log,
-                code: string, runDiff: DiffRunner) {
+    constructor(interpreter: Interpreter, log: Log, program: Program, runDiff: DiffRunner) {
         this.interpreter = interpreter;
         this.log = log;
-        this.code = code;
+        this.program = program;
         log.reset();
         this.promise = new Promise(this.execute.bind(this));
         this.runDiff = runDiff;
@@ -27,7 +27,7 @@ export class Session {
 
     private execute(resolveOuter: () => void, rejectOuter: () => void) {
         this.log.reset();
-        this.interpreter.run(this.code).then(() => {
+        this.interpreter.run(this.program.getCode()).then(() => {
             this.replay(resolveOuter);
         }, (err: any) => {
             // TODO: show the error to the user
