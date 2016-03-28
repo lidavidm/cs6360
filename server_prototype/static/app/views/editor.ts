@@ -4,6 +4,7 @@ import block_utils = require("block_utils");
 import level = require("level");
 import pubsub = require("pubsub");
 import * as HierarchyView from "./hierarchy";
+import {EditorContext} from "model/editorcontext";
 
 interface EditorController extends _mithril.MithrilController {
     level: level.BaseLevel,
@@ -13,15 +14,20 @@ interface EditorController extends _mithril.MithrilController {
     setupLevel: (blocks?: HTMLElement) => void,
 }
 
+interface Args {
+    event: pubsub.PubSub,
+    level: level.BaseLevel,
+    executing: _mithril.MithrilProperty<boolean>,
+    context: EditorContext,
+}
+
 /**
  * The editor component, which handles interactions with Blockly.
  */
 // The Mithril type definition is incomplete and doesn't handle
 // the args parameter to view(), so we cast to `any` to satisfy the typechecker.
 export const Component: _mithril.MithrilComponent<EditorController> = <any> {
-    controller: function(args: {
-        event: pubsub.PubSub,
-    }): EditorController {
+    controller: function(args: Args): EditorController {
         var controller: EditorController = {
             level: null,
             element: null,
@@ -34,13 +40,6 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 if (block) {
                     typecheck(event, block);
                     updateObjectImage(event, block);
-                }
-                let code = Blockly.Python.workspaceToCode(controller.workspace);
-                if (controller.level) {
-                    m.startComputation();
-                    controller.level.setCode(code);
-                    console.log(code);
-                    m.endComputation();
                 }
             },
 
@@ -88,7 +87,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             });
         }
 
-        args.event.on(level.BaseLevel.NEXT_LEVEL_LOADED, (nextLevel: level.BaseLevel, blocks: HTMLElement) => {
+        args.event.on(level.BaseLevel.NEXT_LEVEL_LOADED, (nextLevel: level.BaseLevel, blocks: EditorContext) => {
             controller.level = nextLevel;
             controller.workspace.dispose();
             controller.workspace = Blockly.inject(controller.element, {
@@ -98,14 +97,15 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
 
             controller.workspace.addChangeListener(controller.changeListener);
 
-            setupLevel(blocks);
+            setupLevel(blocks.workspace);
         });
 
         return controller;
     },
 
-    view: function(controller: EditorController, args: any) {
+    view: function(controller: EditorController, args: Args) {
         controller.level = args.level;
+        console.log(`Editor: ${args.context.className}`);
 
         if (controller.workspace) {
             controller.workspace.options.readOnly = args.executing();
@@ -125,7 +125,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     trashcan: true,
                 });
 
-                controller.setupLevel(args.savegame.load());
+                // controller.setupLevel(args.savegame.load());
 
                 controller.workspace.addChangeListener(controller.changeListener);
             },

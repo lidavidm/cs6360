@@ -107,10 +107,6 @@ export class Alpha1Level extends BaseLevel {
                                    this.modelWorld, this.middle, "iron");
 
         this.modelWorld.log.recordInitEnd();
-
-        // The only reason why this isn't created for you is because
-        // of its dependence on the world.
-        this.interpreter = new python.Interpreter("", this.modelWorld, this.toolbox);
-        this.interpreter.instantiateAll();
+        this.program.instantiateGlobals(this.modelWorld, this.toolbox);
     }
 }

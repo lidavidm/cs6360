@@ -74,8 +74,6 @@ export class BasicsLevel1 extends BaseLevel {
                                    this.modelWorld, this.middle, "iron");
 
         this.modelWorld.log.recordInitEnd();
-
-        this.interpreter = new python.Interpreter("", this.modelWorld, this.toolbox);
-        this.interpreter.instantiateAll();
+        this.program.instantiateGlobals(this.modelWorld, this.toolbox);
     }
 }
