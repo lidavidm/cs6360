@@ -70,14 +70,15 @@ export const MainComponent = {
         controller.executing = m.prop(false);
         controller.event = new pubsub.PubSub();
         controller.savegame = savegame;
-        controller.context = {
-            className: MAIN,
-            method: "",
-            workspace: null,
-        };
-        controller.context = savegame.load(controller.context);
 
         controller.setLevel = function(newLevel: level.BaseLevel) {
+            controller.context = {
+                className: MAIN,
+                method: "",
+                workspace: null,
+            };
+            controller.context = savegame.load(controller.context);
+            savegame.save(controller.context);
             newLevel.event.on(level.BaseLevel.WORKSPACE_UPDATED, (blocks: HTMLElement) => {
                 m.startComputation();
                 controller.context.workspace = blocks;

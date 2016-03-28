@@ -89,9 +89,13 @@ export class Savegame {
     static parse(json: string): Savegame {
         let parsed = JSON.parse(json);
         let game = new Savegame(parsed["currentLevel"]);
-        // TODO:
         for (let level in parsed["savedBlocks"]) {
-            // game.savedBlocks[level] = Blockly.Xml.textToDom(parsed["savedBlocks"][level]);
+            let parsedLevel = parsed["savedBlocks"][level];
+            game.savedBlocks[level] = {
+                main: Blockly.Xml.textToDom(parsedLevel.main),
+                // TODO:
+                classes: {},
+            };
         }
         return game;
     }

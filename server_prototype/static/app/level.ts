@@ -440,7 +440,7 @@ export class BaseLevel extends Phaser.State {
 
     zoom(zoomed: boolean) {
         if (zoomed) {
-            this.zoomCamera.scale.set(2, 2);
+            this.zoomCamera.scale.set(3, 3);
         }
         else {
             this.zoomCamera.scale.set(1, 1);

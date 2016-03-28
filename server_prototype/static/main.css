@@ -139,6 +139,15 @@ body {
     height: 100%;
 }
 
+#editor header {
+    font-size: 2em;
+    height: 3rem;
+}
+
+#workspace {
+    height: calc(100% - 3em);
+}
+
 .blueprint {
     display: inline-block;
     width: 100%;

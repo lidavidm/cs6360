@@ -4,7 +4,7 @@ import block_utils = require("block_utils");
 import level = require("level");
 import pubsub = require("pubsub");
 import * as HierarchyView from "./hierarchy";
-import {EditorContext} from "model/editorcontext";
+import {EditorContext, MAIN} from "model/editorcontext";
 
 interface EditorController extends _mithril.MithrilController {
     level: level.BaseLevel,
@@ -105,7 +105,6 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
 
     view: function(controller: EditorController, args: Args) {
         controller.level = args.level;
-        console.log(`Editor: ${args.context.className}`);
 
         if (controller.workspace) {
             controller.workspace.options.readOnly = args.executing();
@@ -113,23 +112,27 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
 
         return m("div#editor", {
             class: args.executing() ? "executing" : "",
-            config: (element: HTMLElement, isInitialized: boolean) => {
-                controller.element = element;
-                if (isInitialized) {
-                    this.resizeBlockly();
-                    return;
-                }
+        }, [
+            m("header", ["Editing ", m("code", args.context.className === MAIN ? "<main>" : `${args.context.className}.${args.context.method}`)]),
+            m("div#workspace", {
+                config: (element: HTMLElement, isInitialized: boolean) => {
+                    controller.element = element;
+                    if (isInitialized) {
+                        this.resizeBlockly();
+                        return;
+                    }
 
-                controller.workspace = Blockly.inject(element, {
-                    toolbox: controller.level.toolbox.xml(),
-                    trashcan: true,
-                });
+                    controller.workspace = Blockly.inject(element, {
+                        toolbox: controller.level.toolbox.xml(),
+                        trashcan: true,
+                    });
 
-                // controller.setupLevel(args.savegame.load());
+                    controller.setupLevel(args.context.workspace);
 
-                controller.workspace.addChangeListener(controller.changeListener);
-            },
-        });
+                    controller.workspace.addChangeListener(controller.changeListener);
+                },
+            })
+        ]);
     },
 
     resizeBlockly: function() {

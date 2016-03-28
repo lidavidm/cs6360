@@ -73,26 +73,4 @@ class ${className}(JSProxyClass):
         let main = Blockly.Python.workspaceToCode(workspace);
         return [code, classes, globals, main].join("\n")
     }
-
-    // serialize(): any {
-    //     let json = Object.create(null);
-    //     json.main = Blockly.Xml.domToText(this.main);
-    //     json.classes = Object.create(null);
-    //     for (let className in this.classes) {
-    //         json.classes[className] = {};
-    //         for (let method in this.classes[className]) {
-    //             json.classes[className][method] = Blockly.Xml.domToText(this.classes[className][method]);
-    //         }
-    //     }
-
-    //     // TODO: seralize globals
-    //     // They'll get recreated anyways
-
-    //     return json;
-    // }
-
-    // deserialize(object: any): Program {
-    //     let program = new Program();
-    //     program.main = Blockly.Xml.textToDom(object.main);
-    // }
 }
