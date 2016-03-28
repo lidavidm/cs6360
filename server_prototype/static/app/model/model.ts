@@ -98,7 +98,6 @@ class OrientationDiff<T extends HasOrientation> extends Diff<T> {
 
     tween(object: T, duration=ANIM_DURATION): Phaser.Tween {
         let p = object.getPhaserObject();
-        console.log(p);
         if (p === null) return null;
 
         let rotation = 0;
@@ -116,7 +115,6 @@ class OrientationDiff<T extends HasOrientation> extends Diff<T> {
             rotation = Math.PI;
             break;
         }
-        console.log(p.rotation, rotation);
 
         let tween = p.game.add.tween(p).to({
             rotation: rotation,
