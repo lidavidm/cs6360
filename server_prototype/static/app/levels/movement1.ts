@@ -1,0 +1,72 @@
+import * as model from "../model/model";
+import {BaseLevel, Toolbox} from "../level";
+import * as TooltipView from "../views/tooltip";
+import * as python from "../execution/python";
+import * as asset from "asset";
+
+export class MovementLevel1 extends BaseLevel {
+    public robot: model.Robot;
+
+    init() {
+        this.toolbox = new Toolbox(true);
+
+        this.toolbox.addControl("tell");
+        let methods = this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
+            model.Robot.prototype.moveForward,
+        ]);
+        let object = this.toolbox.addObject("robot", "Robot");
+
+        this.toolbox.addControl("tell", true, [], [
+            ["OBJECT", object.cloneNode(true)],
+            ["METHOD", methods[0].cloneNode(true)],
+        ]);
+
+        this.objectives = [
+            {
+                objective: `Move the robot [${asset.Robot.Basic}] forward`,
+                completed: false,
+                predicate: (level) => {
+                    return level.robot.getX() === 2 && level.robot.getY() === 1;
+                }
+            },
+        ];
+
+        this.allTooltips = [
+            [
+                new TooltipView.Tooltip(TooltipView.Region.Controls, "Load your code onto the robot and run it."),
+                new TooltipView.Tooltip(TooltipView.Region.Toolbox, "Pick blocks from here…"),
+                new TooltipView.Tooltip(TooltipView.Region.Workspace, "…and drop them here to control the robot."),
+            ],
+        ];
+    }
+
+    preload() {
+        super.preload();
+
+        this.game.load.image("tiles", "assets/tilesets/cave2.png");
+        this.game.load.tilemap("lava", "assets/maps/the_floor_is_lava.json", null, Phaser.Tilemap.TILED_JSON);
+        this.game.load.image("robot", asset.Robot.Basic);
+    }
+
+    create() {
+        // Create the world objects here.
+        super.create();
+
+        let map = this.game.add.tilemap("lava");
+        map.addTilesetImage("cave2", "tiles");
+
+        let layer = map.createLayer(
+            "Tile Layer 1", this.game.width, this.game.height, this.background);
+
+        this.cursors = this.game.input.keyboard.createCursorKeys();
+
+        this.initWorld(map);
+        this.robot = new model.Robot("robot", 1, 3, model.Direction.EAST,
+                                     this.modelWorld, this.foreground, "robot");
+
+         this.modelWorld.log.recordInitEnd();
+
+         this.interpreter = new python.Interpreter("", this.modelWorld, this.toolbox);
+         this.interpreter.instantiateAll();
+    }
+}
