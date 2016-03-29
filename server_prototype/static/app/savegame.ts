@@ -2,7 +2,7 @@ declare var Blockly: any;
 
 import {EditorContext, MAIN} from "model/editorcontext";
 
-interface SavedClasses {
+export interface SavedClasses {
     [className: string]: {
         [method: string]: HTMLElement;
     },

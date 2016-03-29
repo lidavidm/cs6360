@@ -83,6 +83,9 @@ export const MainComponent = {
             };
             controller.context = savegame.load(controller.context);
             savegame.save(controller.context);
+
+            newLevel.loadHierarchy(savegame.loadAll());
+
             newLevel.event.on(level.BaseLevel.WORKSPACE_UPDATED, (blocks: HTMLElement) => {
                 m.startComputation();
                 controller.context.workspace = blocks;
@@ -90,6 +93,7 @@ export const MainComponent = {
                 newLevel.program.update(savegame);
                 m.endComputation();
             });
+
             newLevel.event.on(level.BaseLevel.OBJECTIVES_UPDATED, () => {
                 if (newLevel.isComplete()) {
                     controller.loadScreenOldLevel = newLevel;

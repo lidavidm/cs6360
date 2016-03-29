@@ -1,11 +1,12 @@
 declare var Blockly: any;
 
-import TooltipView = require("views/tooltip");
-import PubSub = require("pubsub");
+import * as PubSub from "pubsub";
+import {SavedClasses} from "savegame";
 import * as python from "execution/python";
 import {Program} from "execution/program";
 import {Session} from "execution/session";
 import {ObjectHierarchy} from "views/hierarchy";
+import * as TooltipView from "views/tooltip";
 
 export interface Objective<T> {
     objective: string,
@@ -330,6 +331,22 @@ export class BaseLevel extends Phaser.State {
         this.zoomCamera.update();
 
         this.grid = this.overlay.add(this.game.add.tileSprite(0, 0, this.game.width, this.game.height, "grid"));
+    }
+
+    /**
+     * Load user methods from the hierarchy.
+     */
+    loadHierarchy(savedClasses: SavedClasses) {
+        let classList = this.toolbox.getClasses();
+        console.log(this.hierarchy);
+
+        for (let className in savedClasses) {
+            if (classList.indexOf(className) > -1) {
+                for (let method in savedClasses[className]) {
+                    this.toolbox.addUserMethod(className, method);
+                }
+            }
+        }
     }
 
     update() {
