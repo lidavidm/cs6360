@@ -145,8 +145,13 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 }, "Object Hierarchy"),
                 m(<any> "button", {
                     onclick: function() {
-                        // TODO:
-                        args.showHierarchy(true);
+                        if (args.level.isCodeValid()) {
+                            args.changeContext(MAIN, "");
+                        }
+                        else {
+                            // TODO:
+                            alert("Code is invalid - fix the code before changing what you're editing!");
+                        }
                     },
                 }, "Edit main"),
             ]),
