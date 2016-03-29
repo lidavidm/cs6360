@@ -133,6 +133,12 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                         args.showHierarchy(true);
                     },
                 }, "Object Hierarchy"),
+                m(<any> "button", {
+                    onclick: function() {
+                        // TODO:
+                        args.showHierarchy(true);
+                    },
+                }, "Edit main"),
             ]),
             m("div#workspace", {
                 config: (element: HTMLElement, isInitialized: boolean) => {

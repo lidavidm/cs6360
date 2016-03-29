@@ -166,6 +166,13 @@ export const MainComponent = {
             m.component(HierarchyView.Component, {
                 showHierarchy: controller.showHierarchy,
                 hierarchy: controller.level.hierarchy,
+                changeContext: (className: string, method: string) => {
+                    controller.context = controller.savegame.load({
+                        className: className,
+                        method: method,
+                        workspace: null,
+                    });
+                }
             }),
             m.component(CongratulationsView.Component, {
                 level: controller.loadScreenOldLevel,

@@ -3,12 +3,14 @@ interface HierarchyController extends _mithril.MithrilController {
     diagonal: d3.svg.Diagonal<d3.layout.tree.Link<d3.layout.tree.Node>, d3.layout.tree.Node>,
     svg: d3.Selection<any>,
     currentClass: _mithril.MithrilProperty<ObjectHierarchy>,
+    newMethod: _mithril.MithrilProperty<string>,
 }
 
 export interface ObjectHierarchy extends d3.layout.tree.Node {
     name: string,
     children?: ObjectHierarchy[],
     methods?: string[],
+    userMethods?: string[],
 
     x?: number,
     y?: number,
@@ -23,12 +25,14 @@ export const Component: _mithril.MithrilComponent<HierarchyController> = <any> {
             diagonal: null,
             svg: null,
             currentClass: <any> m.prop(null),
+            newMethod: m.prop(""),
         };
     },
 
     view: function(controller: HierarchyController, args: {
         showHierarchy: _mithril.MithrilProperty<boolean>,
         hierarchy: ObjectHierarchy,
+        changeContext: (className: string, method: string) => void,
     }): _mithril.MithrilVirtualElement<HierarchyController> {
         function update() {
             let i = 0;
@@ -115,11 +119,40 @@ export const Component: _mithril.MithrilComponent<HierarchyController> = <any> {
                 }
                 else {
                     let d = controller.currentClass();
+                    if (!d.methods) d.methods = [];
                     return [
                         m("h2", "Methods of class " + d.name),
                         m("ul", d.methods.map(function(method) {
                             return m("li", method);
                         })),
+                        m("p", "Your methods:"),
+                        m("ul", d.userMethods ? d.userMethods.map(function(method) {
+                            return m("li", [
+                                method,
+                                "—",
+                                m(<any> "button", {
+                                    onclick: function() {
+                                        args.changeContext(controller.currentClass().name, method);
+                                        args.showHierarchy(false);
+                                    },
+                                }, "Edit code"),
+                            ]);
+                        }) : m("p", "(no methods)")),
+                        m(<any> "input[type=text]", {
+                            value: controller.newMethod(),
+                            oninput: function(e: any) {
+                                controller.newMethod(e.target.value);
+                            },
+                        }),
+                        m(<any> "button", {
+                            onclick: function() {
+                                if (!controller.currentClass().userMethods) {
+                                    controller.currentClass().userMethods = [];
+                                }
+                                controller.currentClass().userMethods.push(controller.newMethod());
+                                controller.newMethod("");
+                            },
+                        }, "Add Method"),
                     ]
                 }
             })()),
