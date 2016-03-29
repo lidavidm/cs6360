@@ -119,7 +119,7 @@ export class Toolbox {
         }
 
         // TODO: use some sanitizing function to generate a valid code name
-        Blockly.Blocks.addClassMethod(className, [methodName, methodName]);
+        Blockly.Blocks.addClassMethod(className, [methodName, methodName, null]);
         return method;
     }
 

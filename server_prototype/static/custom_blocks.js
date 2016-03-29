@@ -33,8 +33,7 @@ Blockly.Blocks.setClassMethods = function(class_name, method_list) {
                 .appendField(new Blockly.FieldDropdown(function() {
                     return Blockly.Blocks.classMethods[class_name];
                 }), "METHOD_NAME");
-            this.data = JSON.stringify([class_name, method_list]);
-            this.className = class_name;
+            this.data = class_name;
         },
 
         onchange: function(event) {
@@ -50,10 +49,7 @@ Blockly.Blocks.setClassMethods = function(class_name, method_list) {
         },
 
         getClassName: function() {
-            if (!this.className) {
-                this.className = JSON.parse(this.data)[0];
-            }
-            return this.className;
+            return this.data;
         },
     };
 

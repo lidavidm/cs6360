@@ -59,10 +59,26 @@ export class Program {
         if (!this.savegame) return "";
         let code = PROXY_CLASS;
         let savedClasses = this.savegame.loadAll();
+
+        let headlessWorkspace = new Blockly.Workspace();
         let classes = this.classes.map((className) => {
-            // let classObj = savedLevel.classes[className];
+            let classObj = savedClasses[className];
+            let methods = "";
+            if (classObj) {
+                methods = Object.keys(classObj).map(function(methodName) {
+                    let method = classObj[methodName];
+                    Blockly.Xml.domToWorkspace(headlessWorkspace, method);
+                    let code: string = Blockly.Python.workspaceToCode(headlessWorkspace);
+                    let header = `    def ${methodName}(self):\n`;
+                    let lines = code.split("\n").map(function(line) {
+                        return "        " + line;
+                    }).join("\n");
+                    return header + lines;
+                }).join("\n");
+            }
             return `
 class ${className}(JSProxyClass):
+${methods}
     pass
 `
         }).join("\n");
