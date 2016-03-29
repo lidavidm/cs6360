@@ -19,6 +19,7 @@ interface Args {
     level: level.BaseLevel,
     executing: _mithril.MithrilProperty<boolean>,
     showHierarchy: _mithril.MithrilProperty<boolean>,
+    changeContext: (className: string, method: string) => void,
     context: EditorContext,
 }
 

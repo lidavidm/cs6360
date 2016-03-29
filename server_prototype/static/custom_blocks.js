@@ -15,10 +15,14 @@ Blockly.Python.STATEMENT_PREFIX = "recordBlockBegin(%1)\n"
 Blockly.Python.STATEMENT_POSTFIX = "recordBlockEnd(%1)\n"
 
 Blockly.Blocks.classMethods = {};
+Blockly.Blocks.userMethods = {};
 
-Blockly.Blocks.addClassMethod = function(className, method) {
-    Blockly.Blocks.classMethods[className].push(method);
-    Blockly.Blocks.classMethods[className].sort();
+Blockly.Blocks.addUserMethod = function(className, method) {
+    if (!Blockly.Blocks.userMethods[className]) {
+        Blockly.Blocks.userMethods[className] = [];
+    }
+    Blockly.Blocks.userMethods[className].push(method);
+    Blockly.Blocks.userMethods[className].sort();
 };
 
 Blockly.Blocks.setClassMethods = function(class_name, method_list) {
@@ -31,7 +35,9 @@ Blockly.Blocks.setClassMethods = function(class_name, method_list) {
             this.setInputsInline(true);
             this.appendDummyInput()
                 .appendField(new Blockly.FieldDropdown(function() {
-                    return Blockly.Blocks.classMethods[class_name];
+                    return Blockly.Blocks.classMethods[class_name]
+                        .concat(Blockly.Blocks.userMethods[class_name] || [])
+                        .sort();
                 }), "METHOD_NAME");
             this.data = class_name;
         },

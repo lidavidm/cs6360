@@ -20,16 +20,8 @@ export const GameWidget: _mithril.MithrilComponent<GameController> = <any> {
         return controller;
     },
 
-    view: function(controller: GameController, args: {
-        level: level.BaseLevel,
-        executing: _mithril.MithrilProperty<boolean>,
-        event: pubsub.PubSub,
-        savegame: Savegame,
-        context: EditorContext,
-        showHierarchy: _mithril.MithrilProperty<boolean>,
-    }) {
+    view: function(controller: GameController, args: MainController) {
         return m(".container", [
-            // TODO: change args into an interface
             m.component(MapView.Component, {
                 executing: args.executing,
                 level: args.level,
@@ -43,6 +35,7 @@ export const GameWidget: _mithril.MithrilComponent<GameController> = <any> {
                 savegame: args.savegame,
                 context: args.context,
                 showHierarchy: args.showHierarchy,
+                changeContext: args.changeContext,
             }),
         ]);
     },
@@ -55,6 +48,7 @@ interface MainController extends _mithril.MithrilController {
     event: pubsub.PubSub,
     savegame: Savegame,
     context: EditorContext,
+    changeContext: (className: string, method: string) => void,
     showHierarchy: _mithril.MithrilProperty<boolean>,
 }
 
@@ -74,6 +68,15 @@ export const MainComponent = {
         controller.event = new pubsub.PubSub();
         controller.savegame = savegame;
         controller.showHierarchy = m.prop(false);
+
+        controller.changeContext = function(className: string, method: string) {
+            controller.context = controller.savegame.load({
+                className: className,
+                method: method,
+                workspace: null,
+            });
+            controller.event.broadcast(level.BaseLevel.CONTEXT_CHANGED, controller.context);
+        };
 
         controller.setLevel = function(newLevel: level.BaseLevel) {
             controller.context = {
@@ -156,14 +159,7 @@ export const MainComponent = {
         return m("div", [
             m(<any> "div#main", {
                 key: "main",
-            }, m.component(GameWidget, {
-                level: controller.level,
-                executing: controller.executing,
-                event: controller.event,
-                savegame: controller.savegame,
-                context: controller.context,
-                showHierarchy: controller.showHierarchy,
-            })),
+            }, m.component(GameWidget, controller)),
             m(<any> "div#tooltip", {
                 key: "tooltip",
             }, m.component(TooltipView.Component, controller.level.tooltips())),
@@ -172,14 +168,7 @@ export const MainComponent = {
                 hierarchy: controller.level.hierarchy,
                 event: controller.event,
                 level: controller.level,
-                changeContext: (className: string, method: string) => {
-                    controller.context = controller.savegame.load({
-                        className: className,
-                        method: method,
-                        workspace: null,
-                    });
-                    controller.event.broadcast(level.BaseLevel.CONTEXT_CHANGED, controller.context);
-                }
+                changeContext: controller.changeContext,
             }),
             m.component(CongratulationsView.Component, {
                 level: controller.loadScreenOldLevel,
