@@ -99,6 +99,10 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             });
         }
 
+        args.event.on(level.BaseLevel.TOOLBOX_UPDATED, () => {
+            controller.workspace.updateToolbox(controller.level.toolbox.xml());
+        });
+
         args.event.on(level.BaseLevel.NEXT_LEVEL_LOADED, (nextLevel: level.BaseLevel, blocks: EditorContext) => {
             controller.level = nextLevel;
             controller.workspace.dispose();

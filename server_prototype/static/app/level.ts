@@ -97,6 +97,31 @@ export class Toolbox {
         return method_blocks;
     }
 
+    addUserMethod(className: string, methodName: string): HTMLElement {
+        if (this._classes.indexOf(className) === -1) return null;
+
+        let methodType = "method_" + className;
+        let method = this._tree.createElement("block");
+        method.setAttribute("type", methodType);
+        let name = this._tree.createElement("field");
+        name.setAttribute("name", "METHOD_NAME");
+        name.textContent = methodName;
+        method.appendChild(name);
+
+        if (this._inline) {
+            this._tree.documentElement.appendChild(method);
+        }
+        else {
+            let category = this._tree.querySelector(`category[name="class ${className}"]`);
+            if (!category) return null;
+            category.appendChild(method);
+        }
+
+        // TODO: use some sanitizing function to generate a valid code name
+        Blockly.Blocks.addClassMethod(className, [methodName, methodName]);
+        return method;
+    }
+
     addObject(name: string, className: string): HTMLElement {
         if (this._classes.indexOf(className) < 0) {
             throw new ReferenceError(`Toolbox error: class ${className} does not exist.`);
@@ -262,6 +287,7 @@ export class BaseLevel extends Phaser.State {
     public static NEXT_LEVEL_LOADED = "nextLevelLoaded";
     public static BLOCK_EXECUTED = "blockExecuted";
     public static WORKSPACE_UPDATED = "workspaceUpdated";
+    public static TOOLBOX_UPDATED = "toolboxUpdated";
 
     constructor() {
         super();

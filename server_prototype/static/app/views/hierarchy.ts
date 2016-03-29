@@ -1,3 +1,6 @@
+import {BaseLevel} from "level";
+import {PubSub} from "pubsub";
+
 interface HierarchyController extends _mithril.MithrilController {
     tree: d3.layout.Tree<ObjectHierarchy>,
     diagonal: d3.svg.Diagonal<d3.layout.tree.Link<d3.layout.tree.Node>, d3.layout.tree.Node>,
@@ -33,6 +36,8 @@ export const Component: _mithril.MithrilComponent<HierarchyController> = <any> {
         showHierarchy: _mithril.MithrilProperty<boolean>,
         hierarchy: ObjectHierarchy,
         changeContext: (className: string, method: string) => void,
+        event: PubSub,
+        level: BaseLevel,
     }): _mithril.MithrilVirtualElement<HierarchyController> {
         function update() {
             let i = 0;
@@ -149,8 +154,11 @@ export const Component: _mithril.MithrilComponent<HierarchyController> = <any> {
                                 if (!controller.currentClass().userMethods) {
                                     controller.currentClass().userMethods = [];
                                 }
-                                controller.currentClass().userMethods.push(controller.newMethod());
+                                let method = controller.newMethod();
+                                controller.currentClass().userMethods.push(method);
                                 controller.newMethod("");
+                                args.level.toolbox.addUserMethod(controller.currentClass().name, method);
+                                args.event.broadcast(BaseLevel.TOOLBOX_UPDATED);
                             },
                         }, "Add Method"),
                     ]

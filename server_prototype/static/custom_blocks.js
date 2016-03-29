@@ -14,16 +14,25 @@ Blockly.Blocks.oop.isFaded = function(block_name) {
 Blockly.Python.STATEMENT_PREFIX = "recordBlockBegin(%1)\n"
 Blockly.Python.STATEMENT_POSTFIX = "recordBlockEnd(%1)\n"
 
+Blockly.Blocks.classMethods = {};
+
+Blockly.Blocks.addClassMethod = function(className, method) {
+    Blockly.Blocks.classMethods[className].push(method);
+    Blockly.Blocks.classMethods[className].sort();
+};
+
 Blockly.Blocks.setClassMethods = function(class_name, method_list) {
     var block_type = "method_" + class_name;
+    Blockly.Blocks.classMethods[class_name] = method_list;
     Blockly.Blocks[block_type] = {
         init: function() {
             this.setColour(260);
             this.setOutput(true, "method");
             this.setInputsInline(true);
             this.appendDummyInput()
-                .appendField(new Blockly.FieldDropdown(method_list),
-                             "METHOD_NAME");
+                .appendField(new Blockly.FieldDropdown(function() {
+                    return Blockly.Blocks.classMethods[class_name];
+                }), "METHOD_NAME");
             this.data = JSON.stringify([class_name, method_list]);
             this.className = class_name;
         },
