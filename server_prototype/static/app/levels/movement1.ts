@@ -49,7 +49,6 @@ export class MovementLevel1 extends BaseLevel {
             "This is Mission Control! The volcano erupted in the middle of your mining trip!",
             "Test if your robot is still online by telling it to move forward."
         ];
-
     }
 
     preload() {
