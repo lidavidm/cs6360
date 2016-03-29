@@ -1,3 +1,4 @@
+
 import * as model from "model/model";
 import {BaseLevel, Toolbox} from "level";
 import * as TooltipView from "views/tooltip";
@@ -69,6 +70,7 @@ export class MovementLevel1 extends BaseLevel {
         this.initWorld(map);
         this.robot = new model.Robot("robot", 1, 3, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
+
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
     }
