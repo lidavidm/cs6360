@@ -64,7 +64,7 @@ export const Component: _mithril.MithrilComponent<HierarchyController> = <any> {
                 });
             nodeEnter.append("circle")
                 .attr("r", 10)
-                .style("stroke", "#000");
+                .style("stroke", "#FFF");
             nodeEnter.append("text")
                 .attr("dy", function(d) { return d.children ? "-10px" : ".35em"; })
                 .attr("dx", function(d) { return d.children ? "-10px" : ".75em"; })
@@ -85,7 +85,7 @@ export const Component: _mithril.MithrilComponent<HierarchyController> = <any> {
             style: args.showHierarchy() ? "display: block;" : "display: none",
             key: "hierarchy",
         }, [
-            m(".image", {
+            m(".image.blueprint", {
                 config: function(element: HTMLElement, isInitialized: boolean) {
                     if (!isInitialized) {
                         let margin = {top: 20, right: 20, bottom: 20, left: 120},

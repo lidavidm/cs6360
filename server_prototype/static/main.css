@@ -50,12 +50,18 @@ body {
 
 #hierarchy .image {
     float: left;
+    width: 500px;
 }
 
 #hierarchy header {
     font-size: 2em;
     height: 3rem;
     line-height: 3rem;
+    margin-left: 500px;
+}
+
+#hierarchy .methods {
+    margin-left: 500px;
 }
 
 #hierarchy header button {
@@ -73,6 +79,10 @@ body {
     transition: 0.3s color ease-in-out;
 }
 
+.node {
+    fill: #FFF;
+}
+
 .node text {
     font: 1em source-code-pro, monospace;
     cursor: pointer;
@@ -87,7 +97,7 @@ body {
 }
 
 .node:hover circle {
-    fill: #000;
+    fill: #0D0;
 }
 
 .link {
