@@ -28,7 +28,7 @@ export class MovementLevel1 extends BaseLevel {
                 objective: `Move the robot [${asset.Robot.Basic}] forward`,
                 completed: false,
                 predicate: (level) => {
-                    return level.robot.getX() === 15 && level.robot.getY() === 2;
+                    return level.robot.getX() === 2 && level.robot.getY() === 1;
                 }
             },
         ];
@@ -40,17 +40,6 @@ export class MovementLevel1 extends BaseLevel {
                 new TooltipView.Tooltip(TooltipView.Region.Workspace, "…and drop them here to control the robot."),
             ],
         ];
-
-        this.hierarchy = {
-            name: "object",
-            children: [
-                {
-                    name: "Robot",
-                    children: [],
-                    methods: ["moveForward", "turnRight"],
-                },
-            ],
-        };
     }
 
     preload() {
@@ -58,7 +47,6 @@ export class MovementLevel1 extends BaseLevel {
 
         this.game.load.image("tiles", "assets/tilesets/cave2.png");
         this.game.load.tilemap("movement1", "assets/maps/movement1.json", null, Phaser.Tilemap.TILED_JSON);
-        //this.game.load.tilemap("movement1", "assets/maps/movement1.json", null, Phaser.Tilemap.TILED_JSON);
         this.game.load.image("robot", asset.Robot.Basic);
     }
 
@@ -67,6 +55,7 @@ export class MovementLevel1 extends BaseLevel {
         super.create();
 
         let map = this.game.add.tilemap("movement1");
+
         map.addTilesetImage("cave2", "tiles");
 
         let layer = map.createLayer(
@@ -78,12 +67,9 @@ export class MovementLevel1 extends BaseLevel {
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
         this.initWorld(map);
-        this.robot = new model.Robot("robot", 1, 1, model.Direction.EAST,
+        this.robot = new model.Robot("robot", 1, 3, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
-
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
-        //  this.interpreter = new python.Interpreter("", this.modelWorld, this.toolbox);
-        //  this.interpreter.instantiateAll();
     }
 }
