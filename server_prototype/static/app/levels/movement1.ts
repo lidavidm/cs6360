@@ -29,7 +29,6 @@ export class MovementLevel1 extends BaseLevel {
                 completed: false,
                 predicate: (level) => {
                     return level.robot.getX() === 2 && level.robot.getY() === 3;
-                    return level.robot.getX() === 2 && level.robot.getY() === 1;
                 }
             },
         ];
