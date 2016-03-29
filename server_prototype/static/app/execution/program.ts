@@ -58,7 +58,7 @@ export class Program {
     getCode(): string {
         if (!this.savegame) return "";
         let code = PROXY_CLASS;
-        let savedLevel = this.savegame.loadAll();
+        let savedClasses = this.savegame.loadAll();
         let classes = this.classes.map((className) => {
             // let classObj = savedLevel.classes[className];
             return `

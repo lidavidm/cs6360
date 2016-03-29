@@ -288,6 +288,7 @@ export class BaseLevel extends Phaser.State {
     public static BLOCK_EXECUTED = "blockExecuted";
     public static WORKSPACE_UPDATED = "workspaceUpdated";
     public static TOOLBOX_UPDATED = "toolboxUpdated";
+    public static CONTEXT_CHANGED = "contextChanged";
 
     constructor() {
         super();

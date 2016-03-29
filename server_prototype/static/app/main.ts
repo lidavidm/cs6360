@@ -174,6 +174,7 @@ export const MainComponent = {
                         method: method,
                         workspace: null,
                     });
+                    controller.event.broadcast(level.BaseLevel.CONTEXT_CHANGED, controller.context);
                 }
             }),
             m.component(CongratulationsView.Component, {

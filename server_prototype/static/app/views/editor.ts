@@ -55,6 +55,11 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             });
         });
 
+        args.event.on(level.BaseLevel.CONTEXT_CHANGED, (context: EditorContext) => {
+            controller.workspace.clear();
+            Blockly.Xml.domToWorkspace(controller.workspace, context.workspace);
+        });
+
         function typecheck(event: any, block: any) {
             if (block && block.parentBlock_) {
                 var parent = block.getParent();
