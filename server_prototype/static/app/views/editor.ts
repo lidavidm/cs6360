@@ -132,29 +132,33 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             controller.workspace.options.readOnly = args.executing();
         }
 
+        let header = [
+            "Editing ",
+            m("code", args.context.className === MAIN ? "<main>" : `${args.context.className}.${args.context.method}`),
+        ];
+        if (args.level.hierarchy !== null) {
+            header.push(m(<any> "button", {
+                onclick: function() {
+                    args.showHierarchy(true);
+                },
+            }, "Object Hierarchy"));
+            header.push(m(<any> "button", {
+                onclick: function() {
+                    if (args.level.isCodeValid()) {
+                        args.changeContext(MAIN, "");
+                    }
+                    else {
+                        // TODO:
+                        alert("Code is invalid - fix the code before changing what you're editing!");
+                    }
+                },
+            }, "Edit main"));
+        }
+
         return m("div#editor", {
             class: args.executing() ? "executing" : "",
         }, [
-            m("header", [
-                "Editing ",
-                m("code", args.context.className === MAIN ? "<main>" : `${args.context.className}.${args.context.method}`),
-                m(<any> "button", {
-                    onclick: function() {
-                        args.showHierarchy(true);
-                    },
-                }, "Object Hierarchy"),
-                m(<any> "button", {
-                    onclick: function() {
-                        if (args.level.isCodeValid()) {
-                            args.changeContext(MAIN, "");
-                        }
-                        else {
-                            // TODO:
-                            alert("Code is invalid - fix the code before changing what you're editing!");
-                        }
-                    },
-                }, "Edit main"),
-            ]),
+            m("header", header),
             m("div#workspace", {
                 config: (element: HTMLElement, isInitialized: boolean) => {
                     controller.element = element;

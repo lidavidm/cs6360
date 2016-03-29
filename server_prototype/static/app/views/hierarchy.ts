@@ -81,6 +81,12 @@ export const Component: _mithril.MithrilComponent<HierarchyController> = <any> {
                 .attr("d", controller.diagonal);
         }
 
+        if (args.hierarchy === null) {
+            return m(<any> "div#hierarchy", {
+                key: "hierarchy",
+            });
+        }
+
         return m(<any> "div#hierarchy", {
             style: args.showHierarchy() ? "display: block;" : "display: none",
             key: "hierarchy",
