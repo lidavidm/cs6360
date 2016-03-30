@@ -18,11 +18,22 @@ Blockly.Blocks.classMethods = {};
 Blockly.Blocks.userMethods = {};
 
 Blockly.Blocks.addUserMethod = function(className, method) {
+    // Method is a list [friendly name, name, (type info...)]
     if (!Blockly.Blocks.userMethods[className]) {
-        Blockly.Blocks.userMethods[className] = [];
+        Blockly.Blocks.userMethods[className] = {};
     }
-    Blockly.Blocks.userMethods[className].push(method);
-    Blockly.Blocks.userMethods[className].sort();
+    Blockly.Blocks.userMethods[className][method[0]] = method;
+};
+
+Blockly.Blocks.getUserMethods = function(className) {
+    if (!Blockly.Blocks.userMethods[className]) {
+        return [];
+    }
+    return Object.keys(Blockly.Blocks.userMethods[className])
+        .sort()
+        .map(function(methodName) {
+            return Blockly.Blocks.userMethods[className][methodName];
+        });
 };
 
 Blockly.Blocks.setClassMethods = function(class_name, method_list) {
@@ -36,7 +47,7 @@ Blockly.Blocks.setClassMethods = function(class_name, method_list) {
             this.appendDummyInput()
                 .appendField(new Blockly.FieldDropdown(function() {
                     return Blockly.Blocks.classMethods[class_name]
-                        .concat(Blockly.Blocks.userMethods[class_name] || [])
+                        .concat(Blockly.Blocks.getUserMethods(class_name))
                         .sort();
                 }), "METHOD_NAME");
             this.data = class_name;
