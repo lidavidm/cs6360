@@ -7,8 +7,8 @@ export class Alpha2Level extends BaseLevel {
     public robot: model.Robot;
     public iron: model.Iron;
 
-    init() {
-        super.init();
+    initialize() {
+        super.initialize();
 
         this.toolbox = new Toolbox();
         this.toolbox.addControl("tell");

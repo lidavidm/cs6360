@@ -9,8 +9,8 @@ export class Alpha1Level extends BaseLevel {
     public robot: model.Robot;
     public iron: model.Iron;
 
-    init() {
-        super.init();
+    initialize() {
+        super.initialize();
 
         // Create the toolbox and add the class. The toolbox object
         // scrapes the methods from the class - just specify the name

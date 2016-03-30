@@ -11,8 +11,8 @@ export class BasicsLevel1 extends BaseLevel {
     public robot: model.Robot;
     public iron: model.Iron;
 
-    init() {
-        super.init();
+    initialize() {
+        super.initialize();
 
         this.toolbox = new Toolbox(true);
         this.toolbox.addControl("tell");

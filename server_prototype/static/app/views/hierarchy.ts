@@ -54,7 +54,6 @@ export const Component: _mithril.MithrilComponent<HierarchyController> = <any> {
             var nodeEnter = node.enter().append("g")
                 .attr("class", "node")
                 .attr("transform", function(d) {
-                    console.log(d);
                     // Flip x and y to get a horizontal tree
                     return "translate(" + d.y + "," + d.x + ")"; })
                 .on("click", (d) => {

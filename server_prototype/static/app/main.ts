@@ -88,7 +88,9 @@ export const MainComponent = {
             controller.context = savegame.load(controller.context);
             savegame.save(controller.context);
 
+            m.startComputation();
             newLevel.loadHierarchy(savegame.loadAll());
+            m.endComputation();
 
             newLevel.event.on(level.BaseLevel.WORKSPACE_UPDATED, (blocks: HTMLElement) => {
                 m.startComputation();

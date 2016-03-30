@@ -57,6 +57,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         });
 
         args.event.on(level.BaseLevel.CONTEXT_CHANGED, (context: EditorContext) => {
+            controller.workspace.updateToolbox(controller.level.toolbox.xml());
             controller.workspace.clear();
             Blockly.Xml.domToWorkspace(controller.workspace, context.workspace);
         });

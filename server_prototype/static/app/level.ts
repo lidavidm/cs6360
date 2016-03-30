@@ -301,11 +301,10 @@ export class BaseLevel extends Phaser.State {
         this.program = new Program();
         this.event = new PubSub.PubSub();
 
-        this.init();
+        this.initialize();
     }
 
-    init() {
-
+    initialize() {
     }
 
     initWorld(map: Phaser.Tilemap) {
