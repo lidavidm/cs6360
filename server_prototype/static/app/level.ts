@@ -287,6 +287,7 @@ export class BaseLevel extends Phaser.State {
     public static OBJECTIVES_UPDATED = "objectivesUpdated";
     public static NEXT_LEVEL_LOADED = "nextLevelLoaded";
     public static BLOCK_EXECUTED = "blockExecuted";
+    public static BLOCK_ERROR = "blockError";
     public static WORKSPACE_UPDATED = "workspaceUpdated";
     public static TOOLBOX_UPDATED = "toolboxUpdated";
     public static CONTEXT_CHANGED = "contextChanged";
@@ -465,7 +466,7 @@ export class BaseLevel extends Phaser.State {
             break;
 
         case model.DiffKind.Error:
-            alert(diff.data);
+            this.event.broadcast(BaseLevel.BLOCK_ERROR, diff.data);
             reject();
             break;
 

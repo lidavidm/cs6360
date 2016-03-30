@@ -85,6 +85,8 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 Blockly.Xml.domToWorkspace(controller.workspace, blocks);
             }
 
+            let lastBlockExecuted: any = null;
+
             controller.level.event.on(level.BaseLevel.BLOCK_EXECUTED, (blockID) => {
                 // Enable trace so that block highlighting works -
                 // needs to be reset before each highlight call
@@ -101,7 +103,21 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     // code will execute. For code highlighting, we
                     // must make sure that we're always looking at
                     // main() when executing.
+                    return;
                 }
+                lastBlockExecuted = blockID;
+            });
+
+            controller.level.event.on(level.BaseLevel.BLOCK_ERROR, (err, blockID) => {
+                if (lastBlockExecuted) {
+                    let block = controller.workspace.getBlockById(lastBlockExecuted);
+                    block.setWarningText(err);
+                    if (block.warning) {
+                        block.warning.setVisible(true);
+                    }
+                    return;
+                }
+                alert(err);
             });
         }
 

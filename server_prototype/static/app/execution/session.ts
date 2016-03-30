@@ -30,11 +30,12 @@ export class Session {
         this.interpreter.run(this.program.getCode()).then(() => {
             this.replay(resolveOuter);
         }, (err: any) => {
-            // TODO: show the error to the user
             console.log(err);
-            // TODO: if the error type is BlocklyError, highlight
-            // the block and add to it the error message
-            this.log.record(new Diff(DiffKind.Error, err.toString()));
+            let recordedErr = err.toString();
+            if (err.nativeError) {
+                recordedErr = err.nativeError.message;
+            }
+            this.log.record(new Diff(DiffKind.Error, recordedErr));
 
             this.replay(resolveOuter);
         });
