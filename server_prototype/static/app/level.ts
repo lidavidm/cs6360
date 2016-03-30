@@ -339,12 +339,31 @@ export class BaseLevel extends Phaser.State {
      */
     loadHierarchy(savedClasses: SavedClasses) {
         let classList = this.toolbox.getClasses();
-        console.log(this.hierarchy);
+
+        let flatHierarchy = Object.create(null);
+        let traverseHierarchy = (root: ObjectHierarchy) => {
+            flatHierarchy[root.name] = root;
+            if (root.children) {
+                root.children.forEach(traverseHierarchy);
+            }
+        };
+        if (this.hierarchy) {
+            traverseHierarchy(this.hierarchy);
+        }
 
         for (let className in savedClasses) {
+            let userMethods: string[] = [];
+            if (flatHierarchy[className]) {
+                if (!flatHierarchy[className].userMethods) {
+                    flatHierarchy[className].userMethods = [];
+                }
+                userMethods = flatHierarchy[className].userMethods;
+            }
+
             if (classList.indexOf(className) > -1) {
                 for (let method in savedClasses[className]) {
                     this.toolbox.addUserMethod(className, method);
+                    userMethods.push(method);
                 }
             }
         }
