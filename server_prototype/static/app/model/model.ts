@@ -339,7 +339,7 @@ export class World {
     }
 
     passable(x: number, y: number) {
-        let tile = (<any> this.tilemap.layer).data[x][y];
+        let tile = (<any> this.tilemap.layer).data[y][x];
 
         // Need explicit check because property may not be defined
         if (tile.properties.passable === "false") {
