@@ -137,22 +137,27 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             m("code", args.context.className === MAIN ? "<main>" : `${args.context.className}.${args.context.method}`),
         ];
         if (args.level.hierarchy !== null) {
+            let disabledText = args.level.isCodeValid() ? "" : "—fix code errors first";
             header.push(m(<any> "button", {
                 onclick: function() {
                     args.showHierarchy(true);
                 },
-            }, "Object Hierarchy"));
-            header.push(m(<any> "button", {
-                onclick: function() {
-                    if (args.level.isCodeValid()) {
-                        args.changeContext(MAIN, "");
-                    }
-                    else {
-                        // TODO:
-                        alert("Code is invalid - fix the code before changing what you're editing!");
-                    }
-                },
-            }, "Edit main"));
+                disabled: !args.level.isCodeValid(),
+            }, "Object Hierarchy" + disabledText));
+            if (args.context.className !== MAIN) {
+                header.push(m(<any> "button", {
+                    onclick: function() {
+                        if (args.level.isCodeValid()) {
+                            args.changeContext(MAIN, "");
+                        }
+                        else {
+                            // TODO:
+                            alert("Code is invalid - fix the code before changing what you're editing!");
+                        }
+                    },
+                    disabled: !args.level.isCodeValid(),
+                }, "Edit main" + disabledText));
+            }
         }
 
         return m("div#editor", {
