@@ -67,6 +67,7 @@ export class Program {
             if (classObj) {
                 methods = Object.keys(classObj).map(function(methodName) {
                     let method = classObj[methodName];
+                    headlessWorkspace.clearWorkspace();
                     Blockly.Xml.domToWorkspace(headlessWorkspace, method);
                     let code: string = Blockly.Python.workspaceToCode(headlessWorkspace);
                     let header = `    def ${methodName}(self):\n`;
