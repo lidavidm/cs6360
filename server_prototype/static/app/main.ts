@@ -27,6 +27,7 @@ export const GameWidget: _mithril.MithrilComponent<GameController> = <any> {
                 level: args.level,
                 event: args.event,
                 savegame: args.savegame,
+                changeContext: args.changeContext,
             }),
             m.component(EditorView.Component, {
                 executing: args.executing,

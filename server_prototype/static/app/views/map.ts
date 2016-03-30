@@ -3,6 +3,7 @@ import Objectives = require("views/objectives");
 import Controls = require("views/controls");
 import level = require("level");
 import pubsub = require("pubsub");
+import {MAIN} from "model/editorcontext";
 import {Session} from "execution/session";
 import {PubSub} from "pubsub";
 
@@ -40,6 +41,7 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
         level: level.BaseLevel,
         executing: _mithril.MithrilProperty<boolean>,
         event: pubsub.PubSub,
+        changeContext: (className: string, method: string) => void,
     }) {
         var style = "";
         if (args.executing()) {
@@ -66,6 +68,7 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                 valid: args.level.isCodeValid(),
 
                 onrun: () => {
+                    args.changeContext(MAIN, "");
                     args.executing(true);
                     let session = args.level.run();
                     controller.session = session;
