@@ -48,6 +48,22 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             setupLevel: setupLevel,
         };
 
+        // Workaround for issue #49
+        function fixWorkspace() {
+            controller.workspace.getAllBlocks().forEach(function(block: any) {
+                block.setDisabled(false);
+                try {
+                    block.setEditable(true);
+                }
+                catch (e) {
+                    // BlockSvg#setEditable seems to have a bug, but
+                    // it doesn't affect the main purpose of this call
+                }
+                block.setMovable(true);
+                block.setDeletable(true);
+            });
+        }
+
         args.event.on("runInvalid", () => {
             controller.workspace.getAllBlocks().forEach((block: any) => {
                 if (block.warning) {
@@ -60,6 +76,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             controller.workspace.updateToolbox(controller.level.toolbox.xml());
             controller.workspace.clear();
             Blockly.Xml.domToWorkspace(controller.workspace, context.workspace);
+            fixWorkspace();
         });
 
         function typecheck(event: any, block: any) {
@@ -84,6 +101,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             controller.workspace.updateToolbox(controller.level.toolbox.xml());
             if (blocks) {
                 Blockly.Xml.domToWorkspace(controller.workspace, blocks);
+                fixWorkspace();
             }
 
             let lastBlockExecuted: any = null;
