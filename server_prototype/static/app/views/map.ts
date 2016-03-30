@@ -76,6 +76,7 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                         controller.session = null;
                         m.startComputation();
                         controller.doneExecuting(true);
+                        args.executing(false);
                         m.endComputation();
                     });
                 },

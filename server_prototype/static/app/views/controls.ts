@@ -21,8 +21,16 @@ export const Component: _mithril.MithrilComponent<ControlsController> = <any> {
         onstep?: () => void,
     }): _mithril.MithrilVirtualElement<ControlsController> {
         let buttons: _mithril.MithrilVirtualElement<ControlsController>[] = [];
-        if (!args.executing()) {
-            // Mithril type definition seems to be off here
+        if (args.doneExecuting()) {
+            buttons.push(m(<any> "button.reset", {
+                onclick: function() {
+                    if (args.onreset) {
+                        args.onreset();
+                    }
+                },
+            }, "Reset"));
+        }
+        else if (!args.executing()) {
             let cssClass = args.valid ? ".run" : ".runInvalid";
             let text = args.valid ? "Run" : "Invalid Code";
             buttons.push(m(<any> ("button" + cssClass), {
@@ -39,15 +47,6 @@ export const Component: _mithril.MithrilComponent<ControlsController> = <any> {
                     }
                 },
             }, text));
-        }
-        else if (args.doneExecuting()) {
-            buttons.push(m(<any> "button.reset", {
-                onclick: function() {
-                    if (args.onreset) {
-                        args.onreset();
-                    }
-                },
-            }, "Reset"));
         }
         else {
             buttons.push(m(<any> "button.abort", {
