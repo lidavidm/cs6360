@@ -40,7 +40,6 @@ export class MovementLevel2 extends BaseLevel {
         this.missionText = [
             "Everything seems okay. For now, try to salvage that robot with whatever commands you have available. We'll work on sending you more."
         ];
-
     }
 
     preload() {
