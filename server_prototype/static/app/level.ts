@@ -284,12 +284,40 @@ import Camera = require("camera");
 export class BaseLevel extends Phaser.State {
     public event: PubSub.PubSub;
 
+    /**
+     * The effective class hierarchy to use for this level.
+     */
     public hierarchy: ObjectHierarchy;
+    /**
+     * The objectives to complete for this level.
+     */
     public objectives: Objective<this>[];
+    /**
+     * The program (codegen helper).
+     */
     public program: Program;
+    /**
+     * The Blockly toolbox helper.
+     */
     public toolbox: Toolbox;
+    /**
+     * The description of the mission presented at the beginning.
+     */
     public missionText: string[];
+    /**
+     * The title of the mission presented at the beginning.
+     */
     public missionTitle: string;
+    /**
+     * A flag controlling whether the player can add arbitrary
+     * methods. Defaults to false. A level can "predefine" custom user
+     * methods in its object hierarchy, by setting the userMethods
+     * array.
+     *
+     * @property
+     * @see views/hierarchy/ObjectHierarchy
+     */
+    public allowArbitraryUserMethods: boolean;
 
     protected allTooltips: TooltipView.Tooltip[][];
     private _tooltipIndex: number;
@@ -329,6 +357,8 @@ export class BaseLevel extends Phaser.State {
 
         this.missionTitle = "Mission";
         this.missionText = ["This is the default mission text. If you're seeing this, please report it to the developers.", "This is part 2 of the mission text."];
+
+        this.allowArbitraryUserMethods = false;
 
         this.initialize();
     }

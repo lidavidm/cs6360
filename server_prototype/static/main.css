@@ -42,11 +42,12 @@ body {
     background: #000;
     color: #FFF;
     box-shadow: 0px 1px 10px rgba(255, 255, 255, 0.8);
-    position: absolute;
-    top: 0;
+    position: fixed;
     left: 3em;
     right: 3em;
-    animation: scroll-up 1s ease-in-out;
+    margin: 1em auto;
+    max-width: 1000px;
+    animation: scroll-up 0.3s ease-in-out;
 }
 
 #hierarchy .image {

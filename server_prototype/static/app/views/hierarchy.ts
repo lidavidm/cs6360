@@ -148,24 +148,27 @@ export const Component: _mithril.MithrilComponent<HierarchyController> = <any> {
                                 }, "Edit code"),
                             ]);
                         }) : m("p", "(no methods)")),
-                        m(<any> "input[type=text]", {
-                            value: controller.newMethod(),
-                            oninput: function(e: any) {
-                                controller.newMethod(e.target.value);
-                            },
-                        }),
-                        m(<any> "button.ui", {
-                            onclick: function() {
-                                if (!controller.currentClass().userMethods) {
-                                    controller.currentClass().userMethods = [];
-                                }
-                                let method = controller.newMethod();
-                                controller.currentClass().userMethods.push(method);
-                                controller.newMethod("");
-                                args.level.toolbox.addUserMethod(controller.currentClass().name, method);
-                                args.event.broadcast(BaseLevel.TOOLBOX_UPDATED, controller.currentClass().name);
-                            },
-                        }, "Add Method"),
+                        (function() {
+                            if (args.level.allowArbitraryUserMethods) {
+                                return [m(<any> "input[type=text]", {
+                                    value: controller.newMethod(),
+                                    oninput: function(e: any) {
+                                        controller.newMethod(e.target.value);
+                                    },
+                                }), m(<any> "button.ui", {
+                                    onclick: function() {
+                                        if (!controller.currentClass().userMethods) {
+                                            controller.currentClass().userMethods = [];
+                                        }
+                                        let method = controller.newMethod();
+                                        controller.currentClass().userMethods.push(method);
+                                        controller.newMethod("");
+                                        args.level.toolbox.addUserMethod(controller.currentClass().name, method);
+                                        args.event.broadcast(BaseLevel.TOOLBOX_UPDATED, controller.currentClass().name);
+                                    },
+                                }, "Add Method"),];
+                            }
+                        })(),
                     ]
                 }
             })()),
