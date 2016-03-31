@@ -39,13 +39,14 @@ body {
 }
 
 #hierarchy {
-    background: #FFF;
-    border: 1px solid #000;
+    background: #000;
+    color: #FFF;
     box-shadow: 0px 1px 10px rgba(255, 255, 255, 0.8);
     position: absolute;
     top: 0;
     left: 3em;
     right: 3em;
+    animation: scroll-up 1s ease-in-out;
 }
 
 #hierarchy .image {
@@ -55,28 +56,29 @@ body {
 
 #hierarchy header {
     font-size: 2em;
+    font-weight: 300;
     height: 3rem;
     line-height: 3rem;
-    margin-left: 500px;
+    margin-left: 525px;
+}
+
+#hierarchy h2 {
+    font-weight: 400;
 }
 
 #hierarchy .methods {
-    margin-left: 500px;
+    margin-left: 525px;
 }
 
 #hierarchy header button {
     float: right;
-    font-size: 1em;
+    font-size: 1.25rem;
     line-height: 1em;
 
-    border: 1px solid #000;
     margin: 0;
-    padding: 0.25em;
-    color: #000;
+    padding: 0.25em 1em;
     height: 3rem;
     background: none;
-
-    transition: 0.3s color ease-in-out;
 }
 
 .node {
@@ -177,6 +179,19 @@ body {
 #editor header {
     font-size: 2em;
     height: 3rem;
+    font-weight: 300;
+}
+
+#editor header code {
+    font-family: source-code-pro, monospace;
+    font-weight: 400;
+}
+
+#editor header button.ui {
+    font-size: 1rem;
+    float: right;
+    height: 3rem;
+    font-weight: 400;
 }
 
 #workspace {

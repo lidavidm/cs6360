@@ -173,14 +173,14 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         ];
         if (args.level.hierarchy !== null) {
             let disabledText = args.level.isCodeValid() ? "" : "—fix code errors first";
-            header.push(m(<any> "button", {
+            header.push(m(<any> "button.ui", {
                 onclick: function() {
                     args.showHierarchy(true);
                 },
                 disabled: !args.level.isCodeValid(),
             }, "Object Hierarchy" + disabledText));
             if (args.context.className !== MAIN) {
-                header.push(m(<any> "button", {
+                header.push(m(<any> "button.ui", {
                     onclick: function() {
                         if (args.level.isCodeValid()) {
                             args.changeContext(MAIN, "");

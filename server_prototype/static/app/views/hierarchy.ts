@@ -115,7 +115,7 @@ export const Component: _mithril.MithrilComponent<HierarchyController> = <any> {
             }),
             m("header", [
                 "Object Hierarchy",
-                m(<any> "button", {
+                m(<any> "button.ui", {
                     onclick: function() {
                         args.showHierarchy(false);
                     },
@@ -140,7 +140,7 @@ export const Component: _mithril.MithrilComponent<HierarchyController> = <any> {
                             return m("li", [
                                 method,
                                 "—",
-                                m(<any> "button", {
+                                m(<any> "button.ui", {
                                     onclick: function() {
                                         args.changeContext(controller.currentClass().name, method);
                                         args.showHierarchy(false);
@@ -154,7 +154,7 @@ export const Component: _mithril.MithrilComponent<HierarchyController> = <any> {
                                 controller.newMethod(e.target.value);
                             },
                         }),
-                        m(<any> "button", {
+                        m(<any> "button.ui", {
                             onclick: function() {
                                 if (!controller.currentClass().userMethods) {
                                     controller.currentClass().userMethods = [];
