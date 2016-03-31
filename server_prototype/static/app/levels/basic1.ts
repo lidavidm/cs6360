@@ -14,6 +14,8 @@ export class BasicsLevel1 extends BaseLevel {
     initialize() {
         super.initialize();
 
+        this.missionTitle = "First Night";
+
         this.toolbox = new Toolbox(true);
         this.toolbox.addControl("tell");
         let methods = this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [

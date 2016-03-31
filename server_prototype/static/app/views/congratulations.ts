@@ -83,7 +83,7 @@ export const Component: _mithril.MithrilComponent<CongratulationsController> = <
             return m(<any> "div#congratulationsContainer.nextLevel", {
                 key: "congratulations",
             }, m("div#congratulations", [
-                m("h2", "Mission"),
+                m("h2", controller.nextLevel.missionTitle),
                 m("section", controller.nextLevel.missionText.map(function(text) {
                     return m("p", text);
                 })),

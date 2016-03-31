@@ -289,6 +289,7 @@ export class BaseLevel extends Phaser.State {
     public program: Program;
     public toolbox: Toolbox;
     public missionText: string[];
+    public missionTitle: string;
 
     protected allTooltips: TooltipView.Tooltip[][];
     private _tooltipIndex: number;
@@ -326,6 +327,7 @@ export class BaseLevel extends Phaser.State {
         this.program = new Program();
         this.event = new PubSub.PubSub();
 
+        this.missionTitle = "Mission";
         this.missionText = ["This is the default mission text. If you're seeing this, please report it to the developers.", "This is part 2 of the mission text."];
 
         this.initialize();
