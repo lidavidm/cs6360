@@ -1,6 +1,5 @@
 declare var Blockly: any;
 
-import block_utils = require("block_utils");
 import level = require("level");
 import pubsub = require("pubsub");
 import * as HierarchyView from "./hierarchy";
@@ -40,7 +39,6 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     Blockly.Xml.workspaceToDom(controller.workspace));
                 var block = Blockly.Block.getById(event.blockId);
                 if (block) {
-                    typecheck(event, block);
                     updateObjectImage(event, block);
                 }
             },
@@ -78,17 +76,6 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             Blockly.Xml.domToWorkspace(controller.workspace, context.workspace);
             fixWorkspace();
         });
-
-        function typecheck(event: any, block: any) {
-            if (block && block.parentBlock_) {
-                var parent = block.getParent();
-                var result = block_utils.typecheckTell(parent);
-                if (result) {
-                    block.unplug(true);
-                    alert(result.message);
-                }
-            }
-        }
 
         function updateObjectImage(event: any, block: any) {
             if (block && block["type"] === "variables_get") {

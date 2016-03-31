@@ -25,6 +25,9 @@ Blockly.Python['tell'] = function(block) {
     else if (!method) {
         return excTemplate("This block needs a method!");
     }
+    else if (block.data === "type_error") {
+        return excTemplate("Type error!");
+    }
     var method = method.getFieldValue("METHOD_NAME");
     var code = object + "." + method + "()\n";
     return code;

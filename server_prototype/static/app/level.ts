@@ -370,6 +370,8 @@ export class BaseLevel extends Phaser.State {
                 }
             }
         }
+
+        Blockly.Blocks.oop.setHierarchy(this.hierarchy);
     }
 
     update() {

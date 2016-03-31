@@ -11,6 +11,34 @@ Blockly.Blocks.oop.isFaded = function(block_name) {
     return Blockly.Blocks.oop.faded[block_name] === true;
 };
 
+Blockly.Blocks.oop.clearFaded = function() {
+    Blockly.Blocks.oop.faded = {};
+}
+
+/**
+ * The object hierarchy to use for typechecking. Should be a
+ * dictionary of className: directParentClassName values.
+ */
+Blockly.Blocks.oop.hierarchy = {};
+Blockly.Blocks.oop.setHierarchy = function(hierarchy) {
+    var traverse = function(root, parent) {
+        Blockly.Blocks.oop.hierarchy[root.name] = parent;
+        if (root.children) {
+            root.children.forEach(function(child) {
+                traverse(child, root.name);
+            });
+        }
+    };
+    Blockly.Blocks.oop.hierarchy = {};
+    if (!hierarchy) return;
+    traverse(hierarchy, null);
+    console.log(Blockly.Blocks.oop.hierarchy);
+};
+
+Blockly.Blocks.oop.getParentInHierarchy = function(className) {
+    return Blockly.Blocks.oop.hierarchy[className] || null;
+};
+
 Blockly.Python.STATEMENT_PREFIX = "recordBlockBegin(%1)\n"
 Blockly.Python.STATEMENT_POSTFIX = "recordBlockEnd(%1)\n"
 
@@ -35,6 +63,24 @@ Blockly.Blocks.getUserMethods = function(className) {
             return Blockly.Blocks.userMethods[className][methodName];
         });
 };
+
+function getClass(block) {
+    if (block["type"] === "variables_get") {
+        return block.data;
+    }
+    else if (block["type"].slice(0, 6) === "method") {
+        return block.getClassName();
+    }
+    else if (block["type"] === "math_number") {
+        return "number";
+    }
+    else if (block["type"] === "logic_boolean") {
+        return "bool";
+    }
+    else {
+        return "object";
+    }
+}
 
 Blockly.Blocks.setClassMethods = function(class_name, method_list) {
     var block_type = "method_" + class_name;
@@ -137,18 +183,44 @@ Blockly.Blocks["tell"] = {
     onchange: function(event) {
         var object = this.childObject();
         var method = this.childMethod();
+        this.setWarningText(null, "typechecker");
+        this.setWarningText(null, "argumentchecker");
+        this.data = null;
 
         if (!object && !method) {
-            this.setWarningText("I still need a method and an object!", "typechecker");
+            this.setWarningText("I still need a method and an object!", "argumentchecker");
         }
         else if (!object) {
-            this.setWarningText("I still need an object! Look at the toolbox.", "typechecker");
+            this.setWarningText("I still need an object! Look at the toolbox.", "argumentchecker");
         }
         else if (!method) {
-            this.setWarningText("I still need a method! Look at the blueprints in the toolbox.", "typechecker");
+            this.setWarningText("I still need a method! Look at the blueprints in the toolbox.", "argumentchecker");
         }
         else {
-            this.setWarningText(null, "typechecker");
+            var objectClass = getClass(object);
+            var methodClass = getClass(method);
+            var methodIsOnSupertype = false;
+
+            var superClass = objectClass;
+            while (superClass) {
+                if (superClass === methodClass) {
+                    methodIsOnSupertype = true;
+                    break;
+                }
+                superClass = Blockly.Blocks.oop.getParentInHierarchy(superClass);
+            }
+
+            if (objectClass === methodClass || methodIsOnSupertype) {
+                this.setWarningText(null, "typechecker");
+            }
+            else {
+                this.setWarningText(objectClass + " doesn't understand " + method.getFieldValue("METHOD_NAME") + "!", "typechecker");
+                this.data = "type_error";
+            }
+        }
+
+        if (this.warning) {
+            this.warning.setVisible(true);
         }
     },
 
