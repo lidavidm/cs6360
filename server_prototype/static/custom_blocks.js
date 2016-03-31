@@ -215,7 +215,9 @@ Blockly.Blocks["tell"] = {
             }
             else {
                 this.setWarningText(objectClass + " doesn't understand " + method.getFieldValue("METHOD_NAME") + "!", "typechecker");
+                m.startComputation();
                 this.data = "type_error";
+                m.endComputation();
             }
         }
 
