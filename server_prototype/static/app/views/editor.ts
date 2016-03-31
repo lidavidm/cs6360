@@ -111,7 +111,9 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     // main() when executing.
                     return;
                 }
-                lastBlockExecuted = blockID;
+                if (controller.workspace.getBlockById(blockID)) {
+                    lastBlockExecuted = blockID;
+                }
             });
 
             controller.level.event.on(level.BaseLevel.BLOCK_ERROR, (err, blockID) => {
