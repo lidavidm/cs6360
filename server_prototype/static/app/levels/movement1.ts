@@ -14,6 +14,7 @@ export class MovementLevel1 extends BaseLevel {
         this.toolbox.addControl("tell");
         let methods = this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
+            model.Robot.prototype.turnRight,
         ]);
         let object = this.toolbox.addObject("robot", "Robot");
 
@@ -65,11 +66,8 @@ export class MovementLevel1 extends BaseLevel {
 
         let map = this.game.add.tilemap("movement1");
 
-        map.addTilesetImage("cave2", "tiles");
-
         let layer = map.createLayer(
             "Tile Layer 1", this.game.width, this.game.height, this.background);
-
         let layer2 = map.createLayer(
             "Tile Layer 2", this.game.width, this.game.height, this.background);
 
