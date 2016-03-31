@@ -29,8 +29,6 @@ export class MovementLevel2 extends BaseLevel {
 
         this.allTooltips = [
             [
-                // new TooltipView.Tooltip(TooltipView.Region.Controls,
-                //     "Load your code onto the robot and run it."),
                 new TooltipView.Tooltip(TooltipView.Region.Toolbox,
                     "We've got your commands sorted out now! Try building them yourself."),
                 new TooltipView.Tooltip(TooltipView.Region.Workspace,
@@ -38,17 +36,11 @@ export class MovementLevel2 extends BaseLevel {
             ],
         ];
 
-        // They daon't need to see the heirarchy for level 1
-        // this.hierarchy = {
-        //     name: "object",
-        //     children: [
-        //         {
-        //             name: "Robot",
-        //             children: [],
-        //             methods: ["moveForward", "turnRight"],
-        //         },
-        //     ],
-        // };
+        this.missionTitle = "Baby Steps";
+        this.missionText = [
+            "Everything seems okay. For now, try to salvage that robot with whatever commands you have available. We'll work on sending you more."
+        ];
+
     }
 
     preload() {
@@ -56,7 +48,6 @@ export class MovementLevel2 extends BaseLevel {
 
         this.game.load.image("tiles", "assets/tilesets/cave2.png");
         this.game.load.tilemap("movement1", "assets/maps/movement1.json", null, Phaser.Tilemap.TILED_JSON);
-        //this.game.load.tilemap("movement1", "assets/maps/movement1.json", null, Phaser.Tilemap.TILED_JSON);
         this.game.load.image("robot", asset.Robot.Basic);
     }
 
@@ -81,7 +72,5 @@ export class MovementLevel2 extends BaseLevel {
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
-        //  this.interpreter = new python.Interpreter("", this.modelWorld, this.toolbox);
-        //  this.interpreter.instantiateAll();
     }
 }
