@@ -67,7 +67,7 @@ export class MovementLevel4 extends BaseLevel {
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
         this.initWorld(map);
-        this.robot = new model.Robot("robot", 7, 3, model.Direction.SOUTH,
+        this.robot = new model.Robot("robot", 7, 3, model.Direction.SOUTH   ,
                                      this.modelWorld, this.foreground, "robot");
 
         this.modelWorld.log.recordInitEnd();
