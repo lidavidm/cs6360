@@ -23,7 +23,7 @@ export class MovementLevel4 extends BaseLevel {
 
         this.objectives = [
             {
-                objective: `Move the robot [${asset.Robot.Basic}] around the corner`,
+                objective: `Move the robot [${asset.Robot.Basic}] to the exit!`,
                 completed: false,
                 predicate: (level) => {
                     return level.robot.getX() === 7 && level.robot.getY() === 8;
@@ -31,16 +31,11 @@ export class MovementLevel4 extends BaseLevel {
             },
         ];
 
-        this.allTooltips = [
-            [
-                new TooltipView.Tooltip(TooltipView.Region.Map,
-                    "Use the arrow keys to look around the map and see what's going on."),
-                new TooltipView.Tooltip(TooltipView.Region.Toolbox,
-                    "Loops are back online! Try repeatedly telling the robot to move forward to the exit"),
-            ],
-        ];
+        this.missionTitle = "Escape!";
 
-        // They don't need to see the heirarchy for level 1
+        this.missionText = [
+            "Loops are back online! Try repeatedly telling the robot to move forward to the exit"
+        ];
     }
 
     preload() {
