@@ -70,6 +70,9 @@ export class Program {
                     headlessWorkspace.clear();
                     Blockly.Xml.domToWorkspace(headlessWorkspace, method);
                     let code: string = Blockly.Python.workspaceToCode(headlessWorkspace);
+                    if (!code.trim()) {
+                        code = "pass";
+                    }
                     let header = `    def ${methodName}(self):\n`;
                     let lines = code.split("\n").map(function(line) {
                         return "        " + line;
