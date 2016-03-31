@@ -43,6 +43,7 @@ export class MovementLevel1 extends BaseLevel {
             ],
         ];
 
+<<<<<<< HEAD
         this.missionTitle = "Test Drive";
 
         this.missionText = [
@@ -50,6 +51,19 @@ export class MovementLevel1 extends BaseLevel {
             "Test if your robot is still online by telling it to move forward."
         ];
 
+=======
+        // They daon't need to see the heirarchy for level 1
+        // this.hierarchy = {
+        //     name: "object",
+        //     children: [
+        //         {
+        //             name: "Robot",
+        //             children: [],
+        //             methods: ["moveForward", "turnRight"],
+        //         },
+        //     ],
+        // };
+>>>>>>> 0ce69e164be595e15795c2df61ff60589b1ccf31
     }
 
     preload() {

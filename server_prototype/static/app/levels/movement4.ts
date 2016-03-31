@@ -36,6 +36,15 @@ export class MovementLevel4 extends BaseLevel {
         this.missionText = [
             "Loops are back online! Try repeatedly telling the robot to move forward to the exit"
         ];
+
+        this.allTooltips = [
+            [
+                new TooltipView.Tooltip(TooltipView.Region.Map,
+                    "Use the arrow keys to look around the map and see what's going on."),
+                new TooltipView.Tooltip(TooltipView.Region.Toolbox,
+                    "Loops are back online! Try repeatedly telling the robot to move forward to the exit"),
+            ],
+        ];
     }
 
     preload() {

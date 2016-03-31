@@ -37,6 +37,7 @@ import {MovementLevel4} from "levels/movement4";
 // import {BasicsLevel2} from "levels/basic2";
 // import {Alpha1Level} from "levels/alpha1";
 
+
 export const DEFAULT_PROGRESSION = new Progression([
     ["movement1", MovementLevel1],
     ["movement2", MovementLevel2],
