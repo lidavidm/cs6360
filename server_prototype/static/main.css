@@ -388,6 +388,15 @@ li.objective img {
     text-align: center;
 }
 
+#congratulations p {
+    margin-top: 0;
+}
+
+#congratulations section {
+    max-height: 250px;
+    overflow-y: auto;
+}
+
 /** UI Widgets **/
 
 button.ui {

@@ -82,9 +82,9 @@ export const Component: _mithril.MithrilComponent<CongratulationsController> = <
                 key: "congratulations",
             }, m("div#congratulations", [
                 m("h2", "Mission"),
-                controller.nextLevel.missionText.map(function(text) {
+                m("section", controller.nextLevel.missionText.map(function(text) {
                     return m("p", text);
-                }),
+                })),
                 m(<any> "button.ui.right", {
                     onclick: () => {
                         controller.state(State.NewObjectives);
