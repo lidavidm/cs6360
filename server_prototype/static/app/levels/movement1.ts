@@ -43,17 +43,13 @@ export class MovementLevel1 extends BaseLevel {
             ],
         ];
 
-        // They daon't need to see the heirarchy for level 1
-        // this.hierarchy = {
-        //     name: "object",
-        //     children: [
-        //         {
-        //             name: "Robot",
-        //             children: [],
-        //             methods: ["moveForward", "turnRight"],
-        //         },
-        //     ],
-        // };
+        this.missionTitle = "Test Drive";
+
+        this.missionText = [
+            "This is Mission Control! The volcano erupted in the middle of your mining trip!",
+            "Test if your robot is still online by telling it to move forward."
+        ];
+
     }
 
     preload() {
@@ -81,7 +77,7 @@ export class MovementLevel1 extends BaseLevel {
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
         this.initWorld(map);
-        this.robot = new model.Robot("robot", 1, 1, model.Direction.EAST,
+        this.robot = new model.Robot("robot", 1, 2, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
 
         this.modelWorld.log.recordInitEnd();
