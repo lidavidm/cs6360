@@ -194,6 +194,10 @@ body {
     font-weight: 400;
 }
 
+#editor header button[disabled] {
+    opacity: 0.5;
+}
+
 #workspace {
     height: calc(100% - 3em);
 }

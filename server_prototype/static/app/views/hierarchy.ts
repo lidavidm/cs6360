@@ -163,7 +163,7 @@ export const Component: _mithril.MithrilComponent<HierarchyController> = <any> {
                                 controller.currentClass().userMethods.push(method);
                                 controller.newMethod("");
                                 args.level.toolbox.addUserMethod(controller.currentClass().name, method);
-                                args.event.broadcast(BaseLevel.TOOLBOX_UPDATED);
+                                args.event.broadcast(BaseLevel.TOOLBOX_UPDATED, controller.currentClass().name);
                             },
                         }, "Add Method"),
                     ]

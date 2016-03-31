@@ -10,7 +10,7 @@ interface EditorController extends _mithril.MithrilController {
     element: HTMLElement,
     workspace: any,
     changeListener: (event: any) => void,
-    setupLevel: (blocks?: HTMLElement) => void,
+    setupLevel: (blocks: EditorContext) => void,
 }
 
 interface Args {
@@ -71,7 +71,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         });
 
         args.event.on(level.BaseLevel.CONTEXT_CHANGED, (context: EditorContext) => {
-            controller.workspace.updateToolbox(controller.level.toolbox.xml());
+            updateToolbox(context.className);
             controller.workspace.clear();
             Blockly.Xml.domToWorkspace(controller.workspace, context.workspace);
             fixWorkspace();
@@ -83,11 +83,11 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             }
         }
 
-        function setupLevel(blocks: HTMLElement) {
+        function setupLevel(context: EditorContext) {
             controller.workspace.clear();
-            controller.workspace.updateToolbox(controller.level.toolbox.xml());
-            if (blocks) {
-                Blockly.Xml.domToWorkspace(controller.workspace, blocks);
+            updateToolbox(context.className);
+            if (context.workspace) {
+                Blockly.Xml.domToWorkspace(controller.workspace, context.workspace);
                 fixWorkspace();
             }
 
@@ -127,8 +127,16 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             });
         }
 
-        args.event.on(level.BaseLevel.TOOLBOX_UPDATED, () => {
-            controller.workspace.updateToolbox(controller.level.toolbox.xml());
+        function updateToolbox(className: string) {
+            let toolbox = controller.level.toolbox.xml();
+            if (className !== MAIN) {
+                toolbox = controller.level.toolbox.methodXml(className);
+            }
+            controller.workspace.updateToolbox(toolbox);
+        }
+
+        args.event.on(level.BaseLevel.TOOLBOX_UPDATED, (className) => {
+            updateToolbox(className);
         });
 
         args.event.on(level.BaseLevel.NEXT_LEVEL_LOADED, (nextLevel: level.BaseLevel, blocks: EditorContext) => {
@@ -141,7 +149,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
 
             controller.workspace.addChangeListener(controller.changeListener);
 
-            setupLevel(blocks.workspace);
+            setupLevel(blocks);
         });
 
         return controller;
@@ -159,13 +167,14 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             m("code", args.context.className === MAIN ? "<main>" : `${args.context.className}.${args.context.method}`),
         ];
         if (args.level.hierarchy !== null) {
-            let disabledText = args.level.isCodeValid() ? "" : "—fix code errors first";
+            let disabledTitle = args.level.isCodeValid() ? null : "Fix code errors here first.";
             header.push(m(<any> "button.ui", {
                 onclick: function() {
                     args.showHierarchy(true);
                 },
+                title: disabledTitle,
                 disabled: !args.level.isCodeValid(),
-            }, "Object Hierarchy" + disabledText));
+            }, "Object Hierarchy"));
             if (args.context.className !== MAIN) {
                 header.push(m(<any> "button.ui", {
                     onclick: function() {
@@ -177,8 +186,9 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                             alert("Code is invalid - fix the code before changing what you're editing!");
                         }
                     },
+                    title: disabledTitle,
                     disabled: !args.level.isCodeValid(),
-                }, "Edit main" + disabledText));
+                }, "Edit main"));
             }
         }
 
@@ -199,7 +209,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                         trashcan: true,
                     });
 
-                    controller.setupLevel(args.context.workspace);
+                    controller.setupLevel(args.context);
 
                     controller.workspace.addChangeListener(controller.changeListener);
                 },

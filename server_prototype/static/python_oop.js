@@ -16,6 +16,7 @@ Blockly.Python['tell'] = function(block) {
     var excTemplate = function(msg) {
         return "raise BlocklyError('" + id + "', '" + msg + "')\n";
     }
+
     if (!object && !method) {
         return excTemplate("This block needs an object and a method!");
     }

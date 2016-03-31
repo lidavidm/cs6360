@@ -69,8 +69,6 @@ export class Toolbox {
         Blockly.Blocks.variables.addClass(className, image);
         Blockly.Blocks.setClassMethods(className, methods);
 
-        // TODO: broadcast event indicating toolbox has been updated
-
         let category = this._tree.createElement("category");
         if (this._inline) {
             category = this._tree.documentElement;
@@ -251,8 +249,34 @@ export class Toolbox {
     /**
      * Get the XML representation of this toolbox.
      */
-    xml() {
+    xml(): HTMLElement {
         return this._tree.documentElement;
+    }
+
+    methodXml(className: string): HTMLElement {
+        let clone = <HTMLElement> this._tree.documentElement.cloneNode(true);
+        let objects = clone.querySelectorAll("block[type='variables_get']");
+        Array.prototype.slice.call(objects).forEach(function(node: HTMLElement) {
+            node.remove();
+        });
+        let block = this._tree.createElement("block");
+        block.setAttribute("type", "variables_get");
+        let data = this._tree.createElement("data");
+        data.textContent = className;
+        block.appendChild(data);
+        let field = this._tree.createElement("field");
+        field.setAttribute("name", "VAR");
+        field.textContent = "self";
+        block.appendChild(field);
+
+        if (this._inline) {
+            clone.appendChild(block);
+        }
+        else {
+            clone.querySelector("category[name='Objects']").appendChild(block);
+        }
+
+        return clone;
     }
 }
 
