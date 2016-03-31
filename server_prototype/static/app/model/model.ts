@@ -529,6 +529,21 @@ export class Robot extends WorldObject {
         circle.drawCircle(TILE_WIDTH / 2, TILE_HEIGHT / 2, 1.41 * TILE_WIDTH);
 
         this.setOrientation(orientation);
+        switch(orientation) {
+        case Direction.NORTH:
+            this.phaserObject.rotation = -Math.PI/2;
+            break;
+        case Direction.SOUTH:
+            this.phaserObject.rotation = Math.PI/2;
+            break;
+        case Direction.EAST:
+            this.phaserObject.rotation = 0;
+            break;
+        case Direction.WEST:
+            this.phaserObject.rotation = Math.PI;
+            break;
+        }
+
         this.holdingID = null;
         this.hold(null);
     }
