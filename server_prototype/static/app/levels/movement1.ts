@@ -57,7 +57,7 @@ export class MovementLevel1 extends BaseLevel {
         super.preload();
 
         this.game.load.image("tiles", "assets/tilesets/cave2.png");
-        this.game.load.tilemap("corner", "assets/maps/corner.json", null, Phaser.Tilemap.TILED_JSON);
+        this.game.load.tilemap("movement1", "assets/maps/movement1.json", null, Phaser.Tilemap.TILED_JSON);
         //this.game.load.tilemap("movement1", "assets/maps/movement1.json", null, Phaser.Tilemap.TILED_JSON);
         this.game.load.image("robot", asset.Robot.Basic);
     }
@@ -66,14 +66,14 @@ export class MovementLevel1 extends BaseLevel {
         // Create the world objects here.
         super.create();
 
-        let map = this.game.add.tilemap("corner");
+        let map = this.game.add.tilemap("movement1");
         map.addTilesetImage("cave2", "tiles");
 
         let layer = map.createLayer(
             "Tile Layer 1", this.game.width, this.game.height, this.background);
 
-        // let layer2 = map.createLayer(
-        //     "Tile Layer 2", this.game.width, this.game.height, this.background);
+        let layer2 = map.createLayer(
+            "Tile Layer 2", this.game.width, this.game.height, this.background);
 
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
