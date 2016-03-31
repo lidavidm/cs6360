@@ -1,4 +1,3 @@
-
 import * as model from "model/model";
 import {BaseLevel, Toolbox} from "level";
 import * as TooltipView from "views/tooltip";
@@ -29,7 +28,7 @@ export class MovementLevel1 extends BaseLevel {
                 objective: `Move the robot [${asset.Robot.Basic}] forward`,
                 completed: false,
                 predicate: (level) => {
-                    return level.robot.getX() === 2 && level.robot.getY() === 1;
+                    return level.robot.getX() === 15 && level.robot.getY() === 2;
                 }
             },
         ];
@@ -41,6 +40,17 @@ export class MovementLevel1 extends BaseLevel {
                 new TooltipView.Tooltip(TooltipView.Region.Workspace, "…and drop them here to control the robot."),
             ],
         ];
+
+        this.hierarchy = {
+            name: "object",
+            children: [
+                {
+                    name: "Robot",
+                    children: [],
+                    methods: ["moveForward", "turnRight"],
+                },
+            ],
+        };
     }
 
     preload() {
@@ -68,7 +78,7 @@ export class MovementLevel1 extends BaseLevel {
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
         this.initWorld(map);
-        this.robot = new model.Robot("robot", 1, 3, model.Direction.EAST,
+        this.robot = new model.Robot("robot", 1, 1, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
 
         this.modelWorld.log.recordInitEnd();
