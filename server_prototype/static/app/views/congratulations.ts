@@ -25,8 +25,10 @@ export const Component: _mithril.MithrilComponent<CongratulationsController> = <
     controller: function(args: Args): CongratulationsController {
         let controller = Object.create(null);
         controller.loaded = m.prop(false);
-        controller.state = m.prop(State.OldLevel);
-        controller.nextLevel = null;
+        // Start in "new story" by default so first level can show the story
+        // TODO: XXX this is rather hacky
+        controller.state = m.prop(State.NewStory);
+        controller.nextLevel = args.level;
 
         args.event.on(level.BaseLevel.NEXT_LEVEL_LOADED, (nextLevel) => {
             console.log(nextLevel);

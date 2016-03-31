@@ -154,6 +154,7 @@ export const MainComponent = {
         let initLevelProto = DEFAULT_PROGRESSION.getLevel(savegame.currentLevel);
         let initLevel: level.BaseLevel = new initLevelProto;
         controller.setLevel(initLevel);
+        controller.loadScreenOldLevel = initLevel;
 
         return controller;
     },
