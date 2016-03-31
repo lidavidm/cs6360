@@ -349,6 +349,25 @@ li.objective img {
     animation: fade-in 0.3s ease-in-out;
 }
 
+@keyframes slide-right {
+    0% {
+        left: 0;
+    }
+
+    100% {
+        left: calc(2em + 320px);
+    }
+}
+
+#congratulationsContainer.nextLevel {
+    left: calc(2em + 320px);
+    animation: slide-right 1s ease-in-out;
+}
+
+#congratulationsContainer.nextLevel #congratulations {
+    animation: none;
+}
+
 #congratulations {
     font-size: 1.5em;
     margin: 5em auto 0;
