@@ -30,26 +30,18 @@ export class MovementLevel3 extends BaseLevel {
 
         this.allTooltips = [
             [
-                // new TooltipView.Tooltip(TooltipView.Region.Controls,
-                //     "Load your code onto the robot and run it."),
+                new TooltipView.Tooltip(TooltipView.Region.Map,
+                    "Use the arrow keys to look around the map and see what's going on."),
                 new TooltipView.Tooltip(TooltipView.Region.Toolbox,
                     "Check the robot's blueprint for a function to get around that corner."),
-                // new TooltipView.Tooltip(TooltipView.Region.Workspace,
-                //     "Right click and select duplicate to copy a command."),
             ],
         ];
 
-        // They daon't need to see the heirarchy for level 1
-        // this.hierarchy = {
-        //     name: "object",
-        //     children: [
-        //         {
-        //             name: "Robot",
-        //             children: [],
-        //             methods: ["moveForward", "turnRight"],
-        //         },
-        //     ],
-        // };
+        this.missionTitle = "Sharp Turn";
+
+        this.missionText = [
+            "We've uploaded a turn right function! It should help with that corner!"
+        ];
     }
 
     preload() {
