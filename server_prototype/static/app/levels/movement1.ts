@@ -14,7 +14,6 @@ export class MovementLevel1 extends BaseLevel {
         this.toolbox.addControl("tell");
         let methods = this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
-            model.Robot.prototype.turnRight,
         ]);
         let object = this.toolbox.addObject("robot", "Robot");
 
@@ -28,7 +27,7 @@ export class MovementLevel1 extends BaseLevel {
                 objective: `Move the robot [${asset.Robot.Basic}] forward`,
                 completed: false,
                 predicate: (level) => {
-                    return level.robot.getX() === 2 && level.robot.getY() === 3;
+                    return level.robot.getX() === 2 && level.robot.getY() === 2;
                 }
             },
         ];
@@ -66,15 +65,19 @@ export class MovementLevel1 extends BaseLevel {
 
         let map = this.game.add.tilemap("movement1");
 
+        map.addTilesetImage("cave2", "tiles");
+
         let layer = map.createLayer(
             "Tile Layer 1", this.game.width, this.game.height, this.background);
+
         let layer2 = map.createLayer(
             "Tile Layer 2", this.game.width, this.game.height, this.background);
 
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
         this.initWorld(map);
-        this.robot = new model.Robot("robot", 1, 3, model.Direction.EAST,
+
+        this.robot = new model.Robot("robot", 1, 2, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
 
         this.modelWorld.log.recordInitEnd();
