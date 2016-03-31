@@ -4,56 +4,43 @@ import * as TooltipView from "views/tooltip";
 import * as python from "execution/python";
 import * as asset from "asset";
 
-export class MovementLevel1 extends BaseLevel {
+export class MovementLevel4 extends BaseLevel {
     public robot: model.Robot;
 
     initialize() {
         super.initialize();
 
-        this.toolbox = new Toolbox(true);
+        this.toolbox = new Toolbox();
         this.toolbox.addControl("tell");
-        let methods = this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
+        this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
+            model.Robot.prototype.turnRight,
         ]);
-        let object = this.toolbox.addObject("robot", "Robot");
+        this.toolbox.addObject("robot", "Robot");
 
-        this.toolbox.addControl("tell", true, [], [
-            ["OBJECT", object.cloneNode(true)],
-            ["METHOD", methods[0].cloneNode(true)],
-        ]);
+        this.toolbox.addControl("controls_repeat_ext");
+        this.toolbox.addNumber(4);
 
         this.objectives = [
             {
-                objective: `Move the robot [${asset.Robot.Basic}] forward`,
+                objective: `Move the robot [${asset.Robot.Basic}] around the corner`,
                 completed: false,
                 predicate: (level) => {
-                    return level.robot.getX() === 2 && level.robot.getY() === 2;
+                    return level.robot.getX() === 7 && level.robot.getY() === 8;
                 }
             },
         ];
 
         this.allTooltips = [
             [
-                new TooltipView.Tooltip(TooltipView.Region.Controls,
-                    "Load your code onto the robot and run it."),
+                new TooltipView.Tooltip(TooltipView.Region.Map,
+                    "Use the arrow keys to look around the map and see what's going on."),
                 new TooltipView.Tooltip(TooltipView.Region.Toolbox,
-                    "Just use the premade command for now!"),
-                new TooltipView.Tooltip(TooltipView.Region.Workspace,
-                    "Drag and drop commands here!"),
+                    "Loops are back online! Try repeatedly telling the robot to move forward to the exit"),
             ],
         ];
 
-        // They daon't need to see the heirarchy for level 1
-        // this.hierarchy = {
-        //     name: "object",
-        //     children: [
-        //         {
-        //             name: "Robot",
-        //             children: [],
-        //             methods: ["moveForward", "turnRight"],
-        //         },
-        //     ],
-        // };
+        // They don't need to see the heirarchy for level 1
     }
 
     preload() {
@@ -61,7 +48,6 @@ export class MovementLevel1 extends BaseLevel {
 
         this.game.load.image("tiles", "assets/tilesets/cave2.png");
         this.game.load.tilemap("movement1", "assets/maps/movement1.json", null, Phaser.Tilemap.TILED_JSON);
-        //this.game.load.tilemap("movement1", "assets/maps/movement1.json", null, Phaser.Tilemap.TILED_JSON);
         this.game.load.image("robot", asset.Robot.Basic);
     }
 
@@ -81,12 +67,10 @@ export class MovementLevel1 extends BaseLevel {
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
         this.initWorld(map);
-        this.robot = new model.Robot("robot", 1, 2, model.Direction.EAST,
+        this.robot = new model.Robot("robot", 7, 3, model.Direction.SOUTH,
                                      this.modelWorld, this.foreground, "robot");
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
-        //  this.interpreter = new python.Interpreter("", this.modelWorld, this.toolbox);
-        //  this.interpreter.instantiateAll();
     }
 }
