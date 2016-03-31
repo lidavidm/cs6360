@@ -139,16 +139,16 @@ Blockly.Blocks["tell"] = {
         var method = this.childMethod();
 
         if (!object && !method) {
-            this.setWarningText("I still need a method and an object!");
+            this.setWarningText("I still need a method and an object!", "typechecker");
         }
         else if (!object) {
-            this.setWarningText("I still need an object! Look at the toolbox.");
+            this.setWarningText("I still need an object! Look at the toolbox.", "typechecker");
         }
         else if (!method) {
-            this.setWarningText("I still need a method! Look at the blueprints in the toolbox.");
+            this.setWarningText("I still need a method! Look at the blueprints in the toolbox.", "typechecker");
         }
         else {
-            this.setWarningText(null);
+            this.setWarningText(null, "typechecker");
         }
     },
 

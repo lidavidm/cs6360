@@ -130,7 +130,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             controller.level.event.on(level.BaseLevel.BLOCK_ERROR, (err, blockID) => {
                 if (lastBlockExecuted) {
                     let block = controller.workspace.getBlockById(lastBlockExecuted);
-                    block.setWarningText(err);
+                    block.setWarningText(err, "execution_error");
                     if (block.warning) {
                         block.warning.setVisible(true);
                     }
