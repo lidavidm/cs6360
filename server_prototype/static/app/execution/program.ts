@@ -107,11 +107,13 @@ ${methods}
             return impl;
         }
         else {
+            let help = `# This is a method of class ${className}.
+# You can always look for methods to call in the class hierarchy view in the top right.\n`;
             let headlessWorkspace = new Blockly.Workspace();
             Blockly.Xml.domToWorkspace(headlessWorkspace, impl);
             let body = Blockly.Python.workspaceToCode(headlessWorkspace);
             let indentedBody = indent(body.trim() || "pass", "    ");
-            return `def ${methodName}(self):\n${indentedBody}`
+            return `${help}def ${methodName}(self):\n${indentedBody}`
         }
     }
 
