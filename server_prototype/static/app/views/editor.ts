@@ -79,13 +79,12 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         });
 
         args.event.on(level.BaseLevel.CONTEXT_CHANGED, (context: EditorContext) => {
-            updateToolbox(context.className);
-            controller.workspace.clear();
-            // TODO: load based on mode
-            Blockly.Xml.domToWorkspace(
-                controller.workspace,
-                context.workspace || controller.level.fallbackWorkspace(context));
-            fixWorkspace();
+            if (context.code) {
+                controller.editor.getSession().setValue(context.code);
+            }
+            else {
+                setupLevel(context);
+            }
         });
 
         function updateObjectImage(event: any, block: any) {
@@ -95,16 +94,29 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         }
 
         function setupLevel(context: EditorContext) {
-            controller.workspace.clear();
-            updateToolbox(context.className);
-            // TODO: load based on mode
-            Blockly.Xml.domToWorkspace(
-                controller.workspace,
-                context.workspace || controller.level.fallbackWorkspace(context));
-            fixWorkspace();
+            if (context.code) {
+                controller.editor.getSession().setValue(context.code);
+            }
+            else {
+                controller.workspace.dispose();
+                controller.workspace = Blockly.inject(controller.element, {
+                    toolbox: controller.level.toolbox.xml(),
+                    trashcan: true,
+                });
+                updateToolbox(context.className);
+                controller.workspace.clear();
+
+                // TODO: if code-only, use fallback
+                Blockly.Xml.domToWorkspace(
+                    controller.workspace,
+                    context.workspace || controller.level.fallbackWorkspace(context));
+                fixWorkspace();
+                fixWorkspace();
+            }
 
             let lastBlockExecuted: any = null;
 
+            // TODO: highlighting for code execution?
             controller.level.event.on(level.BaseLevel.BLOCK_EXECUTED, (blockID) => {
                 // Enable trace so that block highlighting works -
                 // needs to be reset before each highlight call
@@ -128,6 +140,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 }
             });
 
+            // TODO: error reporting in code mode?
             controller.level.event.on(level.BaseLevel.BLOCK_ERROR, (err, blockID) => {
                 if (lastBlockExecuted) {
                     let block = controller.workspace.getBlockById(lastBlockExecuted);
@@ -178,7 +191,9 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             controller.workspace.options.readOnly = args.executing();
         }
 
-        let usingCodeEditor = !args.context.workspace && args.context.code;
+        // Cast to bool
+        let usingCodeEditor = !!args.context.code;
+        console.log(args.context);
 
         let header = [
             m("div.title", [
