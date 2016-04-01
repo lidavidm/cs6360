@@ -211,7 +211,6 @@ body {
 
 #workspace {
     height: calc(100% - 3em);
-    display: none;
 }
 
 #codeWorkspace {
@@ -224,7 +223,10 @@ body {
 }
 
 #editor.blockly #workspace {
-    display: block;
+    /* We don't want to set the workspace to display: none as that breaks
+       Blockly's rendering. Instead, we just make sure the
+       codeWorkspace is on top of everything else. */
+    /* display: block; */
 }
 
 #editor.ace #codeWorkspace {
