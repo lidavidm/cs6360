@@ -425,7 +425,9 @@ export class BaseLevel extends Phaser.State {
             if (classList.indexOf(className) > -1) {
                 for (let method in savedClasses[className]) {
                     this.toolbox.addUserMethod(className, method);
-                    userMethods.push(method);
+                    if (userMethods.indexOf(method) === -1) {
+                        userMethods.push(method);
+                    }
                 }
             }
         }
