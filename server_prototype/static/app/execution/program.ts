@@ -43,10 +43,12 @@ export class Program {
     savegame: Savegame = null;
     classes: string[];
     globals: [string, string, number][];
+    invalid: boolean;
 
     constructor() {
         this.globals = [];
         this.classes = [];
+        this.invalid = false;
     }
 
     update(savegame: Savegame) {
@@ -90,7 +92,14 @@ export class Program {
                 }
             }
         }
-        return valid && this.getCode().indexOf("raise BlocklyError") === -1;
+        return !this.invalid && valid && this.getCode().indexOf("raise BlocklyError") === -1;
+    }
+
+    /**
+     * Flag the program as invalid for some external reason.
+     */
+    flagInvalid(invalid: boolean) {
+        this.invalid = invalid;
     }
 
     getCode(): string {
