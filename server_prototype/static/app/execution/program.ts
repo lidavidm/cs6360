@@ -22,7 +22,13 @@ class BlocklyError(Exception):
     def __init__(self, blockID, message):
         self.blockID = blockID
         self.message = message
-`
+`;
+
+function indent(code: string, indent: string) {
+    return code.split("\n").map(function(line) {
+        return indent + line;
+    }).join("\n");
+}
 
 export class Program {
     savegame: Savegame = null;
@@ -78,17 +84,22 @@ export class Program {
             if (classObj) {
                 methods = Object.keys(classObj).map(function(methodName) {
                     let method = classObj[methodName];
-                    headlessWorkspace.clear();
-                    Blockly.Xml.domToWorkspace(headlessWorkspace, method);
-                    let code: string = Blockly.Python.workspaceToCode(headlessWorkspace);
-                    if (!code.trim()) {
-                        code = "pass";
+                    let code = "";
+                    if (typeof method === "string") {
+                        code = indent(method, "    ");
                     }
-                    let header = `    def ${methodName}(self):\n`;
-                    let lines = code.split("\n").map(function(line) {
-                        return "        " + line;
-                    }).join("\n");
-                    return header + lines;
+                    else {
+                        headlessWorkspace.clear();
+                        Blockly.Xml.domToWorkspace(headlessWorkspace, method);
+                        let generated: string = Blockly.Python.workspaceToCode(headlessWorkspace);
+                        if (!generated.trim()) {
+                            generated = "pass";
+                        }
+                        let header = `    def ${methodName}(self):\n`;
+                        let body = indent(generated, "        ");
+                        code = header + body;
+                    }
+                    return code;
                 }).join("\n");
             }
             return `

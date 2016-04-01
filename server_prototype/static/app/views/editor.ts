@@ -7,7 +7,9 @@ interface EditorController extends _mithril.MithrilController {
     level: level.BaseLevel,
     element: HTMLElement,
     workspace: any,
+    editor: AceAjax.Editor,
     changeListener: (event: any) => void,
+    codeListener: () => void,
     setupLevel: (blocks: EditorContext) => void,
 }
 
@@ -31,7 +33,10 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             level: null,
             element: null,
             workspace: null,
+            editor: null,
+
             changeListener: function(event: any) {
+                // TODO: broadcast a string instead
                 controller.level.event.broadcast(
                     level.BaseLevel.WORKSPACE_UPDATED,
                     Blockly.Xml.workspaceToDom(controller.workspace));
@@ -39,6 +44,10 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 if (block) {
                     updateObjectImage(event, block);
                 }
+            },
+
+            codeListener: function() {
+                console.log(controller.editor.getSession().getValue());
             },
 
             setupLevel: setupLevel,
@@ -71,6 +80,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         args.event.on(level.BaseLevel.CONTEXT_CHANGED, (context: EditorContext) => {
             updateToolbox(context.className);
             controller.workspace.clear();
+            // TODO: load based on mode
             Blockly.Xml.domToWorkspace(
                 controller.workspace,
                 context.workspace || controller.level.fallbackWorkspace(context));
@@ -86,6 +96,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         function setupLevel(context: EditorContext) {
             controller.workspace.clear();
             updateToolbox(context.className);
+            // TODO: load based on mode
             Blockly.Xml.domToWorkspace(
                 controller.workspace,
                 context.workspace || controller.level.fallbackWorkspace(context));
@@ -143,6 +154,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
 
         args.event.on(level.BaseLevel.NEXT_LEVEL_LOADED, (nextLevel: level.BaseLevel, blocks: EditorContext) => {
             controller.level = nextLevel;
+            // TODO: reset editor too
             controller.workspace.dispose();
             controller.workspace = Blockly.inject(controller.element, {
                 toolbox: controller.level.toolbox.xml(),
@@ -160,9 +172,12 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
     view: function(controller: EditorController, args: Args) {
         controller.level = args.level;
 
+        // TODO: disable editor too
         if (controller.workspace) {
             controller.workspace.options.readOnly = args.executing();
         }
+
+        let usingCodeEditor = !args.context.workspace && args.context.code;
 
         let header = [
             m("div.title", [
@@ -196,11 +211,12 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 }, "Edit main"));
             }
 
-            if (args.level.canUseCodeEditor(args.context)) {
+            if (args.level.canUseCodeEditor(args.context) && !usingCodeEditor) {
                 header.push(m(<any> "button.ui", {
                     onclick: function() {
-                        if (window.prompt("You will not be able to convert back to blocks - are you sure?")) {
-
+                        if (window.confirm("You will not be able to convert back to blocks - are you sure?")) {
+                            args.context.workspace = null;
+                            args.context.code = "# This is a test"
                         }
                     },
                     title: disabledTitle,
@@ -210,7 +226,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         }
 
         let mode = ".blockly";
-        if (!args.context.workspace && args.context.code) {
+        if (usingCodeEditor) {
             mode = ".ace";
         }
 
@@ -246,6 +262,9 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     editor.setOption("fontSize", "1rem");
                     editor.setTheme("ace/theme/monokai");
                     editor.getSession().setMode("ace/mode/python");
+                    editor.getSession().on("change", controller.codeListener);
+
+                    controller.editor = editor;
                 },
             }),
         ]);

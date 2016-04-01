@@ -75,6 +75,7 @@ export const MainComponent = {
                 className: className,
                 method: method,
                 workspace: null,
+                code: null,
             });
             controller.event.broadcast(level.BaseLevel.CONTEXT_CHANGED, controller.context);
         };
@@ -84,6 +85,7 @@ export const MainComponent = {
                 className: MAIN,
                 method: "",
                 workspace: null,
+                code: null,
             };
             controller.context = savegame.load(controller.context);
             savegame.save(controller.context);
@@ -92,9 +94,14 @@ export const MainComponent = {
             newLevel.loadHierarchy(savegame.loadAll());
             m.endComputation();
 
-            newLevel.event.on(level.BaseLevel.WORKSPACE_UPDATED, (blocks: HTMLElement) => {
+            newLevel.event.on(level.BaseLevel.WORKSPACE_UPDATED, (blocks: HTMLElement | string) => {
                 m.startComputation();
-                controller.context.workspace = blocks;
+                if (typeof blocks === "string") {
+                    controller.context.code = blocks;
+                }
+                else {
+                    controller.context.workspace = blocks;
+                }
                 savegame.save(controller.context);
                 newLevel.program.update(savegame);
                 m.endComputation();
