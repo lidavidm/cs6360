@@ -39,9 +39,6 @@ Blockly.Blocks.oop.getParentInHierarchy = function(className) {
     return Blockly.Blocks.oop.hierarchy[className] || null;
 };
 
-Blockly.Python.STATEMENT_PREFIX = "recordBlockBegin(%1)\n"
-Blockly.Python.STATEMENT_POSTFIX = "recordBlockEnd(%1)\n"
-
 Blockly.Blocks.classMethods = {};
 Blockly.Blocks.userMethods = {};
 

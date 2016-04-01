@@ -54,6 +54,19 @@ export class Program {
     }
 
     getCode(): string {
+        Blockly.Python.STATEMENT_PREFIX = "recordBlockBegin(%1)\n"
+        Blockly.Python.STATEMENT_POSTFIX = "recordBlockEnd(%1)\n"
+
+        let support = this.getSupportCode();
+        let code = this.getRawCode();
+
+        Blockly.Python.STATEMENT_PREFIX = "";
+        Blockly.Python.STATEMENT_POSTFIX = "";
+
+        return [support, code].join("\n");
+    }
+
+    getSupportCode(): string {
         if (!this.savegame) return "";
         let code = PROXY_CLASS;
         let savedClasses = this.savegame.loadAll();
@@ -87,9 +100,14 @@ ${methods}
         let globals = this.globals.map(([varName, className, modelID]) => {
             return `\n${varName} = ${className}(${modelID})`
         }).join("\n");
-        // TODO: code generation always has to be done with main workspace showing main
+
+        return [code, classes, globals].join("\n");
+    }
+
+    getRawCode(): string {
+        if (!this.savegame) return "";
+        // Code generation always has to be done with main workspace showing main
         let workspace = Blockly.mainWorkspace;
-        let main = Blockly.Python.workspaceToCode(workspace);
-        return [code, classes, globals, main].join("\n")
+        return Blockly.Python.workspaceToCode(workspace);
     }
 }
