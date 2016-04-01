@@ -1,4 +1,5 @@
 import * as model from "model/model";
+import {EditorContext, MAIN} from "model/editorcontext";
 import {BaseLevel, Toolbox} from "level";
 import * as TooltipView from "views/tooltip";
 import * as python from "execution/python";
@@ -10,17 +11,22 @@ export class MovementLevel1 extends BaseLevel {
     initialize() {
         super.initialize();
 
-        this.toolbox = new Toolbox(true);
+        this.toolbox = new Toolbox();
         this.toolbox.addControl("tell");
         let methods = this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
         ]);
         let object = this.toolbox.addObject("robot", "Robot");
 
-        this.toolbox.addControl("tell", true, [], [
+        this.fallback = this.toolbox.addControl("tell", false, [], [
             ["OBJECT", object.cloneNode(true)],
             ["METHOD", methods[0].cloneNode(true)],
         ]);
+
+        // this.toolbox.addControl("tell", true, [], [
+        //     ["OBJECT", object.cloneNode(true)],
+        //     ["METHOD", methods[0].cloneNode(true)],
+        // ]);
 
         this.objectives = [
             {
