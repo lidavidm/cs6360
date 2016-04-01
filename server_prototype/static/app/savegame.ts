@@ -23,14 +23,19 @@ export class Savegame {
         json["savedBlocks"] = Object.create(null);
 
         for (let level in this.savedBlocks) {
-            json["savedBlocks"][level] = Blockly.Xml.domToText(this.savedBlocks[level]);
+            if (this.savedBlocks[level]) {
+                json["savedBlocks"][level] = Blockly.Xml.domToText(this.savedBlocks[level]);
+            }
         }
 
         json["classes"] = {};
         for (let className in this.classes) {
             let savedClass = Object.create(null);
             for (let method in this.classes[className]) {
-                savedClass[method] = Blockly.Xml.domToText(this.classes[className][method]);
+                let methodImpl = this.classes[className][method];
+                if (methodImpl) {
+                    savedClass[method] = Blockly.Xml.domToText(methodImpl);
+                }
             }
             json["classes"][className] = savedClass;
         }
@@ -53,7 +58,7 @@ export class Savegame {
     }
 
     load(context: EditorContext): EditorContext {
-        context.workspace = Blockly.Xml.textToDom("<xml></xml>");
+        context.workspace = null;
 
         if (context.className === MAIN) {
             context.workspace = this.savedBlocks[this.currentLevel] || context.workspace;

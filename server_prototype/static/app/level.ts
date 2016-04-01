@@ -1,5 +1,6 @@
 import * as PubSub from "pubsub";
 import {SavedClasses} from "savegame";
+import {EditorContext} from "model/editorcontext";
 import * as python from "execution/python";
 import {Program} from "execution/program";
 import {Session} from "execution/session";
@@ -389,6 +390,10 @@ export class BaseLevel extends Phaser.State {
         this.zoomCamera.update();
 
         this.grid = this.overlay.add(this.game.add.tileSprite(0, 0, this.game.width, this.game.height, "grid"));
+    }
+
+    fallbackWorkspace(context: EditorContext): HTMLElement {
+        return Blockly.Xml.textToDom("<xml></xml>");
     }
 
     /**

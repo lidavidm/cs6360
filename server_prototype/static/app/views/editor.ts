@@ -71,7 +71,9 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         args.event.on(level.BaseLevel.CONTEXT_CHANGED, (context: EditorContext) => {
             updateToolbox(context.className);
             controller.workspace.clear();
-            Blockly.Xml.domToWorkspace(controller.workspace, context.workspace);
+            Blockly.Xml.domToWorkspace(
+                controller.workspace,
+                context.workspace || controller.level.fallbackWorkspace(context));
             fixWorkspace();
         });
 
@@ -84,10 +86,10 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         function setupLevel(context: EditorContext) {
             controller.workspace.clear();
             updateToolbox(context.className);
-            if (context.workspace) {
-                Blockly.Xml.domToWorkspace(controller.workspace, context.workspace);
-                fixWorkspace();
-            }
+            Blockly.Xml.domToWorkspace(
+                controller.workspace,
+                context.workspace || controller.level.fallbackWorkspace(context));
+            fixWorkspace();
 
             let lastBlockExecuted: any = null;
 

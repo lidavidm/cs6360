@@ -194,7 +194,7 @@ Blockly.Blocks["tell"] = {
             this.setWarningText("I still need an object! Look at the toolbox.", "argumentchecker");
         }
         else if (!method) {
-            this.setWarningText("I still need a method! Look at the blueprints in the toolbox.", "argumentchecker");
+            this.setWarningText("I still need a method! Look at the blueprints on the left.", "argumentchecker");
         }
         else {
             var objectClass = getClass(object);

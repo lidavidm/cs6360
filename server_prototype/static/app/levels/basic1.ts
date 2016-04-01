@@ -1,4 +1,5 @@
 import * as model from "model/model";
+import {EditorContext, MAIN} from "model/editorcontext";
 import {BaseLevel, Toolbox} from "level";
 import * as TooltipView from "views/tooltip";
 import * as python from "execution/python";
@@ -10,6 +11,8 @@ import * as asset from "asset";
 export class BasicsLevel1 extends BaseLevel {
     public robot: model.Robot;
     public iron: model.Iron;
+
+    private fallback: HTMLElement;
 
     initialize() {
         super.initialize();
@@ -26,7 +29,7 @@ export class BasicsLevel1 extends BaseLevel {
 
         let object = this.toolbox.addObject("robot", "Robot");
 
-        this.toolbox.addControl("tell", true, [], [
+        this.fallback = this.toolbox.addControl("tell", false, [], [
             ["OBJECT", object.cloneNode(true)],
             ["METHOD", methods[0].cloneNode(true)],
         ]);
@@ -90,5 +93,12 @@ export class BasicsLevel1 extends BaseLevel {
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
+    }
+
+    fallbackWorkspace(context: EditorContext): HTMLElement {
+        if (context.className === MAIN) {
+            return Blockly.Xml.textToDom(`<xml>${this.fallback.outerHTML}</xml>`);
+        }
+        return super.fallbackWorkspace(context);
     }
 }
