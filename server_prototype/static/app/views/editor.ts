@@ -10,6 +10,7 @@ interface EditorController extends _mithril.MithrilController {
     editor: AceAjax.Editor,
     changeListener: (event: any) => void,
     codeListener: () => void,
+    annotationListener: () => void,
     setupLevel: (blocks: EditorContext) => void,
 }
 
@@ -51,6 +52,13 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     controller.editor.getSession().getValue());
             },
 
+            annotationListener: function() {
+                let annotations = controller.editor.getSession().getAnnotations();
+                m.startComputation();
+                controller.level.program.flagInvalid(annotations.length > 0);
+                m.endComputation();
+            },
+
             setupLevel: setupLevel,
         };
 
@@ -80,6 +88,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
 
         args.event.on(level.BaseLevel.CONTEXT_CHANGED, (context: EditorContext) => {
             if (context.code) {
+                controller.level.program.flagInvalid(false);
                 controller.editor.getSession().setValue(context.code);
             }
             else {
@@ -282,6 +291,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     editor.setTheme("ace/theme/monokai");
                     editor.getSession().setMode("ace/mode/python");
                     editor.getSession().on("change", controller.codeListener);
+                    editor.getSession().on("changeAnnotation", controller.annotationListener);
                     editor.setOption("useWorker", true);
 
                     controller.editor = editor;
