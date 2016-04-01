@@ -233,7 +233,10 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                         // TODO: disable if code is invalid
                         if (window.confirm("You will not be able to convert back to blocks - are you sure?")) {
                             args.context.workspace = null;
-                            args.context.code = "# This is a test"
+                            // TODO: check for MAIN
+                            let code = controller.level.program.getMethodCode(args.context.className, args.context.method);
+                            args.context.code = code;
+                            controller.editor.getSession().setValue(args.context.code);
                         }
                     },
                     title: disabledTitle,
