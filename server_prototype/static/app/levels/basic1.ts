@@ -102,4 +102,8 @@ export class BasicsLevel1 extends BaseLevel {
         }
         return super.fallbackWorkspace(context);
     }
+
+    canUseCodeEditor(context: EditorContext): boolean {
+        return context.className === "Robot" && context.method === "turnLeft";
+    }
 }

@@ -195,9 +195,26 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     disabled: !args.level.isCodeValid(),
                 }, "Edit main"));
             }
+
+            if (args.level.canUseCodeEditor(args.context)) {
+                header.push(m(<any> "button.ui", {
+                    onclick: function() {
+                        if (window.prompt("You will not be able to convert back to blocks - are you sure?")) {
+
+                        }
+                    },
+                    title: disabledTitle,
+                    disabled: !args.level.isCodeValid(),
+                }, "Edit as code"));
+            }
         }
 
-        return m("div#editor", {
+        let mode = ".blockly";
+        if (!args.context.workspace && args.context.code) {
+            mode = ".ace";
+        }
+
+        return m("div#editor" + mode, {
             class: args.executing() ? "executing" : "",
         }, [
             m("header", header),
@@ -218,7 +235,19 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
 
                     controller.workspace.addChangeListener(controller.changeListener);
                 },
-            })
+            }),
+            m("div#codeWorkspace", {
+                config: (element: HTMLElement, isInitialized: boolean) => {
+                    if (isInitialized) {
+                        return;
+                    }
+
+                    let editor = ace.edit(element);
+                    editor.setOption("fontSize", "1rem");
+                    editor.setTheme("ace/theme/monokai");
+                    editor.getSession().setMode("ace/mode/python");
+                },
+            }),
         ]);
     },
 

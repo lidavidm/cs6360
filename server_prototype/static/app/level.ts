@@ -396,6 +396,10 @@ export class BaseLevel extends Phaser.State {
         return Blockly.Xml.textToDom("<xml></xml>");
     }
 
+    canUseCodeEditor(context: EditorContext): boolean {
+        return false;
+    }
+
     /**
      * Load user methods from the hierarchy.
      */
