@@ -22,6 +22,15 @@ class BlocklyError(Exception):
     def __init__(self, blockID, message):
         self.blockID = blockID
         self.message = message
+
+counter = 0
+MAX_NUM_EXECUTED_LINES = 200
+def incrementCounter():
+    global counter
+    counter = counter + 1
+    if counter >= MAX_NUM_EXECUTED_LINES:
+        raise RuntimeError("The interpreter timed out. Too many lines were executed.")
+
 `;
 
 function indent(code: string, indent: string) {
@@ -86,7 +95,7 @@ export class Program {
 
     getCode(): string {
         Blockly.Python.STATEMENT_PREFIX = "recordBlockBegin(%1)\n"
-        Blockly.Python.STATEMENT_POSTFIX = "recordBlockEnd(%1)\n"
+        Blockly.Python.STATEMENT_POSTFIX = "recordBlockEnd(%1)\nincrementCounter()\n"
 
         let support = this.getSupportCode();
         let code = this.getRawCode();
