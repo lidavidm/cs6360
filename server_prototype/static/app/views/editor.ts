@@ -1,5 +1,3 @@
-declare var Blockly: any;
-
 import level = require("level");
 import pubsub = require("pubsub");
 import * as HierarchyView from "./hierarchy";

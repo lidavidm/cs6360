@@ -1,5 +1,3 @@
-declare var Blockly: any;
-
 import * as PubSub from "pubsub";
 import {SavedClasses} from "savegame";
 import * as python from "execution/python";

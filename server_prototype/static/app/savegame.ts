@@ -1,5 +1,3 @@
-declare var Blockly: any;
-
 import {EditorContext, MAIN} from "model/editorcontext";
 
 export interface SavedClasses {

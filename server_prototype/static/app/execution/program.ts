@@ -1,5 +1,3 @@
-declare var Blockly: any;
-
 import {Savegame} from "savegame";
 import {Toolbox} from "level";
 import {World} from "model/model";
