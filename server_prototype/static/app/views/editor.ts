@@ -116,6 +116,8 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
 
             let lastBlockExecuted: any = null;
 
+            controller.workspace.addChangeListener(controller.changeListener);
+
             // TODO: highlighting for code execution?
             controller.level.event.on(level.BaseLevel.BLOCK_EXECUTED, (blockID) => {
                 // Enable trace so that block highlighting works -
@@ -174,8 +176,6 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 toolbox: controller.level.toolbox.xml(),
                 trashcan: true,
             });
-
-            controller.workspace.addChangeListener(controller.changeListener);
 
             setupLevel(blocks);
         });
