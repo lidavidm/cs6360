@@ -36,7 +36,6 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             editor: null,
 
             changeListener: function(event: any) {
-                // TODO: broadcast a string instead
                 controller.level.event.broadcast(
                     level.BaseLevel.WORKSPACE_UPDATED,
                     Blockly.Xml.workspaceToDom(controller.workspace));
@@ -47,7 +46,9 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             },
 
             codeListener: function() {
-                console.log(controller.editor.getSession().getValue());
+                controller.level.event.broadcast(
+                    level.BaseLevel.WORKSPACE_UPDATED,
+                    controller.editor.getSession().getValue());
             },
 
             setupLevel: setupLevel,
@@ -214,6 +215,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             if (args.level.canUseCodeEditor(args.context) && !usingCodeEditor) {
                 header.push(m(<any> "button.ui", {
                     onclick: function() {
+                        // TODO: disable if code is invalid
                         if (window.confirm("You will not be able to convert back to blocks - are you sure?")) {
                             args.context.workspace = null;
                             args.context.code = "# This is a test"
