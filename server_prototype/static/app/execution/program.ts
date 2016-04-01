@@ -75,31 +75,15 @@ export class Program {
     getSupportCode(): string {
         if (!this.savegame) return "";
         let code = PROXY_CLASS;
-        let savedClasses = this.savegame.loadAll();
 
+        let savedClasses = this.savegame.loadAll();
         let headlessWorkspace = new Blockly.Workspace();
         let classes = this.classes.map((className) => {
             let classObj = savedClasses[className];
             let methods = "";
             if (classObj) {
-                methods = Object.keys(classObj).map(function(methodName) {
-                    let method = classObj[methodName];
-                    let code = "";
-                    if (typeof method === "string") {
-                        code = indent(method, "    ");
-                    }
-                    else {
-                        headlessWorkspace.clear();
-                        Blockly.Xml.domToWorkspace(headlessWorkspace, method);
-                        let generated: string = Blockly.Python.workspaceToCode(headlessWorkspace);
-                        if (!generated.trim()) {
-                            generated = "pass";
-                        }
-                        let header = `    def ${methodName}(self):\n`;
-                        let body = indent(generated, "        ");
-                        code = header + body;
-                    }
-                    return code;
+                methods = Object.keys(classObj).map((methodName) => {
+                    return indent(this.getMethodCode(className, methodName), "    ");
                 }).join("\n");
             }
             return `
@@ -113,6 +97,22 @@ ${methods}
         }).join("\n");
 
         return [code, classes, globals].join("\n");
+    }
+
+    getMethodCode(className: string, methodName: string): string {
+        let savedClasses = this.savegame.loadAll();
+        let classObj = savedClasses[className];
+        let impl = classObj[methodName];
+        if (typeof impl === "string") {
+            return impl;
+        }
+        else {
+            let headlessWorkspace = new Blockly.Workspace();
+            Blockly.Xml.domToWorkspace(headlessWorkspace, impl);
+            let body = Blockly.Python.workspaceToCode(headlessWorkspace);
+            let indentedBody = indent(body.trim() || "pass", "    ");
+            return `def ${methodName}(self):\n${indentedBody}`
+        }
     }
 
     getRawCode(): string {
