@@ -59,6 +59,7 @@ export class BasicsLevel1 extends BaseLevel {
                     name: "Robot",
                     children: [],
                     methods: ["moveForward", "turnRight"],
+                    userMethods: ["turnLeft"],
                 },
             ],
         };

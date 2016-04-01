@@ -165,8 +165,11 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         }
 
         let header = [
-            "Editing ",
-            m("code", args.context.className === MAIN ? "<main>" : `${args.context.className}.${args.context.method}`),
+            m("div.title", [
+                m("span", "Editing: "),
+                m("br"),
+                m("code", args.context.className === MAIN ? "<main>" : `${args.context.className}.${args.context.method}`),
+            ]),
         ];
         if (args.level.hierarchy !== null) {
             let disabledTitle = args.level.isCodeValid() ? null : "Fix code errors here first.";
@@ -176,7 +179,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 },
                 title: disabledTitle,
                 disabled: !args.level.isCodeValid(),
-            }, "Object Hierarchy"));
+            }, "Class Hierarchy"));
             if (args.context.className !== MAIN) {
                 header.push(m(<any> "button.ui", {
                     onclick: function() {

@@ -48,6 +48,7 @@ body {
     margin: 1em auto;
     max-width: 1000px;
     animation: scroll-up 0.3s ease-in-out;
+    z-index: 9999;
 }
 
 #hierarchy .image {
@@ -56,7 +57,7 @@ body {
 }
 
 #hierarchy header {
-    font-size: 2em;
+    font-size: 1.75em;
     font-weight: 300;
     height: 3rem;
     line-height: 3rem;
@@ -175,17 +176,23 @@ body {
     float: left;
     width: calc(100% - 320px);
     height: 100%;
+    position: relative;
 }
 
 #editor header {
-    font-size: 2em;
     height: 3rem;
-    font-weight: 300;
+}
+
+#editor header .title {
+    float: left;
+}
+
+#editor header .title span {
+    font-weight: bold;
 }
 
 #editor header code {
     font-family: source-code-pro, monospace;
-    font-weight: 400;
 }
 
 #editor header button.ui {
@@ -193,6 +200,9 @@ body {
     float: right;
     height: 3rem;
     font-weight: 400;
+
+    line-height: 1.25rem;
+    width: 7rem;
 }
 
 #editor header button[disabled] {
