@@ -500,7 +500,7 @@ export class BaseLevel extends Phaser.State {
     }
 
     isCodeValid(): boolean {
-        return this.program.getCode().indexOf("raise BlocklyError") == -1;
+        return this.program.isCodeValid();
     }
 
     tooltips(): TooltipView.Tooltip[] {

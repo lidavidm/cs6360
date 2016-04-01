@@ -193,7 +193,6 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
 
         // Cast to bool
         let usingCodeEditor = !!args.context.code;
-        console.log(args.context);
 
         let header = [
             m("div.title", [
