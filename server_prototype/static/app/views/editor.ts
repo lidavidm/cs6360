@@ -12,6 +12,7 @@ interface EditorController extends _mithril.MithrilController {
     codeListener: () => void,
     annotationListener: () => void,
     setupLevel: (blocks: EditorContext) => void,
+    readonlyRange: AceAjax.Range,
 }
 
 interface Args {
@@ -22,6 +23,9 @@ interface Args {
     changeContext: (className: string, method: string) => void,
     context: EditorContext,
 }
+
+
+let Range: typeof AceAjax.Range = ace.require("ace/range").Range;
 
 /**
  * The editor component, which handles interactions with Blockly.
@@ -35,6 +39,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             element: null,
             workspace: null,
             editor: null,
+            readonlyRange: null,
 
             changeListener: function(event: any) {
                 controller.level.event.broadcast(
@@ -86,10 +91,16 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             });
         });
 
+        function markReadonly() {
+            controller.readonlyRange = new Range(0, 0, 2, 10000);
+            controller.editor.getSession().addMarker(controller.readonlyRange, "readonly");
+        }
+
         args.event.on(level.BaseLevel.CONTEXT_CHANGED, (context: EditorContext) => {
             if (context.code) {
                 controller.level.program.flagInvalid(false);
                 controller.editor.getSession().setValue(context.code);
+                markReadonly();
             }
             else {
                 setupLevel(context);
@@ -105,6 +116,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         function setupLevel(context: EditorContext) {
             if (context.code) {
                 controller.editor.getSession().setValue(context.code);
+                markReadonly();
             }
             else {
                 controller.workspace.dispose();
@@ -293,6 +305,26 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     editor.getSession().on("change", controller.codeListener);
                     editor.getSession().on("changeAnnotation", controller.annotationListener);
                     editor.setOption("useWorker", true);
+                    editor.setOption("dragEnabled", false);
+
+                    // Based on http://stackoverflow.com/questions/24958589/
+                    // Make the header uneditable
+                    editor.keyBinding.addKeyboardHandler({
+                        handleKeyboard: function(data: any, hash: number, keyString: any, keyCode: number, event: any): any {
+                            // Let arrow keys through
+                            if ((keyCode <= 40 && keyCode >= 37) || hash === -1) {
+                                return false;
+                            }
+
+                            if (controller.readonlyRange &&
+                                controller.readonlyRange.intersects(editor.getSelectionRange())) {
+                                return {
+                                    command: "null",
+                                    passEvent: false,
+                                };
+                            }
+                        }
+                    });
 
                     controller.editor = editor;
                 },
