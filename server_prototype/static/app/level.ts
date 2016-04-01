@@ -428,10 +428,22 @@ export class BaseLevel extends Phaser.State {
 
             if (classList.indexOf(className) > -1) {
                 for (let method in savedClasses[className]) {
-                    this.toolbox.addUserMethod(className, method);
                     if (userMethods.indexOf(method) === -1) {
                         userMethods.push(method);
                     }
+                }
+            }
+        }
+
+        for (let className in flatHierarchy) {
+            let userMethods = flatHierarchy[className].userMethods || [];
+            for (let method of userMethods) {
+                this.toolbox.addUserMethod(className, method);
+                if (!savedClasses[className]) {
+                    savedClasses[className] = {};
+                }
+                if (!savedClasses[className][method]) {
+                    savedClasses[className][method] = Blockly.Xml.textToDom("<xml></xml>");
                 }
             }
         }
