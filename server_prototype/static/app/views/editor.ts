@@ -282,6 +282,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     editor.setTheme("ace/theme/monokai");
                     editor.getSession().setMode("ace/mode/python");
                     editor.getSession().on("change", controller.codeListener);
+                    editor.setOption("useWorker", true);
 
                     controller.editor = editor;
                 },
