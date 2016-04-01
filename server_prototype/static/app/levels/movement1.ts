@@ -8,25 +8,25 @@ import * as asset from "asset";
 export class MovementLevel1 extends BaseLevel {
     public robot: model.Robot;
 
+    private fallback: HTMLElement;
+
     initialize() {
         super.initialize();
+
+        this.missionTitle = "Test Drive";
 
         this.toolbox = new Toolbox();
         this.toolbox.addControl("tell");
         let methods = this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
         ]);
+
         let object = this.toolbox.addObject("robot", "Robot");
 
         this.fallback = this.toolbox.addControl("tell", false, [], [
             ["OBJECT", object.cloneNode(true)],
             ["METHOD", methods[0].cloneNode(true)],
         ]);
-
-        // this.toolbox.addControl("tell", true, [], [
-        //     ["OBJECT", object.cloneNode(true)],
-        //     ["METHOD", methods[0].cloneNode(true)],
-        // ]);
 
         this.objectives = [
             {
@@ -42,14 +42,10 @@ export class MovementLevel1 extends BaseLevel {
             [
                 new TooltipView.Tooltip(TooltipView.Region.Controls,
                     "Load your code onto the robot and run it."),
-                new TooltipView.Tooltip(TooltipView.Region.Toolbox,
-                    "Just use the premade command for now!"),
                 new TooltipView.Tooltip(TooltipView.Region.Workspace,
-                    "Drag and drop commands here!"),
+                    "A command has already been prepped for you!"),
             ],
         ];
-
-        this.missionTitle = "Test Drive";
 
         this.missionText = [
             "This is Mission Control! The volcano erupted in the middle of your mining trip!",
@@ -88,5 +84,12 @@ export class MovementLevel1 extends BaseLevel {
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
+    }
+
+    fallbackWorkspace(context: EditorContext): HTMLElement {
+        if (context.className === MAIN) {
+            return Blockly.Xml.textToDom(`<xml>${this.fallback.outerHTML}</xml>`);
+        }
+        return super.fallbackWorkspace(context);
     }
 }
