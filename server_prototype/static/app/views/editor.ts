@@ -238,26 +238,19 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         ];
         if (args.level.hierarchy !== null) {
             let disabledTitle = args.level.isCodeValid() ? null : "Fix code errors here first.";
+            // We can't disable these two buttons, because the game
+            // saves invalid code. When they return, they won't be
+            // able to go and edit it.
             header.push(m(<any> "button.ui", {
                 onclick: function() {
                     args.showHierarchy(true);
                 },
-                title: disabledTitle,
-                disabled: !args.level.isCodeValid(),
             }, "Class Hierarchy"));
             if (args.context.className !== MAIN) {
                 header.push(m(<any> "button.ui", {
                     onclick: function() {
-                        if (args.level.isCodeValid()) {
-                            args.changeContext(MAIN, "");
-                        }
-                        else {
-                            // TODO:
-                            alert("Code is invalid - fix the code before changing what you're editing!");
-                        }
+                        args.changeContext(MAIN, "");
                     },
-                    title: disabledTitle,
-                    disabled: !args.level.isCodeValid(),
                 }, "Edit main"));
             }
 
