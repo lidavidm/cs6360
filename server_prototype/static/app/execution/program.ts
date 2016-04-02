@@ -1,3 +1,5 @@
+declare var Sk: any;
+
 import {Savegame} from "savegame";
 import {Toolbox} from "level";
 import {World} from "model/model";
@@ -72,27 +74,27 @@ export class Program {
 
     isCodeValid(): boolean {
         if (!this.savegame) return true;
-        let savedClasses = this.savegame.loadAll();
-        let valid = true;
+        let code = this.getCode();
 
-        outer:
-        for (let className of this.classes) {
-            let classObj = savedClasses[className];
-            for (let methodName in classObj) {
-                let methodImpl = this.getMethodCode(className, methodName);
-                let lines = methodImpl.split("\n");
-                let header = lines.slice(0, 3);
-                let body = lines.slice(3);
-                for (let line of body) {
-                    // Make sure all lines are indented
-                    if (line.charAt(0) !== " " && line.trim()) {
-                        valid = false;
-                        break outer;
-                    }
-                }
-            }
+        return !this.invalid && code.indexOf("raise BlocklyError") === -1;
+    }
+
+    isCodeFullValid(): boolean {
+        // More time-consuming check
+        if (!this.savegame) return true;
+        let code = this.getCode();
+        // Make sure code doesn't actually run
+        code = "if False:\n" + indent(code, "    ");
+
+        try {
+            Sk.importMainWithBody("<validate>", false, code, false);
         }
-        return !this.invalid && valid && this.getCode().indexOf("raise BlocklyError") === -1;
+        catch (e) {
+            console.log(e);
+            return false;
+        }
+
+        return !this.invalid && code.indexOf("raise BlocklyError") === -1;
     }
 
     /**
@@ -129,6 +131,7 @@ export class Program {
                     return indent(this.getMethodCode(className, methodName), "    ");
                 }).join("\n");
             }
+            // TODO: subclass the correct class
             return `
 class ${className}(JSProxyClass):
 ${methods}

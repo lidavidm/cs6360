@@ -68,6 +68,14 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                 valid: args.level.isCodeValid(),
 
                 onrun: () => {
+                    if (!args.level.program.isCodeFullValid()) {
+                        // TODO: report the error somehow
+                        args.level.program.flagInvalid(true);
+                        return;
+                    }
+                    else {
+                        args.level.program.flagInvalid(false);
+                    }
                     args.changeContext(MAIN, "");
                     args.executing(true);
                     let session = args.level.run();
