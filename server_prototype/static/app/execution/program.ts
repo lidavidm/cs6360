@@ -3,6 +3,7 @@ declare var Sk: any;
 import {Savegame} from "savegame";
 import {Toolbox} from "level";
 import {World} from "model/model";
+import {ObjectHierarchy} from "views/hierarchy";
 
 const PROXY_CLASS = `
 class JSProxyClass(object):
@@ -46,11 +47,13 @@ export class Program {
     classes: string[];
     globals: [string, string, number][];
     invalid: boolean;
+    hierarchy: ObjectHierarchy;
 
-    constructor() {
+    constructor(hierarchy: ObjectHierarchy) {
         this.globals = [];
         this.classes = [];
         this.invalid = false;
+        this.hierarchy = hierarchy;
     }
 
     update(savegame: Savegame) {
@@ -85,6 +88,7 @@ export class Program {
         let code = this.getCode();
         // Make sure code doesn't actually run
         code = "if False:\n" + indent(code, "    ");
+        console.log(code);
 
         try {
             Sk.importMainWithBody("<validate>", false, code, false);
@@ -123,7 +127,11 @@ export class Program {
 
         let savedClasses = this.savegame.loadAll();
         let headlessWorkspace = new Blockly.Workspace();
-        let classes = this.classes.map((className) => {
+        let classQueue: [ObjectHierarchy, string][] = [[this.hierarchy, "JSProxyClass"]];
+        let classDefns: string[] = [];
+        while (classQueue.length > 0) {
+            let [classDesc, parent] = classQueue.pop();
+            let className = classDesc.name;
             let classObj = savedClasses[className];
             let methods = "";
             if (classObj) {
@@ -131,13 +139,24 @@ export class Program {
                     return indent(this.getMethodCode(className, methodName), "    ");
                 }).join("\n");
             }
-            // TODO: subclass the correct class
-            return `
-class ${className}(JSProxyClass):
+            if (!methods.trim()) {
+                methods = "    pass";
+            }
+
+            classDefns.push(`
+class ${className}(${parent}):
 ${methods}
-    pass
-`
-        }).join("\n");
+`);
+
+            if (classDesc.children) {
+                for (let child of classDesc.children) {
+                    classQueue.push([child, className]);
+                }
+            }
+        }
+
+        let classes = classDefns.join("\n");
+
         let globals = this.globals.map(([varName, className, modelID]) => {
             return `\n${varName} = ${className}(${modelID})`
         }).join("\n");

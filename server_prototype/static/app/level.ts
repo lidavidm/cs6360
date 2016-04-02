@@ -351,7 +351,6 @@ export class BaseLevel extends Phaser.State {
         this._tooltipIndex = 0;
         this.hierarchy = null;
         this.objectives = [];
-        this.program = new Program();
         this.event = new PubSub.PubSub();
 
         this.missionTitle = "Mission";
@@ -360,6 +359,7 @@ export class BaseLevel extends Phaser.State {
         this.allowArbitraryUserMethods = false;
 
         this.initialize();
+        this.program = new Program(this.hierarchy);
     }
 
     initialize() {
