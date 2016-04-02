@@ -75,11 +75,15 @@ export class Session {
 
     unpause() {
         this.paused = false;
-        this.pauseContext();
+        if (this.pauseContext) {
+            this.pauseContext();
+        }
     }
 
     step() {
-        this.pauseContext();
+        if (this.pauseContext) {
+            this.pauseContext();
+        }
     }
 
     then(success: () => any, failure?: () => any): any {
