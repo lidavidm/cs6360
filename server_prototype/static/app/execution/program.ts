@@ -128,31 +128,53 @@ export class Program {
 
         let savedClasses = this.savegame.loadAll();
         let headlessWorkspace = new Blockly.Workspace();
-        let classQueue: [ObjectHierarchy, string][] = [[this.hierarchy, "JSProxyClass"]];
         let classDefns: string[] = [];
-        while (classQueue.length > 0) {
-            let [classDesc, parent] = classQueue.pop();
-            let className = classDesc.name;
-            let classObj = savedClasses[className];
-            let methods = "";
-            if (classObj) {
-                methods = Object.keys(classObj).map((methodName) => {
-                    return indent(this.getMethodCode(className, methodName), "    ");
-                }).join("\n");
-            }
-            if (!methods.trim()) {
-                methods = "    pass";
-            }
 
-            classDefns.push(`
+        if (this.hierarchy) {
+            let classQueue: [ObjectHierarchy, string][] = [[this.hierarchy, "JSProxyClass"]];
+            while (classQueue.length > 0) {
+                let [classDesc, parent] = classQueue.pop();
+                let className = classDesc.name;
+                let classObj = savedClasses[className];
+                let methods = "";
+                if (classObj) {
+                    methods = Object.keys(classObj).map((methodName) => {
+                        return indent(this.getMethodCode(className, methodName), "    ");
+                    }).join("\n");
+                }
+                if (!methods.trim()) {
+                    methods = "    pass";
+                }
+
+                classDefns.push(`
 class ${className}(${parent}):
 ${methods}
 `);
 
-            if (classDesc.children) {
-                for (let child of classDesc.children) {
-                    classQueue.push([child, className]);
+                if (classDesc.children) {
+                    for (let child of classDesc.children) {
+                        classQueue.push([child, className]);
+                    }
                 }
+            }
+        }
+        else {
+            for (let className of this.classes) {
+                let classObj = savedClasses[className];
+                let methods = "";
+                if (classObj) {
+                    methods = Object.keys(classObj).map((methodName) => {
+                        return indent(this.getMethodCode(className, methodName), "    ");
+                    }).join("\n");
+                }
+                if (!methods.trim()) {
+                    methods = "    pass";
+                }
+
+                classDefns.push(`
+class ${className}(JSProxyClass):
+${methods}
+`);
             }
         }
 
