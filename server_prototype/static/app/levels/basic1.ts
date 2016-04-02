@@ -104,6 +104,7 @@ export class BasicsLevel1 extends BaseLevel {
     }
 
     canUseCodeEditor(context: EditorContext): boolean {
-        return context.className === "Robot" && context.method === "turnLeft";
+        return (context.className === "Robot" && context.method === "turnLeft") ||
+            context.className === MAIN;
     }
 }
