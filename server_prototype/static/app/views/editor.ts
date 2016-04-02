@@ -75,7 +75,16 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 }
 
                 if (context.className === MAIN) {
-                    controller.readonlyRange = null;
+                    let code = context.code;
+                    let lines = code.split("\n");
+                    let index = 0;
+                    for (let line of lines) {
+                        if (line.indexOf("Beginning of main code") > -1) {
+                            break;
+                        }
+                        index++;
+                    }
+                    controller.readonlyRange = new Range(0, 0, index, 10000);
                 }
                 else {
                     controller.readonlyRange = new Range(0, 0, 2, 10000);
@@ -259,9 +268,14 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     onclick: function() {
                         if (window.confirm("You will not be able to convert back to blocks - are you sure?")) {
                             args.context.workspace = null;
-                            // TODO: check for MAIN
-                            let code = controller.level.program.getMethodCode(args.context.className, args.context.method);
-                            args.context.code = code;
+                            if (args.context.className === MAIN) {
+                                let code = controller.level.program.getMainCode();
+                                args.context.code = code;
+                            }
+                            else {
+                                let code = controller.level.program.getMethodCode(args.context.className, args.context.method);
+                                args.context.code = code;
+                            }
                             controller.editor.getSession().setValue(args.context.code);
                             controller.markReadonly(args.context);
                         }
@@ -305,7 +319,9 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                         trashcan: true,
                     });
 
-                    controller.setupLevel(args.context);
+                    if (args.context.workspace) {
+                        controller.setupLevel(args.context);
+                    }
 
                     controller.workspace.addChangeListener(controller.changeListener);
                 },
@@ -317,6 +333,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     }
 
                     let editor = ace.edit(element);
+                    controller.editor = editor;
                     editor.setOption("fontSize", "1rem");
                     editor.setTheme("ace/theme/monokai");
                     editor.getSession().setMode("ace/mode/python");
@@ -324,6 +341,10 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     editor.getSession().on("changeAnnotation", controller.annotationListener);
                     editor.setOption("useWorker", true);
                     editor.setOption("dragEnabled", false);
+
+                    if (args.context.code) {
+                        controller.setupLevel(args.context);
+                    }
 
                     // Based on http://stackoverflow.com/questions/24958589/
                     // Make the header uneditable
@@ -344,7 +365,6 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                         }
                     });
 
-                    controller.editor = editor;
                 },
             }),
         ]);

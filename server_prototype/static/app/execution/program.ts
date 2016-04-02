@@ -2,6 +2,7 @@ declare var Sk: any;
 
 import {Savegame} from "savegame";
 import {Toolbox} from "level";
+import {MAIN} from "model/editorcontext";
 import {World} from "model/model";
 import {ObjectHierarchy} from "views/hierarchy";
 
@@ -113,7 +114,7 @@ export class Program {
         Blockly.Python.STATEMENT_POSTFIX = "recordBlockEnd(%1)\nincrementCounter()\n"
 
         let support = this.getSupportCode();
-        let code = this.getRawCode();
+        let code = this.getMainCode();
 
         Blockly.Python.STATEMENT_PREFIX = "";
         Blockly.Python.STATEMENT_POSTFIX = "";
@@ -157,11 +158,7 @@ ${methods}
 
         let classes = classDefns.join("\n");
 
-        let globals = this.globals.map(([varName, className, modelID]) => {
-            return `\n${varName} = ${className}(${modelID})`
-        }).join("\n");
-
-        return [code, classes, globals].join("\n");
+        return [code, classes].join("\n");
     }
 
     getMethodCode(className: string, methodName: string): string {
@@ -182,10 +179,32 @@ ${methods}
         }
     }
 
+    getMainCode(): string {
+        let globals = this.globals.map(([varName, className, modelID]) => {
+            return `\n${varName} = ${className}(${modelID})`
+        }).join("\n");
+
+        return `# These are the global variables you have access to.
+${globals}
+
+# Beginning of main code
+${this.getRawCode()}
+`;
+    }
+
     getRawCode(): string {
         if (!this.savegame) return "";
         // Code generation always has to be done with main workspace showing main
-        let workspace = Blockly.mainWorkspace;
-        return Blockly.Python.workspaceToCode(workspace);
+        let main = this.savegame.load({
+            className: MAIN,
+            method: null,
+        });
+        if (main.workspace) {
+            let workspace = Blockly.mainWorkspace;
+            return Blockly.Python.workspaceToCode(workspace);
+        }
+        else {
+            return main.code;
+        }
     }
 }
