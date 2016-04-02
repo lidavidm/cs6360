@@ -531,6 +531,29 @@ export class BaseLevel extends Phaser.State {
         });
     }
 
+    private checkObjectives(resolve: () => void) {
+        m.startComputation();
+        let objectiveCompleted = false;
+
+        for (let objective of this.objectives) {
+            if (!objective.completed) {
+                objective.completed = objective.predicate(this);
+                objectiveCompleted = objectiveCompleted || objective.completed;
+            }
+        }
+
+        if (objectiveCompleted) {
+            setTimeout(() => {
+                this.event.broadcast(BaseLevel.OBJECTIVES_UPDATED);
+                resolve();
+            }, 1500);
+        }
+        else {
+            resolve();
+        }
+        m.endComputation();
+    }
+
     runDiff(diff: model.Diff<any>, resolve: () => void, reject: () => void, animDuration?: number) {
         switch (diff.kind) {
         case model.DiffKind.BeginningOfBlock:
@@ -539,26 +562,7 @@ export class BaseLevel extends Phaser.State {
             break;
 
         case model.DiffKind.EndOfBlock:
-            m.startComputation();
-            let objectiveCompleted = false;
-
-            for (let objective of this.objectives) {
-                if (!objective.completed) {
-                    objective.completed = objective.predicate(this);
-                    objectiveCompleted = objectiveCompleted || objective.completed;
-                }
-            }
-
-            if (objectiveCompleted) {
-                setTimeout(() => {
-                    this.event.broadcast(BaseLevel.OBJECTIVES_UPDATED);
-                    resolve();
-                }, 1500);
-            }
-            else {
-                resolve();
-            }
-            m.endComputation();
+            resolve();
             break;
 
         case model.DiffKind.EndOfInit:
@@ -574,11 +578,11 @@ export class BaseLevel extends Phaser.State {
             let object = this.modelWorld.getObjectByID(diff.id);
             let tween = diff.tween(object, animDuration);
             if (!tween) {
-                resolve();
+                this.checkObjectives(resolve);
                 return;
             }
             tween.onComplete.add(() => {
-                resolve();
+                this.checkObjectives(resolve);
             });
             tween.start();
             break;
