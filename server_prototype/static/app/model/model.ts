@@ -118,7 +118,7 @@ class OrientationDiff<T extends HasOrientation> extends Diff<T> {
 
         let tween = p.game.add.tween(p).to({
             rotation: rotation,
-        }, duration / 3, Phaser.Easing.Linear.None);
+        }, duration, Phaser.Easing.Linear.None);
         return tween;
     }
 }

@@ -12,7 +12,9 @@ interface EditorController extends _mithril.MithrilController {
     codeListener: () => void,
     annotationListener: () => void,
     setupLevel: (blocks: EditorContext) => void,
+    markReadonly: (context: EditorContext) => void,
     readonlyRange: AceAjax.Range,
+    readonlyRangeId: number,
 }
 
 interface Args {
@@ -40,6 +42,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             workspace: null,
             editor: null,
             readonlyRange: null,
+            readonlyRangeId: -1,
 
             changeListener: function(event: any) {
                 controller.level.event.broadcast(
@@ -62,6 +65,23 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 m.startComputation();
                 controller.level.program.flagInvalid(annotations.length > 0);
                 m.endComputation();
+
+                return true;
+            },
+
+            markReadonly: function(context: EditorContext) {
+                if (controller.readonlyRange) {
+                    controller.editor.getSession().removeMarker(controller.readonlyRangeId);
+                }
+
+                if (context.className === MAIN) {
+                    controller.readonlyRange = null;
+                }
+                else {
+                    controller.readonlyRange = new Range(0, 0, 2, 10000);
+                    controller.readonlyRangeId =
+                        controller.editor.getSession().addMarker(controller.readonlyRange, "readonly");
+                }
             },
 
             setupLevel: setupLevel,
@@ -91,16 +111,11 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             });
         });
 
-        function markReadonly() {
-            controller.readonlyRange = new Range(0, 0, 2, 10000);
-            controller.editor.getSession().addMarker(controller.readonlyRange, "readonly");
-        }
-
         args.event.on(level.BaseLevel.CONTEXT_CHANGED, (context: EditorContext) => {
             if (context.code) {
                 controller.level.program.flagInvalid(false);
                 controller.editor.getSession().setValue(context.code);
-                markReadonly();
+                controller.markReadonly(context);
             }
             else {
                 setupLevel(context);
@@ -115,8 +130,9 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
 
         function setupLevel(context: EditorContext) {
             if (context.code) {
+                // TODO: if code-only, use fallback
                 controller.editor.getSession().setValue(context.code);
-                markReadonly();
+                controller.markReadonly(context);
             }
             else {
                 controller.workspace.dispose();
@@ -127,11 +143,9 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 updateToolbox(context.className);
                 controller.workspace.clear();
 
-                // TODO: if code-only, use fallback
                 Blockly.Xml.domToWorkspace(
                     controller.workspace,
                     context.workspace || controller.level.fallbackWorkspace(context));
-                fixWorkspace();
                 fixWorkspace();
             }
 
@@ -250,13 +264,13 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             if (args.level.canUseCodeEditor(args.context) && !usingCodeEditor) {
                 header.push(m(<any> "button.ui", {
                     onclick: function() {
-                        // TODO: disable if code is invalid
                         if (window.confirm("You will not be able to convert back to blocks - are you sure?")) {
                             args.context.workspace = null;
                             // TODO: check for MAIN
                             let code = controller.level.program.getMethodCode(args.context.className, args.context.method);
                             args.context.code = code;
                             controller.editor.getSession().setValue(args.context.code);
+                            controller.markReadonly(args.context);
                         }
                     },
                     title: disabledTitle,
