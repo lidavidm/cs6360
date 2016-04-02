@@ -270,6 +270,17 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     disabled: !args.level.isCodeValid(),
                 }, "Edit as code"));
             }
+            else if (usingCodeEditor) {
+                header.push(m(<any> "button.ui", {
+                    onclick: function() {
+                        if (window.confirm("You will lose all the code here - are you sure?")) {
+                            args.context.code = null;
+                            args.context.workspace = controller.level.fallbackWorkspace(args.context);
+                            controller.setupLevel(args.context);
+                        }
+                    }
+                }, "Edit as blocks"));
+            }
         }
 
         let mode = ".blockly";
