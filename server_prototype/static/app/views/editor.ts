@@ -203,7 +203,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         function updateToolbox(className: string) {
             let toolbox = controller.level.toolbox.xml();
             if (className !== MAIN) {
-                toolbox = controller.level.toolbox.methodXml(className);
+                toolbox = controller.level.toolbox.methodXml(className, controller.level.hierarchy);
             }
             controller.workspace.updateToolbox(toolbox);
         }

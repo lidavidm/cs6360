@@ -252,7 +252,7 @@ export class Toolbox {
         return this._tree.documentElement;
     }
 
-    methodXml(className: string): HTMLElement {
+    methodXml(className: string, hierarchy: ObjectHierarchy): HTMLElement {
         let clone = <HTMLElement> this._tree.documentElement.cloneNode(true);
         let objects = clone.querySelectorAll("block[type='variables_get']");
         Array.prototype.slice.call(objects).forEach(function(node: HTMLElement) {
@@ -273,6 +273,43 @@ export class Toolbox {
         }
         else {
             clone.querySelector("category[name='Objects']").appendChild(block);
+        }
+
+        // Search for the parent class
+        let queue = [[hierarchy, null]];
+        let foundParent: ObjectHierarchy = null;
+        while (queue.length > 0) {
+            let [root, parent] = queue.pop();
+            if (!root) break;
+            if (root.name === className) {
+                foundParent = parent;
+                break;
+            }
+
+            if (root.children) {
+                for (let child of root.children) {
+                    queue.push([child, root]);
+                }
+            }
+        }
+
+        if (foundParent) {
+            block = this._tree.createElement("block");
+            block.setAttribute("type", "variables_get");
+            data = this._tree.createElement("data");
+            data.textContent = foundParent.name;
+            block.appendChild(data);
+            field = this._tree.createElement("field");
+            field.setAttribute("name", "VAR");
+            field.textContent = "super";
+            block.appendChild(field);
+
+            if (this._inline) {
+                clone.appendChild(block);
+            }
+            else {
+                clone.querySelector("category[name='Objects']").appendChild(block);
+            }
         }
 
         return clone;
