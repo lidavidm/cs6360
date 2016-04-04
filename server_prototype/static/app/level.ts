@@ -355,6 +355,11 @@ export class BaseLevel extends Phaser.State {
      */
     public allowArbitraryUserMethods: boolean;
 
+    /**
+     * The "base", where objects created during execution spawn.
+     */
+    public base: Phaser.Point;
+
     protected allTooltips: TooltipView.Tooltip[][];
     private _tooltipIndex: number;
 
@@ -394,6 +399,7 @@ export class BaseLevel extends Phaser.State {
         this.missionText = ["This is the default mission text. If you're seeing this, please report it to the developers.", "This is part 2 of the mission text."];
 
         this.allowArbitraryUserMethods = false;
+        this.base = new Phaser.Point(1, 1);
 
         this.initialize();
         this.program = new Program(this.hierarchy);
@@ -429,12 +435,28 @@ export class BaseLevel extends Phaser.State {
         this.grid = this.overlay.add(this.game.add.tileSprite(0, 0, this.game.width, this.game.height, "grid"));
     }
 
+    /** Level design methods - meant to be overridden! **/
+
+    /**
+     * Provide default blocks for a method/main. Fall back to super()
+     * if you don't care/don't know.
+     */
     fallbackWorkspace(context: EditorContext): HTMLElement {
         return Blockly.Xml.textToDom("<xml></xml>");
     }
 
+    /**
+     * Decide whether a particular method/main can use the code editor.
+     */
     canUseCodeEditor(context: EditorContext): boolean {
         return false;
+    }
+
+    /**
+     * If the code spawns a new object, decide what sprite and which group to use.
+     */
+    assignSprite(className: string): [string, Phaser.Group] {
+        return ["robot", this.foreground];
     }
 
     /**
