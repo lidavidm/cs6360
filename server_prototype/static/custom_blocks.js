@@ -175,6 +175,119 @@ Blockly.Blocks["tell"] = {
             "tooltip": "",
             "helpUrl": "http://www.example.com/"
         });
+        this.setMutator(new Blockly.Mutator(['tell_arg', 'tell_return']));
+        this.argCount_ = 0;
+    },
+
+    mutationToDom: function() {
+        if (!this.argCount_ && !this.returnCount_) {
+            return null;
+        }
+        var container = document.createElement('mutation');
+        if (this.argCount_) {
+            container.setAttribute('arg', this.argCount_);
+        }
+        if (this.returnCount_) {
+            container.setAttribute('return', 1);
+        }
+        return container;
+    },
+
+    domToMutation: function(xmlElement) {
+        this.argCount_ = parseInt(xmlElement.getAttribute('arg'), 10) || 0;
+        this.returnCount_ = parseInt(xmlElement.getAttribute('return'), 10) || 0;
+        for (var i = 1; i <= this.argCount_; i++) {
+            var vi = this.appendValueInput('ARG' + i);
+            vi.setCheck('object');
+            if (i == 1) {
+                vi.appendField('with');
+            }
+        }
+        if (this.returnCount_) {
+            this.appendDummyInput('RETURN');
+        }
+    },
+
+    decompose: function(workspace) {
+        var containerBlock = workspace.newBlock('tell_base');
+        containerBlock.initSvg();
+        var connection = containerBlock.nextConnection;
+        for (var i = 1; i <= this.argCount_; i++) {
+            var tellArgBlock = workspace.newBlock('tell_arg');
+            tellArgBlock.initSvg();
+            connection.connect(tellArgBlock.previousConnection);
+            connection = tellArgBlock.nextConnection;
+        }
+        if (this.returnCount_) {
+            var returnBlock = workspace.newBlock('tell_return');
+            returnBlock.initSvg();
+            connection.connect(returnBlock.previousConnection);
+        }
+        return containerBlock;
+    },
+
+    compose: function(containerBlock) {
+        if (this.returnCount_ > 0) {
+            this.removeInput('RETURN');
+            // this.setOutput(false);
+            // this.setPreviousStatement(true, null);
+            // this.setNextStatement(true, null);
+        }
+        this.returnCount_ = 0;
+        
+        for (var i = this.argCount_; i > 0; i--) {
+            this.removeInput('ARG' + i);
+        }
+        this.argCount_ = 0;
+        var returnsValue = false;
+        // Rebuild the block's optional inputs.
+        var clauseBlock = containerBlock.nextConnection.targetBlock();
+        while (clauseBlock) {
+            switch (clauseBlock.type) {
+                case 'tell_arg':
+                    this.argCount_++;
+                    var argInput = this.appendValueInput('ARG' + this.argCount_);
+                    argInput.setCheck('object');
+                    if (this.argCount_ == 1) {
+                        argInput.appendField('with');
+                    }
+                    // Reconnect any child blocks.
+                    if (clauseBlock.valueConnection_) {
+                        argInput.connection.connect(clauseBlock.valueConnection_);
+                    }
+                    break;
+                case 'tell_return':
+                    this.returnCount_++;
+                    var returnInput = this.appendDummyInput('RETURN');
+                    // this.unplug();
+                    // this.setPreviousStatement(false);
+                    // this.setNextStatement(false);
+                    // this.setOutput(true, 'Boolean');
+                    break;
+                default:
+                    throw 'Unknown block type.';
+            }
+            clauseBlock = clauseBlock.nextConnection && clauseBlock.nextConnection.targetBlock();
+        }         
+    },
+
+    saveConnections: function(containerBlock) {
+        var clauseBlock = containerBlock.nextConnection.targetBlock();
+        var i = 1;
+        while (clauseBlock) {
+            switch (clauseBlock.type) {
+                case 'tell_arg':
+                    var argInput = this.getInput('ARG' + i);
+                    clauseBlock.valueConnection_ = argInput && argInput.connection.targetConnection;
+                    i++;
+                    break;
+                case 'tell_return':
+                    break;
+                default:
+                    throw 'Unknown block type.';
+            }
+            clauseBlock = clauseBlock.nextConnection && clauseBlock.nextConnection.targetBlock();
+        }
     },
 
     onchange: function(event) {
@@ -229,7 +342,42 @@ Blockly.Blocks["tell"] = {
 
     childMethod: function() {
         return this.getInputTargetBlock("METHOD");
-    },
+    }
+};
+
+/**
+* tell_base, tell_arg, and tell_return are the blocks that
+* appear in the mutator dialogue for the tell block
+*/
+Blockly.Blocks['tell_base'] = {
+    init: function() {
+        this.setColour(120);
+        this.appendDummyInput().appendField('tell');
+        this.setNextStatement(true);
+        this.contextMenu = false;
+    }
+};
+
+Blockly.Blocks['tell_arg'] = {
+    init: function() {
+        this.setColour(120);
+        this.appendDummyInput()
+            .appendField('argument');
+        this.setPreviousStatement(true);
+        this.setNextStatement(true);
+        this.contextMenu = false;
+    }
+};
+
+Blockly.Blocks['tell_return'] = {
+    init: function() {
+        this.setColour(120);
+        this.appendDummyInput()
+            .appendField('return');
+        this.setPreviousStatement(true);
+        this.setNextStatement(false);
+        this.contextMenu = false;
+    }
 };
 
 Blockly.Blocks["new"] = {
@@ -258,4 +406,28 @@ Blockly.Blocks["new"] = {
       this.setTooltip("");
       this.setHelpUrl("http://www.example.com/");
   },
+};
+
+Blockly.Blocks['while'] = {
+  init: function() {
+    this.setColour(Blockly.Blocks.logic.HUE);
+    var vi = this.appendValueInput('WHILE');
+    vi.setCheck('Boolean');
+    var faded = Blockly.Blocks.oop.isFaded("while");
+    if (faded) {
+      vi.appendField('while');
+      this.appendDummyInput().appendField(":");
+    } else {
+      vi.appendField('repeat while');
+    }
+
+    var si = this.appendStatementInput('DO');
+    if (!faded) {
+      si.appendField(Blockly.Msg.CONTROLS_WHILEUNTIL_INPUT_DO);
+    }
+
+    this.setInputsInline(true);
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+  }
 };

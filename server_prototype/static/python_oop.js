@@ -13,6 +13,7 @@ Blockly.Python['tell'] = function(block) {
     var object = Blockly.Python.valueToCode(block, "OBJECT", Blockly.Python.ORDER_NONE);
     var method = block.getInputTargetBlock("METHOD");
     var id = block.id;
+    //var argCount = block.argCount_ || 0;
     var excTemplate = function(msg) {
         return "raise BlocklyError('" + id + "', '" + msg + "')\n";
     }
@@ -29,6 +30,7 @@ Blockly.Python['tell'] = function(block) {
     else if (block.data === "type_error") {
         return excTemplate("Type error!");
     }
+    // TODO: code generation for provided arguments
     var method = method.getFieldValue("METHOD_NAME");
     var code = object + "." + method + "()\n";
     return code;

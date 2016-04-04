@@ -45,8 +45,18 @@ Blockly.Blocks['controls_if'] = {
     this.appendValueInput('IF0')
         .setCheck('Boolean')
         .appendField(Blockly.Msg.CONTROLS_IF_MSG_IF);
-    this.appendStatementInput('DO0')
-        .appendField(Blockly.Msg.CONTROLS_IF_MSG_THEN);
+    var faded = Blockly.Blocks.oop.isFaded("if");
+    if (faded) {
+      this.appendDummyInput()
+          .appendField(":");
+    }
+
+    var si = this.appendStatementInput('DO0');
+    if (!faded) {
+      si.appendField(Blockly.Msg.CONTROLS_IF_MSG_THEN);
+    }
+
+    this.setInputsInline(true);
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.setMutator(new Blockly.Mutator(['controls_if_elseif',
@@ -94,18 +104,34 @@ Blockly.Blocks['controls_if'] = {
   domToMutation: function(xmlElement) {
     this.elseifCount_ = parseInt(xmlElement.getAttribute('elseif'), 10) || 0;
     this.elseCount_ = parseInt(xmlElement.getAttribute('else'), 10) || 0;
+    var faded = Blockly.Blocks.oop.isFaded("if");
+
     for (var i = 1; i <= this.elseifCount_; i++) {
-      this.appendValueInput('IF' + i)
-          .setCheck('Boolean')
-          .appendField(Blockly.Msg.CONTROLS_IF_MSG_ELSEIF);
-      this.appendStatementInput('DO' + i)
-          .appendField(Blockly.Msg.CONTROLS_IF_MSG_THEN);
+      var vi = this.appendValueInput('IF' + i);
+      vi.setCheck('Boolean');
+      if (faded) {
+        vi.appendField("elif"); // python elif
+        this.appendDummyInput('COLON' + i).appendField(":");
+      } else {
+        vi.appendField(Blockly.Msg.CONTROLS_IF_MSG_ELSEIF);
+      }
+
+      var si = this.appendStatementInput('DO' + i);
+      if (!faded) {
+        si.appendField(Blockly.Msg.CONTROLS_IF_MSG_THEN);
+      }
     }
+
     if (this.elseCount_) {
+      var message = Blockly.Msg.CONTROLS_IF_MSG_ELSE;
+      if (faded) {
+        message = message + ":";
+      }
       this.appendStatementInput('ELSE')
-          .appendField(Blockly.Msg.CONTROLS_IF_MSG_ELSE);
+          .appendField(message);
     }
   },
+
   /**
    * Populate the mutator's dialog with this block's components.
    * @param {!Blockly.Workspace} workspace Mutator's workspace.
@@ -129,6 +155,7 @@ Blockly.Blocks['controls_if'] = {
     }
     return containerBlock;
   },
+
   /**
    * Reconfigure this block based on the mutator dialog's components.
    * @param {!Blockly.Block} containerBlock Root block in mutator.
@@ -144,8 +171,13 @@ Blockly.Blocks['controls_if'] = {
     for (var i = this.elseifCount_; i > 0; i--) {
       this.removeInput('IF' + i);
       this.removeInput('DO' + i);
+      if (Blockly.Blocks.oop.isFaded("if")) {
+        this.removeInput('COLON' + i);
+      }
     }
     this.elseifCount_ = 0;
+
+    var faded = Blockly.Blocks.oop.isFaded("if");
     // Rebuild the block's optional inputs.
     var clauseBlock = containerBlock.nextConnection.targetBlock();
     while (clauseBlock) {
@@ -153,10 +185,19 @@ Blockly.Blocks['controls_if'] = {
         case 'controls_if_elseif':
           this.elseifCount_++;
           var ifInput = this.appendValueInput('IF' + this.elseifCount_)
-              .setCheck('Boolean')
-              .appendField(Blockly.Msg.CONTROLS_IF_MSG_ELSEIF);
+              .setCheck('Boolean');
+          if (faded) {
+            ifInput.appendField("elif");
+            this.appendDummyInput('COLON' + this.elseifCount_).appendField(":");
+          } else {
+            ifInput.appendField(Blockly.Msg.CONTROLS_IF_MSG_ELSEIF);
+          }
+
           var doInput = this.appendStatementInput('DO' + this.elseifCount_);
-          doInput.appendField(Blockly.Msg.CONTROLS_IF_MSG_THEN);
+          if (!faded) {
+            doInput.appendField(Blockly.Msg.CONTROLS_IF_MSG_THEN);
+          }
+
           // Reconnect any child blocks.
           if (clauseBlock.valueConnection_) {
             ifInput.connection.connect(clauseBlock.valueConnection_);
@@ -165,15 +206,21 @@ Blockly.Blocks['controls_if'] = {
             doInput.connection.connect(clauseBlock.statementConnection_);
           }
           break;
+
         case 'controls_if_else':
           this.elseCount_++;
           var elseInput = this.appendStatementInput('ELSE');
-          elseInput.appendField(Blockly.Msg.CONTROLS_IF_MSG_ELSE);
+          var message = Blockly.Msg.CONTROLS_IF_MSG_ELSE;
+          if (faded) {
+            message = message + ":";
+          }
+          elseInput.appendField(message);
           // Reconnect any child blocks.
           if (clauseBlock.statementConnection_) {
             elseInput.connection.connect(clauseBlock.statementConnection_);
           }
           break;
+          
         default:
           throw 'Unknown block type.';
       }
