@@ -32,7 +32,15 @@ Blockly.Python['tell'] = function(block) {
     }
     // TODO: code generation for provided arguments
     var method = method.getFieldValue("METHOD_NAME");
-    var code = object + "." + method + "()\n";
+    var code = object + "." + method + "(";
+    for (var i = 1; i <= block.argCount_; i++) {
+        var arg = Blockly.Python.valueToCode(block, 'ARG' + i, Blockly.Python.ORDER_NONE);
+        if (i != 1) {
+            code = code + ", ";
+        }
+        code = code + arg;
+    }
+    code = code + ")\n";
     return code;
 };
 
