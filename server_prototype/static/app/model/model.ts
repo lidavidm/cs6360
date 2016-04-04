@@ -376,6 +376,7 @@ export abstract class WorldObject {
     protected phaserObject: Phaser.Group;
 
     constructor(name: string, x: number, y: number, world: World) {
+        // TODO: log a "created" event (in get ID?)
         this.name = name;
         this.world = world;
         this.id = this.world.getNewID();

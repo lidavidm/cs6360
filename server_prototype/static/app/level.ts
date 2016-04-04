@@ -355,11 +355,6 @@ export class BaseLevel extends Phaser.State {
      */
     public allowArbitraryUserMethods: boolean;
 
-    /**
-     * The "base", where objects created during execution spawn.
-     */
-    public base: Phaser.Point;
-
     protected allTooltips: TooltipView.Tooltip[][];
     private _tooltipIndex: number;
 
@@ -411,7 +406,7 @@ export class BaseLevel extends Phaser.State {
     initWorld(map: Phaser.Tilemap) {
         this.modelWorld = new model.World(this.game, map);
         this.zoomCamera.setBounds(map.widthInPixels, map.heightInPixels);
-        this.interpreter = new python.Interpreter(this.modelWorld);
+        this.interpreter = new python.Interpreter(this, this.modelWorld);
     }
 
     preload() {
@@ -453,10 +448,11 @@ export class BaseLevel extends Phaser.State {
     }
 
     /**
-     * If the code spawns a new object, decide what sprite and which group to use.
+     * If the code spawns a new object, do so, providing the
+     * appropriate sprite, layer, and initial location.
      */
-    assignSprite(className: string): [string, Phaser.Group] {
-        return ["robot", this.foreground];
+    instantiateObject(className: string): model.WorldObject {
+        return null;
     }
 
     /**

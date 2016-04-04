@@ -13,7 +13,7 @@ export class Interpreter {
     // the world that this interpreter updates
     private _world: model.World;
 
-    constructor(world: model.World) {
+    constructor(level: level.BaseLevel, world: model.World) {
         this._world = world;
 
         // Set up Python output to go to the console (for debugging needs)
@@ -34,6 +34,19 @@ export class Interpreter {
                 var obj: any = world.getObjectByID(id);
                 // TODO: catch and throw (in Python) any exceptions
                 obj[methodName].apply(obj, args);
+            }
+        );
+
+        /**
+         * Executes a constructor call for an object given a class
+         * name. Called by interpreted Python code.
+         */
+        Sk.builtins.constructorCall = new Sk.builtin.func(
+            function(className: any) {
+                className = Sk.ffi.remapToJs(className);
+                let obj = level.instantiateObject(className);
+
+                return obj.getID();
             }
         );
 
