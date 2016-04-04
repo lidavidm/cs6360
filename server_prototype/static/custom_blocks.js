@@ -13,7 +13,7 @@ Blockly.Blocks.oop.isFaded = function(block_name) {
 
 Blockly.Blocks.oop.clearFaded = function() {
     Blockly.Blocks.oop.faded = {};
-}
+};
 
 /**
  * The object hierarchy to use for typechecking. Should be a
@@ -145,9 +145,10 @@ Blockly.Blocks.setClassObjects = function(classes) {
 
 Blockly.Blocks["tell"] = {
     init: function() {
+        var faded = Blockly.Blocks.oop.isFaded("tell");
         var message = "tell %1 to %2";
-        if (Blockly.Blocks.oop.isFaded("tell")) {
-            message = "%1.%2()";
+        if (faded) {
+            message = "%1.%2(";
         }
         this.jsonInit({
             "id": "tell",
@@ -175,8 +176,12 @@ Blockly.Blocks["tell"] = {
             "tooltip": "",
             "helpUrl": "http://www.example.com/"
         });
+        if (faded) {
+            this.appendDummyInput('RIGHT_PAREN').appendField(')');
+        }
         this.setMutator(new Blockly.Mutator(['tell_arg', 'tell_return']));
         this.argCount_ = 0;
+        this.returnCount_ = 0;
     },
 
     mutationToDom: function() {
@@ -196,11 +201,22 @@ Blockly.Blocks["tell"] = {
     domToMutation: function(xmlElement) {
         this.argCount_ = parseInt(xmlElement.getAttribute('arg'), 10) || 0;
         this.returnCount_ = parseInt(xmlElement.getAttribute('return'), 10) || 0;
+        var faded = Blockly.Blocks.oop.isFaded("tell");
         for (var i = 1; i <= this.argCount_; i++) {
+            if (faded) {
+                this.removeInput('RIGHT_PAREN');
+            }
             var vi = this.appendValueInput('ARG' + i);
-            vi.setCheck('object');
-            if (i == 1) {
-                vi.appendField('with');
+            vi.setCheck(["object", "Boolean", "Number"]);
+            if (faded) {
+                if (i != 1) {
+                    vi.appendField(',');
+                }
+                this.appendDummyInput('RIGHT_PAREN').appendField(')');
+            } else {
+                if (i == 1) {
+                    vi.appendField('with');
+                }
             }
         }
         if (this.returnCount_) {
@@ -227,6 +243,8 @@ Blockly.Blocks["tell"] = {
     },
 
     compose: function(containerBlock) {
+        var faded = Blockly.Blocks.oop.isFaded("tell");
+
         if (this.returnCount_ > 0) {
             this.removeInput('RETURN');
             // this.setOutput(false);
@@ -246,10 +264,20 @@ Blockly.Blocks["tell"] = {
             switch (clauseBlock.type) {
                 case 'tell_arg':
                     this.argCount_++;
+                    if (faded) {
+                        this.removeInput('RIGHT_PAREN');
+                    }
                     var argInput = this.appendValueInput('ARG' + this.argCount_);
-                    argInput.setCheck('object');
-                    if (this.argCount_ == 1) {
-                        argInput.appendField('with');
+                    argInput.setCheck(['object', 'Boolean', 'Number']);
+                    if (faded) {
+                        if (this.argCount_ != 1) {
+                            argInput.appendField(',');
+                        }
+                        this.appendDummyInput('RIGHT_PAREN').appendField(')');
+                    } else {
+                        if (this.argCount_ == 1) {
+                            argInput.appendField('with');
+                        }
                     }
                     // Reconnect any child blocks.
                     if (clauseBlock.valueConnection_) {
