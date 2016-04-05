@@ -210,7 +210,6 @@ export class Log {
     }
 
     replay(callback: (diff: Diff<any>) => Promise<{}>, replayInit=false): Promise<{}> {
-        console.log(this.log);
         return new Promise((resolve, reject) => {
             let programCounter = 0;
             // Whether we are done with the reset steps.
@@ -238,12 +237,11 @@ export class Log {
                 // If the object was created on the fly, update it
                 // with the actual object ID
                 if (this.dynamicObjects.indexOf(diff.id) > -1) {
-                    // if (typeof dynamicObjectsInitialized[diff.id] === "undefined") {
-                    //     dynamicObjectsInitialized[diff.id] = false;
-                    // }
+                    if (typeof dynamicObjectsInitialized[diff.id] === "undefined") {
+                        dynamicObjectsInitialized[diff.id] = false;
+                    }
                     initialized = dynamicObjectsInitialized[diff.id];
                 }
-                console.log(diff.id, "initialized", initialized);
 
                 switch (diff.kind) {
                 case DiffKind.BeginningOfBlock:
@@ -440,7 +438,6 @@ export abstract class WorldObject {
         this.x = x;
         this.y = y;
         this.world.addObject(this);
-        this.world.log.recordInitialized(this.id);
 
         // Record ourselves in the log
         this.setLoc(x, y);

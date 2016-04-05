@@ -130,32 +130,38 @@ export class Program {
         let headlessWorkspace = new Blockly.Workspace();
         let classDefns: string[] = [];
 
+        let generateClassCode = (className: string, parent: string, classObj: {
+            [method: string]: HTMLElement | string;
+        }) => {
+            let methods = "";
+            if (classObj) {
+                methods = Object.keys(classObj).map((methodName) => {
+                    return indent(this.getMethodCode(className, methodName), "    ");
+                }).join("\n");
+            }
+            if (!methods.trim()) {
+                methods = "    pass";
+            }
+
+            return `
+class ${className}(${parent}):
+    def __init__(self, id=None):
+        if id == None:
+            id = constructorCall("${className}")
+        JSProxyClass.__init__(self, id)
+
+${methods}
+`;
+        };
+
         if (this.hierarchy) {
             let classQueue: [ObjectHierarchy, string][] = [[this.hierarchy, "JSProxyClass"]];
             while (classQueue.length > 0) {
                 let [classDesc, parent] = classQueue.pop();
                 let className = classDesc.name;
                 let classObj = savedClasses[className];
-                let methods = "";
-                if (classObj) {
-                    methods = Object.keys(classObj).map((methodName) => {
-                        return indent(this.getMethodCode(className, methodName), "    ");
-                    }).join("\n");
-                }
-                if (!methods.trim()) {
-                    methods = "    pass";
-                }
 
-                classDefns.push(`
-class ${className}(${parent}):
-    def __init__(self, id=None):
-        if id == None:
-            id = constructorCall("${className}")
-
-        JSProxyClass.__init__(self, id)
-
-${methods}
-`);
+                classDefns.push(generateClassCode(className, parent, classObj));
 
                 if (classDesc.children) {
                     for (let child of classDesc.children) {
@@ -167,26 +173,7 @@ ${methods}
         else {
             for (let className of this.classes) {
                 let classObj = savedClasses[className];
-                let methods = "";
-                if (classObj) {
-                    methods = Object.keys(classObj).map((methodName) => {
-                        return indent(this.getMethodCode(className, methodName), "    ");
-                    }).join("\n");
-                }
-                if (!methods.trim()) {
-                    methods = "    pass";
-                }
-
-                classDefns.push(`
-class ${className}(JSProxyClass):
-    def __init__(self, id=None):
-        if id == None:
-            id = constructorCall("${className}")
-
-        JSProxyClass.__init__(self, id)
-
-${methods}
-`);
+                classDefns.push(generateClassCode(className, "JSProxyClass", classObj));
             }
         }
 

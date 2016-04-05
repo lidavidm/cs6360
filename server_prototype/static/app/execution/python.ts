@@ -43,15 +43,19 @@ export class Interpreter {
          * name. Called by interpreted Python code.
          */
         Sk.builtins.constructorCall = new Sk.builtin.func(
-            function(className: any): any {
+            (className: any) => {
                 className = Sk.ffi.remapToJs(className);
-                console.log(`Called constructor for ${className}`);
                 let obj = level.instantiateObject(className, `USERCREATED_${className}_${ctr}`);
+                this._world.log.recordInitialized(obj.getID());
                 ctr++;
 
                 return Sk.ffi.remapToPy(obj.getID());
             }
         );
+
+        Sk.builtins.log = new Sk.builtin.func((message: any) => {
+            console.log(Sk.ffi.remapToJs(message));
+        });
 
         /**
          * Records the end of a block in the world's log. Called by python
