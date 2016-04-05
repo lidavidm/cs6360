@@ -394,7 +394,6 @@ export class BaseLevel extends Phaser.State {
         this.missionText = ["This is the default mission text. If you're seeing this, please report it to the developers.", "This is part 2 of the mission text."];
 
         this.allowArbitraryUserMethods = false;
-        this.base = new Phaser.Point(1, 1);
 
         this.initialize();
         this.program = new Program(this.hierarchy);
@@ -451,7 +450,7 @@ export class BaseLevel extends Phaser.State {
      * If the code spawns a new object, do so, providing the
      * appropriate sprite, layer, and initial location.
      */
-    instantiateObject(className: string): model.WorldObject {
+    instantiateObject(className: string, varName: string): model.WorldObject {
         return null;
     }
 

@@ -21,6 +21,8 @@ export class BasicsLevel1 extends BaseLevel {
 
         this.toolbox = new Toolbox(true);
         this.toolbox.addControl("tell");
+        this.toolbox.addControl("new");
+        this.toolbox.addClasses(["Robot"]);
         let methods = this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
             model.Robot.prototype.turnRight,
@@ -107,4 +109,10 @@ export class BasicsLevel1 extends BaseLevel {
         return (context.className === "Robot" && context.method === "turnLeft") ||
             context.className === MAIN;
     }
+
+    instantiateObject(className: string, varName: string): model.WorldObject {
+        return new model.Robot(varName, 1, 2, model.Direction.EAST,
+                               this.modelWorld, this.foreground, "robot");
+    }
+
 }

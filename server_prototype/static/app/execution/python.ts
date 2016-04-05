@@ -37,16 +37,19 @@ export class Interpreter {
             }
         );
 
+        let ctr = 0;
         /**
          * Executes a constructor call for an object given a class
          * name. Called by interpreted Python code.
          */
         Sk.builtins.constructorCall = new Sk.builtin.func(
-            function(className: any) {
+            function(className: any): any {
                 className = Sk.ffi.remapToJs(className);
-                let obj = level.instantiateObject(className);
+                console.log(`Called constructor for ${className}`);
+                let obj = level.instantiateObject(className, `USERCREATED_${className}_${ctr}`);
+                ctr++;
 
-                return obj.getID();
+                return Sk.ffi.remapToPy(obj.getID());
             }
         );
 

@@ -148,6 +148,12 @@ export class Program {
 
                 classDefns.push(`
 class ${className}(${parent}):
+    def __init__(self, id=None):
+        if id == None:
+            id = constructorCall("${className}")
+
+        JSProxyClass.__init__(self, id)
+
 ${methods}
 `);
 
@@ -173,6 +179,12 @@ ${methods}
 
                 classDefns.push(`
 class ${className}(JSProxyClass):
+    def __init__(self, id=None):
+        if id == None:
+            id = constructorCall("${className}")
+
+        JSProxyClass.__init__(self, id)
+
 ${methods}
 `);
             }

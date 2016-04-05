@@ -35,6 +35,8 @@ export enum DiffKind {
     Error,
     // When a property is changed
     Property,
+    // When an object is created on the fly
+    Initialized,
 }
 
 export class Diff<T extends WorldObject> {
@@ -61,6 +63,12 @@ export class Diff<T extends WorldObject> {
             let change = this.properties[property];
             (<any> object)[property] = change[1];
         });
+    }
+}
+
+class InitializedDiff extends Diff<any> {
+    constructor(id: number) {
+        super(DiffKind.Initialized, id, id);
     }
 }
 
@@ -147,17 +155,30 @@ class HoldingDiff extends Diff<Robot> {
 
 export class Log {
     log: Diff<any>[];
+    initialized: boolean;
     world: World;
+    // Records whether objects created on the fly were initialized
+    dynamicObjects: number[];
 
     constructor(world: World) {
         this.log = [];
+        this.initialized = false;
         this.world = world;
+        this.dynamicObjects = [];
     }
 
     /**
-     * Clears log entries after the end of initialization.
+     * Clears log entries after the end of initialization, and removes
+     * user-created objects.
      */
     reset() {
+        for (let id of this.dynamicObjects) {
+            let object = this.world.getObjectByID(id);
+            object.getPhaserObject().destroy();
+            this.world.removeObject(object);
+            // TODO: delete the object...
+        }
+        this.dynamicObjects = [];
         let index = this.log.indexOf(Diff.EndOfInit);
         if (index >= 0) {
             this.log.splice(index + 1);
@@ -169,7 +190,15 @@ export class Log {
     }
 
     recordInitEnd() {
+        this.initialized = true;
         this.log.push(Diff.EndOfInit);
+    }
+
+    recordInitialized(id: number) {
+        if (this.initialized) {
+            this.log.push(new InitializedDiff(id));
+            this.dynamicObjects.push(id);
+        }
     }
 
     recordBlockBegin(blockID: any) {
@@ -181,10 +210,15 @@ export class Log {
     }
 
     replay(callback: (diff: Diff<any>) => Promise<{}>, replayInit=false): Promise<{}> {
+        console.log(this.log);
         return new Promise((resolve, reject) => {
             let programCounter = 0;
             // Whether we are done with the reset steps.
             let reset = replayInit;
+
+            let dynamicObjectsInitialized: {
+                [id: number]: boolean,
+            } = {};
 
             let advanceStep = () => {
                 programCounter++;
@@ -198,6 +232,18 @@ export class Log {
 
             let executor = () => {
                 let diff = this.log[programCounter];
+
+
+                let initialized = true;
+                // If the object was created on the fly, update it
+                // with the actual object ID
+                if (this.dynamicObjects.indexOf(diff.id) > -1) {
+                    // if (typeof dynamicObjectsInitialized[diff.id] === "undefined") {
+                    //     dynamicObjectsInitialized[diff.id] = false;
+                    // }
+                    initialized = dynamicObjectsInitialized[diff.id];
+                }
+                console.log(diff.id, "initialized", initialized);
 
                 switch (diff.kind) {
                 case DiffKind.BeginningOfBlock:
@@ -216,9 +262,19 @@ export class Log {
                     let object = this.world.getObjectByID(diff.id);
                     diff.apply(this.world, object);
                     break;
+                case DiffKind.Initialized:
+                    // We have to create a new object, then map its ID to our ID
+                    let origID = diff.data;
+                    // TODO:
+                    dynamicObjectsInitialized[origID] = true;
+                    advanceStep();
+                    return;
                 }
 
-                if (reset) {
+                if (!initialized) {
+                    advanceStep();
+                }
+                else if (reset) {
                     callback(diff).then(advanceStep, () => {
                         resolve();
                         // aborted. do nothing.
@@ -384,6 +440,7 @@ export abstract class WorldObject {
         this.x = x;
         this.y = y;
         this.world.addObject(this);
+        this.world.log.recordInitialized(this.id);
 
         // Record ourselves in the log
         this.setLoc(x, y);
