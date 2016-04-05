@@ -55,7 +55,7 @@ export class BasicsLevel1 extends BaseLevel {
         ];
 
         this.hierarchy = {
-            name: "object",
+            name: "Object",
             children: [
                 {
                     name: "Robot",

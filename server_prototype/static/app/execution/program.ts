@@ -7,7 +7,7 @@ import {World} from "model/model";
 import {ObjectHierarchy} from "views/hierarchy";
 
 const PROXY_CLASS = `
-class JSProxyClass(object):
+class JSProxyClass:
     def __init__(self, jsid):
         self.jsid = jsid
 
