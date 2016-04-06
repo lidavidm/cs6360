@@ -45,7 +45,11 @@ Blockly.Python['tell'] = function(block) {
 };
 
 Blockly.Python["new"] = function(block) {
+    var objectName = Blockly.Python.variableDB_.getName(block.getFieldValue("NAME"),
+                                                        Blockly.Variables.NAME_TYPE);
     var className = Blockly.Python.valueToCode(block, "CLASS", Blockly.Python.ORDER_NONE);
-    var objectName = block.getFieldValue("NAME");
+    if (!block.getFieldValue("NAME") || !className) {
+        return "raise BlocklyError('" + block.id + "', 'No object or class in instantiation!')\n";
+    }
     return objectName + " = " + className + "()\n";
 };
