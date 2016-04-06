@@ -130,10 +130,12 @@ Blockly.Blocks.setClassObjects = function(classes) {
             this.setColour(330);
             this.setTooltip('');
             this.setHelpUrl('http://www.example.com/');
-            this.svgPath_.style.fill = "url(#blueprintGrid)";
-            this.svgPathLight_.style.stroke = "#007";
-            this.svgPathDark_.style.stroke = "#007";
-            this.svgPathDark_.style.fill = "#007";
+            if (this.svgPath_) {
+                this.svgPath_.style.fill = "url(#blueprintGrid)";
+                this.svgPathLight_.style.stroke = "#007";
+                this.svgPathDark_.style.stroke = "#007";
+                this.svgPathDark_.style.fill = "#007";
+            }
         }
     };
 
@@ -252,7 +254,7 @@ Blockly.Blocks["tell"] = {
             // this.setNextStatement(true, null);
         }
         this.returnCount_ = 0;
-        
+
         for (var i = this.argCount_; i > 0; i--) {
             this.removeInput('ARG' + i);
         }
@@ -296,7 +298,7 @@ Blockly.Blocks["tell"] = {
                     throw 'Unknown block type.';
             }
             clauseBlock = clauseBlock.nextConnection && clauseBlock.nextConnection.targetBlock();
-        }         
+        }
     },
 
     saveConnections: function(containerBlock) {
