@@ -436,6 +436,30 @@ Blockly.Blocks["new"] = {
       this.setTooltip("");
       this.setHelpUrl("http://www.example.com/");
   },
+
+  onchange: function(event) {
+    this.setWarningText(null, "argumentchecker");
+
+    var hasField = !!this.getFieldValue("NAME");
+    var hasClass = !!this.getInputTargetBlock("CLASS");
+
+    if (!hasField && !hasClass) {
+      this.setWarningText("I still need a class and a name!", "argumentchecker");
+    }
+    else if (!hasField) {
+      this.setWarningText("I still need an name!", "argumentchecker");
+    }
+    else if (!hasClass) {
+      this.setWarningText("I still need a class! Look at the blueprint blocks inside the toolbox.", "argumentchecker");
+    }
+    else {
+      this.setWarningText(null, "typechecker");
+    }
+
+    if (this.warning) {
+      this.warning.setVisible(true);
+    }
+  },
 };
 
 Blockly.Blocks['while'] = {
