@@ -52,6 +52,8 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 if (block) {
                     updateObjectImage(event, block);
                 }
+
+                updateUserObjects();
             },
 
             codeListener: function() {
@@ -96,6 +98,27 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             setupLevel: setupLevel,
         };
 
+        function updateUserObjects() {
+            let blocks = controller.workspace.getAllBlocks();
+
+            let objects: { [name: string]: string } = {};
+
+            for (let block of blocks) {
+                if (block["type"] == "new") {
+                    let input = block.getInputTargetBlock("CLASS");
+                    if (!input) continue;
+                    if (!block.getFieldValue("NAME")) continue;
+                    objects[block.getFieldValue("NAME")] = input.getFieldValue("CLASS_NAME");
+                }
+            }
+
+            console.log(objects);
+
+            if (controller.level.toolbox.setUserObjects(objects)) {
+                updateToolbox();
+            }
+        }
+
         // Workaround for issue #49
         function fixWorkspace() {
             controller.workspace.getAllBlocks().forEach(function(block: any) {
@@ -127,6 +150,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 controller.markReadonly(context);
             }
             else {
+                updateUserObjects();
                 setupLevel(context);
             }
         });
@@ -200,7 +224,12 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             });
         }
 
-        function updateToolbox(className: string) {
+        let lastClassName: string = null;
+        function updateToolbox(className?: string) {
+            if (!className && lastClassName) {
+                className = lastClassName;
+            }
+            lastClassName = className;
             let toolbox = controller.level.toolbox.xml();
             if (className !== MAIN) {
                 toolbox = controller.level.toolbox.methodXml(className, controller.level.hierarchy);

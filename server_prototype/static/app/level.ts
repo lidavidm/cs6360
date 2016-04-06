@@ -24,6 +24,9 @@ export class Toolbox {
     private _controlParent: Element;
     private _classes: string[];
     private _objects: [string, string][];
+    private _userObjects: {
+        [name: string]: string
+    };
 
     private static INLINE_XML: string = `<xml></xml>`;
     private static CATEGORY_XML: string = `
@@ -41,6 +44,7 @@ export class Toolbox {
         this._inline = inline;
         this._classes = [];
         this._objects = [];
+        this._userObjects = {};
         this._objectParent = inline ? this._tree.documentElement : this._tree.querySelector("category[name='Objects']");
         this._controlParent = inline ? this._tree.documentElement : this._tree.querySelector("category[name='Toolbox']");
     }
@@ -139,6 +143,29 @@ export class Toolbox {
         this._objects.push([name, className]);
 
         return block;
+    }
+
+    setUserObjects(objects: { [name: string]: string }): boolean {
+        let changed = false;
+        for (let name in objects) {
+            let className = objects[name];
+            if (className !== this._userObjects[name]) {
+                changed = true;
+            }
+
+            if (this._classes.indexOf(className) < 0) {
+                throw new ReferenceError(`Toolbox error: class ${className} does not exist.`);
+            }
+        }
+
+        for (let name in this._userObjects) {
+            if (this._userObjects[name] != objects[name]) {
+                changed = true;
+            }
+        }
+
+        this._userObjects = objects;
+        return changed;
     }
 
     addControl(name: string, insert=true, fields?: [string, any][], values?: [string, any][], data?: string) {
@@ -245,11 +272,31 @@ export class Toolbox {
         return this._objects;
     }
 
+    private _addUserObjects(element: HTMLElement): HTMLElement {
+        let objectParent = this._inline ? element : element.querySelector("category[name=Objects]");
+        for (let name in this._userObjects) {
+            let className = this._userObjects[name];
+            let block = this._tree.createElement("block");
+            block.setAttribute("type", "variables_get");
+            let data = this._tree.createElement("data");
+            data.textContent = className;
+            block.appendChild(data);
+            let field = this._tree.createElement("field");
+            field.setAttribute("name", "VAR");
+            field.textContent = name;
+            block.appendChild(field);
+
+            objectParent.appendChild(block);
+        }
+
+        return element;
+    }
+
     /**
      * Get the XML representation of this toolbox.
      */
     xml(): HTMLElement {
-        return this._tree.documentElement;
+        return this._addUserObjects(<HTMLElement> this._tree.documentElement.cloneNode(true));
     }
 
     methodXml(className: string, hierarchy: ObjectHierarchy): HTMLElement {
@@ -312,7 +359,7 @@ export class Toolbox {
             }
         }
 
-        return clone;
+        return this._addUserObjects(clone);
     }
 }
 
