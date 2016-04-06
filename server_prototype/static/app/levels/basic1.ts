@@ -61,7 +61,7 @@ export class BasicsLevel1 extends BaseLevel {
                     name: "Robot",
                     children: [],
                     methods: ["moveForward", "turnRight"],
-                    userMethods: ["turnLeft"],
+                    userMethods: ["turnLeft", "vacuum"],
                 },
             ],
         };
@@ -108,6 +108,10 @@ export class BasicsLevel1 extends BaseLevel {
     canUseCodeEditor(context: EditorContext): boolean {
         return (context.className === "Robot" && context.method === "turnLeft") ||
             context.className === MAIN;
+    }
+
+    canUseBlockEditor(context: EditorContext): boolean {
+        return !(context.className === "Robot" && context.method === "vacuum");
     }
 
     instantiateObject(className: string, varName: string): model.WorldObject {

@@ -494,6 +494,13 @@ export class BaseLevel extends Phaser.State {
     }
 
     /**
+     * Decide whether a particular method/main can use the block editor.
+     */
+    canUseBlockEditor(context: EditorContext): boolean {
+        return true;
+    }
+
+    /**
      * If the code spawns a new object, do so, providing the
      * appropriate sprite, layer, and initial location.
      */

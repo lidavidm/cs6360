@@ -313,7 +313,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     disabled: !args.level.isCodeValid(),
                 }, "Edit as code"));
             }
-            else if (usingCodeEditor) {
+            else if (args.level.canUseBlockEditor(args.context) && usingCodeEditor) {
                 header.push(m(<any> "button.ui", {
                     onclick: function() {
                         if (window.confirm("You will lose all the code here - are you sure?")) {
@@ -327,7 +327,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         }
 
         let mode = ".blockly";
-        if (usingCodeEditor) {
+        if (usingCodeEditor || !args.level.canUseBlockEditor(args.context)) {
             mode = ".ace";
         }
 
