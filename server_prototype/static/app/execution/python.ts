@@ -46,6 +46,10 @@ export class Interpreter {
             (className: any) => {
                 className = Sk.ffi.remapToJs(className);
                 let obj = level.instantiateObject(className, `USERCREATED_${className}_${ctr}`);
+                if (obj === null) {
+                    throw `Can't create a ${className} here!`;
+                }
+                obj.getPhaserObject().alpha = 0.0;
                 this._world.log.recordInitialized(obj.getID());
                 ctr++;
 

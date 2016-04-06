@@ -33,7 +33,7 @@ export class Session {
             console.log(err);
             let recordedErr = err.toString();
             if (err.nativeError) {
-                recordedErr = err.nativeError.message;
+                recordedErr = err.nativeError.message || err.nativeError;
             }
             this.log.record(new Diff(DiffKind.Error, recordedErr));
 

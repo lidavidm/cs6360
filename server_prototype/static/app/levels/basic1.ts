@@ -111,6 +111,9 @@ export class BasicsLevel1 extends BaseLevel {
     }
 
     instantiateObject(className: string, varName: string): model.WorldObject {
+        if (this.modelWorld.getObjectByLoc(1, 2).length > 0) {
+            return null;
+        }
         return new model.Robot(varName, 1, 2, model.Direction.EAST,
                                this.modelWorld, this.foreground, "robot");
     }

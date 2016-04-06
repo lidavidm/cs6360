@@ -83,8 +83,7 @@ export class Program {
         return !this.invalid && code.indexOf("raise BlocklyError") === -1;
     }
 
-    isCodeFullValid(): boolean {
-        // More time-consuming check
+    isCodeParseable(): boolean {
         if (!this.savegame) return true;
         let code = this.getCode();
         // Make sure code doesn't actually run
@@ -99,7 +98,14 @@ export class Program {
             return false;
         }
 
-        return !this.invalid && code.indexOf("raise BlocklyError") === -1;
+        return code.indexOf("raise BlocklyError") === -1;
+    }
+
+    isCodeFullValid(): boolean {
+        // More time-consuming check
+        if (!this.savegame) return true;
+
+        return this.isCodeParseable() && !this.invalid;
     }
 
     /**

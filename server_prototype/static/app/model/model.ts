@@ -261,10 +261,10 @@ export class Log {
                     diff.apply(this.world, object);
                     break;
                 case DiffKind.Initialized:
-                    // We have to create a new object, then map its ID to our ID
                     let origID = diff.data;
-                    // TODO:
                     dynamicObjectsInitialized[origID] = true;
+                    let obj = this.world.getObjectByID(origID);
+                    obj.getPhaserObject().alpha = 1.0;
                     advanceStep();
                     return;
                 }
