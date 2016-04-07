@@ -227,6 +227,7 @@ ${this.getRawCode()}
             method: null,
         });
         if (main.workspace) {
+            if (!Blockly.mainWorkspace) return "";
             let workspace = Blockly.mainWorkspace;
             return Blockly.Python.workspaceToCode(workspace);
         }
