@@ -621,6 +621,9 @@ export class BaseLevel extends Phaser.State {
 
     runReset(): Promise<{}> {
         this.modelWorld.log.reset();
+        for (var id in this.modelWorld.objects) {
+            this.modelWorld.objects[id].clearHold();
+        }
         // TODO: clean reset world by recreating map array?
         this.objectives.forEach((objective) => {
             objective.completed = false;

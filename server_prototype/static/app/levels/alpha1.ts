@@ -49,8 +49,8 @@ export class Alpha1Level extends BaseLevel {
                 objective: "Take the iron",
                 completed: false,
                 predicate: (level) => {
-                    console.log("Robot is holding: ", level.robot.holding());
-                    return level.robot.holding() === level.iron;
+                    console.log("Robot is holding: ", level.robot.lastPickedUp());
+                    return level.robot.holding(level.iron);
                 }
             },
             {

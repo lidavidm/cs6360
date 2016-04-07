@@ -30,7 +30,7 @@ export class Alpha2Level extends BaseLevel {
                 objective: "Take the iron",
                 completed: false,
                 predicate: (level) => {
-                    return level.robot.holding() === level.iron;
+                    return level.robot.holding(level.iron);
                 }
             },
             {
@@ -78,5 +78,8 @@ export class Alpha2Level extends BaseLevel {
                                      this.modelWorld, this.foreground, "robot");
         this.iron = new model.Iron("iron", 5, 1,
                                    this.modelWorld, this.middle, "iron");
+
+        this.modelWorld.log.recordInitEnd();
+        this.program.instantiateGlobals(this.modelWorld, this.toolbox);
     }
 }

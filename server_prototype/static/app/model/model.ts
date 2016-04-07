@@ -200,7 +200,7 @@ class HoldingDiff extends Diff<Robot> {
     }
 
     tween(object: Robot, duration=ANIM_DURATION): Phaser.Tween {
-        let holding = object.holding();
+        let holding = object.lastPickedUp();
         if (holding === null) return;
 
         let p = holding.getPhaserObject();
@@ -594,6 +594,10 @@ export abstract class WorldObject {
             throw new RangeError("Trying to move object to invalid location: (" + x + ", " + y + ")");
         }
     }
+
+    clearHold() {
+        
+    }
 }
 
 export enum Direction {
@@ -629,7 +633,7 @@ export class Robot extends WorldObject {
     orientation: Direction;
     destructed: boolean;
 
-    protected holdingID: number;
+    protected holdingIDs: number[];
     protected phaserObject: Phaser.Group;
 
     constructor(name: string, x: number, y: number, orientation: Direction,
@@ -670,7 +674,7 @@ export class Robot extends WorldObject {
             break;
         }
 
-        this.holdingID = null;
+        this.holdingIDs = [];
         this.hold(null);
     }
 
@@ -682,24 +686,41 @@ export class Robot extends WorldObject {
     }
 
     hold(object: WorldObject | number) {
-        let origID = this.holdingID;
+        let orig = this.holdingIDs.slice(0);
+        let newIDs = this.holdingIDs.slice(0);
         if (typeof object === "number") {
-            this.holdingID = object;
+            this.holdingIDs.push(object);
         }
         else if (object === null) {
-            this.holdingID = null;
+            // pass
         }
         else {
-            this.holdingID = object.getID();
+            newIDs.push(object.getID())
         }
         this.world.log.record(new HoldingDiff(this.id, {
-            holdingID: [origID, this.holdingID],
+            holdingIDs: [orig, newIDs],
         }));
     }
 
-    holding(): WorldObject {
-        if (this.holdingID === null) return null;
-        return this.world.getObjectByID(this.holdingID);
+    holding(object: WorldObject): boolean {
+        for (var id of this.holdingIDs) {
+            if (this.world.getObjectByID(id) === object) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    clearHold() {
+        this.holdingIDs = [];
+    }
+
+    // Returns the last object that Robot picked up
+    lastPickedUp(): WorldObject {
+        if (this.holdingIDs.length === 0) {
+            return null;
+        }
+        return this.world.getObjectByID(this.holdingIDs[this.holdingIDs.length - 1]);
     }
 
     passable(): boolean {
@@ -796,9 +817,10 @@ export class Robot extends WorldObject {
             }
         }
         //TODO: this will need to choose WHICH thing to pick up?
-        if (target !== null && this.holdingID === null) {
-            this.hold(target);
-        }
+        // if (target !== null && this.holdingID === null) {
+        //     this.hold(target);
+        // }
+        this.hold(target);
     }
 }
 
