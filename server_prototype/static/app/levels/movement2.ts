@@ -29,8 +29,6 @@ export class MovementLevel2 extends BaseLevel {
 
         this.allTooltips = [
             [
-                new TooltipView.Tooltip(TooltipView.Region.Toolbox,
-                    "We've got your commands sorted out now! Try building them yourself."),
                 new TooltipView.Tooltip(TooltipView.Region.Workspace,
                     "Right click and select duplicate to copy a command."),
             ],
