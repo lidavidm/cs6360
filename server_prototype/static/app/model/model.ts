@@ -131,6 +131,35 @@ class OrientationDiff<T extends HasOrientation> extends Diff<T> {
     }
 }
 
+class SelfDestructDiff extends Diff<Robot> {
+    constructor(id: number) {
+        super(DiffKind.Property, null, id, {});
+    }
+
+    tween(object: Robot, duration=ANIM_DURATION): Phaser.Tween {
+        let p = object.getPhaserObject();
+
+        let t1 = p.game.add.tween(p).to({
+            x: p.position.x - 5,
+            y: p.position.y - 5,
+        }, duration / 2, Phaser.Easing.Bounce.In);
+        let t2 = p.game.add.tween(p).to({
+            x: p.position.x + 5,
+            y: p.position.y + 5,
+        }, duration / 2, Phaser.Easing.Bounce.In);
+        let t3 = p.game.add.tween(p).to({
+            x: p.position.x,
+            y: p.position.y,
+            alpha: 0,
+        }, duration, Phaser.Easing.Bounce.In);
+        return t1.chain(t2.chain(t3));
+    }
+
+    apply(world: World, object: Robot) {
+        ;
+    }
+}
+
 class HoldingDiff extends Diff<Robot> {
     constructor(id: number, properties: PropertyDiff) {
         super(DiffKind.Property, null, id, properties);
@@ -563,6 +592,7 @@ function offsetDirection(x: number, y: number,
 export class Robot extends WorldObject {
     sprite: Phaser.Sprite;
     orientation: Direction;
+    destructed: boolean;
 
     protected holdingID: number;
     protected phaserObject: Phaser.Group;
@@ -570,6 +600,7 @@ export class Robot extends WorldObject {
     constructor(name: string, x: number, y: number, orientation: Direction,
                 world: World, group: Phaser.Group, sprite: string) {
         super(name, x, y, world);
+        this.destructed = false;
         this.phaserObject = world.game.add.group(group);
         this.phaserObject.position.x = TILE_WIDTH * x + TILE_WIDTH / 2;
         this.phaserObject.position.y = TILE_HEIGHT * y + TILE_WIDTH / 2;
@@ -632,14 +663,28 @@ export class Robot extends WorldObject {
     }
 
     passable(): boolean {
-        return false;
+        return this.destructed;
+    }
+
+    phaserReset() {
+        this.phaserObject.alpha = 1.0;
+        this.destructed = false;
+    }
+
+    @blocklyMethod("selfDestruct", "self destruct")
+    selfDestruct() {
+        this.destructed = true;
+        this.world.log.record(new SelfDestructDiff(this.id));
     }
 
     @blocklyMethod("moveForward", "move forward")
     moveForward() {
         let [x, y] = offsetDirection(this.x, this.y, this.orientation, 1);
 
-        if (this.world.passable(x, y)) {
+        if (this.destructed) {
+            throw new RangeError("Self destructed, can't move!");
+        }
+        else if (this.world.passable(x, y)) {
             this.setLoc(x, y);
         }
         else {
@@ -657,7 +702,10 @@ export class Robot extends WorldObject {
     moveBackward() {
         let [x, y] = offsetDirection(this.x, this.y, this.orientation, -1);
 
-        if (this.world.passable(x, y)) {
+        if (this.destructed) {
+            throw new RangeError("Self destructed, can't move!");
+        }
+        else if (this.world.passable(x, y)) {
             this.setLoc(x, y);
         }
         else {
@@ -667,6 +715,10 @@ export class Robot extends WorldObject {
 
     @blocklyMethod("turnRight", "turn right")
     turnRight() {
+        if (this.destructed) {
+            throw new RangeError("Self destructed, can't move!");
+        }
+
         switch (this.orientation) {
         case Direction.NORTH:
             this.setOrientation(Direction.EAST);
@@ -690,6 +742,10 @@ export class Robot extends WorldObject {
      */
     @blocklyMethod("pickUpUnderneath", "pick up what's underneath me")
     pickUpUnderneath() {
+        if (this.destructed) {
+            throw new RangeError("Self destructed, can't pick up anything!");
+        }
+
         let targets: WorldObject[] = this.world.getObjectByLoc(this.x, this.y);
         let target: WorldObject = null;
 

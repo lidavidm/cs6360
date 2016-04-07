@@ -25,6 +25,7 @@ export class BasicsLevel1 extends BaseLevel {
         this.toolbox.addClasses(["Robot"]);
         let methods = this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
+            model.Robot.prototype.selfDestruct,
             model.Robot.prototype.turnRight,
         ]);
         this.toolbox.addClass("Object", asset.Robot.Basic, model.WorldObject, []);

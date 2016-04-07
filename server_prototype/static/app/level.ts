@@ -689,7 +689,13 @@ export class BaseLevel extends Phaser.State {
                 this.checkObjectives(resolve);
                 return;
             }
-            tween.onComplete.add(() => {
+            let lastTween = tween;
+            // Wait for the last tween in a series of chained tweens
+            // to complete
+            while (lastTween.chainedTween) {
+                lastTween = lastTween.chainedTween;
+            }
+            lastTween.onComplete.add(() => {
                 this.checkObjectives(resolve);
             });
             tween.start();
