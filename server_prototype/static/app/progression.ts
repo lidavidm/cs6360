@@ -47,6 +47,7 @@ export const DEFAULT_PROGRESSION = new Progression([
     // ["movement3", MovementLevel3],
     // ["movement4", MovementLevel4],
     // ["funcdefs2", FuncDefsLevel2],
+    ["funcdefs2", FuncDefsLevel2],
     // ["basic1", BasicsLevel1],
     // ["basic2", BasicsLevel2],
     // ["alpha1", Alpha1Level],
