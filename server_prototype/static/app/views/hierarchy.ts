@@ -102,7 +102,7 @@ export const Component: _mithril.MithrilComponent<HierarchyController> = <any> {
             });
         }
 
-        return m(<any> "div#hierarchy", {
+        let hierarchy = m(<any> "div#hierarchy", {
             style: args.showHierarchy() ? "display: block;" : "display: none",
             key: "hierarchy",
         }, [
@@ -204,5 +204,11 @@ export const Component: _mithril.MithrilComponent<HierarchyController> = <any> {
                 }
             })()),
         ]);
+
+        return m(<any> "div#hierarchyContainer", {
+            style: args.showHierarchy() ? "display: block;" : "display: none",
+            key: "hierarchyContainer",
+        }, hierarchy);
+
     }
 }
