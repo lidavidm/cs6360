@@ -40,8 +40,8 @@ import {BasicsLevel1} from "levels/basic1";
 import {BasicsLevel2} from "levels/basic2";
 import {Alpha1Level} from "levels/alpha1";
 
+
 export const DEFAULT_PROGRESSION = new Progression([
-    ["robotrescue1", RobotRescueLevel1],
     // ["movement1", MovementLevel1],
     // ["movement2", MovementLevel2],
     // ["movement3", MovementLevel3],
