@@ -16,11 +16,7 @@ export class FuncDefsLevel2 extends BaseLevel {
         this.missionText = [
             "Your robot's mining functionality is back online!",
             "Pick up some iron on the way back to base.",
-<<<<<<< HEAD
         ];
-=======
-        ]
->>>>>>> 8d31185... feat(Levels): add function creation levels
 
         this.toolbox = new Toolbox();
         this.toolbox.addControl("tell");
