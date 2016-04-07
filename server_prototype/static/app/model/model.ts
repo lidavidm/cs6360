@@ -594,10 +594,6 @@ export abstract class WorldObject {
             throw new RangeError("Trying to move object to invalid location: (" + x + ", " + y + ")");
         }
     }
-
-    clearHold() {
-        
-    }
 }
 
 export enum Direction {
@@ -710,10 +706,6 @@ export class Robot extends WorldObject {
             }
         }
         return false;
-    }
-
-    clearHold() {
-        this.holdingIDs = [];
     }
 
     // Returns the last object that Robot picked up

@@ -620,9 +620,6 @@ export class BaseLevel extends Phaser.State {
     }
 
     runReset(): Promise<{}> {
-        for (var id in this.modelWorld.objects) {
-            this.modelWorld.objects[id].clearHold();
-        }
         this.modelWorld.log.reset();
         // TODO: clean reset world by recreating map array?
         this.objectives.forEach((objective) => {
@@ -632,9 +629,7 @@ export class BaseLevel extends Phaser.State {
         return new Promise((resolve, reject) => {
             this.modelWorld.log.replay((diff) => {
                 return new Promise((resolve, reject) => {
-                    // 1, not 0, because 0 is false to JS, i.e. it's
-                    // the same as not passing the duration -.-
-                    this.runDiff(diff, resolve, reject, 1);
+                    this.runDiff(diff, resolve, reject, true);
                 });
             }, true).then(() => {
                 resolve();
@@ -665,7 +660,7 @@ export class BaseLevel extends Phaser.State {
         m.endComputation();
     }
 
-    runDiff(diff: model.Diff<any>, resolve: () => void, reject: () => void, animDuration?: number) {
+    runDiff(diff: model.Diff<any>, resolve: () => void, reject: () => void, resetting=false) {
         switch (diff.kind) {
         case model.DiffKind.BeginningOfBlock:
             this.event.broadcast(BaseLevel.BLOCK_EXECUTED, diff.data);
@@ -687,9 +682,17 @@ export class BaseLevel extends Phaser.State {
 
         case model.DiffKind.Property:
             let object = this.modelWorld.getObjectByID(diff.id);
-            let tween = diff.tween(object, animDuration);
+            if (resetting) {
+                var tween = diff.tween(object, 1);
+            } else {
+                var tween = diff.tween(object);
+            }
             if (!tween) {
-                this.checkObjectives(resolve);
+                if (!resetting) {
+                    this.checkObjectives(resolve);
+                } else {
+                    resolve();
+                }
                 return;
             }
             let lastTween = tween;
@@ -699,7 +702,11 @@ export class BaseLevel extends Phaser.State {
                 lastTween = lastTween.chainedTween;
             }
             lastTween.onComplete.add(() => {
-                this.checkObjectives(resolve);
+                if (!resetting) {
+                    this.checkObjectives(resolve);
+                } else {
+                    resolve();
+                }
             });
             tween.start();
             break;
