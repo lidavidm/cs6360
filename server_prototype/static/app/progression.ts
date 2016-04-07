@@ -35,7 +35,6 @@ import {MovementLevel3} from "levels/movement3";
 import {MovementLevel4} from "levels/movement4";
 import {FuncDefsLevel1} from "levels/funcdefs1";
 import {FuncDefsLevel2} from "levels/funcdefs2";
-import {RobotRescueLevel1} from "levels/robotrescue1";
 import {BasicsLevel1} from "levels/basic1";
 import {BasicsLevel2} from "levels/basic2";
 import {Alpha1Level} from "levels/alpha1";
