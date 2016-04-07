@@ -89,6 +89,7 @@ export const MainComponent = {
             };
             controller.context = savegame.load(controller.context);
             savegame.save(controller.context);
+            newLevel.program.update(savegame);
 
             m.startComputation();
             newLevel.loadHierarchy(savegame.loadAll());
@@ -103,7 +104,6 @@ export const MainComponent = {
                     controller.context.workspace = blocks;
                 }
                 savegame.save(controller.context);
-                newLevel.program.update(savegame);
                 m.endComputation();
             });
 
