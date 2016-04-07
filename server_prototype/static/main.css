@@ -246,10 +246,12 @@ body {
        Blockly's rendering. Instead, we just make sure the
        codeWorkspace is on top of everything else. */
     /* display: block; */
+    z-index: 0;
 }
 
 #editor.ace #codeWorkspace {
     display: block;
+    z-index: 1000;
 }
 
 .blueprint {
