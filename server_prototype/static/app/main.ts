@@ -155,6 +155,10 @@ export const MainComponent = {
                 controller.level.event.broadcast(level.BaseLevel.OBJECTIVES_UPDATED);
                 m.endComputation();
             };
+            (<any> window)["cheat_reset"] = () => {
+                delete window.localStorage["0"];
+                window.location.reload();
+            };
         };
 
         // TYPE SYSTEM SHENANNIGANS

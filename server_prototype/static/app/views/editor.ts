@@ -146,13 +146,11 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         args.event.on(level.BaseLevel.CONTEXT_CHANGED, (context: EditorContext) => {
             if (context.code) {
                 controller.level.program.flagInvalid(false);
-                controller.editor.getSession().setValue(context.code);
-                controller.markReadonly(context);
             }
             else {
                 updateUserObjects();
-                setupLevel(context);
             }
+            setupLevel(context);
         });
 
         function updateObjectImage(event: any, block: any) {
@@ -351,9 +349,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                         trashcan: true,
                     });
 
-                    if (args.context.workspace) {
-                        controller.setupLevel(args.context);
-                    }
+                    controller.setupLevel(args.context);
 
                     controller.workspace.addChangeListener(controller.changeListener);
                 },
@@ -373,10 +369,6 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     editor.getSession().on("changeAnnotation", controller.annotationListener);
                     editor.setOption("useWorker", true);
                     editor.setOption("dragEnabled", false);
-
-                    if (args.context.code) {
-                        controller.setupLevel(args.context);
-                    }
 
                     // Based on http://stackoverflow.com/questions/24958589/
                     // Make the header uneditable
