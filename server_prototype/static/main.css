@@ -54,6 +54,8 @@ body {
 #hierarchy .image {
     float: left;
     width: 500px;
+    background: #FFF;
+    border: 1px solid #000;
 }
 
 #hierarchy header {

@@ -53,7 +53,20 @@ var diagonal = d3.svg.diagonal()
 
 var svg = d3.select("body").append("svg")
     .attr("height", "100%")
-    .attr("viewBox", "0 0 960 500")
+    .attr("viewBox", "0 0 960 500");
+svg.append("defs")
+    .append("pattern")
+    .attr("id", "blueprintGrid")
+    .attr("width", 5)
+    .attr("height", 5)
+    .attr("patternUnits", "userSpaceOnUse")
+    .append("path")
+    .attr("d", "M 5 0 L 0 0 0 5 5 5")
+    .attr("fill", "#007")
+    .attr("stroke", "#FFF")
+    .style("stroke-width", "0.5");
+
+svg = svg
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -80,17 +93,35 @@ function update(source) {
         .attr("transform", function(d) {
             return "translate(" + d.y + "," + d.x + ")"; });
 
-    nodeEnter.append("circle")
-        .attr("r", 10)
-        .style("stroke", "#000");
-
-    nodeEnter.append("text")
-        .attr("dy", function(d) { return d.children ? "-10px" : ".35em"; })
-        .attr("dx", function(d) { return d.children ? "-10px" : ".75em"; })
+    var g = nodeEnter.append("g");
+    g.append("text")
+        .attr("dy", ".35em")
+        .attr("dx", "-10px")
+        .attr("fill", "#FFF")
         .attr("text-anchor", function(d) {
+            return "start";
             return d.children? "end" : "start"; })
-        .text(function(d) { return d.name; })
-	.style("fill-opacity", 1);
+                .text(function(d) { return d.name; });
+
+    g.append("rect")
+        .attr("fill", "url(#blueprintGrid)")
+        .attr("width", function() {
+            var text = this.parentNode.querySelector("text");
+            text.parentElement.insertBefore(this, text);
+            return text.getBBox().width;
+        })
+        .attr("height", function() {
+            var text = this.parentNode.querySelector("text");
+            return text.getBBox().height;
+        })
+        .attr("y", function() {
+            var text = this.parentNode.querySelector("text");
+            return text.getBBox().y;
+        })
+        .attr("x", function() {
+            var text = this.parentNode.querySelector("text");
+            return text.getBBox().x;
+        });
 
     // Declare the links…
     var link = svg.selectAll("path.link")

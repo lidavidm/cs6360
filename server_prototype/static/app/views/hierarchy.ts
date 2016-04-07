@@ -61,16 +61,32 @@ export const Component: _mithril.MithrilComponent<HierarchyController> = <any> {
                     controller.currentClass(d);
                     m.endComputation();
                 });
-            nodeEnter.append("circle")
-                .attr("r", 10)
-                .style("stroke", "#FFF");
             nodeEnter.append("text")
-                .attr("dy", function(d) { return d.children ? "-10px" : ".35em"; })
-                .attr("dx", function(d) { return d.children ? "-10px" : ".75em"; })
-                .attr("text-anchor", function(d) {
-                    return d.children? "end" : "start"; })
+                .attr("dy", ".35em")
+                .attr("dx", "-10px")
+                .attr("text-anchor", "start")
                 .text(function(d) { return d.name; })
                 .style("fill-opacity", 1);
+            nodeEnter.append("rect")
+                .attr("fill", "url(#blueprintGrid)")
+                .attr("width", function() {
+                    var text = this.parentNode.querySelector("text");
+                    text.parentElement.insertBefore(this, text);
+                    return text.getBBox().width + 10;
+                })
+                .attr("height", function() {
+                    var text = this.parentNode.querySelector("text");
+                    return text.getBBox().height + 10;
+                })
+                .attr("y", function() {
+                    var text = this.parentNode.querySelector("text");
+                    return text.getBBox().y - 5;
+                })
+                .attr("x", function() {
+                    var text = this.parentNode.querySelector("text");
+                    return text.getBBox().x - 5;
+                });
+
 
             // Declare and create the links between nodes
             var link = controller.svg.selectAll("path.link")
@@ -90,7 +106,7 @@ export const Component: _mithril.MithrilComponent<HierarchyController> = <any> {
             style: args.showHierarchy() ? "display: block;" : "display: none",
             key: "hierarchy",
         }, [
-            m(".image.blueprint", {
+            m(".image", {
                 config: function(element: HTMLElement, isInitialized: boolean) {
                     if (!isInitialized) {
                         let margin = {top: 20, right: 20, bottom: 20, left: 120},
@@ -103,14 +119,29 @@ export const Component: _mithril.MithrilComponent<HierarchyController> = <any> {
                         controller.diagonal = d3.svg.diagonal()
                             .projection(function(d) { return [d.y, d.x]; });
 
-                        controller.svg = d3.select(element).append("svg")
+                        let svg = d3.select(element).append("svg")
                             .attr("height", "500px")
                             .attr("width", "500px")
-                            .attr("viewBox", "0 0 500 500")
+                            .attr("viewBox", "0 0 500 500");
+                        svg.append("defs")
+                            .append("pattern")
+                            .attr("id", "blueprintGrid")
+                            .attr("width", 8)
+                            .attr("height", 8)
+                            .attr("patternUnits", "userSpaceOnUse")
+                            .append("path")
+                            .attr("d", "M 8 0 L 0 0 0 8 8 8")
+                            .attr("fill", "#007")
+                            .attr("stroke", "#FFF")
+                            .style("stroke-width", "0.5");
+
+                        controller.svg = svg
                             .append("g")
                             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
                     }
-                    update();
+                    if (args.showHierarchy()) {
+                        update();
+                    }
                 }
             }),
             m("header", [
