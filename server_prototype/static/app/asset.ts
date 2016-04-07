@@ -6,3 +6,7 @@ export const AssetManager = {
 export const Robot = {
     Basic: SPRITE_DIR + "robot_3Dblue.png",
 };
+
+export const Iron = {
+    Basic: SPRITE_DIR + "iron.png",
+};
