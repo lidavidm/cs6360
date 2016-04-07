@@ -65,6 +65,7 @@ export class FuncDefsLevel2 extends BaseLevel {
                     children: [],
                     methods: ["moveForward", "turnRight", "mine"],
                     userMethods: ["temporaryLeft", "advance"],
+
                 },
             ],
         };
