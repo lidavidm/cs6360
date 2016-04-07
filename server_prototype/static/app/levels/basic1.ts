@@ -52,6 +52,7 @@ export class BasicsLevel1 extends BaseLevel {
                 new TooltipView.Tooltip(TooltipView.Region.Controls, "Load your code onto the robot and run it."),
                 new TooltipView.Tooltip(TooltipView.Region.Toolbox, "Pick blocks from here…"),
                 new TooltipView.Tooltip(TooltipView.Region.Workspace, "…and drop them here to control the robot."),
+                new TooltipView.Tooltip(TooltipView.Region.ButtonBar, "Edit methods here!"),
             ],
         ];
 

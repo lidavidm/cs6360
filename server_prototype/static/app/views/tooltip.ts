@@ -8,6 +8,7 @@ export enum Region {
     Toolbox,
     Workspace,
     Objectives,
+    ButtonBar,
 }
 
 export class Tooltip {
