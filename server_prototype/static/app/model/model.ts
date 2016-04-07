@@ -109,7 +109,7 @@ class OrientationDiff<T extends HasOrientation> extends Diff<T> {
         if (p === null) return null;
 
         let rotation = 0;
-        switch(object.orientation) {
+        switch (object.orientation) {
         case Direction.NORTH:
             rotation = -Math.PI/2;
             break;
@@ -127,6 +127,40 @@ class OrientationDiff<T extends HasOrientation> extends Diff<T> {
         let tween = p.game.add.tween(p).to({
             rotation: rotation,
         }, duration, Phaser.Easing.Linear.None);
+
+        let obj = <any> object;
+        if (obj.shadow) {
+            let sx = 1;
+            let sy = 1;
+
+            switch (object.orientation) {
+            case Direction.NORTH:
+                sx = -1;
+                sy = 1;
+                break;
+            case Direction.SOUTH:
+                sx = 1;
+                sy = -1;
+                break;
+            case Direction.EAST:
+                sx = 1;
+                sy = 1;
+                break;
+            case Direction.WEST:
+                sx = -1;
+                sy = -1;
+                break;
+            }
+
+            let shadowTween = p.game.add.tween(obj.shadow).to({
+                x: sx,
+                y: sy,
+            }, duration, Phaser.Easing.Linear.None);
+            tween.onStart.add(() => {
+                shadowTween.start();
+            });
+        }
+
         return tween;
     }
 }
@@ -591,6 +625,7 @@ function offsetDirection(x: number, y: number,
  */
 export class Robot extends WorldObject {
     sprite: Phaser.Sprite;
+    shadow: Phaser.Sprite;
     orientation: Direction;
     destructed: boolean;
 
@@ -606,6 +641,11 @@ export class Robot extends WorldObject {
         this.phaserObject.position.y = TILE_HEIGHT * y + TILE_WIDTH / 2;
         this.phaserObject.pivot.x = TILE_WIDTH / 2;
         this.phaserObject.pivot.y = TILE_HEIGHT / 2;
+        this.shadow = this.phaserObject.create(1, 1, sprite);
+        this.shadow.width = TILE_WIDTH;
+        this.shadow.height = TILE_WIDTH;
+        this.shadow.tint = 0x000000;
+        this.shadow.alpha = 0.7;
         this.sprite = this.phaserObject.create(0, 0, sprite);
         this.sprite.width = TILE_WIDTH;
         this.sprite.height = TILE_HEIGHT;
