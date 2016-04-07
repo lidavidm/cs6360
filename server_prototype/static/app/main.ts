@@ -171,7 +171,7 @@ export const MainComponent = {
     },
 
     view: function(controller: MainController) {
-        return m("div", [
+        return m("div.controller", [
             m(<any> "div#main", {
                 key: "main",
             }, m.component(GameWidget, controller)),
@@ -195,5 +195,3 @@ export const MainComponent = {
         ])
     }
 }
-
-m.mount(document.getElementById("container"), MainComponent);

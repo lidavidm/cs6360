@@ -486,6 +486,23 @@ button.ui {
     text-transform: uppercase;
     color: #FFF;
     font-size: 1em;
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+button.ui[disabled] {
+    color: #999;
+    border-color: #999;
+}
+
+button.ui:not([disabled]):hover {
+    box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.8);
+    text-shadow: 0px 0px 5px rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+}
+
+button.ui:not([disabled]):active {
+    transform: translateY(1px);
+    text-shadow: none;
 }
 
 @keyframes fade-in {
