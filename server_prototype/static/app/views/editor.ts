@@ -112,8 +112,6 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 }
             }
 
-            console.log(objects);
-
             if (controller.level.toolbox.setUserObjects(objects)) {
                 updateToolbox();
             }
@@ -144,6 +142,11 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         });
 
         args.event.on(level.BaseLevel.CONTEXT_CHANGED, (context: EditorContext) => {
+            if (!controller.level.canUseBlockEditor(context) && !context.code) {
+                let code = controller.level.program.getMethodCode(context.className, context.method);
+                context.code = code;
+            }
+
             if (context.code) {
                 controller.level.program.flagInvalid(false);
             }
@@ -369,6 +372,8 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     editor.getSession().on("changeAnnotation", controller.annotationListener);
                     editor.setOption("useWorker", true);
                     editor.setOption("dragEnabled", false);
+
+                    controller.setupLevel(args.context);
 
                     // Based on http://stackoverflow.com/questions/24958589/
                     // Make the header uneditable
