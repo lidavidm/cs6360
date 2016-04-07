@@ -16,12 +16,15 @@ export class MovementLevel1 extends BaseLevel {
         this.missionTitle = "Test Drive";
 
         this.toolbox = new Toolbox();
-        this.toolbox.addControl("tell");
+
+        let tells = this.toolbox.addControl("tell");
+
         let methods = this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
         ]);
 
         let object = this.toolbox.addObject("robot", "Robot");
+
 
         this.fallback = this.toolbox.addControl("tell", false, [], [
             ["OBJECT", object.cloneNode(true)],
