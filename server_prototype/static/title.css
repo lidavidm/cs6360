@@ -60,7 +60,7 @@
 }
 
 .titleContainer.vanish {
-    animation: 4s fade-out ease-out;
+    animation: 3s fade-out ease-out;
     opacity: 0;
 }
 
@@ -91,7 +91,7 @@
         opacity: 1;
     }
 
-    75% {
+    90% {
         opacity: 0;
     }
 }
