@@ -94,7 +94,7 @@ export class FuncDefsLevel2 extends BaseLevel {
 
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
-        this.initWorld(map);
+        this.initWorld(map)
         this.robot = new model.Robot("smallRobot", 2, 3, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
         this.iron = new model.Iron("iron", 4, 5,

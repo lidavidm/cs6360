@@ -26,6 +26,7 @@ export class MovementLevel1 extends BaseLevel {
         let object = this.toolbox.addObject("smallRobot", "SmallRobot");
 
 
+
         this.fallback = this.toolbox.addControl("tell", false, [], [
             ["OBJECT", object.cloneNode(true)],
             ["METHOD", methods[0].cloneNode(true)],
