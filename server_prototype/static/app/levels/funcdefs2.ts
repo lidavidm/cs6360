@@ -16,14 +16,14 @@ export class FuncDefsLevel2 extends BaseLevel {
         this.missionText = [
             "Your robot's mining functionality is back online!",
             "Pick up some iron on the way back to base.",
-        ]
+        ];
 
         this.toolbox = new Toolbox();
         this.toolbox.addControl("tell");
         this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
             model.Robot.prototype.turnRight,
-            model.Robot.prototype.pickUpUnderneath,
+            model.Robot.prototype.mine,
         ]);
         this.toolbox.addObject("robot", "Robot");
 
@@ -35,7 +35,7 @@ export class FuncDefsLevel2 extends BaseLevel {
                 objective: `Pick up some Iron [${asset.Iron.Basic}].`,
                 completed: false,
                 predicate: (level) => {
-                    return level.robot.holding() != null;
+                    return level.robot.lastPickedUp() != null;
                 }
             },
             {
