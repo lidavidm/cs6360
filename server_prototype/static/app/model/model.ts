@@ -689,7 +689,7 @@ export class Robot extends WorldObject {
         let orig = this.holdingIDs.slice(0);
         let newIDs = this.holdingIDs.slice(0);
         if (typeof object === "number") {
-            this.holdingIDs.push(object);
+            newIDs.push(object);
         }
         else if (object === null) {
             // pass
@@ -697,6 +697,7 @@ export class Robot extends WorldObject {
         else {
             newIDs.push(object.getID())
         }
+        this.holdingIDs = newIDs.slice(0);
         this.world.log.record(new HoldingDiff(this.id, {
             holdingIDs: [orig, newIDs],
         }));
