@@ -36,6 +36,9 @@ export class FuncDefsLevel2 extends BaseLevel {
                 completed: false,
                 predicate: (level) => {
                     return level.robot.lastPickedUp() != null;
+=======
+                    return level.robot.holding() != null;
+>>>>>>> 8e07fd3... feat(Levels): add function creation levels
                 }
             },
             {
