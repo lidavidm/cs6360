@@ -27,22 +27,22 @@ declare module _mithril {
 				MithrilVirtualElement<T> |
 				MithrilComponent<T>>
 		): MithrilVirtualElement<T>;
-		
-		/**
-		* Initializes a component for use with m.render, m.mount, etc.
-		*
-		* @param component A component.
-		* @param args Arguments to optionally pass to the component.
-		* @return A component.
-		*
-		* @see m.render
-		* @see m.mount
-		* @see m
-		*/
-		<T extends MithrilController>(
-			component: MithrilComponent<T>,
-			...args: any[]
-		): MithrilComponent<T>;
+
+		// /**
+		// * Initializes a component for use with m.render, m.mount, etc.
+		// *
+		// * @param component A component.
+		// * @param args Arguments to optionally pass to the component.
+		// * @return A component.
+		// *
+		// * @see m.render
+		// * @see m.mount
+		// * @see m
+		// */
+		// <T extends MithrilController>(
+		// 	component: MithrilComponent<T>,
+		// 	...args: any[]
+		// ): MithrilComponent<T>;
 
 		/**
 		* Creates a virtual element for use with m.render, m.mount, etc.
@@ -534,6 +534,8 @@ declare module _mithril {
 		* @see MithrilElementConfig
 		*/
 		config?: MithrilElementConfig;
+
+		[attr: string]: any;
 	}
 
 	/**
