@@ -283,12 +283,14 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 onclick: function() {
                     args.showHierarchy(true);
                 },
+                disabled: args.executing(),
             }, "Class Hierarchy"));
             if (args.context.className !== MAIN) {
                 header.push(m(<any> "button.ui", {
                     onclick: function() {
                         args.changeContext(MAIN, "");
                     },
+                    disabled: args.executing(),
                 }, "Edit main"));
             }
 
@@ -310,7 +312,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                         }
                     },
                     title: disabledTitle,
-                    disabled: !args.level.isCodeValid(),
+                    disabled: !args.level.isCodeValid() || args.executing(),
                 }, "Edit as code"));
             }
             else if (args.level.canUseBlockEditor(args.context) && usingCodeEditor) {
@@ -321,7 +323,8 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                             args.context.workspace = controller.level.fallbackWorkspace(args.context);
                             controller.setupLevel(args.context);
                         }
-                    }
+                    },
+                    disabled: args.executing(),
                 }, "Edit as blocks"));
             }
         }
