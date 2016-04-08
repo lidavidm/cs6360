@@ -14,9 +14,9 @@ export const TitleComponent: _mithril.MithrilComponent<TitleController> = {
         let hasLastGame = !!lastGame;
 
         let startGame = () => {
-            document.querySelector(".titleContainer").addEventListener("transitionend", () => {
+            window.setTimeout(() => {
                 m.route("/game");
-            });
+            }, 2500)
 
             document.querySelector(".titleContainer").classList.add("vanish");
         };
