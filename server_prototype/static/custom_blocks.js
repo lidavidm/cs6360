@@ -181,7 +181,8 @@ Blockly.Blocks["tell"] = {
         if (faded) {
             this.appendDummyInput('RIGHT_PAREN').appendField(')');
         }
-        // this.setMutator(new Blockly.Mutator(['tell_arg', 'tell_return']));
+        //this.setMutator(new Blockly.Mutator(['tell_arg']));
+        //this.setMutator(new Blockly.Mutator(['tell_arg', 'tell_return']));
         this.argCount_ = 0;
         this.returnCount_ = 0;
     },
