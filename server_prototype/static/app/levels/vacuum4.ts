@@ -3,8 +3,8 @@ import {BaseLevel, Toolbox} from "../level";
 import * as TooltipView from "../views/tooltip";
 import * as asset from "asset";
 
-// Goal: use loops to get all the iron and move back to the base
-export class VacuumLevel3 extends BaseLevel {
+// Goal: Go nuts. Demonstrate the value of concise code.
+export class VacuumLevel4 extends BaseLevel {
     public modelWorld: model.World;
     public robot: model.Robot;
     public irons: model.Iron[];
@@ -12,7 +12,7 @@ export class VacuumLevel3 extends BaseLevel {
     initialize() {
         super.initialize();
 
-        this.missionTitle = "Vacuum 3";
+        this.missionTitle = "Fe-esta";
         this.missionText = [
             "todo"
         ];
@@ -24,6 +24,7 @@ export class VacuumLevel3 extends BaseLevel {
             model.Robot.prototype.moveForward,
             model.Robot.prototype.moveBackward,
             model.Robot.prototype.turnRight,
+            model.Robot.prototype.turnLeft,
             model.Robot.prototype.mine,
         ]);
         this.toolbox.addObject("robot", "Robot");
@@ -31,7 +32,7 @@ export class VacuumLevel3 extends BaseLevel {
 
         this.objectives = [
             {
-                objective: "Collect 10 iron",
+                objective: "Collect all the iron",
                 completed: false,
                 predicate: (level) => {
                     for (var iron of level.irons) {
@@ -42,15 +43,9 @@ export class VacuumLevel3 extends BaseLevel {
                     return true;
                 }
             },
-            {
-                objective: `Move the robot [${asset.Robot.Basic}] back to base`,
-                completed: false,
-                predicate: (level) => {
-                    return level.objectives[0].completed &&
-                        level.robot.getX() === 1 && level.robot.getY() === 1;
-                }
-            },
         ];
+
+        this.allTooltips = [[]];
 
         this.hierarchy = {
             name: "object",
@@ -58,17 +53,11 @@ export class VacuumLevel3 extends BaseLevel {
                 {
                     name: "Robot",
                     children: [],
-                    methods: ["moveForward", "turnRight", "mine", "moveBackward"],
+                    methods: ["moveForward", "turnRight", "turnLeft", "mine", "moveBackward"],
                     userMethods: ["moveAndMine"],
                 },
             ],
         };
-
-        this.allTooltips = [
-            [
-                new TooltipView.Tooltip(TooltipView.Region.Workspace, "")
-            ]
-        ];
     }
 
     preload() {
@@ -94,9 +83,12 @@ export class VacuumLevel3 extends BaseLevel {
         this.robot = new model.Robot("robot", 1, 1, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
         this.irons = [];
-        for (var i = 0; i < 10; i++) {
-            this.irons.push(new model.Iron("iron", 2, 2 + i,
+        for (var i = 0; i < 5; i++) {
+            for (var j = 0; j < 10; j++) {
+                this.irons.push(new model.Iron("iron", 2 + j, 1 + i,
                                    this.modelWorld, this.middle, "iron"));
+            }
+            
         }
 
         this.modelWorld.log.recordInitEnd();
