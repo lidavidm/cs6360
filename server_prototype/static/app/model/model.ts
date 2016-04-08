@@ -190,7 +190,7 @@ class SelfDestructDiff extends Diff<Robot> {
     }
 
     apply(world: World, object: Robot) {
-        ;
+        object.destructed = true;
     }
 }
 
