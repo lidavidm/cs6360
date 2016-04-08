@@ -92,11 +92,4 @@ export class FuncDefsLevel1 extends BaseLevel {
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
     }
-<<<<<<< HEAD
-=======
-
-    canUseCodeEditor(context: EditorContext): boolean {
-        return context.className === "Robot" && context.method === "turnLeft";
-    }
->>>>>>> 97e128e... feat(Levels): add function creation levels
 }
