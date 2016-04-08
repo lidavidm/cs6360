@@ -31,7 +31,7 @@ export class RobotRescueLevel1 extends BaseLevel {
         ]);
 
         this.toolbox.addClass("BrokenRobot", asset.Robot.Basic, model.Robot, [
-            model.Robot.prototype.selfDestruct,
+            model.Robot.prototype.selfDestruct
         ]);
 
         this.toolbox.addObject("brokenRobot", "BrokenRobot");
