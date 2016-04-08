@@ -3,8 +3,8 @@ import {BaseLevel, Toolbox} from "../level";
 import * as TooltipView from "../views/tooltip";
 import * as asset from "asset";
 
-// Goal: do the same task (moveForward + mine) a couple of times
-export class VacuumLevel1 extends BaseLevel {
+// Goal: use loops to get all the iron and move back to the base
+export class VacuumLevel3 extends BaseLevel {
     public modelWorld: model.World;
     public robot: model.Robot;
     public irons: model.Iron[];
@@ -12,13 +12,14 @@ export class VacuumLevel1 extends BaseLevel {
     initialize() {
         super.initialize();
 
-        this.missionTitle = "Vacuum 1";
+        this.missionTitle = "Vacuum 3";
         this.missionText = [
             "todo"
         ];
 
         this.toolbox = new Toolbox();
         this.toolbox.addControl("tell");
+        this.toolbox.addControl("controls_repeat_ext");
         this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
             model.Robot.prototype.moveBackward,
@@ -26,10 +27,11 @@ export class VacuumLevel1 extends BaseLevel {
             model.Robot.prototype.mine,
         ]);
         this.toolbox.addObject("robot", "Robot");
+        this.toolbox.addNumber();
 
         this.objectives = [
             {
-                objective: "Collect 3 iron",
+                objective: "Collect 10 iron",
                 completed: false,
                 predicate: (level) => {
                     for (var iron of level.irons) {
@@ -51,6 +53,24 @@ export class VacuumLevel1 extends BaseLevel {
         ];
 
         this.allTooltips = [[]];
+
+        this.hierarchy = {
+            name: "object",
+            children: [
+                {
+                    name: "Robot",
+                    children: [],
+                    methods: ["moveForward", "turnRight", "mine", "moveBackward"],
+                    userMethods: ["moveAndMine"],
+                },
+            ],
+        };
+
+        this.allTooltips = [
+            [
+                new TooltipView.Tooltip(TooltipView.Region.Workspace, "")
+            ]
+        ];
     }
 
     preload() {
@@ -76,12 +96,10 @@ export class VacuumLevel1 extends BaseLevel {
         this.robot = new model.Robot("robot", 1, 1, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
         this.irons = [];
-        this.irons.push(new model.Iron("iron", 3, 1,
+        for (var i = 0; i < 10; i++) {
+            this.irons.push(new model.Iron("iron", 2, 2 + i,
                                    this.modelWorld, this.middle, "iron"));
-        this.irons.push(new model.Iron("iron", 4, 1,
-                                   this.modelWorld, this.middle, "iron"));
-        this.irons.push(new model.Iron("iron", 5, 1,
-                                   this.modelWorld, this.middle, "iron"));
+        }
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
