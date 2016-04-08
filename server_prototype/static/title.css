@@ -18,6 +18,7 @@
     background-size: cover;
     background-repeat: no-repeat;
     box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.8);
+    transition: height 2s ease-in;
     /* animation: shake 5s cubic-bezier(.36,.07,.19,.97) infinite; */
     /* animation-delay: 5s; */
 }
@@ -62,6 +63,38 @@
 .titleContainer.vanish {
     animation: 3s fade-out ease-out;
     opacity: 0;
+}
+
+.titleContainer.to-story .non-story {
+    animation: 3s fade-out ease-out;
+    opacity: 0;
+}
+
+.titleContainer.to-story header {
+    height: 30em;
+}
+
+.titleContainer.story {
+    transition: background-color 0.3s ease-in;
+}
+
+.titleContainer.story.wrong {
+    background-color: #700;
+}
+
+.titleContainer.story header {
+    height: 30em;
+}
+
+.titleContainer.story article h1 {
+    font-size: 2em;
+    font-weight: 300;
+    text-align: center;
+}
+
+.titleContainer.story article .hint {
+    text-align: center;
+    animation: 2s fade-in ease-in;
 }
 
 @keyframes shake {
