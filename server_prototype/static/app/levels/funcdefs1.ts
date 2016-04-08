@@ -53,7 +53,7 @@ export class FuncDefsLevel1 extends BaseLevel {
                     name: "Robot",
                     children: [],
                     methods: ["moveForward", "turnRight"],
-                    userMethods: ["turnLeft"],
+                    userMethods: ["temporaryLeft"],
                 },
             ],
         };
@@ -91,9 +91,5 @@ export class FuncDefsLevel1 extends BaseLevel {
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
-    }
-
-    canUseCodeEditor(context: EditorContext): boolean {
-        return context.className === "Robot" && context.method === "turnLeft";
     }
 }
