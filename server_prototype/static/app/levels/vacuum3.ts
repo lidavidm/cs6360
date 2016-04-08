@@ -52,8 +52,6 @@ export class VacuumLevel3 extends BaseLevel {
             },
         ];
 
-        this.allTooltips = [[]];
-
         this.hierarchy = {
             name: "object",
             children: [

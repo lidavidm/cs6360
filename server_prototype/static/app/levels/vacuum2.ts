@@ -42,11 +42,7 @@ export class VacuumLevel2 extends BaseLevel {
             },
         ];
 
-<<<<<<< HEAD
-=======
         this.allTooltips = [[]];
-
->>>>>>> 544eac2... vacuum level drafts
         this.hierarchy = {
             name: "object",
             children: [
