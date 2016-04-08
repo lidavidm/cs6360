@@ -76,7 +76,7 @@ export class RobotRescueLevel1 extends BaseLevel {
             children: [
                 {
                     name: "BrokenRobot",
-                    children: []
+                    children: [],
                     methods: ["selfDestruct"],
                     userMethods: [],
                 },
