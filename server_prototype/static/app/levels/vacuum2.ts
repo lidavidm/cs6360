@@ -42,8 +42,6 @@ export class VacuumLevel2 extends BaseLevel {
             },
         ];
 
-        this.allTooltips = [[]];
-
         this.hierarchy = {
             name: "object",
             children: [
@@ -68,8 +66,8 @@ export class VacuumLevel2 extends BaseLevel {
 
         this.game.load.tilemap("prototype", "assets/maps/prototype.json", null, Phaser.Tilemap.TILED_JSON);
         this.game.load.image("tiles", "assets/tilesets/cave.png");
-        this.game.load.image("robot", "assets/sprites/robot_3Dblue.png");
-        this.game.load.image("iron", "assets/sprites/iron.png");
+        this.game.load.image("robot", asset.Robot.Basic);
+        this.game.load.image("iron", asset.Iron.Basic);
     }
 
     create() {
