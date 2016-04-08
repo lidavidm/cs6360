@@ -37,12 +37,43 @@ export class BasicsLevel1 extends BaseLevel {
             ["METHOD", methods[0].cloneNode(true)],
         ]);
 
+        let headlessWorkspace = new Blockly.Workspace();
         this.objectives = [
             {
-                objective: `Move the robot [${asset.Robot.Basic}] forward`,
+                objective: `Implement turnLeft for the robot [${asset.Robot.Basic}]`,
                 completed: false,
                 predicate: (level) => {
-                    return level.robot.getX() === 2 && level.robot.getY() === 1;
+                    let impl = level.program.savegame.load({
+                        className: "Robot",
+                        method: "turnLeft"
+                    });
+                    headlessWorkspace.clear();
+                    if (impl.workspace) {
+                        Blockly.Xml.domToWorkspace(headlessWorkspace, impl.workspace);
+
+                        // What Blockly considers a "top block" is the
+                        // first block in a stack of connected
+                        // blocks. So if they're all connected,
+                        // there's only one "top block".
+                        let allTopBlocks: any[] = [];
+                        for (let block of headlessWorkspace.getTopBlocks()) {
+                            while (block) {
+                                allTopBlocks.push(block);
+                                block = block.getNextBlock();
+                            }
+                        }
+                        console.log(allTopBlocks);
+                        return allTopBlocks.length === 3;
+                    }
+                    return false;
+                }
+            },
+
+            {
+                objective: `Turn the robot [${asset.Robot.Basic}] north`,
+                completed: false,
+                predicate: (level) => {
+                    return level.robot.orientation === model.Direction.NORTH;
                 }
             },
         ];
