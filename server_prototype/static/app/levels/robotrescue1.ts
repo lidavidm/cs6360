@@ -32,7 +32,6 @@ export class RobotRescueLevel1 extends BaseLevel {
 
         this.toolbox.addClass("BrokenRobot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.selfDestruct,
-            model.Robot.prototype.moveForward,
         ]);
 
         this.toolbox.addObject("brokenRobot", "BrokenRobot");
@@ -46,14 +45,18 @@ export class RobotRescueLevel1 extends BaseLevel {
                 objective: `Destroy the old robot [${asset.Robot.Basic}]`,
                 completed: false,
                 predicate: (level) => {
-                    return this.brokenRobot.destructed == true;
+                    return this.brokenRobot.destructed;
                 }
             },
             {
                 objective: `Construct a new robot [${asset.Robot.Basic}]`,
                 completed: false,
                 predicate: (level) => {
-                    //return !(level.NewRobot.destructed);
+                    for (let object of this.modelWorld.getObjectByLoc(17, 4)){
+                        if (object !== null && object.getName() !== "brokenRobot"){
+                            return true;
+                        }
+                    }
                     return false;
                 }
             },
@@ -74,7 +77,7 @@ export class RobotRescueLevel1 extends BaseLevel {
                 {
                     name: "BrokenRobot",
                     children: [],
-                    methods: ["selfDestruct", "moveForward"],
+                    methods: ["selfDestruct"],
                     userMethods: [],
                 },
                 {
