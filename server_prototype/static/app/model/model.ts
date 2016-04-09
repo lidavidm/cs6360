@@ -70,6 +70,26 @@ class InitializedDiff extends Diff<any> {
     constructor(id: number) {
         super(DiffKind.Initialized, id, id);
     }
+
+    tween(object: any, duration=ANIM_DURATION): Phaser.Tween {
+        let p = object.getPhaserObject();
+        if (p === null) return null;
+
+        let width = p.width;
+        let height = p.height;
+        p.width = 0;
+        p.height = 0;
+
+        return p.game.add.tween(p).to({
+            alpha: 1,
+            width: width,
+            height: height,
+        }, duration, Phaser.Easing.Bounce.InOut);
+    }
+
+    apply(world: World, object: any) {
+        ;
+    }
 }
 
 class MovementDiff<T extends WorldObject> extends Diff<T> {
@@ -92,6 +112,34 @@ class MovementDiff<T extends WorldObject> extends Diff<T> {
         world.removeObject(object);
         super.apply(world, object);
         world.addObject(object);
+    }
+}
+
+class StuckDiff<T extends WorldObject> extends Diff<T> {
+    constructor(id: number) {
+        super(DiffKind.Property, null, id, {});
+    }
+
+    tween(object: T, duration=ANIM_DURATION): Phaser.Tween {
+        let p = object.getPhaserObject();
+        if (p === null) return null;
+
+        let t1 = p.game.add.tween(p).to({
+            x: p.position.x - 2,
+            alpha: 0.5,
+        }, duration / 3, Phaser.Easing.Bounce.Out);
+        let t2 = p.game.add.tween(p).to({
+            x: p.position.x + 2,
+            alpha: 1,
+        }, duration / 3, Phaser.Easing.Bounce.Out);
+        let t3 = p.game.add.tween(p).to({
+            x: p.position.x,
+        }, duration / 3, Phaser.Easing.Bounce.Out);
+        return t1.chain(t2.chain(t3));
+    }
+
+    apply(world: World, object: T) {
+        ;
     }
 }
 
@@ -126,7 +174,7 @@ class OrientationDiff<T extends HasOrientation> extends Diff<T> {
 
         let tween = p.game.add.tween(p).to({
             rotation: rotation,
-        }, duration, Phaser.Easing.Linear.None);
+        }, duration / 2, Phaser.Easing.Linear.None);
 
         let obj = <any> object;
         if (obj.shadow) {
@@ -155,7 +203,7 @@ class OrientationDiff<T extends HasOrientation> extends Diff<T> {
             let shadowTween = p.game.add.tween(obj.shadow).to({
                 x: sx,
                 y: sy,
-            }, duration, Phaser.Easing.Linear.None);
+            }, duration / 2, Phaser.Easing.Linear.None);
             tween.onStart.add(() => {
                 shadowTween.start();
             });
@@ -200,19 +248,29 @@ class HoldingDiff extends Diff<Robot> {
     }
 
     tween(object: Robot, duration=ANIM_DURATION): Phaser.Tween {
+        let holder = object.getPhaserObject();
+        let t1 = holder.game.add.tween(holder).to({
+            rotation: holder.rotation + 8 * Math.PI,
+        }, duration, Phaser.Easing.Quadratic.InOut);
+
         let holding = object.lastPickedUp();
-        if (holding === null) return;
-
+        if (holding === null) return t1;
         let p = holding.getPhaserObject();
-        if (p === null) return;
 
-        return p.game.add.tween(p).to({
-            x: p.position.x - 16,
-            y: p.position.y - 16,
+        let t2 = p.game.add.tween(p).to({
             width: p.width + 32,
             height: p.height + 32,
             alpha: 0,
         }, duration, Phaser.Easing.Quadratic.InOut);
+        t2.onStart.add(() => {
+            t1.start();
+        });
+
+        t1.onComplete.add(() => {
+            t1.rotation -= 8 * Math.PI;
+        });
+
+        return t2;
     }
 }
 
@@ -239,7 +297,6 @@ export class Log {
             let object = this.world.getObjectByID(id);
             object.getPhaserObject().destroy();
             this.world.removeObject(object);
-            // TODO: delete the object...
         }
         this.dynamicObjects = [];
         let index = this.log.indexOf(Diff.EndOfInit);
@@ -326,10 +383,11 @@ export class Log {
                 case DiffKind.Initialized:
                     let origID = diff.data;
                     dynamicObjectsInitialized[origID] = true;
-                    let obj = this.world.getObjectByID(origID);
-                    obj.getPhaserObject().alpha = 1.0;
-                    advanceStep();
-                    return;
+                    let obj = this.world.getObjectByID(diff.id);
+                    let p = obj.getPhaserObject();
+                    p.alpha = 0;
+
+                    initialized = true;
                 }
 
                 if (!initialized) {
@@ -742,6 +800,7 @@ export class Robot extends WorldObject {
             this.setLoc(x, y);
         }
         else {
+            this.world.log.record(new StuckDiff(this.getID()));
             throw new RangeError("Can't move forward! Tried: " + x + ", " + y);
         }
     }
@@ -763,6 +822,7 @@ export class Robot extends WorldObject {
             this.setLoc(x, y);
         }
         else {
+            this.world.log.record(new StuckDiff(this.getID()));
             throw new RangeError("Can't move backward! Tried: " + x + ", " + y);
         }
     }

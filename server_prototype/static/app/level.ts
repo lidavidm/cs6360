@@ -680,6 +680,7 @@ export class BaseLevel extends Phaser.State {
             reject();
             break;
 
+        case model.DiffKind.Initialized:
         case model.DiffKind.Property:
             let object = this.modelWorld.getObjectByID(diff.id);
             if (resetting) {

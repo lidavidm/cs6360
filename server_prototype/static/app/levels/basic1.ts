@@ -27,6 +27,7 @@ export class BasicsLevel1 extends BaseLevel {
             model.Robot.prototype.moveForward,
             model.Robot.prototype.selfDestruct,
             model.Robot.prototype.turnRight,
+            model.Robot.prototype.pickUpUnderneath,
         ]);
         this.toolbox.addClass("Object", asset.Robot.Basic, model.WorldObject, []);
 
@@ -124,7 +125,7 @@ export class BasicsLevel1 extends BaseLevel {
         this.initWorld(map);
         this.robot = new model.Robot("robot", 1, 1, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
-        this.iron = new model.Iron("iron", 5, 1,
+        this.iron = new model.Iron("iron", 2, 1,
                                    this.modelWorld, this.middle, "iron");
 
         this.modelWorld.log.recordInitEnd();
