@@ -19,11 +19,11 @@ export class MovementLevel1 extends BaseLevel {
 
         let tells = this.toolbox.addControl("tell");
 
-        let methods = this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
+        let methods = this.toolbox.addClass("SmallRobot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
         ]);
 
-        let object = this.toolbox.addObject("robot", "Robot");
+        let object = this.toolbox.addObject("smallRobot", "SmallRobot");
 
 
         this.fallback = this.toolbox.addControl("tell", false, [], [
@@ -82,7 +82,7 @@ export class MovementLevel1 extends BaseLevel {
 
         this.initWorld(map);
 
-        this.robot = new model.Robot("robot", 1, 2, model.Direction.EAST,
+        this.robot = new model.Robot("smallRobot", 1, 2, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
 
         this.modelWorld.log.recordInitEnd();
