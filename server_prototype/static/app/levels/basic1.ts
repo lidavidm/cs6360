@@ -27,7 +27,7 @@ export class BasicsLevel1 extends BaseLevel {
             model.Robot.prototype.moveForward,
             model.Robot.prototype.selfDestruct,
             model.Robot.prototype.turnRight,
-            model.Robot.prototype.pickUpUnderneath,
+            model.Robot.prototype.mine,
         ]);
         this.toolbox.addClass("Object", asset.Robot.Basic, model.WorldObject, []);
 
