@@ -12,10 +12,10 @@ export class MovementLevel2 extends BaseLevel {
 
         this.toolbox = new Toolbox();
         this.toolbox.addControl("tell");
-        this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
+        this.toolbox.addClass("SmallRobot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
         ]);
-        this.toolbox.addObject("robot", "Robot");
+        this.toolbox.addObject("smallRobot", "SmallRobot");
 
         this.objectives = [
             {
@@ -64,7 +64,7 @@ export class MovementLevel2 extends BaseLevel {
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
         this.initWorld(map);
-        this.robot = new model.Robot("robot", 2, 2, model.Direction.EAST,
+        this.robot = new model.Robot("smallRobot", 2, 2, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
 
         this.modelWorld.log.recordInitEnd();

@@ -12,11 +12,11 @@ export class MovementLevel4 extends BaseLevel {
 
         this.toolbox = new Toolbox();
         this.toolbox.addControl("tell");
-        this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
+        this.toolbox.addClass("SmallRobot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
             model.Robot.prototype.turnRight,
         ]);
-        this.toolbox.addObject("robot", "Robot");
+        this.toolbox.addObject("smallRobot", "SmallRobot");
 
         this.toolbox.addControl("controls_repeat_ext");
         this.toolbox.addNumber(0);
@@ -71,7 +71,7 @@ export class MovementLevel4 extends BaseLevel {
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
         this.initWorld(map);
-        this.robot = new model.Robot("robot", 7, 3, model.Direction.SOUTH   ,
+        this.robot = new model.Robot("smallRobot", 7, 3, model.Direction.SOUTH   ,
                                      this.modelWorld, this.foreground, "robot");
 
         this.modelWorld.log.recordInitEnd();

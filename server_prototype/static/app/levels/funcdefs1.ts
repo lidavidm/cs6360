@@ -18,11 +18,11 @@ export class FuncDefsLevel1 extends BaseLevel {
 
         this.toolbox = new Toolbox();
         this.toolbox.addControl("tell");
-        this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
+        this.toolbox.addClass("SmallRobot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
             model.Robot.prototype.turnRight,
         ]);
-        this.toolbox.addObject("robot", "Robot");
+        this.toolbox.addObject("smallRobot", "SmallRobot");
 
         this.toolbox.addControl("controls_repeat_ext");
         this.toolbox.addNumber(0);
@@ -50,7 +50,7 @@ export class FuncDefsLevel1 extends BaseLevel {
             name: "object",
             children: [
                 {
-                    name: "Robot",
+                    name: "SmallRobot",
                     children: [],
                     methods: ["moveForward", "turnRight"],
                     userMethods: ["temporaryLeft"],
@@ -84,7 +84,7 @@ export class FuncDefsLevel1 extends BaseLevel {
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
         this.initWorld(map);
-        this.robot = new model.Robot("robot", 2, 3, model.Direction.SOUTH,
+        this.robot = new model.Robot("smallRobot", 2, 3, model.Direction.SOUTH,
                                      this.modelWorld, this.foreground, "robot");
         this.iron = new model.Iron("iron", 4, 5,
                                    this.modelWorld, this.middle, "iron");
