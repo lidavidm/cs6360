@@ -5,17 +5,21 @@ import * as TooltipView from "views/tooltip";
 import * as python from "execution/python";
 import * as asset from "asset";
 
-export class HierarchyLevel2 extends BaseLevel {
+export class HierarchyLevel3 extends BaseLevel {
     public robot: model.Robot;
+    public robot2: model.Robot;
     public iron: model.Iron;
+    public iron2: model.Iron;
+    public iron3: model.Iron;
+    public iron4: model.Iron;
 
     initialize() {
         super.initialize();
 
-        this.missionTitle = "Reinforcements";
+        this.missionTitle = "Generation Gap";
         this.missionText = [
-            "Time to build another robot!",
-            "Use the 'new' block to CONSTRUCT an additional Robot.",
+            "Use both of your robots to pick up some Iron! (feel free to make more, too!)",
+            "Note that the new one can't use advance because a SUPERCLASS doesn't have access to SUBCLASS information.",
         ];
 
         this.toolbox = new Toolbox();
@@ -35,33 +39,56 @@ export class HierarchyLevel2 extends BaseLevel {
         ]);
 
         this.toolbox.addObject("smallRobot", "SmallRobot");
+        this.toolbox.addObject("robot", "Robot");
 
         this.toolbox.addControl("controls_repeat_ext");
         this.toolbox.addNumber(0);
 
         this.objectives = [
             {
-                objective: `Build another Robot [${asset.Robot.Basic}]`,
+                objective: `Collect 1 Iron with smallRobot [${asset.Robot.Basic}]`,
                 completed: false,
                 predicate: (level) => {
-                    for (let object of this.modelWorld.getObjectByLoc(17, 4)){
-                        if (object !== null && object.getName() !== "smallRobot"){
-                            return true;
+                    return this.robot.lastPickedUp() !== null;
+                }
+            },
+            {
+                objective: `Collect 1 Iron with robot [${asset.Robot.Basic}]`,
+                completed: false,
+                predicate: (level) => {
+                    return this.robot2.lastPickedUp() !== null;
+                }
+            },
+            {
+                objective: `Collect 4 Iron [${asset.Iron.Basic}] total.`,
+                completed: false,
+                predicate: (level) => {
+                    for (let object of this.modelWorld.getObjectByLoc(13, 3)){
+                        if (object !== null && object.getName() === "iron"){
+                            return false;
                         }
                     }
-                    return false;
+                    for (let object of this.modelWorld.getObjectByLoc(14, 5)){
+                        if (object !== null && object.getName() === "iron2"){
+                            return false;
+                        }
+                    }
+                    for (let object of this.modelWorld.getObjectByLoc(18, 8)){
+                        if (object !== null && object.getName() === "iron3"){
+                            return false;
+                        }
+                    }
+                    for (let object of this.modelWorld.getObjectByLoc(16, 10)){
+                        if (object !== null && object.getName() === "iron4"){
+                            return false;
+                        }
+                    }
+                    return true;
                 }
             },
         ];
 
-        this.allTooltips = [
-            [
-                new TooltipView.Tooltip(TooltipView.Region.Toolbox,
-                    "Use the blue prints object to create a new robot!"),
-                new TooltipView.Tooltip(TooltipView.Region.ButtonBar,
-                    "Get overviews of the blue prints in the object heirarchy."),
-            ],
-        ];
+        this.allTooltips = [[]];
 
         this.hierarchy = {
             name: "object",
@@ -110,6 +137,18 @@ export class HierarchyLevel2 extends BaseLevel {
         this.initWorld(map);
         this.robot = new model.Robot("smallRobot", 17, 3, model.Direction.NORTH,
                                      this.modelWorld, this.foreground, "robot");
+        this.robot2 = new model.Robot("robot", 17, 4, model.Direction.WEST,
+                                    this.modelWorld, this.foreground, "robot");
+
+        this.iron = new model.Iron("iron", 13, 3,
+                                   this.modelWorld, this.middle, "iron");
+        this.iron2 = new model.Iron("iron1", 14, 5,
+                                   this.modelWorld, this.middle, "iron");
+        this.iron3 = new model.Iron("iron2", 18, 8,
+                                   this.modelWorld, this.middle, "iron");
+        this.iron4 = new model.Iron("iron3", 16, 10,
+                                  this.modelWorld, this.middle, "iron");
+
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
