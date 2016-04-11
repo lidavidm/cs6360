@@ -26,7 +26,7 @@ export class HierarchyLevel3 extends BaseLevel {
         this.toolbox.addControl("tell");
         this.toolbox.addControl("new");
         this.toolbox.addClasses(["Robot"]);
-        this.toolbox.addClass("SmallRobot", asset.Robot.Basic, model.Robot, [
+        this.toolbox.addClass("SmallRobot", asset.Robot.Red, model.Robot, [
             model.Robot.prototype.moveForward,
             model.Robot.prototype.turnRight,
             model.Robot.prototype.mine,
@@ -46,7 +46,7 @@ export class HierarchyLevel3 extends BaseLevel {
 
         this.objectives = [
             {
-                objective: `Collect 1 Iron with smallRobot [${asset.Robot.Basic}]`,
+                objective: `Collect 1 Iron with smallRobot [${asset.Robot.Red}]`,
                 completed: false,
                 predicate: (level) => {
                     return this.robot.lastPickedUp() !== null;
@@ -115,7 +115,8 @@ export class HierarchyLevel3 extends BaseLevel {
 
         this.game.load.image("tiles", "assets/tilesets/cave2.png");
         this.game.load.tilemap("outside", "assets/maps/outside.json", null, Phaser.Tilemap.TILED_JSON);
-        this.game.load.image("robot", asset.Robot.Basic);
+        this.game.load.image("robot", asset.Robot.Red);
+        this.game.load.image("robot2", asset.Robot.Basic);
         this.game.load.image("iron", asset.Iron.Basic);
     }
 
@@ -138,7 +139,7 @@ export class HierarchyLevel3 extends BaseLevel {
         this.robot = new model.Robot("smallRobot", 17, 3, model.Direction.NORTH,
                                      this.modelWorld, this.foreground, "robot");
         this.robot2 = new model.Robot("robot", 17, 4, model.Direction.WEST,
-                                    this.modelWorld, this.foreground, "robot");
+                                    this.modelWorld, this.foreground, "robot2");
 
         this.iron = new model.Iron("iron", 13, 3,
                                    this.modelWorld, this.middle, "iron");
@@ -158,6 +159,16 @@ export class HierarchyLevel3 extends BaseLevel {
         if (!this.modelWorld.passable(17, 4)) {
             return null;
         }
+
+        let sprite: string;
+
+        if ( className === "SmallRobot" ){
+            sprite = "robot";
+        }
+        else{
+            sprite = "robot2";
+        }
+
         return new model.Robot(varName, 17, 4, model.Direction.WEST,
                                this.modelWorld, this.foreground, "robot");
     }

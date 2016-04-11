@@ -40,7 +40,7 @@ export class HierarchyLevel1 extends BaseLevel {
 
         this.objectives = [
             {
-                objective: `Make the robot [${asset.Robot.Basic}] turn left (again).`,
+                objective: `Make the robot [${asset.Robot.Red}] turn left (again).`,
                 completed: false,
                 predicate: (level) => {
                     return level.robot.orientation == model.Direction.NORTH;
@@ -89,7 +89,7 @@ export class HierarchyLevel1 extends BaseLevel {
 
         this.game.load.image("tiles", "assets/tilesets/cave2.png");
         this.game.load.tilemap("outside", "assets/maps/outside.json", null, Phaser.Tilemap.TILED_JSON);
-        this.game.load.image("robot", asset.Robot.Basic);
+        this.game.load.image("robot", asset.Robot.Red);
         this.game.load.image("iron", asset.Iron.Basic);
     }
 

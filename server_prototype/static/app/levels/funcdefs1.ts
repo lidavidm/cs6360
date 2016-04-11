@@ -18,7 +18,7 @@ export class FuncDefsLevel1 extends BaseLevel {
 
         this.toolbox = new Toolbox();
         this.toolbox.addControl("tell");
-        this.toolbox.addClass("SmallRobot", asset.Robot.Basic, model.Robot, [
+        this.toolbox.addClass("SmallRobot", asset.Robot.Red, model.Robot, [
             model.Robot.prototype.moveForward,
             model.Robot.prototype.turnRight,
         ]);
@@ -29,7 +29,7 @@ export class FuncDefsLevel1 extends BaseLevel {
 
         this.objectives = [
             {
-                objective: `Make the robot [${asset.Robot.Basic}] turn left.`,
+                objective: `Make the robot [${asset.Robot.Red}] turn left.`,
                 completed: false,
                 predicate: (level) => {
                     return level.robot.orientation == model.Direction.EAST;
@@ -64,7 +64,7 @@ export class FuncDefsLevel1 extends BaseLevel {
 
         this.game.load.image("tiles", "assets/tilesets/cave2.png");
         this.game.load.tilemap("outside", "assets/maps/outside.json", null, Phaser.Tilemap.TILED_JSON);
-        this.game.load.image("robot", asset.Robot.Basic);
+        this.game.load.image("robot", asset.Robot.Red);
         this.game.load.image("iron", "assets/sprites/iron.png");
     }
 

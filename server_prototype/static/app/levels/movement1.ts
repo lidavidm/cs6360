@@ -19,7 +19,7 @@ export class MovementLevel1 extends BaseLevel {
 
         let tells = this.toolbox.addControl("tell");
 
-        let methods = this.toolbox.addClass("SmallRobot", asset.Robot.Basic, model.Robot, [
+        let methods = this.toolbox.addClass("SmallRobot", asset.Robot.Red, model.Robot, [
             model.Robot.prototype.moveForward,
         ]);
 
@@ -32,7 +32,7 @@ export class MovementLevel1 extends BaseLevel {
 
         this.objectives = [
             {
-                objective: `Move the robot [${asset.Robot.Basic}] forward`,
+                objective: `Move the robot [${asset.Robot.Red}] forward`,
                 completed: false,
                 predicate: (level) => {
                     return level.robot.getX() === 2 && level.robot.getY() === 2;
@@ -60,7 +60,7 @@ export class MovementLevel1 extends BaseLevel {
 
         this.game.load.image("tiles", "assets/tilesets/cave2.png");
         this.game.load.tilemap("movement1", "assets/maps/movement1.json", null, Phaser.Tilemap.TILED_JSON);
-        this.game.load.image("robot", asset.Robot.Basic);
+        this.game.load.image("robot", asset.Robot.Red);
     }
 
     create() {

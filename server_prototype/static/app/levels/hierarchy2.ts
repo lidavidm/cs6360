@@ -22,7 +22,7 @@ export class HierarchyLevel2 extends BaseLevel {
         this.toolbox.addControl("tell");
         this.toolbox.addControl("new");
         this.toolbox.addClasses(["Robot"]);
-        this.toolbox.addClass("SmallRobot", asset.Robot.Basic, model.Robot, [
+        this.toolbox.addClass("SmallRobot", asset.Robot.Red, model.Robot, [
             model.Robot.prototype.moveForward,
             model.Robot.prototype.turnRight,
             model.Robot.prototype.mine,
@@ -41,7 +41,7 @@ export class HierarchyLevel2 extends BaseLevel {
 
         this.objectives = [
             {
-                objective: `Build another Robot [${asset.Robot.Basic}]`,
+                objective: `Build a normal Robot [${asset.Robot.Basic}]`,
                 completed: false,
                 predicate: (level) => {
                     for (let object of this.modelWorld.getObjectByLoc(17, 4)){
@@ -88,7 +88,8 @@ export class HierarchyLevel2 extends BaseLevel {
 
         this.game.load.image("tiles", "assets/tilesets/cave2.png");
         this.game.load.tilemap("outside", "assets/maps/outside.json", null, Phaser.Tilemap.TILED_JSON);
-        this.game.load.image("robot", asset.Robot.Basic);
+        this.game.load.image("robot", asset.Robot.Red);
+        this.game.load.image("robot2", asset.Robot.Basic);
         this.game.load.image("iron", asset.Iron.Basic);
     }
 
@@ -120,6 +121,6 @@ export class HierarchyLevel2 extends BaseLevel {
             return null;
         }
         return new model.Robot(varName, 17, 4, model.Direction.WEST,
-                               this.modelWorld, this.foreground, "robot");
+                               this.modelWorld, this.foreground, "robot2");
     }
 }
