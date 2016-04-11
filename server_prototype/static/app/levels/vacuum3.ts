@@ -3,7 +3,8 @@ import {BaseLevel, Toolbox} from "../level";
 import * as TooltipView from "../views/tooltip";
 import * as asset from "asset";
 
-export class VacuumLevel1 extends BaseLevel {
+// Goal: write a vacuum method
+export class VacuumLevel3 extends BaseLevel {
     public modelWorld: model.World;
     public robot: model.Robot;
     public irons: model.Iron[];
@@ -11,9 +12,9 @@ export class VacuumLevel1 extends BaseLevel {
     initialize() {
         super.initialize();
 
-        this.missionTitle = "Raw Materials";
+        this.missionTitle = "Vacuum";
         this.missionText = [
-            "It looks like this robot is going to kick the bucket soon. Before that happens, let's get some more iron to build a new one."
+            "We managed to upload a temporary fix to the robot's loops. You might want to use one to implement a more powerful mining method."
         ];
 
         this.toolbox = new Toolbox();
@@ -21,15 +22,36 @@ export class VacuumLevel1 extends BaseLevel {
         this.toolbox.addControl("controls_repeat_ext");
         this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
-            model.Robot.prototype.pickUpUnderneath,
             model.Robot.prototype.moveBackward,
+            model.Robot.prototype.turnRight,
+            model.Robot.prototype.mine,
         ]);
         this.toolbox.addObject("robot", "Robot");
         this.toolbox.addNumber();
 
+        let headlessWorkspace = new Blockly.Workspace();
         this.objectives = [
             {
-                objective: "Collect 3 iron",
+                objective: `Define a 'vacuum' method`,
+                completed: false,
+                predicate: (level) => {
+                    let impl = level.program.savegame.load({
+                        className: "Robot",
+                        method: "vacuum"
+                    });
+                    headlessWorkspace.clear();
+                    if (impl.workspace) {
+                        Blockly.Xml.domToWorkspace(headlessWorkspace, impl.workspace);
+                        if (headlessWorkspace.getTopBlocks()) {
+                            // accept any implementation
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            },
+            {
+                objective: "Collect 10 iron",
                 completed: false,
                 predicate: (level) => {
                     for (var iron of level.irons) {
@@ -38,14 +60,6 @@ export class VacuumLevel1 extends BaseLevel {
                         }
                     }
                     return true;
-                }
-            },
-            {
-                objective: `Move the robot [${asset.Robot.Basic}] back to base`,
-                completed: false,
-                predicate: (level) => {
-                    return level.objectives[0].completed &&
-                        level.robot.getX() === 1 && level.robot.getY() === 1;
                 }
             },
         ];
@@ -57,14 +71,14 @@ export class VacuumLevel1 extends BaseLevel {
                     name: "Robot",
                     children: [],
                     methods: ["moveForward", "moveBackward", "turnRight", "mine"],
-                    userMethods: []
+                    userMethods: ["moveAndMine", "vacuum"],
                 },
             ],
         };
 
         this.allTooltips = [
             [
-                new TooltipView.Tooltip(TooltipView.Region.Toolbox, "Ugh, looks like loops are broken again. You'll have to make do for now."),
+                new TooltipView.Tooltip(TooltipView.Region.Toolbox, "One idea is to implement vacuum so that it mines a line of ten iron."),
             ]
         ];
     }
@@ -74,8 +88,8 @@ export class VacuumLevel1 extends BaseLevel {
 
         this.game.load.tilemap("prototype", "assets/maps/prototype.json", null, Phaser.Tilemap.TILED_JSON);
         this.game.load.image("tiles", "assets/tilesets/cave.png");
-        this.game.load.image("robot", "assets/sprites/robot_3Dblue.png");
-        this.game.load.image("iron", "assets/sprites/iron.png");
+        this.game.load.image("robot", asset.Robot.Basic);
+        this.game.load.image("iron", asset.Iron.Basic);
     }
 
     create() {
@@ -92,12 +106,10 @@ export class VacuumLevel1 extends BaseLevel {
         this.robot = new model.Robot("robot", 1, 1, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
         this.irons = [];
-        this.irons.push(new model.Iron("iron", 3, 1,
+        for (var i = 0; i < 10; i++) {
+            this.irons.push(new model.Iron("iron", 2, 2 + i,
                                    this.modelWorld, this.middle, "iron"));
-        this.irons.push(new model.Iron("iron", 4, 1,
-                                   this.modelWorld, this.middle, "iron"));
-        this.irons.push(new model.Iron("iron", 5, 1,
-                                   this.modelWorld, this.middle, "iron"));
+        }
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);

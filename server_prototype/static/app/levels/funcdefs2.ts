@@ -5,22 +5,25 @@ import * as TooltipView from "views/tooltip";
 import * as python from "execution/python";
 import * as asset from "asset";
 
-export class FuncDefsLevel1 extends BaseLevel {
+export class FuncDefsLevel2 extends BaseLevel {
     public robot: model.Robot;
     public iron: model.Iron;
 
     initialize() {
         super.initialize();
 
-        this.missionTitle = "Writing Left";
-
-        this.missionText = ["You need to get your robot back to base! Start by writing and using a function to turn left."];
+        this.missionTitle = "Restock";
+        this.missionText = [
+            "Your robot's mining functionality is back online!",
+            "Pick up some iron on the way back to base.",
+        ];
 
         this.toolbox = new Toolbox();
         this.toolbox.addControl("tell");
         this.toolbox.addClass("SmallRobot", asset.Robot.Red, model.Robot, [
             model.Robot.prototype.moveForward,
             model.Robot.prototype.turnRight,
+            model.Robot.prototype.mine,
         ]);
         this.toolbox.addObject("smallRobot", "SmallRobot");
 
@@ -29,10 +32,18 @@ export class FuncDefsLevel1 extends BaseLevel {
 
         this.objectives = [
             {
-                objective: `Make the robot [${asset.Robot.Red}] turn left.`,
+                objective: `Pick up some Iron [${asset.Iron.Basic}].`,
                 completed: false,
                 predicate: (level) => {
-                    return level.robot.orientation == model.Direction.EAST;
+                    return level.robot.lastPickedUp() != null;
+                }
+            },
+            {
+                objective: `Return to base.`,
+                completed: false,
+                predicate: (level) => {
+                    return level.objectives[0].completed &&
+                        level.robot.getX() === 17 && level.robot.getY() === 4;
                 }
             },
         ];
@@ -40,9 +51,9 @@ export class FuncDefsLevel1 extends BaseLevel {
         this.allTooltips = [
             [
                 new TooltipView.Tooltip(TooltipView.Region.Toolbox,
-                    "There's a turnLeft block, but it doesn't do anything yet."),
+                    "Use your new function to get to the iron!"),
                 new TooltipView.Tooltip(TooltipView.Region.ButtonBar,
-                    "Check the object heirarchy to edit your robot's code!"),
+                    "Hint: save time by putting a loop repeatedly telling the robot to move forward inside a function"),
             ],
         ];
 
@@ -52,8 +63,8 @@ export class FuncDefsLevel1 extends BaseLevel {
                 {
                     name: "SmallRobot",
                     children: [],
-                    methods: ["moveForward", "turnRight"],
-                    userMethods: ["temporaryLeft"],
+                    methods: ["moveForward", "turnRight", "mine"],
+                    userMethods: ["temporaryLeft", "advance"],
                 },
             ],
         };
@@ -65,7 +76,7 @@ export class FuncDefsLevel1 extends BaseLevel {
         this.game.load.image("tiles", "assets/tilesets/cave2.png");
         this.game.load.tilemap("outside", "assets/maps/outside.json", null, Phaser.Tilemap.TILED_JSON);
         this.game.load.image("robot", asset.Robot.Red);
-        this.game.load.image("iron", "assets/sprites/iron.png");
+        this.game.load.image("iron", asset.Iron.Basic);
     }
 
     create() {
@@ -83,8 +94,9 @@ export class FuncDefsLevel1 extends BaseLevel {
 
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
-        this.initWorld(map);
-        this.robot = new model.Robot("smallRobot", 2, 3, model.Direction.SOUTH,
+        this.initWorld(map)
+
+        this.robot = new model.Robot("smallRobot", 2, 3, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
         this.iron = new model.Iron("iron", 4, 5,
                                    this.modelWorld, this.middle, "iron");

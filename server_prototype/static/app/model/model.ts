@@ -849,13 +849,35 @@ export class Robot extends WorldObject {
         }
     }
 
+    @blocklyMethod("turnLeft", "turn left")
+    turnLeft() {
+        if (this.destructed) {
+            throw new RangeError("Self destructed, can't move!");
+        }
+
+        switch (this.orientation) {
+        case Direction.NORTH:
+            this.setOrientation(Direction.WEST);
+            break;
+        case Direction.EAST:
+            this.setOrientation(Direction.NORTH);
+            break;
+        case Direction.SOUTH:
+            this.setOrientation(Direction.EAST);
+            break;
+        case Direction.WEST:
+            this.setOrientation(Direction.SOUTH);
+            break;
+        }
+    }
+
     /*
      * Tries to pick up one obeject on the same tile as this Robot. Which object
      * is unspecified. Returns a promise that is resolved once the target object's
      * pick up animation plays, or rejects if the object is not Iron
      */
-    @blocklyMethod("pickUpUnderneath", "pick up what's underneath me")
-    pickUpUnderneath() {
+    @blocklyMethod("mine", "mine")
+    mine() {
         if (this.destructed) {
             throw new RangeError("Self destructed, can't pick up anything!");
         }

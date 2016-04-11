@@ -12,14 +12,14 @@ export class MovementLevel2 extends BaseLevel {
 
         this.toolbox = new Toolbox();
         this.toolbox.addControl("tell");
-        this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
+        this.toolbox.addClass("SmallRobot", asset.Robot.Red, model.Robot, [
             model.Robot.prototype.moveForward,
         ]);
-        this.toolbox.addObject("robot", "Robot");
+        this.toolbox.addObject("smallRobot", "SmallRobot");
 
         this.objectives = [
             {
-                objective: `Move the robot [${asset.Robot.Basic}] forward 4 more times`,
+                objective: `Move the robot [${asset.Robot.Red}] forward 4 more times`,
                 completed: false,
                 predicate: (level) => {
                     return level.robot.getX() === 6 && level.robot.getY() === 2;
@@ -29,8 +29,6 @@ export class MovementLevel2 extends BaseLevel {
 
         this.allTooltips = [
             [
-                new TooltipView.Tooltip(TooltipView.Region.Toolbox,
-                    "We've got your commands sorted out now! Try building them yourself."),
                 new TooltipView.Tooltip(TooltipView.Region.Workspace,
                     "Right click and select duplicate to copy a command."),
             ],
@@ -47,7 +45,7 @@ export class MovementLevel2 extends BaseLevel {
 
         this.game.load.image("tiles", "assets/tilesets/cave2.png");
         this.game.load.tilemap("movement1", "assets/maps/movement1.json", null, Phaser.Tilemap.TILED_JSON);
-        this.game.load.image("robot", asset.Robot.Basic);
+        this.game.load.image("robot", asset.Robot.Red);
     }
 
     create() {
@@ -66,7 +64,7 @@ export class MovementLevel2 extends BaseLevel {
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
         this.initWorld(map);
-        this.robot = new model.Robot("robot", 2, 2, model.Direction.EAST,
+        this.robot = new model.Robot("smallRobot", 2, 2, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
 
         this.modelWorld.log.recordInitEnd();

@@ -3,7 +3,8 @@ import {BaseLevel, Toolbox} from "../level";
 import * as TooltipView from "../views/tooltip";
 import * as asset from "asset";
 
-export class VacuumLevel1 extends BaseLevel {
+// Goal: Go nuts. Demonstrate the value of concise code.
+export class VacuumLevel4 extends BaseLevel {
     public modelWorld: model.World;
     public robot: model.Robot;
     public irons: model.Iron[];
@@ -11,9 +12,9 @@ export class VacuumLevel1 extends BaseLevel {
     initialize() {
         super.initialize();
 
-        this.missionTitle = "Raw Materials";
+        this.missionTitle = "Fe-esta";
         this.missionText = [
-            "It looks like this robot is going to kick the bucket soon. Before that happens, let's get some more iron to build a new one."
+            "One last mission for this robot before we decommission it."
         ];
 
         this.toolbox = new Toolbox();
@@ -21,15 +22,17 @@ export class VacuumLevel1 extends BaseLevel {
         this.toolbox.addControl("controls_repeat_ext");
         this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
-            model.Robot.prototype.pickUpUnderneath,
             model.Robot.prototype.moveBackward,
+            model.Robot.prototype.turnRight,
+            model.Robot.prototype.turnLeft,
+            model.Robot.prototype.mine,
         ]);
         this.toolbox.addObject("robot", "Robot");
         this.toolbox.addNumber();
 
         this.objectives = [
             {
-                objective: "Collect 3 iron",
+                objective: "Collect all the iron (30)",
                 completed: false,
                 predicate: (level) => {
                     for (var iron of level.irons) {
@@ -40,15 +43,9 @@ export class VacuumLevel1 extends BaseLevel {
                     return true;
                 }
             },
-            {
-                objective: `Move the robot [${asset.Robot.Basic}] back to base`,
-                completed: false,
-                predicate: (level) => {
-                    return level.objectives[0].completed &&
-                        level.robot.getX() === 1 && level.robot.getY() === 1;
-                }
-            },
         ];
+
+        this.allTooltips = [[]];
 
         this.hierarchy = {
             name: "object",
@@ -56,17 +53,11 @@ export class VacuumLevel1 extends BaseLevel {
                 {
                     name: "Robot",
                     children: [],
-                    methods: ["moveForward", "moveBackward", "turnRight", "mine"],
-                    userMethods: []
+                    methods: ["moveForward", "turnRight", "turnLeft", "mine", "moveBackward"],
+                    userMethods: ["moveAndMine", "vacuum"],
                 },
             ],
         };
-
-        this.allTooltips = [
-            [
-                new TooltipView.Tooltip(TooltipView.Region.Toolbox, "Ugh, looks like loops are broken again. You'll have to make do for now."),
-            ]
-        ];
     }
 
     preload() {
@@ -74,8 +65,8 @@ export class VacuumLevel1 extends BaseLevel {
 
         this.game.load.tilemap("prototype", "assets/maps/prototype.json", null, Phaser.Tilemap.TILED_JSON);
         this.game.load.image("tiles", "assets/tilesets/cave.png");
-        this.game.load.image("robot", "assets/sprites/robot_3Dblue.png");
-        this.game.load.image("iron", "assets/sprites/iron.png");
+        this.game.load.image("robot", asset.Robot.Basic);
+        this.game.load.image("iron", asset.Iron.Basic);
     }
 
     create() {
@@ -89,15 +80,16 @@ export class VacuumLevel1 extends BaseLevel {
         this.cursors = this.game.input.keyboard.createCursorKeys();
         this.initWorld(map);
 
-        this.robot = new model.Robot("robot", 1, 1, model.Direction.EAST,
+        this.robot = new model.Robot("robot", 1, 3, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
         this.irons = [];
-        this.irons.push(new model.Iron("iron", 3, 1,
+        for (var i = 0; i < 3; i++) {
+            for (var j = 0; j < 10; j++) {
+                this.irons.push(new model.Iron("iron", 2 + j, 3 + i,
                                    this.modelWorld, this.middle, "iron"));
-        this.irons.push(new model.Iron("iron", 4, 1,
-                                   this.modelWorld, this.middle, "iron"));
-        this.irons.push(new model.Iron("iron", 5, 1,
-                                   this.modelWorld, this.middle, "iron"));
+            }
+            
+        }
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);

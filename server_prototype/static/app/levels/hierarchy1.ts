@@ -5,23 +5,34 @@ import * as TooltipView from "views/tooltip";
 import * as python from "execution/python";
 import * as asset from "asset";
 
-export class FuncDefsLevel1 extends BaseLevel {
+export class HierarchyLevel1 extends BaseLevel {
     public robot: model.Robot;
     public iron: model.Iron;
 
     initialize() {
         super.initialize();
 
-        this.missionTitle = "Writing Left";
-
-        this.missionText = ["You need to get your robot back to base! Start by writing and using a function to turn left."];
+        this.missionTitle = "Family Values";
+        this.missionText = [
+            "We've found the blueprints for a normal robot.",
+            "Robot is a SUPERCLASS of your SmallRobot, so smallRobot understands the same commands as Robot.",
+            "Try telling smallRobot to do things from the Robot blueprints.",
+        ];
 
         this.toolbox = new Toolbox();
         this.toolbox.addControl("tell");
-        this.toolbox.addClass("SmallRobot", asset.Robot.Red, model.Robot, [
+        this.toolbox.addClass("SmallRobot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
             model.Robot.prototype.turnRight,
+            model.Robot.prototype.mine,
         ]);
+        this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
+            model.Robot.prototype.moveForward,
+            model.Robot.prototype.turnRight,
+            model.Robot.prototype.turnLeft,
+            model.Robot.prototype.mine,
+        ]);
+
         this.toolbox.addObject("smallRobot", "SmallRobot");
 
         this.toolbox.addControl("controls_repeat_ext");
@@ -29,10 +40,17 @@ export class FuncDefsLevel1 extends BaseLevel {
 
         this.objectives = [
             {
-                objective: `Make the robot [${asset.Robot.Red}] turn left.`,
+                objective: `Make the robot [${asset.Robot.Red}] turn left (again).`,
                 completed: false,
                 predicate: (level) => {
-                    return level.robot.orientation == model.Direction.EAST;
+                    return level.robot.orientation == model.Direction.NORTH;
+                }
+            },
+            {
+                objective: `Gather more iron [${asset.Iron.Basic}]!`,
+                completed: false,
+                predicate: (level) => {
+                    return level.robot.lastPickedUp() != null;
                 }
             },
         ];
@@ -40,9 +58,9 @@ export class FuncDefsLevel1 extends BaseLevel {
         this.allTooltips = [
             [
                 new TooltipView.Tooltip(TooltipView.Region.Toolbox,
-                    "There's a turnLeft block, but it doesn't do anything yet."),
+                    "Use turnLeft from the robot blueprints!"),
                 new TooltipView.Tooltip(TooltipView.Region.ButtonBar,
-                    "Check the object heirarchy to edit your robot's code!"),
+                    "Check out the updated hierarchy!"),
             ],
         ];
 
@@ -50,10 +68,17 @@ export class FuncDefsLevel1 extends BaseLevel {
             name: "object",
             children: [
                 {
-                    name: "SmallRobot",
-                    children: [],
-                    methods: ["moveForward", "turnRight"],
-                    userMethods: ["temporaryLeft"],
+                    name: "Robot",
+                    children: [
+                        {
+                            name: "SmallRobot",
+                            children: [],
+                            methods: ["moveForward", "turnRight", "mine"],
+                            userMethods: ["advance"],
+                        },
+                    ],
+                    methods: ["moveForward", "turnRight", "turnLeft", "mine"],
+                    userMethods: [],
                 },
             ],
         };
@@ -65,7 +90,7 @@ export class FuncDefsLevel1 extends BaseLevel {
         this.game.load.image("tiles", "assets/tilesets/cave2.png");
         this.game.load.tilemap("outside", "assets/maps/outside.json", null, Phaser.Tilemap.TILED_JSON);
         this.game.load.image("robot", asset.Robot.Red);
-        this.game.load.image("iron", "assets/sprites/iron.png");
+        this.game.load.image("iron", asset.Iron.Basic);
     }
 
     create() {
@@ -84,11 +109,10 @@ export class FuncDefsLevel1 extends BaseLevel {
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
         this.initWorld(map);
-        this.robot = new model.Robot("smallRobot", 2, 3, model.Direction.SOUTH,
+        this.robot = new model.Robot("smallRobot", 17, 4, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
-        this.iron = new model.Iron("iron", 4, 5,
+        this.iron = new model.Iron("iron", 17, 3,
                                    this.modelWorld, this.middle, "iron");
-
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
     }

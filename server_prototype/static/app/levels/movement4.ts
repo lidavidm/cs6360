@@ -12,18 +12,18 @@ export class MovementLevel4 extends BaseLevel {
 
         this.toolbox = new Toolbox();
         this.toolbox.addControl("tell");
-        this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
+        this.toolbox.addClass("SmallRobot", asset.Robot.Red, model.Robot, [
             model.Robot.prototype.moveForward,
             model.Robot.prototype.turnRight,
         ]);
-        this.toolbox.addObject("robot", "Robot");
+        this.toolbox.addObject("smallRobot", "SmallRobot");
 
         this.toolbox.addControl("controls_repeat_ext");
         this.toolbox.addNumber(0);
 
         this.objectives = [
             {
-                objective: `Move the robot [${asset.Robot.Basic}] to the exit!`,
+                objective: `Move the robot [${asset.Robot.Red}] to the exit!`,
                 completed: false,
                 predicate: (level) => {
                     return level.robot.getX() === 7 && level.robot.getY() === 8;
@@ -52,7 +52,7 @@ export class MovementLevel4 extends BaseLevel {
 
         this.game.load.image("tiles", "assets/tilesets/cave2.png");
         this.game.load.tilemap("movement1", "assets/maps/movement1.json", null, Phaser.Tilemap.TILED_JSON);
-        this.game.load.image("robot", asset.Robot.Basic);
+        this.game.load.image("robot", asset.Robot.Red);
     }
 
     create() {
@@ -71,7 +71,7 @@ export class MovementLevel4 extends BaseLevel {
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
         this.initWorld(map);
-        this.robot = new model.Robot("robot", 7, 3, model.Direction.SOUTH   ,
+        this.robot = new model.Robot("smallRobot", 7, 3, model.Direction.SOUTH   ,
                                      this.modelWorld, this.foreground, "robot");
 
         this.modelWorld.log.recordInitEnd();

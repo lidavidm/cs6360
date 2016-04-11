@@ -16,12 +16,14 @@ export class MovementLevel1 extends BaseLevel {
         this.missionTitle = "Test Drive";
 
         this.toolbox = new Toolbox();
-        this.toolbox.addControl("tell");
-        let methods = this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
+
+        let tells = this.toolbox.addControl("tell");
+
+        let methods = this.toolbox.addClass("SmallRobot", asset.Robot.Red, model.Robot, [
             model.Robot.prototype.moveForward,
         ]);
 
-        let object = this.toolbox.addObject("robot", "Robot");
+        let object = this.toolbox.addObject("smallRobot", "SmallRobot");
 
         this.fallback = this.toolbox.addControl("tell", false, [], [
             ["OBJECT", object.cloneNode(true)],
@@ -30,7 +32,7 @@ export class MovementLevel1 extends BaseLevel {
 
         this.objectives = [
             {
-                objective: `Move the robot [${asset.Robot.Basic}] forward`,
+                objective: `Move the robot [${asset.Robot.Red}] forward`,
                 completed: false,
                 predicate: (level) => {
                     return level.robot.getX() === 2 && level.robot.getY() === 2;
@@ -58,7 +60,7 @@ export class MovementLevel1 extends BaseLevel {
 
         this.game.load.image("tiles", "assets/tilesets/cave2.png");
         this.game.load.tilemap("movement1", "assets/maps/movement1.json", null, Phaser.Tilemap.TILED_JSON);
-        this.game.load.image("robot", asset.Robot.Basic);
+        this.game.load.image("robot", asset.Robot.Red);
     }
 
     create() {
@@ -79,7 +81,7 @@ export class MovementLevel1 extends BaseLevel {
 
         this.initWorld(map);
 
-        this.robot = new model.Robot("robot", 1, 2, model.Direction.EAST,
+        this.robot = new model.Robot("smallRobot", 1, 2, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
 
         this.modelWorld.log.recordInitEnd();
