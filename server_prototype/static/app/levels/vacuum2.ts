@@ -3,7 +3,7 @@ import {BaseLevel, Toolbox} from "../level";
 import * as TooltipView from "../views/tooltip";
 import * as asset from "asset";
 
-// Goal: write a moveAndMine method and spam it
+// Goal: write a moveAndMine method
 export class VacuumLevel2 extends BaseLevel {
     public modelWorld: model.World;
     public robot: model.Robot;
@@ -12,9 +12,9 @@ export class VacuumLevel2 extends BaseLevel {
     initialize() {
         super.initialize();
 
-        this.missionTitle = "Vacuum 2";
+        this.missionTitle = "";
         this.missionText = [
-            "todo"
+            "Repeating 'moveForward' and 'mine' is getting kind of tedious. Try writing a new method."
         ];
 
         this.toolbox = new Toolbox();
@@ -27,9 +27,50 @@ export class VacuumLevel2 extends BaseLevel {
         ]);
         this.toolbox.addObject("robot", "Robot");
 
+        let headlessWorkspace = new Blockly.Workspace();
         this.objectives = [
             {
-                objective: "Collect 10 iron",
+                objective: `Implement moveAndMine`,
+                completed: false,
+                predicate: (level) => {
+                    let impl = level.program.savegame.load({
+                        className: "Robot",
+                        method: "moveAndMine"
+                    });
+                    headlessWorkspace.clear();
+                    if (impl.workspace) {
+                        Blockly.Xml.domToWorkspace(headlessWorkspace, impl.workspace);
+                        let allTopBlocks: any[] = [];
+                        for (let block of headlessWorkspace.getTopBlocks()) {
+                            while (block) {
+                                allTopBlocks.push(block);
+                                block = block.getNextBlock();
+                            }
+                        }
+                        console.log(allTopBlocks);
+                        if (allTopBlocks.length !== 2) {
+                            return false;
+                        }
+                        if (allTopBlocks[0].type != 'tell' || allTopBlocks[1].type != 'tell') {
+                            return false;
+                        }
+                        var object = Blockly.Python.valueToCode(allTopBlocks[0], "OBJECT", Blockly.Python.ORDER_NONE);
+                        var method = allTopBlocks[0].getInputTargetBlock("METHOD").getFieldValue("METHOD_NAME");
+                        if (object != 'self' || method != 'moveForward') {
+                            return false;
+                        }
+                        var object = Blockly.Python.valueToCode(allTopBlocks[1], "OBJECT", Blockly.Python.ORDER_NONE);
+                        var method = allTopBlocks[1].getInputTargetBlock("METHOD").getFieldValue("METHOD_NAME");
+                        if (object != 'self' || method != 'mine') {
+                            return false;
+                        }
+                        return true;
+                    }
+                    return false;
+                }
+            },
+            {
+                objective: "Collect 5 iron",
                 completed: false,
                 predicate: (level) => {
                     for (var iron of level.irons) {
@@ -58,7 +99,7 @@ export class VacuumLevel2 extends BaseLevel {
 
         this.allTooltips = [
             [
-                new TooltipView.Tooltip(TooltipView.Region.Workspace, "")
+                new TooltipView.Tooltip(TooltipView.Region.Toolbox, "moveAndMine should make the robot move one space and mine"),
             ]
         ];
     }
@@ -86,7 +127,7 @@ export class VacuumLevel2 extends BaseLevel {
         this.robot = new model.Robot("robot", 1, 1, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
         this.irons = [];
-        for (var i = 0; i < 10; i++) {
+        for (var i = 0; i < 5; i++) {
             this.irons.push(new model.Iron("iron", 2, 2 + i,
                                    this.modelWorld, this.middle, "iron"));
         }

@@ -3,7 +3,6 @@ import {BaseLevel, Toolbox} from "../level";
 import * as TooltipView from "../views/tooltip";
 import * as asset from "asset";
 
-// Goal: do the same task (moveForward + mine) a couple of times
 export class VacuumLevel1 extends BaseLevel {
     public modelWorld: model.World;
     public robot: model.Robot;
@@ -12,20 +11,21 @@ export class VacuumLevel1 extends BaseLevel {
     initialize() {
         super.initialize();
 
-        this.missionTitle = "Vacuum 1";
+        this.missionTitle = "Raw Materials";
         this.missionText = [
-            "todo"
+            "It looks like this robot is going to kick the bucket soon. Before that happens, let's get some more iron to build a new one."
         ];
 
         this.toolbox = new Toolbox();
         this.toolbox.addControl("tell");
+        this.toolbox.addControl("controls_repeat_ext");
         this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
+            model.Robot.prototype.pickUpUnderneath,
             model.Robot.prototype.moveBackward,
-            model.Robot.prototype.turnRight,
-            model.Robot.prototype.mine,
         ]);
         this.toolbox.addObject("robot", "Robot");
+        this.toolbox.addNumber();
 
         this.objectives = [
             {
@@ -50,7 +50,23 @@ export class VacuumLevel1 extends BaseLevel {
             },
         ];
 
-        this.allTooltips = [[]];
+        this.hierarchy = {
+            name: "object",
+            children: [
+                {
+                    name: "Robot",
+                    children: [],
+                    methods: ["moveForward", "moveBackward", "turnRight", "mine"],
+                    userMethods: []
+                },
+            ],
+        };
+
+        this.allTooltips = [
+            [
+                new TooltipView.Tooltip(TooltipView.Region.Toolbox, "Ugh, looks like loops are broken again. You'll have to make do for now."),
+            ]
+        ];
     }
 
     preload() {
@@ -58,8 +74,8 @@ export class VacuumLevel1 extends BaseLevel {
 
         this.game.load.tilemap("prototype", "assets/maps/prototype.json", null, Phaser.Tilemap.TILED_JSON);
         this.game.load.image("tiles", "assets/tilesets/cave.png");
-        this.game.load.image("robot", asset.Robot.Basic);
-        this.game.load.image("iron", asset.Iron.Basic);
+        this.game.load.image("robot", "assets/sprites/robot_3Dblue.png");
+        this.game.load.image("iron", "assets/sprites/iron.png");
     }
 
     create() {

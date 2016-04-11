@@ -3,7 +3,7 @@ import {BaseLevel, Toolbox} from "../level";
 import * as TooltipView from "../views/tooltip";
 import * as asset from "asset";
 
-// Goal: use loops to get all the iron and move back to the base
+// Goal: write a vacuum method
 export class VacuumLevel3 extends BaseLevel {
     public modelWorld: model.World;
     public robot: model.Robot;
@@ -12,9 +12,9 @@ export class VacuumLevel3 extends BaseLevel {
     initialize() {
         super.initialize();
 
-        this.missionTitle = "Vacuum 3";
+        this.missionTitle = "Vacuum";
         this.missionText = [
-            "todo"
+            "We managed to upload a temporary fix to the robot's loops. You might want to use one to implement a more powerful mining method."
         ];
 
         this.toolbox = new Toolbox();
@@ -29,7 +29,27 @@ export class VacuumLevel3 extends BaseLevel {
         this.toolbox.addObject("robot", "Robot");
         this.toolbox.addNumber();
 
+        let headlessWorkspace = new Blockly.Workspace();
         this.objectives = [
+            {
+                objective: `Define a 'vacuum' method`,
+                completed: false,
+                predicate: (level) => {
+                    let impl = level.program.savegame.load({
+                        className: "Robot",
+                        method: "vacuum"
+                    });
+                    headlessWorkspace.clear();
+                    if (impl.workspace) {
+                        Blockly.Xml.domToWorkspace(headlessWorkspace, impl.workspace);
+                        if (headlessWorkspace.getTopBlocks()) {
+                            // accept any implementation
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            },
             {
                 objective: "Collect 10 iron",
                 completed: false,
@@ -42,14 +62,6 @@ export class VacuumLevel3 extends BaseLevel {
                     return true;
                 }
             },
-            {
-                objective: `Move the robot [${asset.Robot.Basic}] back to base`,
-                completed: false,
-                predicate: (level) => {
-                    return level.objectives[0].completed &&
-                        level.robot.getX() === 1 && level.robot.getY() === 1;
-                }
-            },
         ];
 
         this.hierarchy = {
@@ -58,15 +70,15 @@ export class VacuumLevel3 extends BaseLevel {
                 {
                     name: "Robot",
                     children: [],
-                    methods: ["moveForward", "turnRight", "mine", "moveBackward"],
-                    userMethods: ["moveAndMine"],
+                    methods: ["moveForward", "moveBackward", "turnRight", "mine"],
+                    userMethods: ["moveAndMine", "vacuum"],
                 },
             ],
         };
 
         this.allTooltips = [
             [
-                new TooltipView.Tooltip(TooltipView.Region.Workspace, "")
+                new TooltipView.Tooltip(TooltipView.Region.Toolbox, "One idea is to implement vacuum so that it mines a line of ten iron."),
             ]
         ];
     }

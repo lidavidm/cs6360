@@ -14,7 +14,7 @@ export class VacuumLevel4 extends BaseLevel {
 
         this.missionTitle = "Fe-esta";
         this.missionText = [
-            "todo"
+            "One last mission for this robot before we decommission it."
         ];
 
         this.toolbox = new Toolbox();
@@ -32,7 +32,7 @@ export class VacuumLevel4 extends BaseLevel {
 
         this.objectives = [
             {
-                objective: "Collect all the iron",
+                objective: "Collect all the iron (30)",
                 completed: false,
                 predicate: (level) => {
                     for (var iron of level.irons) {
@@ -54,7 +54,7 @@ export class VacuumLevel4 extends BaseLevel {
                     name: "Robot",
                     children: [],
                     methods: ["moveForward", "turnRight", "turnLeft", "mine", "moveBackward"],
-                    userMethods: ["moveAndMine"],
+                    userMethods: ["moveAndMine", "vacuum"],
                 },
             ],
         };
@@ -80,12 +80,12 @@ export class VacuumLevel4 extends BaseLevel {
         this.cursors = this.game.input.keyboard.createCursorKeys();
         this.initWorld(map);
 
-        this.robot = new model.Robot("robot", 1, 1, model.Direction.EAST,
+        this.robot = new model.Robot("robot", 1, 3, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
         this.irons = [];
-        for (var i = 0; i < 5; i++) {
+        for (var i = 0; i < 3; i++) {
             for (var j = 0; j < 10; j++) {
-                this.irons.push(new model.Iron("iron", 2 + j, 1 + i,
+                this.irons.push(new model.Iron("iron", 2 + j, 3 + i,
                                    this.modelWorld, this.middle, "iron"));
             }
             
