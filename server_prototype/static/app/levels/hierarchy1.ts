@@ -16,7 +16,7 @@ export class HierarchyLevel1 extends BaseLevel {
         this.missionText = [
             "We've found the blueprints for a normal robot.",
             "Robot is a SUPERCLASS of your SmallRobot, so smallRobot understands the same commands as Robot.",
-            "Try telling smallRobot to do things from the Robot blueprints."
+            "Try telling smallRobot to do things from the Robot blueprints.",
         ];
 
         this.toolbox = new Toolbox();
