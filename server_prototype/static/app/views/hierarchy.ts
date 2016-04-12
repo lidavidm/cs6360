@@ -22,14 +22,22 @@ export interface ObjectHierarchy extends d3.layout.tree.Node {
 }
 
 export const Component: _mithril.MithrilComponent<HierarchyController> = <any> {
-    controller: function(): HierarchyController {
-        return {
+    controller: function(args: {
+        event: PubSub,
+    }): HierarchyController {
+        let controller: HierarchyController = {
             tree: null,
             diagonal: null,
             svg: null,
             currentClass: <any> m.prop(null),
             newMethod: m.prop(""),
         };
+
+        args.event.on(BaseLevel.NEXT_LEVEL_LOADED, () => {
+            controller.currentClass(null);
+        });
+
+        return controller;
     },
 
     view: function(controller: HierarchyController, args: {
