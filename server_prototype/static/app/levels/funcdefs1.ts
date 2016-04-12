@@ -40,9 +40,9 @@ export class FuncDefsLevel1 extends BaseLevel {
         this.allTooltips = [
             [
                 new TooltipView.Tooltip(TooltipView.Region.Toolbox,
-                    "There's a turnLeft block, but it doesn't do anything yet."),
+                    "There's a temporaryLeft block, but it doesn't do anything yet."),
                 new TooltipView.Tooltip(TooltipView.Region.ButtonBar,
-                    "Check the object heirarchy to edit your robot's code!"),
+                    "Check the object hierarchy to edit your robot's code!"),
             ],
         ];
 

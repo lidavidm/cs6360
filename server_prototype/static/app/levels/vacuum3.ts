@@ -71,7 +71,7 @@ export class VacuumLevel3 extends BaseLevel {
                     name: "Robot",
                     children: [],
                     methods: ["moveForward", "moveBackward", "turnRight", "mine"],
-                    userMethods: ["moveAndMine", "vacuum"],
+                    userMethods: ["temporaryLeft", "moveAndMine", "vacuum"],
                 },
             ],
         };
@@ -86,28 +86,32 @@ export class VacuumLevel3 extends BaseLevel {
     preload() {
         super.preload();
 
-        this.game.load.tilemap("prototype", "assets/maps/prototype.json", null, Phaser.Tilemap.TILED_JSON);
-        this.game.load.image("tiles", "assets/tilesets/cave.png");
-        this.game.load.image("robot", asset.Robot.Basic);
+        this.game.load.image("tiles", "assets/tilesets/cave2.png");
+        this.game.load.tilemap("outside", "assets/maps/outside.json", null, Phaser.Tilemap.TILED_JSON);
+        this.game.load.image("robot", asset.Robot.Red);
         this.game.load.image("iron", asset.Iron.Basic);
     }
 
     create() {
         super.create();
 
-        let map = this.game.add.tilemap("prototype");
-        map.addTilesetImage("cave", "tiles");
+        let map = this.game.add.tilemap("outside");
+        map.addTilesetImage("cave2", "tiles");
+
         let layer = map.createLayer(
             "Tile Layer 1", this.game.width, this.game.height, this.background);
+
+        let layer2 = map.createLayer(
+            "Tile Layer 2", this.game.width, this.game.height, this.background);
 
         this.cursors = this.game.input.keyboard.createCursorKeys();
         this.initWorld(map);
 
-        this.robot = new model.Robot("robot", 1, 1, model.Direction.EAST,
+        this.robot = new model.Robot("robot", 17, 5, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
         this.irons = [];
         for (var i = 0; i < 10; i++) {
-            this.irons.push(new model.Iron("iron", 2, 2 + i,
+            this.irons.push(new model.Iron("iron", 18, 6 + i,
                                    this.modelWorld, this.middle, "iron"));
         }
 
