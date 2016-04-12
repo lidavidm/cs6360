@@ -56,6 +56,9 @@ export class MovementLevel3 extends BaseLevel {
         // Create the world objects here.
         super.create();
 
+        this.zoomCamera.position.x = 120;
+        this.zoomCamera.position.y = 0;
+
         let map = this.game.add.tilemap("movement1");
         map.addTilesetImage("cave2", "tiles");
 

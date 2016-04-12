@@ -39,8 +39,6 @@ export class MovementLevel4 extends BaseLevel {
 
         this.allTooltips = [
             [
-                new TooltipView.Tooltip(TooltipView.Region.Map,
-                    "Use the arrow keys to look around the map and see what's going on."),
                 new TooltipView.Tooltip(TooltipView.Region.Toolbox,
                     "Loops are back online! Try repeatedly telling the robot to move forward to the exit"),
             ],
@@ -58,6 +56,9 @@ export class MovementLevel4 extends BaseLevel {
     create() {
         // Create the world objects here.
         super.create();
+
+        this.zoomCamera.position.x = 120;
+        this.zoomCamera.position.y = 0;
 
         let map = this.game.add.tilemap("movement1");
         map.addTilesetImage("cave2", "tiles");
