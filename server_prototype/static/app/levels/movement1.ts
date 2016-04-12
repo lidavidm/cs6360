@@ -8,7 +8,7 @@ import * as asset from "asset";
 export class MovementLevel1 extends BaseLevel {
     public robot: model.Robot;
 
-    private fallback: HTMLElement;
+    private fallback: HTMLElement[];
 
     initialize() {
         super.initialize();
@@ -25,10 +25,17 @@ export class MovementLevel1 extends BaseLevel {
 
         let object = this.toolbox.addObject("smallRobot", "SmallRobot");
 
-        this.fallback = this.toolbox.addControl("tell", false, [], [
-            ["OBJECT", object.cloneNode(true)],
-            ["METHOD", methods[0].cloneNode(true)],
-        ]);
+        let fallbackObject = <HTMLElement> object.cloneNode(true);
+        let fallbackMethod = <HTMLElement> methods[0].cloneNode(true);
+        fallbackObject.setAttribute("x", "10");
+        fallbackObject.setAttribute("y", "100");
+        fallbackMethod.setAttribute("x", "200");
+        fallbackMethod.setAttribute("y", "100");
+        this.fallback = <HTMLElement[]> [
+            this.toolbox.addControl("tell", false, [], []),
+            fallbackObject,
+            fallbackMethod,
+        ];
 
         this.objectives = [
             {
@@ -90,7 +97,10 @@ export class MovementLevel1 extends BaseLevel {
 
     fallbackWorkspace(context: EditorContext): HTMLElement {
         if (context.className === MAIN) {
-            return Blockly.Xml.textToDom(`<xml>${this.fallback.outerHTML}</xml>`);
+            let doc = this.fallback.map((node) => {
+                return node.outerHTML;
+            }).join("\n");
+            return Blockly.Xml.textToDom(`<xml>${doc}</xml>`);
         }
         return super.fallbackWorkspace(context);
     }
