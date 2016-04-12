@@ -46,7 +46,7 @@ export const Component: _mithril.MithrilComponent<HierarchyController> = <any> {
             let links = controller.tree.links(nodes);
 
             // Set the distance between the nodes
-            nodes.forEach(function(d) { d.y = d.depth * 150; });
+            nodes.forEach(function(d) { d.y = d.depth * 100; });
 
             // Declare and create the nodes
             let node = controller.svg.selectAll("g.node")
@@ -109,7 +109,7 @@ export const Component: _mithril.MithrilComponent<HierarchyController> = <any> {
             m(".image", {
                 config: function(element: HTMLElement, isInitialized: boolean) {
                     if (!isInitialized) {
-                        let margin = {top: 20, right: 20, bottom: 20, left: 120},
+                        let margin = {top: 20, right: 20, bottom: 20, left: 80},
                         width = 500 - margin.right - margin.left,
                         height = 500 - margin.top - margin.bottom;
 
