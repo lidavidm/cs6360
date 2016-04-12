@@ -93,7 +93,7 @@ Blockly.Blocks['variables_get'] = {
         .appendField(new Blockly.FieldVariable(
         Blockly.Msg.VARIABLES_DEFAULT_NAME), 'VAR');
     this.setOutput(true, "object");
-    this.setTooltip(Blockly.Msg.VARIABLES_GET_TOOLTIP);
+    this.setTooltip("This is one of your objects. Find it on the map!");
     this.contextMenuMsg_ = Blockly.Msg.VARIABLES_GET_CREATE_SET;
   },
   /**

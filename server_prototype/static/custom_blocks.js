@@ -94,6 +94,7 @@ Blockly.Blocks.setClassMethods = function(class_name, method_list) {
                         .sort();
                 }), "METHOD_NAME");
             this.data = class_name;
+            this.setTooltip("A method—something an object of this class knows how to do.");
         },
 
         onchange: function(event) {
@@ -128,7 +129,7 @@ Blockly.Blocks.setClassObjects = function(classes) {
                 .appendField(new Blockly.FieldDropdown(classList), "CLASS_NAME");
             this.setOutput(true, "class");
             this.setColour(330);
-            this.setTooltip('');
+            this.setTooltip("A class object—a blueprint for a new class. Use with the 'new' block!");
             this.setHelpUrl('http://www.example.com/');
             if (this.svgPath_) {
                 this.svgPath_.style.fill = "url(#blueprintGrid)";
@@ -175,7 +176,7 @@ Blockly.Blocks["tell"] = {
             "previousStatement": null,
             "nextStatement": null,
             "colour": 120,
-            "tooltip": "",
+            "tooltip": "Tell an object to do something defined by one of its methods.",
             "helpUrl": "http://www.example.com/"
         });
         if (faded) {
@@ -434,7 +435,7 @@ Blockly.Blocks["new"] = {
       this.setPreviousStatement(true);
       this.setNextStatement(true);
       this.setColour(120);
-      this.setTooltip("");
+      this.setTooltip("Create a new object of the given class.");
       this.setHelpUrl("http://www.example.com/");
   },
 
