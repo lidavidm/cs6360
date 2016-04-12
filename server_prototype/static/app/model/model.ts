@@ -267,7 +267,7 @@ class HoldingDiff extends Diff<Robot> {
         });
 
         t1.onComplete.add(() => {
-            t1.rotation -= 8 * Math.PI;
+            holder.rotation -= 8 * Math.PI;
         });
 
         return t2;

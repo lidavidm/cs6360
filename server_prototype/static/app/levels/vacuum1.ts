@@ -21,7 +21,7 @@ export class VacuumLevel1 extends BaseLevel {
         this.toolbox.addControl("controls_repeat_ext");
         this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
-            model.Robot.prototype.pickUpUnderneath,
+            model.Robot.prototype.mine,
             model.Robot.prototype.moveBackward,
         ]);
         this.toolbox.addObject("robot", "Robot");
