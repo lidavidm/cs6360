@@ -156,10 +156,12 @@ class OrientationDiff<T extends HasOrientation> extends Diff<T> {
         let p = object.getPhaserObject();
         if (p === null) return null;
 
+        p.rotation = (p.rotation + 2 * Math.PI) % (2 * Math.PI);
+
         let rotation = 0;
         switch (object.orientation) {
         case Direction.NORTH:
-            rotation = -Math.PI/2;
+            rotation = 3 * Math.PI/2;
             break;
         case Direction.SOUTH:
             rotation = Math.PI/2;
@@ -170,6 +172,15 @@ class OrientationDiff<T extends HasOrientation> extends Diff<T> {
         case Direction.WEST:
             rotation = Math.PI;
             break;
+        }
+
+        if (Math.abs(p.rotation - rotation) > Math.PI) {
+            if (rotation > p.rotation) {
+                rotation -= 2 * Math.PI;
+            }
+            else {
+                rotation += 2 * Math.PI;
+            }
         }
 
         let tween = p.game.add.tween(p).to({
