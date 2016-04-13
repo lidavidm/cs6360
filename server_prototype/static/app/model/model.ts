@@ -374,7 +374,6 @@ export class Log {
             let executor = () => {
                 let diff = this.log[programCounter];
 
-
                 let initialized = true;
                 // If the object was created on the fly, update it
                 // with the actual object ID
@@ -393,7 +392,12 @@ export class Log {
                 case DiffKind.EndOfInit:
                     reset = true;
                     Object.keys(this.world.objects).forEach((id) => {
-                        this.world.getObjectByID(<any> id).phaserReset();
+                        let object = this.world.getObjectByID(<any> id);
+                        object.phaserReset();
+                        // Make sure the object stays hidden
+                        if (this.dynamicObjects.indexOf(parseInt(id, 10)) > -1) {
+                            object.getPhaserObject().alpha = 0;
+                        }
                     });
                     if (replayInit) {
                         resolve();
