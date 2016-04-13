@@ -672,7 +672,9 @@ export class BaseLevel extends Phaser.State {
             break;
 
         case model.DiffKind.EndOfInit:
-            this.checkObjectives(resolve);
+            if (!resetting) {
+                this.checkObjectives(resolve);
+            }
             break;
 
         case model.DiffKind.Error:

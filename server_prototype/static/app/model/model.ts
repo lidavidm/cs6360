@@ -80,11 +80,15 @@ class InitializedDiff extends Diff<any> {
         p.width = 0;
         p.height = 0;
 
-        return p.game.add.tween(p).to({
+        let tween = p.game.add.tween(p).to({
             alpha: 1,
             width: width,
             height: height,
         }, duration, Phaser.Easing.Bounce.InOut);
+        tween.onComplete.add(() => {
+            object.initialized = true;
+        });
+        return tween;
     }
 
     apply(world: World, object: any) {
@@ -325,8 +329,10 @@ export class Log {
         this.log.push(Diff.EndOfInit);
     }
 
-    recordInitialized(id: number) {
+    recordInitialized(object: WorldObject) {
         if (this.initialized) {
+            let id = object.getID();
+            object.initialized = false;
             this.log.push(new InitializedDiff(id));
             this.dynamicObjects.push(id);
         }
@@ -349,6 +355,11 @@ export class Log {
             let dynamicObjectsInitialized: {
                 [id: number]: boolean,
             } = {};
+
+            for (let id of this.dynamicObjects) {
+                let object = this.world.getObjectByID(id);
+                object.initialized = false;
+            }
 
             let advanceStep = () => {
                 programCounter++;
@@ -561,6 +572,11 @@ export abstract class WorldObject {
 
     protected phaserObject: Phaser.Group;
 
+    // Flag used for objects created on the fly. Is always true unless
+    // this object was created on the fly, in which case it is false
+    // until we have reached the appropriate point in the log.
+    public initialized: boolean;
+
     constructor(name: string, x: number, y: number, world: World) {
         // TODO: log a "created" event (in get ID?)
         this.name = name;
@@ -570,6 +586,8 @@ export abstract class WorldObject {
         this.x = x;
         this.y = y;
         this.world.addObject(this);
+
+        this.initialized = true;
 
         // Record ourselves in the log
         this.setLoc(x, y);

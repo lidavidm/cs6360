@@ -50,7 +50,7 @@ export class Interpreter {
                     throw `Can't create a ${className} here!`;
                 }
                 obj.getPhaserObject().alpha = 0.0;
-                this._world.log.recordInitialized(obj.getID());
+                this._world.log.recordInitialized(obj);
                 ctr++;
 
                 return Sk.ffi.remapToPy(obj.getID());
