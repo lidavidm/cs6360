@@ -1,4 +1,5 @@
 import * as model from "../model/model";
+import {EditorContext, MAIN} from "model/editorcontext";
 import {BaseLevel, Toolbox} from "../level";
 import * as TooltipView from "../views/tooltip";
 import * as asset from "asset";
@@ -30,12 +31,12 @@ export class VacuumLevel2 extends BaseLevel {
         let headlessWorkspace = new Blockly.Workspace();
         this.objectives = [
             {
-                objective: `Implement moveAndMine`,
+                objective: `Use moveAndMine`,
                 completed: false,
                 predicate: (level) => {
                     let impl = level.program.savegame.load({
-                        className: "SmallRobot",
-                        method: "moveAndMine"
+                        className: MAIN,
+                        method: ""
                     });
                     headlessWorkspace.clear();
                     if (impl.workspace) {
@@ -48,27 +49,60 @@ export class VacuumLevel2 extends BaseLevel {
                             }
                         }
                         console.log(allTopBlocks);
-                        if (allTopBlocks.length !== 2) {
-                            return false;
+                        for (var block of allTopBlocks) {
+                            var method = block.getInputTargetBlock("METHOD").getFieldValue("METHOD_NAME");
+                            if (method == "moveAndMine") {
+                                return true;
+                            }
                         }
-                        if (allTopBlocks[0].type != 'tell' || allTopBlocks[1].type != 'tell') {
-                            return false;
-                        }
-                        var object = Blockly.Python.valueToCode(allTopBlocks[0], "OBJECT", Blockly.Python.ORDER_NONE);
-                        var method = allTopBlocks[0].getInputTargetBlock("METHOD").getFieldValue("METHOD_NAME");
-                        if (object != 'self' || method != 'moveForward') {
-                            return false;
-                        }
-                        var object = Blockly.Python.valueToCode(allTopBlocks[1], "OBJECT", Blockly.Python.ORDER_NONE);
-                        var method = allTopBlocks[1].getInputTargetBlock("METHOD").getFieldValue("METHOD_NAME");
-                        if (object != 'self' || method != 'mine') {
-                            return false;
-                        }
-                        return true;
                     }
                     return false;
                 }
             },
+            
+            /* 
+             * removing this objective for now since moveAndMine is faded to a code editor now 
+             */
+            // {
+            //     objective: `Implement moveAndMine`,
+            //     completed: false,
+            //     predicate: (level) => {
+            //         let impl = level.program.savegame.load({
+            //             className: "SmallRobot",
+            //             method: "moveAndMine"
+            //         });
+            //         headlessWorkspace.clear();
+            //         if (impl.workspace) {
+            //             Blockly.Xml.domToWorkspace(headlessWorkspace, impl.workspace);
+            //             let allTopBlocks: any[] = [];
+            //             for (let block of headlessWorkspace.getTopBlocks()) {
+            //                 while (block) {
+            //                     allTopBlocks.push(block);
+            //                     block = block.getNextBlock();
+            //                 }
+            //             }
+            //             console.log(allTopBlocks);
+            //             if (allTopBlocks.length !== 2) {
+            //                 return false;
+            //             }
+            //             if (allTopBlocks[0].type != 'tell' || allTopBlocks[1].type != 'tell') {
+            //                 return false;
+            //             }
+            //             var object = Blockly.Python.valueToCode(allTopBlocks[0], "OBJECT", Blockly.Python.ORDER_NONE);
+            //             var method = allTopBlocks[0].getInputTargetBlock("METHOD").getFieldValue("METHOD_NAME");
+            //             if (object != 'self' || method != 'moveForward') {
+            //                 return false;
+            //             }
+            //             var object = Blockly.Python.valueToCode(allTopBlocks[1], "OBJECT", Blockly.Python.ORDER_NONE);
+            //             var method = allTopBlocks[1].getInputTargetBlock("METHOD").getFieldValue("METHOD_NAME");
+            //             if (object != 'self' || method != 'mine') {
+            //                 return false;
+            //             }
+            //             return true;
+            //         }
+            //         return false;
+            //     }
+            // },
             {
                 objective: "Collect 5 iron",
                 completed: false,
@@ -147,5 +181,13 @@ export class VacuumLevel2 extends BaseLevel {
     setUpFading() {
         Blockly.Blocks.oop.clearFaded();
         Blockly.Blocks.oop.faded['tell'] = true;
+    }
+
+    canUseCodeEditor(context: EditorContext): boolean {
+        return (context.className === "SmallRobot" && context.method === "moveAndMine");
+    }
+
+    canUseBlockEditor(context: EditorContext): boolean {
+        return !(context.className === "SmallRobot" && context.method === "moveAndMine");
     }
 }
