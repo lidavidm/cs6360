@@ -28,6 +28,7 @@ export class HierarchyLevel3 extends BaseLevel {
         this.toolbox.addClasses(["Robot"]);
         this.toolbox.addClass("SmallRobot", asset.Robot.Red, model.Robot, [
             model.Robot.prototype.moveForward,
+            model.Robot.prototype.moveBackward,
             model.Robot.prototype.turnRight,
             model.Robot.prototype.mine,
         ]);
@@ -99,8 +100,8 @@ export class HierarchyLevel3 extends BaseLevel {
                         {
                             name: "SmallRobot",
                             children: [],
-                            methods: ["moveForward", "turnRight", "mine"],
-                            userMethods: ["advance"],
+                            methods: ["moveForward", "moveBackward", "turnRight", "mine"],
+                            userMethods: ["advance", "moveAndMine", "vacuum"],
                         },
                     ],
                     methods: ["moveForward", "turnRight", "turnLeft", "mine"],
@@ -108,6 +109,8 @@ export class HierarchyLevel3 extends BaseLevel {
                 },
             ],
         };
+
+        this.setUpFading();
     }
 
     preload() {
@@ -173,5 +176,11 @@ export class HierarchyLevel3 extends BaseLevel {
 
         return new model.Robot(varName, 17, 4, model.Direction.WEST,
                                this.modelWorld, this.foreground, "robot");
+    }
+
+    setUpFading() {
+        Blockly.Blocks.oop.clearFaded();
+        Blockly.Blocks.oop.faded['tell'] = true;
+        Blockly.Blocks.oop.faded['controls_repeat_ext'] = true;
     }
 }

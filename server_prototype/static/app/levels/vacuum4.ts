@@ -24,7 +24,6 @@ export class VacuumLevel4 extends BaseLevel {
             model.Robot.prototype.moveForward,
             model.Robot.prototype.moveBackward,
             model.Robot.prototype.turnRight,
-            model.Robot.prototype.turnLeft,
             model.Robot.prototype.mine,
         ]);
         this.toolbox.addObject("smallRobot", "SmallRobot");
