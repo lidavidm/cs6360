@@ -27,6 +27,7 @@ export class Toolbox {
     private _userObjects: {
         [name: string]: string
     };
+    private _enableSuper: boolean;
 
     private static INLINE_XML: string = `<xml></xml>`;
     private static CATEGORY_XML: string = `
@@ -38,10 +39,11 @@ export class Toolbox {
 </xml>
 `;
 
-    constructor(inline=false) {
+    constructor(inline=false, enableSuper=false) {
         let parser = new DOMParser();
         this._tree = parser.parseFromString(inline ? Toolbox.INLINE_XML : Toolbox.CATEGORY_XML, "text/xml");
         this._inline = inline;
+        this._enableSuper = enableSuper;
         this._classes = [];
         this._objects = [];
         this._userObjects = {};
@@ -340,7 +342,7 @@ export class Toolbox {
             }
         }
 
-        if (foundParent) {
+        if (foundParent && this._enableSuper) {
             block = this._tree.createElement("block");
             block.setAttribute("type", "variables_get");
             data = this._tree.createElement("data");
