@@ -354,6 +354,8 @@ li.objective img {
     height: 100%;
     color: #FFF;
     font-size: 2rem;
+    cursor: pointer;
+    font-family: source-code-pro, monospace;
 }
 
 .executing #gameControls {
@@ -370,6 +372,13 @@ li.objective img {
 
 #gameControls button.run {
     background: green;
+    animation: glow 2s ease-in-out infinite alternate;
+}
+
+#gameControls button.run:hover {
+    background: green;
+    box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.8);
+    animation: none;
 }
 
 #gameControls button.runInvalid {
@@ -575,6 +584,18 @@ button.ui:not([disabled]):active {
 
     100% {
         background: #000;
+    }
+}
+
+@keyframes glow {
+    0% {
+        box-shadow: 0px 0px 2px rgba(255, 255, 255, 0.8);
+        opacity: 0.5;
+    }
+
+    100% {
+        box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.8);
+        opacity: 1;
     }
 }
 
