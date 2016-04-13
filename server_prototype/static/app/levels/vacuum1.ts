@@ -18,14 +18,12 @@ export class VacuumLevel1 extends BaseLevel {
 
         this.toolbox = new Toolbox();
         this.toolbox.addControl("tell");
-        this.toolbox.addControl("controls_repeat_ext");
-        this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
+        this.toolbox.addClass("SmallRobot", asset.Robot.Red, model.Robot, [
             model.Robot.prototype.moveForward,
             model.Robot.prototype.mine,
             model.Robot.prototype.moveBackward,
         ]);
-        this.toolbox.addObject("robot", "Robot");
-        this.toolbox.addNumber();
+        this.toolbox.addObject("smallRobot", "SmallRobot");
 
         this.objectives = [
             {
@@ -54,10 +52,10 @@ export class VacuumLevel1 extends BaseLevel {
             name: "object",
             children: [
                 {
-                    name: "Robot",
+                    name: "SmallRobot",
                     children: [],
                     methods: ["moveForward", "moveBackward", "turnRight", "mine"],
-                    userMethods: ["temporaryLeft"]
+                    userMethods: ["temporaryLeft", "advance"]
                 },
             ],
         };
@@ -67,6 +65,8 @@ export class VacuumLevel1 extends BaseLevel {
                 new TooltipView.Tooltip(TooltipView.Region.Toolbox, "Ugh, looks like loops are broken again. You'll have to make do for now."),
             ]
         ];
+
+        this.setUpFading();
     }
 
     preload() {
@@ -93,7 +93,7 @@ export class VacuumLevel1 extends BaseLevel {
         this.cursors = this.game.input.keyboard.createCursorKeys();
         this.initWorld(map);
 
-        this.robot = new model.Robot("robot", 17, 4, model.Direction.SOUTH,
+        this.robot = new model.Robot("smallRobot", 17, 4, model.Direction.SOUTH,
                                      this.modelWorld, this.foreground, "robot");
         this.irons = [];
         this.irons.push(new model.Iron("iron", 17, 6,
@@ -105,5 +105,10 @@ export class VacuumLevel1 extends BaseLevel {
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
+    }
+
+    setUpFading() {
+        Blockly.Blocks.oop.clearFaded();
+        Blockly.Blocks.oop.faded['tell'] = true;
     }
 }

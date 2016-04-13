@@ -57,6 +57,8 @@ export class FuncDefsLevel1 extends BaseLevel {
                 },
             ],
         };
+
+        this.setUpFading();
     }
 
     preload() {
@@ -91,5 +93,10 @@ export class FuncDefsLevel1 extends BaseLevel {
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
+    }
+
+    setUpFading() {
+        Blockly.Blocks.oop.clearFaded();
+        Blockly.Blocks.oop.faded['tell'] = true;
     }
 }

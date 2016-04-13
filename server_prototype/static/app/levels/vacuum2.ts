@@ -19,13 +19,13 @@ export class VacuumLevel2 extends BaseLevel {
 
         this.toolbox = new Toolbox();
         this.toolbox.addControl("tell");
-        this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
+        this.toolbox.addClass("SmallRobot", asset.Robot.Red, model.Robot, [
             model.Robot.prototype.moveForward,
             model.Robot.prototype.moveBackward,
             model.Robot.prototype.turnRight,
             model.Robot.prototype.mine,
         ]);
-        this.toolbox.addObject("robot", "Robot");
+        this.toolbox.addObject("smallRobot", "SmallRobot");
 
         let headlessWorkspace = new Blockly.Workspace();
         this.objectives = [
@@ -34,7 +34,7 @@ export class VacuumLevel2 extends BaseLevel {
                 completed: false,
                 predicate: (level) => {
                     let impl = level.program.savegame.load({
-                        className: "Robot",
+                        className: "SmallRobot",
                         method: "moveAndMine"
                     });
                     headlessWorkspace.clear();
@@ -89,10 +89,10 @@ export class VacuumLevel2 extends BaseLevel {
             name: "object",
             children: [
                 {
-                    name: "Robot",
+                    name: "SmallRobot",
                     children: [],
                     methods: ["moveForward", "moveBackward", "turnRight", "mine"],
-                    userMethods: ["temporaryLeft", "moveAndMine"],
+                    userMethods: ["temporaryLeft", "advance", "moveAndMine"],
                 },
             ],
         };
@@ -102,6 +102,8 @@ export class VacuumLevel2 extends BaseLevel {
                 new TooltipView.Tooltip(TooltipView.Region.Toolbox, "moveAndMine should make the robot move one space and mine"),
             ]
         ];
+
+        this.setUpFading();
     }
 
     preload() {
@@ -128,7 +130,7 @@ export class VacuumLevel2 extends BaseLevel {
         this.cursors = this.game.input.keyboard.createCursorKeys();
         this.initWorld(map);
 
-        this.robot = new model.Robot("robot", 17, 4, model.Direction.SOUTH,
+        this.robot = new model.Robot("smallRobot", 17, 4, model.Direction.SOUTH,
                                      this.modelWorld, this.foreground, "robot");
         this.irons = [];
         for (var i = 0; i < 5; i++) {
@@ -138,5 +140,10 @@ export class VacuumLevel2 extends BaseLevel {
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
+    }
+
+    setUpFading() {
+        Blockly.Blocks.oop.clearFaded();
+        Blockly.Blocks.oop.faded['tell'] = false;
     }
 }

@@ -20,13 +20,13 @@ export class VacuumLevel3 extends BaseLevel {
         this.toolbox = new Toolbox();
         this.toolbox.addControl("tell");
         this.toolbox.addControl("controls_repeat_ext");
-        this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
+        this.toolbox.addClass("SmallRobot", asset.Robot.Red, model.Robot, [
             model.Robot.prototype.moveForward,
             model.Robot.prototype.moveBackward,
             model.Robot.prototype.turnRight,
             model.Robot.prototype.mine,
         ]);
-        this.toolbox.addObject("robot", "Robot");
+        this.toolbox.addObject("smallRobot", "SmallRobot");
         this.toolbox.addNumber();
 
         let headlessWorkspace = new Blockly.Workspace();
@@ -68,10 +68,10 @@ export class VacuumLevel3 extends BaseLevel {
             name: "object",
             children: [
                 {
-                    name: "Robot",
+                    name: "SmallRobot",
                     children: [],
                     methods: ["moveForward", "moveBackward", "turnRight", "mine"],
-                    userMethods: ["temporaryLeft", "moveAndMine", "vacuum"],
+                    userMethods: ["temporaryLeft", "advance", "moveAndMine", "vacuum"],
                 },
             ],
         };
@@ -81,6 +81,8 @@ export class VacuumLevel3 extends BaseLevel {
                 new TooltipView.Tooltip(TooltipView.Region.Toolbox, "One idea is to implement vacuum so that it mines a line of ten iron."),
             ]
         ];
+
+        this.setUpFading();
     }
 
     preload() {
@@ -107,7 +109,7 @@ export class VacuumLevel3 extends BaseLevel {
         this.cursors = this.game.input.keyboard.createCursorKeys();
         this.initWorld(map);
 
-        this.robot = new model.Robot("robot", 17, 5, model.Direction.EAST,
+        this.robot = new model.Robot("smallRobot", 17, 5, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
         this.irons = [];
         for (var i = 0; i < 10; i++) {
@@ -117,5 +119,11 @@ export class VacuumLevel3 extends BaseLevel {
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
+    }
+
+    setUpFading() {
+        Blockly.Blocks.oop.clearFaded();
+        Blockly.Blocks.oop.faded['tell'] = true;
+        Blockly.Blocks.oop.faded['controls_repeat_ext'] = true;
     }
 }

@@ -20,14 +20,14 @@ export class VacuumLevel4 extends BaseLevel {
         this.toolbox = new Toolbox();
         this.toolbox.addControl("tell");
         this.toolbox.addControl("controls_repeat_ext");
-        this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
+        this.toolbox.addClass("SmallRobot", asset.Robot.Red, model.Robot, [
             model.Robot.prototype.moveForward,
             model.Robot.prototype.moveBackward,
             model.Robot.prototype.turnRight,
             model.Robot.prototype.turnLeft,
             model.Robot.prototype.mine,
         ]);
-        this.toolbox.addObject("robot", "Robot");
+        this.toolbox.addObject("smallRobot", "SmallRobot");
         this.toolbox.addNumber();
 
         this.objectives = [
@@ -51,13 +51,15 @@ export class VacuumLevel4 extends BaseLevel {
             name: "object",
             children: [
                 {
-                    name: "Robot",
+                    name: "SmallRobot",
                     children: [],
                     methods: ["moveForward", "moveBackward", "turnRight", "mine"],
-                    userMethods: ["temporaryLeft", "moveAndMine", "vacuum"],
+                    userMethods: ["temporaryLeft", "advance", "moveAndMine", "vacuum"],
                 },
             ],
         };
+
+        this.setUpFading();
     }
 
     preload() {
@@ -84,7 +86,7 @@ export class VacuumLevel4 extends BaseLevel {
         this.cursors = this.game.input.keyboard.createCursorKeys();
         this.initWorld(map);
 
-        this.robot = new model.Robot("robot", 16, 5, model.Direction.WEST,
+        this.robot = new model.Robot("smallRobot", 16, 5, model.Direction.WEST,
                                      this.modelWorld, this.foreground, "robot");
         this.irons = [];
         for (var i = 0; i < 3; i++) {
@@ -97,5 +99,11 @@ export class VacuumLevel4 extends BaseLevel {
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
+    }
+
+    setUpFading() {
+        Blockly.Blocks.oop.clearFaded();
+        Blockly.Blocks.oop.faded['tell'] = true;
+        Blockly.Blocks.oop.faded['controls_repeat_ext'] = true;
     }
 }
