@@ -12,7 +12,7 @@ export class VacuumLevel2 extends BaseLevel {
     initialize() {
         super.initialize();
 
-        this.missionTitle = "";
+        this.missionTitle = "Refining Mining";
         this.missionText = [
             "Repeating 'moveForward' and 'mine' is getting kind of tedious. Try writing a new method."
         ];
