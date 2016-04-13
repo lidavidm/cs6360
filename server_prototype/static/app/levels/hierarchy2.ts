@@ -46,7 +46,7 @@ export class HierarchyLevel2 extends BaseLevel {
                 completed: false,
                 predicate: (level) => {
                     for (let object of this.modelWorld.getObjectByLoc(17, 4)){
-                        if (object !== null && object.getName() !== "smallRobot"){
+                        if (object !== null && object.initialized){
                             return true;
                         }
                     }
