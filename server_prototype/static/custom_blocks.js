@@ -82,6 +82,9 @@ function getClass(block) {
 Blockly.Blocks.setClassMethods = function(class_name, method_list) {
     var block_type = "method_" + class_name;
     Blockly.Blocks.classMethods[class_name] = method_list;
+    if (Blockly.Blocks.oop.isFaded('tell')) {
+
+    }
     Blockly.Blocks[block_type] = {
         init: function() {
             this.setColour(260);
@@ -89,9 +92,15 @@ Blockly.Blocks.setClassMethods = function(class_name, method_list) {
             this.setInputsInline(true);
             this.appendDummyInput()
                 .appendField(new Blockly.FieldDropdown(function() {
-                    return Blockly.Blocks.classMethods[class_name]
-                        .concat(Blockly.Blocks.getUserMethods(class_name))
-                        .sort();
+                    var list = Blockly.Blocks.classMethods[class_name].concat(Blockly.Blocks.getUserMethods(class_name)).sort();
+                    if (Blockly.Blocks.oop.isFaded('tell')) {
+                        var copy = [];
+                        for (var element in list) {
+                            copy.push([element[1], element[1], element[2]]);
+                        }
+                        return copy;
+                    }
+                    return list;
                 }), "METHOD_NAME");
             this.data = class_name;
             this.setTooltip("A method—something an object of this class knows how to do.");
