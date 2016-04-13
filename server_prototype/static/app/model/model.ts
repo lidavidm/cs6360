@@ -395,9 +395,14 @@ export class Log {
                     Object.keys(this.world.objects).forEach((id) => {
                         this.world.getObjectByID(<any> id).phaserReset();
                     });
+                    if (replayInit) {
+                        resolve();
+                        return;
+                    }
                     break;
                 case DiffKind.Error:
-                    break;
+                    resolve();
+                    return;
                 case DiffKind.Property:
                     let object = this.world.getObjectByID(diff.id);
                     diff.apply(this.world, object);
