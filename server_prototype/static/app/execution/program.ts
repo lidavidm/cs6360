@@ -229,10 +229,10 @@ ${this.getRawCode()}
         if (main.workspace) {
             if (!Blockly.mainWorkspace) return "";
             let workspace = Blockly.mainWorkspace;
-            return Blockly.Python.workspaceToCode(workspace);
+            return Blockly.Python.workspaceToCode(workspace) || "# No code here, write some!";
         }
         else {
-            return main.code;
+            return main.code || "# No code here, write some!";
         }
     }
 }
