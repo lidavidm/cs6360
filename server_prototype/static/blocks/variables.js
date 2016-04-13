@@ -80,7 +80,7 @@ Blockly.Blocks['variables_get'] = {
    * @this Blockly.Block
    */
   init: function() {
-    this.setHelpUrl(Blockly.Msg.VARIABLES_GET_HELPURL);
+    this.setHelpUrl("help.html#object");
     this.setColour(Blockly.Blocks.variables.HUE);
     this.setInputsInline(true);
     this.data = "object";
