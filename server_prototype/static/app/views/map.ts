@@ -94,7 +94,6 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                     if (!args.level.program.isCodeParseable()) {
                         // TODO: report the error somehow
                         args.level.program.flagInvalid(true);
-                        return;
                     }
                     else {
                         args.level.program.flagInvalid(false);

@@ -53,6 +53,13 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     updateObjectImage(event, block);
                 }
 
+                for (let block of controller.workspace.getTopBlocks()) {
+                    if (block.warning) {
+                        block.warning.setVisible(true);
+                        break;
+                    }
+                }
+
                 updateUserObjects();
             },
 

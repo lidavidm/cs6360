@@ -113,9 +113,6 @@ Blockly.Blocks.setClassMethods = function(class_name, method_list) {
             }
             else {
                 this.setWarningText("Put me in a tell block!");
-                if (this.warning) {
-                    this.warning.setVisible(true);
-                }
             }
         },
 
@@ -372,10 +369,6 @@ Blockly.Blocks["tell"] = {
                 m.endComputation();
             }
         }
-
-        if (this.warning) {
-            this.warning.setVisible(true);
-        }
     },
 
     childObject: function() {
@@ -466,10 +459,6 @@ Blockly.Blocks["new"] = {
     }
     else {
       this.setWarningText(null, "typechecker");
-    }
-
-    if (this.warning) {
-      this.warning.setVisible(true);
     }
   },
 };
