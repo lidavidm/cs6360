@@ -146,6 +146,6 @@ export class VacuumLevel2 extends BaseLevel {
 
     setUpFading() {
         Blockly.Blocks.oop.clearFaded();
-        Blockly.Blocks.oop.faded['tell'] = false;
+        Blockly.Blocks.oop.faded['tell'] = true;
     }
 }

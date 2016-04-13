@@ -36,7 +36,7 @@ export class VacuumLevel3 extends BaseLevel {
                 completed: false,
                 predicate: (level) => {
                     let impl = level.program.savegame.load({
-                        className: "Robot",
+                        className: "SmallRobot",
                         method: "vacuum"
                     });
                     headlessWorkspace.clear();
