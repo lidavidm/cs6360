@@ -95,7 +95,7 @@ Blockly.Blocks.setClassMethods = function(class_name, method_list) {
                     var list = Blockly.Blocks.classMethods[class_name].concat(Blockly.Blocks.getUserMethods(class_name)).sort();
                     if (Blockly.Blocks.oop.isFaded('tell')) {
                         var copy = [];
-                        for (var element in list) {
+                        for (var element of list) {
                             copy.push([element[1], element[1], element[2]]);
                         }
                         return copy;
