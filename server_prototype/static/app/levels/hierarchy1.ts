@@ -97,6 +97,8 @@ export class HierarchyLevel1 extends BaseLevel {
         // Create the world objects here.
         super.create();
 
+        this.zoomCamera.position.x = 1000;
+
         let map = this.game.add.tilemap("outside");
         map.addTilesetImage("cave2", "tiles");
 
@@ -111,7 +113,7 @@ export class HierarchyLevel1 extends BaseLevel {
         this.initWorld(map);
         this.robot = new model.Robot("smallRobot", 17, 4, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
-        this.iron = new model.Iron("iron", 17, 3,
+        this.iron = new model.Iron("iron", 15, 3,
                                    this.modelWorld, this.middle, "iron");
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);

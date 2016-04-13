@@ -124,6 +124,8 @@ export class HierarchyLevel3 extends BaseLevel {
         // Create the world objects here.
         super.create();
 
+        this.zoomCamera.position.x = 1000;
+
         let map = this.game.add.tilemap("outside");
         map.addTilesetImage("cave2", "tiles");
 
