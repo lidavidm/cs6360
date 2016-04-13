@@ -29,7 +29,7 @@ export class MovementLevel1 extends BaseLevel {
         let fallbackMethod = <HTMLElement> methods[0].cloneNode(true);
         fallbackObject.setAttribute("x", "10");
         fallbackObject.setAttribute("y", "100");
-        fallbackMethod.setAttribute("x", "200");
+        fallbackMethod.setAttribute("x", "250");
         fallbackMethod.setAttribute("y", "100");
         this.fallback = <HTMLElement[]> [
             this.toolbox.addControl("tell", false, [], []),
