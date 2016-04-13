@@ -405,8 +405,7 @@ export class Log {
                     }
                     break;
                 case DiffKind.Error:
-                    resolve();
-                    return;
+                    break;
                 case DiffKind.Property:
                     let object = this.world.getObjectByID(diff.id);
                     diff.apply(this.world, object);
