@@ -1,5 +1,5 @@
-<a name="beta (unreleased)"></a>
-## beta (unreleased) (2016-04-11)
+<a name="beta"></a>
+## beta (2016-04-13)
 
 
 #### Features
@@ -7,6 +7,9 @@
 *   implement savegames ([3a253ef9](https://github.com/lidavidm/cs6360/commit/3a253ef904e05a6097d42ac7156fefd796f5db51), closes [#48](https://github.com/lidavidm/cs6360/issues/48))
 *   add asset listing to reduce hardcoding ([b113d702](https://github.com/lidavidm/cs6360/commit/b113d702e08d7c908bcc2e8d5d58ac0510275b04))
 * **Block Editor:**
+  *  add help page ([1b60e3fe](https://github.com/lidavidm/cs6360/commit/1b60e3fee40e272ae1a886225fd3df099d56ac15))
+  *  fading for method names. turns to camelcase when tell is faded ([3a747010](https://github.com/lidavidm/cs6360/commit/3a747010005fa1a9abfbf67da01859e77ad2c67f))
+  *  define tooltips for custom blocks ([1566a593](https://github.com/lidavidm/cs6360/commit/1566a5937f27680b23e2fcc5ee0ceee7a08d8f8b))
   *  disable toolbar while executing ([8c252821](https://github.com/lidavidm/cs6360/commit/8c25282177b6a32d76ef8956352223756afd42e3))
   *  show warning tooltips for new block ([eb299a62](https://github.com/lidavidm/cs6360/commit/eb299a62ae3947fa2cc28ce47df40b8fe0ebee0b))
   *  reflect user objects in toolbox ([0e5dc71e](https://github.com/lidavidm/cs6360/commit/0e5dc71ea43c27488fa370b62a5bf825d61cb809))
@@ -60,6 +63,12 @@
   *  enable user code editing/codegen ([c845fd88](https://github.com/lidavidm/cs6360/commit/c845fd8832600551d1280b8fe2ea6dae5d3b6216))
   *  initial support for code editor ([8255e9a4](https://github.com/lidavidm/cs6360/commit/8255e9a44a41d00b1c92e75a1b2db065a224f3b6))
 * **Content:**
+  *  fading to hierarchy levels. tweaks to method availability in some levels ([372cd571](https://github.com/lidavidm/cs6360/commit/372cd571a8589ce7782ec73071f42a51e3cc69df))
+  *  added some fading and small tweaks to levels ([ca7525d0](https://github.com/lidavidm/cs6360/commit/ca7525d0d97ec20ece12320b1e5cac8de8649cc8))
+  *  break example blocks apart ([04dc7727](https://github.com/lidavidm/cs6360/commit/04dc77272ad5eae6e6699b85dc3712eac4fd078a))
+  *  set progression ([ac5772b0](https://github.com/lidavidm/cs6360/commit/ac5772b080c367fecbd26d148a9d4e418b6db2cc))
+  *  updated vacuum levels to match with mike's map ([a16649f9](https://github.com/lidavidm/cs6360/commit/a16649f9fd5d4f0076778610d4a74d634c64e8f9))
+  *  add Michael and Andy's levels ([75b937d8](https://github.com/lidavidm/cs6360/commit/75b937d88000e9bbbd09cebea5c5d409d8867071))
   *  first vacuum level ([f914d49c](https://github.com/lidavidm/cs6360/commit/f914d49cec8a03ad40b6171296d04a1e88a8b64f))
   *  add basic tutorial levels ([971ad0fd](https://github.com/lidavidm/cs6360/commit/971ad0fd1fac5416947a4cddabd3122178a4f8d9))
 * **Level:**
@@ -84,6 +93,7 @@
   *  disable step while not paused ([b529abe6](https://github.com/lidavidm/cs6360/commit/b529abe6a1e7561bbf69ab3fa28967dae979bb21), closes [#41](https://github.com/lidavidm/cs6360/issues/41))
   *  run animations even when Phaser doesn't have focus ([9c63d077](https://github.com/lidavidm/cs6360/commit/9c63d077dc801819b07d1689163b5a611752f2c3), closes [#14](https://github.com/lidavidm/cs6360/issues/14))
 * **Model:**
+  *  add initialized flag ([8dc763ff](https://github.com/lidavidm/cs6360/commit/8dc763ffaf125cb8e2ffef92a565d3cabfa87044))
   *  animate some robot activities ([10addd56](https://github.com/lidavidm/cs6360/commit/10addd568939e576104539f2125b6b307e2a5569), closes [#35](https://github.com/lidavidm/cs6360/issues/35))
   *  Robot can hold multiple things. also fixed a bug with objectives when resetting the level. ([581628e3](https://github.com/lidavidm/cs6360/commit/581628e38a68fde6536871e61f1766a98b9e8f99))
   *  implement Robot#selfDestruct ([a0e96e25](https://github.com/lidavidm/cs6360/commit/a0e96e25d0ab6cac7387a008715bdb9929dddd47))
@@ -114,6 +124,7 @@
 
 *   make everything fit better on low res ([f3f4e64d](https://github.com/lidavidm/cs6360/commit/f3f4e64df6f88a47986634e83c15af756d1a5105))
 * **Block Editor:**
+  *  I broke the method dropdown list with the last commit but it's fixed now ([4883a51a](https://github.com/lidavidm/cs6360/commit/4883a51a4ed46bdbebc3ca10d912763b696eca21))
   *  fix bug with fallback workspaces ([a4feee59](https://github.com/lidavidm/cs6360/commit/a4feee59f6976a54e29df461510c27bf52879534))
   *  don't set svgPath on headless class block ([3558acfa](https://github.com/lidavidm/cs6360/commit/3558acfa04e3375f3037d99c814d209fbb7ad070))
   *  properly save block changes ([219216a7](https://github.com/lidavidm/cs6360/commit/219216a7f3aeff3a88d4eaa1cd45a6d3e2e1ae35))
@@ -128,27 +139,43 @@
   *  don't make warning visible if not created ([62598cd6](https://github.com/lidavidm/cs6360/commit/62598cd6f147605196a3ab71154f959f81a0cad0))
   *  make sure execution highlighting works after the first level ([0dfed4aa](https://github.com/lidavidm/cs6360/commit/0dfed4aac2ffb3b2d71e2f2ed30a7df8a7842fb2))
   *  disable variable creation/renaming ([2710c5fc](https://github.com/lidavidm/cs6360/commit/2710c5fc4f29348991b33cce8003e49e62ebccf8), closes [#21](https://github.com/lidavidm/cs6360/issues/21))
-* **Class Hierarchy:**  don't duplicate user methods ([ca3425b9](https://github.com/lidavidm/cs6360/commit/ca3425b9e2214cd3b078fdc0ac6220a7f82d86ed))
+* **Class Hierarchy:**
+  *  reset hierarchy view between levels ([57cba0d6](https://github.com/lidavidm/cs6360/commit/57cba0d63b7e01a09f8440f074bf40efe1e879c9))
+  *  use less space for hierarchy tree ([0098f755](https://github.com/lidavidm/cs6360/commit/0098f755e2d9ec4191b62fd7d27e97969134587d))
+  *  don't duplicate user methods ([ca3425b9](https://github.com/lidavidm/cs6360/commit/ca3425b9e2214cd3b078fdc0ac6220a7f82d86ed))
 * **Code Editor:**
   *  make sure Blockly stays under the code editor ([3f30fcc0](https://github.com/lidavidm/cs6360/commit/3f30fcc0b50c934cedea687535169ef49f7c60ec))
   *  initialize code-only methods with method sig ([ac76efc3](https://github.com/lidavidm/cs6360/commit/ac76efc33d7a8c31c3b88a4f728238cbbe426141), closes [#59](https://github.com/lidavidm/cs6360/issues/59))
+* **Content:**
+  *  updated an objective in vacuum2 since moveAndMine has faded to code editor ([f321a371](https://github.com/lidavidm/cs6360/commit/f321a3717fc664d83aa36f9a81736b430701ad5b))
+  *  method-impl objectives were checking Robot methods, not SmallRobot methods ([2735937a](https://github.com/lidavidm/cs6360/commit/2735937ad821d7056097985c847a65d90fdc0c98))
 * **Level:**
   *  better fix for objective-reset bug ([4575d75a](https://github.com/lidavidm/cs6360/commit/4575d75a60c147fa18137c29cc441416d76ce8c4))
   *  fixed objective-reset bug for real ([a8205db0](https://github.com/lidavidm/cs6360/commit/a8205db04b2ebb29213822fbebae306ee3c165d4))
   *  initialize level-defined classes/methods in savegame ([5c3abd70](https://github.com/lidavidm/cs6360/commit/5c3abd700ac08a45f972fff6997bb82453d4b5ce))
   *  check correct tile coordinate for passability ([3a785e83](https://github.com/lidavidm/cs6360/commit/3a785e83ff1add372b57dab1512116d620355134))
+* **Levels:**
+  *  adjust fallbcak method location in first level ([db1f57ee](https://github.com/lidavidm/cs6360/commit/db1f57eeef710e544dfcf74b5d915dc048718e56))
+  *  update hierarchy2 objectives ([efab8889](https://github.com/lidavidm/cs6360/commit/efab88897ed784b03f8bcf380902ccdca0a7618d))
+  *  update camera for vacuum levels ([2308a8bc](https://github.com/lidavidm/cs6360/commit/2308a8bca5ac2ea8543fee43214cdc19f4328b23))
+  *  update camera in hierarchy and movement levels ([6b077ef3](https://github.com/lidavidm/cs6360/commit/6b077ef39b8e4751695ab8ad04cbc5de665e6506))
+  *  update camera for movement levels ([1829e3f5](https://github.com/lidavidm/cs6360/commit/1829e3f51eca8ce8d61e6f41159a0bab22c93018))
 * **Map:**
   *  allow camera to move all the way to the right ([9e5d0a95](https://github.com/lidavidm/cs6360/commit/9e5d0a955536fabab8f4a562cf35ba100e2bf438), closes [#53](https://github.com/lidavidm/cs6360/issues/53))
   *  don't take advantage of image caching ([02e13bf1](https://github.com/lidavidm/cs6360/commit/02e13bf1b98355e74b8e2fbdf581f930e6abe654), closes [#46](https://github.com/lidavidm/cs6360/issues/46))
   *  work around Phaser not properly loading tileset images ([4206a3f0](https://github.com/lidavidm/cs6360/commit/4206a3f0ded96a3fa0cbb78a6ce9eba7ebdb8d39))
   *  properly reset iron ([eb08b49c](https://github.com/lidavidm/cs6360/commit/eb08b49c9a279ab46671dea1cad2216031007c31), closes [#42](https://github.com/lidavidm/cs6360/issues/42))
 * **Model:**
+  *  make sure user objects stay hidden ([cec8505c](https://github.com/lidavidm/cs6360/commit/cec8505c21f747c5f2685e3178d61efc8b1a5a2f))
+  *  minimize rotation angle in OrientationDiff ([03b776e9](https://github.com/lidavidm/cs6360/commit/03b776e93857b713fa6deab8316f8cebc902a13d))
+  *  reset rotation after mining ([bacdf349](https://github.com/lidavidm/cs6360/commit/bacdf34912ac99b546fbe0416c1face852900e9c))
   *  set destructed in diff ([660209aa](https://github.com/lidavidm/cs6360/commit/660209aafd9eb76b078c1eb0f7aa43a01400f329))
   *  bug with multi-hold that I introduced. references to same array were being stored in multiple diffs. ([9ddddccf](https://github.com/lidavidm/cs6360/commit/9ddddccfc82ace6ca03dd2198eb2418b9a02e2ae))
   *  don't allow overlapping user-made objects ([4c42ac22](https://github.com/lidavidm/cs6360/commit/4c42ac2246d5f3859be4f33c94afd462a823cc52))
   *  fix bug where user object instantiation was repeated ([6fd472ef](https://github.com/lidavidm/cs6360/commit/6fd472ef8bec8c047736f0c237288b8ca6cc132c))
   *  set rotation angle in object creation ([a5f72cd8](https://github.com/lidavidm/cs6360/commit/a5f72cd803dcd678ab881cbe7b001024bb90c9e9))
 * **Python Codegen:**
+  *  fix by david to a bug where an empty workspace was generating a 'null' line ([1c4b898b](https://github.com/lidavidm/cs6360/commit/1c4b898ba08406ee1620ce3a45a38cfb29ab6a34))
   *  make super() work with __getattr__ ([9c887faf](https://github.com/lidavidm/cs6360/commit/9c887faf1d071d0e54229bdf81b21b307261aca8))
   *  generate super() correctly ([bec4b957](https://github.com/lidavidm/cs6360/commit/bec4b95725cd81435e2cc3fdc8d8177681a83cf0))
   *  don't use null workspace ([faa5564d](https://github.com/lidavidm/cs6360/commit/faa5564dd4d60ff46e3266aa8d279f1ceb7b1da4))
@@ -158,6 +185,8 @@
   *  make sure empty user methods generate 'pass' code ([6f737f76](https://github.com/lidavidm/cs6360/commit/6f737f76b5c17133a4ff26a46179999110665401))
   *  fix for previous fix ([1fb6479b](https://github.com/lidavidm/cs6360/commit/1fb6479b8301605ebc92971cc994120e3e527ea4))
   *  clear headless workspace between methods ([3e92c51e](https://github.com/lidavidm/cs6360/commit/3e92c51e4ccd70715e25cbd284b1513388f4e3fe))
+* **Python Interpreter:**  allow reset after exception ([6752eea2](https://github.com/lidavidm/cs6360/commit/6752eea2e369fd7f8c2ad8aa84ec68ed8911d3f4))
+* **Skulpt:**  don't override self in getattr unless self is a valid object ([f5d0b703](https://github.com/lidavidm/cs6360/commit/f5d0b7037cd2324b4e0fb0fa05b86059f5c413f8))
 * **Title Screen:**  don't use transitionEnd to transition (unreliable) ([8639c754](https://github.com/lidavidm/cs6360/commit/8639c754d5a9152e0ea643b42a32cd0e58445e94))
 
 
@@ -252,6 +281,3 @@
   *  fix typechecking, codegen of partial blocks ([6a40914c](https://github.com/lidavidm/cs6360/commit/6a40914ce2bb6d76618b704f24c89f86a3e34b3a), closes [#23](https://github.com/lidavidm/cs6360/issues/23))
   *  add statement postfix correctly ([77158d34](https://github.com/lidavidm/cs6360/commit/77158d343f1308ac45d1444d82479a0d3e2a2c98))
 * **Python Interpreter:**  return promise so others can wait for it ([a87da56c](https://github.com/lidavidm/cs6360/commit/a87da56c1baac2a9b04704c829bbd6c03fc3e47a))
-
-
-
