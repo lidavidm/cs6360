@@ -32,7 +32,7 @@ export class Toolbox {
     private static INLINE_XML: string = `<xml></xml>`;
     private static CATEGORY_XML: string = `
 <xml>
-  <category name="Toolbox" colour="210">
+  <category name="Commands" colour="120">
   </category>
   <category name="Objects" colour="330">
   </category>
@@ -48,7 +48,7 @@ export class Toolbox {
         this._objects = [];
         this._userObjects = {};
         this._objectParent = inline ? this._tree.documentElement : this._tree.querySelector("category[name='Objects']");
-        this._controlParent = inline ? this._tree.documentElement : this._tree.querySelector("category[name='Toolbox']");
+        this._controlParent = inline ? this._tree.documentElement : this._tree.querySelector("category[name='Commands']");
     }
 
     /**
