@@ -74,6 +74,8 @@ export class VacuumLevel4 extends BaseLevel {
     create() {
         super.create();
 
+        this.zoomCamera.position.x = 1000;
+
         let map = this.game.add.tilemap("outside");
         map.addTilesetImage("cave2", "tiles");
 
@@ -94,7 +96,7 @@ export class VacuumLevel4 extends BaseLevel {
                 this.irons.push(new model.Iron("iron", 6 + j, 5 + i,
                                    this.modelWorld, this.middle, "iron"));
             }
-            
+
         }
 
         this.modelWorld.log.recordInitEnd();

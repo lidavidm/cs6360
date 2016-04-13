@@ -97,6 +97,8 @@ export class VacuumLevel3 extends BaseLevel {
     create() {
         super.create();
 
+        this.zoomCamera.position.x = 1000;
+
         let map = this.game.add.tilemap("outside");
         map.addTilesetImage("cave2", "tiles");
 
