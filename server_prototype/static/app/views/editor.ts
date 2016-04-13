@@ -252,6 +252,12 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             });
 
             setupLevel(blocks);
+
+            // Auto-open toolbox
+            let toolbox = controller.workspace.toolbox_;
+            if (toolbox.tree_ && toolbox.tree_.getChildren()[0]) {
+                toolbox.tree_.getChildren()[0].select()
+            }
         });
 
         return controller;
