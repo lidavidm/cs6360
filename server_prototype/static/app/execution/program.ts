@@ -201,6 +201,9 @@ ${methods}
             let headlessWorkspace = new Blockly.Workspace();
             Blockly.Xml.domToWorkspace(headlessWorkspace, impl);
             let body = Blockly.Python.workspaceToCode(headlessWorkspace);
+            if (!body) {
+                body = `raise NotImplementedError("${className}.${methodName} isn't implemented!")`
+            }
             let indentedBody = indent(body.trim() || "pass", "    ");
             return `${help}def ${methodName}(self):\n${indentedBody}`
         }
