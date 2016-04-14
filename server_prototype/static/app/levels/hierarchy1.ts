@@ -91,7 +91,7 @@ export class HierarchyLevel1 extends BaseLevel {
         super.preload();
 
         this.game.load.image("tiles", "assets/tilesets/cave2.png");
-        this.game.load.tilemap("outside", "assets/maps/outside.json", null, Phaser.Tilemap.TILED_JSON);
+        this.game.load.tilemap("outside", "assets/maps/small_world.json", null, Phaser.Tilemap.TILED_JSON);
         this.game.load.image("robot", asset.Robot.Red);
         this.game.load.image("iron", asset.Iron.Basic);
     }
@@ -100,7 +100,7 @@ export class HierarchyLevel1 extends BaseLevel {
         // Create the world objects here.
         super.create();
 
-        this.zoomCamera.position.x = 1000;
+        //this.zoomCamera.position.x = 100;
 
         let map = this.game.add.tilemap("outside");
         map.addTilesetImage("cave2", "tiles");
@@ -114,9 +114,9 @@ export class HierarchyLevel1 extends BaseLevel {
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
         this.initWorld(map);
-        this.robot = new model.Robot("smallRobot", 17, 4, model.Direction.EAST,
+        this.robot = new model.Robot("smallRobot", 7, 4, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
-        this.iron = new model.Iron("iron", 15, 3,
+        this.iron = new model.Iron("iron", 6, 3,
                                    this.modelWorld, this.middle, "iron");
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
