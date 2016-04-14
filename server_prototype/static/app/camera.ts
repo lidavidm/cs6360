@@ -23,6 +23,24 @@ export class ZoomCamera {
         this.bounds.height = height;
     }
 
+    centerOn(position: Phaser.Point, width: number, height: number): Phaser.Tween {
+        let x = this.scale.x * position.x, y = this.scale.y * position.y;
+        width = this.scale.x * width;
+        height = this.scale.y * height;
+
+        if (x - 32 < this.position.x || y - 32 < this.position.y ||
+            x + width + 32 > this.position.x + this.game.width ||
+            y + height + 32 > this.position.y + this.game.height) {
+            return this.game.add.tween(this.position).to({
+                x: x - this.game.width / 2,
+                y: y - this.game.height / 2,
+            }, 300, Phaser.Easing.Quadratic.InOut);
+        }
+        else {
+            return null;
+        }
+    }
+
     update() {
         this.position.x = Math.max(this.position.x, 0);
         this.position.x = Math.min(this.position.x, this.bounds.width + this.game.width);

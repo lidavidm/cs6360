@@ -722,7 +722,22 @@ export class BaseLevel extends Phaser.State {
                     resolve();
                 }
             });
-            tween.start();
+
+            // Tween camera to center on object
+            let p = object.getPhaserObject();
+            let cameraTween = this.zoomCamera.centerOn(
+                p.position,
+                p.width,
+                p.height);
+            if (!resetting && cameraTween !== null) {
+                cameraTween.onComplete.add(() => {
+                    tween.start();
+                });
+                cameraTween.start();
+            }
+            else {
+                tween.start();
+            }
             break;
         }
     }
