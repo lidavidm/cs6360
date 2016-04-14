@@ -289,6 +289,27 @@ class HoldingDiff extends Diff<Robot> {
     }
 }
 
+class VisibilityDiff extends Diff<Gate> {
+    target_alpha: number;
+
+    constructor(id:number, target_alpha:number) {
+        super(DiffKind.Property, null, id);
+        this.target_alpha = target_alpha;
+    }
+
+    tween(object: Gate, duration=ANIM_DURATION): Phaser.Tween {
+        console.log("ALPHA: " + this.target_alpha);
+        let p = object.getPhaserObject();
+        return p.game.add.tween(p).to({
+            alpha: this.target_alpha,
+        }, duration, Phaser.Easing.Quadratic.InOut);
+    }
+
+    apply(world: World, object: Gate) {
+        ;
+    }
+}
+
 export class Log {
     log: Diff<any>[];
     initialized: boolean;
@@ -974,5 +995,54 @@ export class Iron extends WorldObject {
         this.phaserObject.width = TILE_WIDTH;
         this.phaserObject.height = TILE_HEIGHT;
         this.phaserObject.alpha = 1.0;
+    }
+}
+
+export class Gate extends WorldObject {
+    sprite: Phaser.Sprite;
+    phaserObject: Phaser.Group;
+
+    opened = false;
+
+    constructor(name:string, x:number, y:number, world:World, group:Phaser.Group, sprite:string) {
+        super(name, x, y, world);
+        this.phaserObject = world.game.add.group(group);
+        this.phaserObject.position.x = TILE_WIDTH * x + TILE_WIDTH / 2;
+        this.phaserObject.position.y = TILE_HEIGHT * y + TILE_WIDTH / 2;
+        this.phaserObject.pivot.x = TILE_WIDTH / 2;
+        this.phaserObject.pivot.y = TILE_HEIGHT / 2;
+
+        this.sprite = this.phaserObject.create(0, 0, sprite);
+        this.sprite.width = TILE_WIDTH;
+        this.sprite.height = TILE_HEIGHT;
+    }
+
+    passable() {
+        return this.opened;
+    }
+
+    phaserReset() {
+        this.phaserObject.width = TILE_WIDTH;
+        this.phaserObject.height = TILE_HEIGHT;
+        this.phaserObject.alpha = 1.0;
+    }
+
+/*
+this.world.log.record(new HoldingDiff(this.id, {
+    holdingIDs: [orig, newIDs],
+}));
+*/
+
+    @blocklyMethod("open", "open")
+    open() {
+        this.opened = true;
+        this.world.log.record(
+            new VisibilityDiff(this.id, 0));
+    }
+
+    @blocklyMethod("close", "close")
+    close() {
+        this.opened = false;
+        this.world.log.record(new VisibilityDiff(this.id, 1));
     }
 }

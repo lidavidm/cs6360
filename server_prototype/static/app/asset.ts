@@ -11,3 +11,7 @@ export const Robot = {
 export const Iron = {
     Basic: SPRITE_DIR + "iron.png",
 };
+
+export const Gate = {
+    Basic: SPRITE_DIR + "gate.png",
+}
