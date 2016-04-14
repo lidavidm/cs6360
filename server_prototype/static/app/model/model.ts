@@ -544,6 +544,8 @@ export class World {
     }
 
     passable(x: number, y: number) {
+        if (!this.boundsOkay(x, y)) return false;
+
         let tile = (<any> this.tilemap.layer).data[y][x];
 
         // Need explicit check because property may not be defined
