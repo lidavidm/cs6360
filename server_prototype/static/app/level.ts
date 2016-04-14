@@ -22,6 +22,7 @@ export class Toolbox {
     private _inline: boolean;
     private _objectParent: Element;
     private _controlParent: Element;
+    private _classParent: Element;
     private _classes: string[];
     private _objects: [string, string][];
     private _userObjects: {
@@ -49,6 +50,7 @@ export class Toolbox {
         this._userObjects = {};
         this._objectParent = inline ? this._tree.documentElement : this._tree.querySelector("category[name='Objects']");
         this._controlParent = inline ? this._tree.documentElement : this._tree.querySelector("category[name='Commands']");
+        this._classParent = null;
     }
 
     /**
@@ -251,6 +253,13 @@ export class Toolbox {
 
     addClasses(classNames: string[]): HTMLElement[] {
         Blockly.Blocks.setClassObjects(classNames);
+        if (!this._classParent) {
+            let category = this._tree.createElement("category");
+            category.setAttribute("name", "Classes");
+            category.setAttribute("colour", "240");
+            this._tree.documentElement.appendChild(category);
+            this._classParent = category;
+        }
         return classNames.map((className) => {
             let block = this._tree.createElement("block");
             block.setAttribute("type", "class");
@@ -259,7 +268,7 @@ export class Toolbox {
             field.textContent = className;
             block.appendChild(field);
 
-            this._objectParent.appendChild(block);
+            this._classParent.appendChild(block);
             // this._objects.push([name, className]);
 
             return block;
