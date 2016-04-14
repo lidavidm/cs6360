@@ -6,38 +6,47 @@ import * as asset from "asset";
 
 export class MovementLevel3 extends BaseLevel {
     public robot: model.Robot;
+    public gate: model.Gate;
 
     initialize() {
         super.initialize();
 
         this.toolbox = new Toolbox();
         this.toolbox.addControl("tell");
-        this.toolbox.addClass("SmallRobot", asset.Robot.Red, model.Robot, [
+        this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
             model.Robot.prototype.turnRight,
         ]);
-        this.toolbox.addObject("smallRobot", "SmallRobot");
+        this.toolbox.addObject("robot", "Robot");
+
+        this.toolbox.addControl("controls_repeat_ext");
+        this.toolbox.addNumber(0);
 
         this.objectives = [
             {
-                objective: `Move the robot [${asset.Robot.Red}] around the corner`,
+                objective: `Tell the robot [${asset.Robot.Basic}] to turn right`,
                 completed: false,
                 predicate: (level) => {
-                    return level.robot.getX() === 7 && level.robot.getY() === 3;
+                    return level.robot.orientation == model.Direction.SOUTH;
+                }
+            },
+            {
+                objective: `Move the robot [${asset.Robot.Basic}] in front of the gate`, //[${asset.Gate.Basic}]`,
+                completed: false,
+                predicate: (level) => {
+                    return level.robot.getX() === 7 && level.robot.getY() === 7;
                 }
             },
         ];
 
         this.allTooltips = [
             [
-                new TooltipView.Tooltip(TooltipView.Region.Map,
-                    "Use the arrow keys to look around the map and see what's going on."),
                 new TooltipView.Tooltip(TooltipView.Region.Toolbox,
                     "Check the robot's blueprint for a function to get around that corner."),
             ],
         ];
 
-        this.missionTitle = "Sharp Turn";
+        this.missionTitle = "Turn of Events";
 
         this.missionText = [
             "We've uploaded a turn right function! It should help with that corner!"
@@ -48,8 +57,9 @@ export class MovementLevel3 extends BaseLevel {
         super.preload();
 
         this.game.load.image("tiles", "assets/tilesets/cave2.png");
-        this.game.load.tilemap("movement1", "assets/maps/movement1.json", null, Phaser.Tilemap.TILED_JSON);
-        this.game.load.image("robot", asset.Robot.Red);
+        this.game.load.tilemap("lava", "assets/maps/lava.json", null, Phaser.Tilemap.TILED_JSON);
+        this.game.load.image("robot", asset.Robot.Basic);
+        this.game.load.image("gate", asset.Gate.Basic);
     }
 
     create() {
@@ -58,7 +68,7 @@ export class MovementLevel3 extends BaseLevel {
 
         this.zoomCamera.position.x = 120;
 
-        let map = this.game.add.tilemap("movement1");
+        let map = this.game.add.tilemap("lava");
         map.addTilesetImage("cave2", "tiles");
 
         let layer = map.createLayer(
@@ -70,8 +80,10 @@ export class MovementLevel3 extends BaseLevel {
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
         this.initWorld(map);
-        this.robot = new model.Robot("smallRobot", 6, 2, model.Direction.EAST,
+        this.robot = new model.Robot("robot", 7, 2, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
+        this.gate = new model.Gate("gate", 7, 8, this.modelWorld,
+                                    this.foreground, "gate");
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);

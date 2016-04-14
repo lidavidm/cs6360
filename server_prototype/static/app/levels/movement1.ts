@@ -7,6 +7,7 @@ import * as asset from "asset";
 
 export class MovementLevel1 extends BaseLevel {
     public robot: model.Robot;
+    public gate: model.Gate;
 
     private fallback: HTMLElement[];
 
@@ -19,11 +20,11 @@ export class MovementLevel1 extends BaseLevel {
 
         let tells = this.toolbox.addControl("tell");
 
-        let methods = this.toolbox.addClass("SmallRobot", asset.Robot.Red, model.Robot, [
+        let methods = this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
         ]);
 
-        let object = this.toolbox.addObject("smallRobot", "SmallRobot");
+        let object = this.toolbox.addObject("robot", "Robot");
 
         let fallbackObject = <HTMLElement> object.cloneNode(true);
         let fallbackMethod = <HTMLElement> methods[0].cloneNode(true);
@@ -39,7 +40,7 @@ export class MovementLevel1 extends BaseLevel {
 
         this.objectives = [
             {
-                objective: `Move the robot [${asset.Robot.Red}] forward`,
+                objective: `Move the robot [${asset.Robot.Basic}] forward`,
                 completed: false,
                 predicate: (level) => {
                     return level.robot.getX() === 2 && level.robot.getY() === 2;
@@ -66,15 +67,16 @@ export class MovementLevel1 extends BaseLevel {
         super.preload();
 
         this.game.load.image("tiles", "assets/tilesets/cave2.png");
-        this.game.load.tilemap("movement1", "assets/maps/movement1.json", null, Phaser.Tilemap.TILED_JSON);
-        this.game.load.image("robot", asset.Robot.Red);
+        this.game.load.tilemap("lava", "assets/maps/lava.json", null, Phaser.Tilemap.TILED_JSON);
+        this.game.load.image("robot", asset.Robot.Basic);
+        this.game.load.image("gate", asset.Gate.Basic);
     }
 
     create() {
         // Create the world objects here.
         super.create();
 
-        let map = this.game.add.tilemap("movement1");
+        let map = this.game.add.tilemap("lava");
 
         map.addTilesetImage("cave2", "tiles");
 
@@ -88,8 +90,10 @@ export class MovementLevel1 extends BaseLevel {
 
         this.initWorld(map);
 
-        this.robot = new model.Robot("smallRobot", 1, 2, model.Direction.EAST,
+        this.robot = new model.Robot("robot", 1, 2, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
+        this.gate = new model.Gate("gate", 7, 8, this.modelWorld,
+                                   this.foreground, "gate");
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);

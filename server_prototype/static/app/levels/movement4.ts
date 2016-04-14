@@ -6,24 +6,37 @@ import * as asset from "asset";
 
 export class MovementLevel4 extends BaseLevel {
     public robot: model.Robot;
+    public gate: model.Gate;
 
     initialize() {
         super.initialize();
 
         this.toolbox = new Toolbox();
         this.toolbox.addControl("tell");
-        this.toolbox.addClass("SmallRobot", asset.Robot.Red, model.Robot, [
+        this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
             model.Robot.prototype.turnRight,
         ]);
-        this.toolbox.addObject("smallRobot", "SmallRobot");
+        this.toolbox.addObject("robot", "Robot");
+
+        this.toolbox.addClass("Gate", asset.Gate.Basic, model.Gate, [
+            model.Gate.prototype.open,
+        ]);
+        this.toolbox.addObject("gate", "Gate");
 
         this.toolbox.addControl("controls_repeat_ext");
         this.toolbox.addNumber(0);
 
         this.objectives = [
             {
-                objective: `Move the robot [${asset.Robot.Red}] to the exit!`,
+                objective: `Tell the gate [${asset.Gate.Basic}] to open`,
+                completed: false,
+                predicate: (level) => {
+                    return level.gate.opened;
+                }
+            },
+            {
+                objective: `Tell the robot [${asset.Robot.Basic}] to move past the gate`, //[${asset.Gate.Basic}]`,
                 completed: false,
                 predicate: (level) => {
                     return level.robot.getX() === 7 && level.robot.getY() === 8;
@@ -34,13 +47,13 @@ export class MovementLevel4 extends BaseLevel {
         this.missionTitle = "Escape!";
 
         this.missionText = [
-            "Loops are back online! Try repeatedly telling the robot to move forward to the exit"
+            "Open the gate to get out of the cave!",
         ];
 
         this.allTooltips = [
             [
                 new TooltipView.Tooltip(TooltipView.Region.Toolbox,
-                    "Loops are back online! Try repeatedly telling the robot to move forward to the exit"),
+                    "Check the Gate's blueprint!"),
             ],
         ];
     }
@@ -49,8 +62,9 @@ export class MovementLevel4 extends BaseLevel {
         super.preload();
 
         this.game.load.image("tiles", "assets/tilesets/cave2.png");
-        this.game.load.tilemap("movement1", "assets/maps/movement1.json", null, Phaser.Tilemap.TILED_JSON);
-        this.game.load.image("robot", asset.Robot.Red);
+        this.game.load.tilemap("lava", "assets/maps/lava.json", null, Phaser.Tilemap.TILED_JSON);
+        this.game.load.image("robot", asset.Robot.Basic);
+        this.game.load.image("gate", asset.Gate.Basic);
     }
 
     create() {
@@ -58,8 +72,9 @@ export class MovementLevel4 extends BaseLevel {
         super.create();
 
         this.zoomCamera.position.x = 120;
+        this.zoomCamera.position.y = 120;
 
-        let map = this.game.add.tilemap("movement1");
+        let map = this.game.add.tilemap("lava");
         map.addTilesetImage("cave2", "tiles");
 
         let layer = map.createLayer(
@@ -71,8 +86,10 @@ export class MovementLevel4 extends BaseLevel {
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
         this.initWorld(map);
-        this.robot = new model.Robot("smallRobot", 7, 3, model.Direction.SOUTH   ,
+        this.robot = new model.Robot("robot", 7, 7, model.Direction.SOUTH   ,
                                      this.modelWorld, this.foreground, "robot");
+        this.gate = new model.Gate("gate", 7, 8, this.modelWorld,
+                                   this.foreground, "gate");
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
