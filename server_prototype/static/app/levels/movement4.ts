@@ -36,7 +36,7 @@ export class MovementLevel4 extends BaseLevel {
                 }
             },
             {
-                objective: `Tell the robot [${asset.Robot.Basic}] to move past the gate`, //[${asset.Gate.Basic}]`,
+                objective: `Tell the robot [${asset.Robot.Basic}] to move past the gate [${asset.Gate.Basic}]`,
                 completed: false,
                 predicate: (level) => {
                     return level.robot.getX() === 7 && level.robot.getY() === 8;
