@@ -5,7 +5,7 @@ interface ObjectivesController extends _mithril.MithrilController {
 }
 
 export function renderObjective(objective: level.Objective<any>): _mithril.MithrilTrustedString {
-    return m.trust(objective.objective.replace(/\[(.*)\]/g, "<img src='$1'/>"));
+    return m.trust(objective.objective.replace(/\[(.*?)\]/g, "<img src='$1'/>"));
 }
 
 export const Component: _mithril.MithrilComponent<ObjectivesController> = <any> {
