@@ -131,6 +131,13 @@ export class Program {
     getSupportCode(): string {
         if (!this.savegame) return "";
         let code = PROXY_CLASS;
+        let classes = this.getClassCode();
+
+        return [code, classes].join("\n");
+    }
+
+    getClassCode(): string {
+        if (!this.savegame) return "";
 
         let savedClasses = this.savegame.loadAll();
         let headlessWorkspace = new Blockly.Workspace();
@@ -185,7 +192,7 @@ ${methods}
 
         let classes = classDefns.join("\n");
 
-        return [code, classes].join("\n");
+        return classes;
     }
 
     getMethodCode(className: string, methodName: string): string {
@@ -209,7 +216,7 @@ ${methods}
         }
     }
 
-    getMainCode(): string {
+    getMainCode(headless=false): string {
         let globals = this.globals.map(([varName, className, modelID]) => {
             return `\n${varName} = ${className}(${modelID})`
         }).join("\n");
@@ -218,11 +225,11 @@ ${methods}
 ${globals}
 
 # Beginning of main code
-${this.getRawCode()}
+${this.getRawCode(headless)}
 `;
     }
 
-    getRawCode(): string {
+    getRawCode(headless=false): string {
         if (!this.savegame) return "";
         // Code generation always has to be done with main workspace showing main
         let main = this.savegame.load({
@@ -230,8 +237,13 @@ ${this.getRawCode()}
             method: null,
         });
         if (main.workspace) {
-            if (!Blockly.mainWorkspace) return "";
-            let workspace = Blockly.mainWorkspace;
+            if (!Blockly.mainWorkspace && !headless) {
+                return "";
+            }
+            let workspace = Blockly.mainWorkspace || new Blockly.Workspace();
+            if (headless) {
+                Blockly.Xml.domToWorkspace(workspace, main.workspace);
+            }
             return Blockly.Python.workspaceToCode(workspace) || "# No code here, write some!";
         }
         else {

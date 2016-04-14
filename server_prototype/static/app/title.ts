@@ -1,4 +1,5 @@
 import * as MainView from "main";
+import * as VictoryView from "views/victory";
 
 interface TitleController {
 
@@ -59,4 +60,5 @@ m.route(document.body, "/", {
     "/": TitleComponent,
     // "/cinematic": CinematicComponent,
     "/game": MainView.MainComponent,
+    "/victory": VictoryView.Component,
 });

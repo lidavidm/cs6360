@@ -484,6 +484,66 @@ li.objective img {
     z-index: 9999;
 }
 
+#victory {
+    color: #FFF;
+    text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.8);
+    font-size: 1.5em;
+}
+
+#victory .victory-background {
+    background: url(assets/earth_blurred.jpg);
+    background-size: cover;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+
+    animation: 30s scroll-up-victory ease-out;
+}
+
+#victory .victory-container {
+    width: 52rem;
+    margin: 10rem auto;
+    height: auto;
+}
+
+#victory h1, h2 {
+    letter-spacing: 0.1em;
+    font-weight: 200;
+    text-transform: uppercase;
+    margin: 0 auto;
+    text-align: center;
+}
+
+#victory h1 {
+    font-size: 3em;
+}
+
+#victory h2 {
+    font-size: 1.25em;
+}
+
+#victory ul.view-code {
+    font-size: 1rem;
+    list-style-type: none;
+}
+
+#victory ul.view-code li {
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+#victory pre.view-code {
+    padding: 0;
+    font-size: 1rem;
+    font-family: source-code-pro, monospace;
+    overflow: auto;
+}
+
 /** UI Widgets **/
 
 button.ui {
@@ -561,6 +621,18 @@ button.ui:not([disabled]):active {
     0% {
         opacity: 0;
         transform: translateY(300%);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scroll-up-victory {
+    0% {
+        opacity: 0;
+        transform: translateY(100%);
     }
 
     100% {

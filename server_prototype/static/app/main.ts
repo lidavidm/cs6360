@@ -116,7 +116,8 @@ export const MainComponent = {
 
                     let newLevelName = DEFAULT_PROGRESSION.nextLevel(savegame.currentLevel);
                     if (!newLevelName) {
-                        // TODO: victory screen!
+                        m.route("/victory");
+                        return;
                     }
 
                     savegame.currentLevel = newLevelName;

@@ -15,6 +15,7 @@ interface EditorController extends _mithril.MithrilController {
     markReadonly: (context: EditorContext) => void,
     readonlyRange: AceAjax.Range,
     readonlyRangeId: number,
+    onunload: () => void,
 }
 
 interface Args {
@@ -43,6 +44,15 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             editor: null,
             readonlyRange: null,
             readonlyRangeId: -1,
+
+            onunload: function() {
+                if (controller.workspace) {
+                    controller.workspace.dispose();
+                }
+                if (controller.editor) {
+                    controller.editor.destroy();
+                }
+            },
 
             changeListener: function(event: any) {
                 controller.level.event.broadcast(
