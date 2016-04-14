@@ -481,7 +481,7 @@ export class BaseLevel extends Phaser.State {
         this.foreground = this.game.add.group(this.zoomCamera.group);
         this.overlay = this.game.add.group(this.zoomCamera.group);
         this.cursors = this.game.input.keyboard.createCursorKeys();
-        this.zoom(true);
+        this.zoomCamera.scale.set(3, 3);
         this.zoomCamera.update();
 
         this.grid = this.overlay.add(this.game.add.tileSprite(0, 0, this.game.width, this.game.height, "grid"));
@@ -739,15 +739,6 @@ export class BaseLevel extends Phaser.State {
                 tween.start();
             }
             break;
-        }
-    }
-
-    zoom(zoomed: boolean) {
-        if (zoomed) {
-            this.zoomCamera.scale.set(3, 3);
-        }
-        else {
-            this.zoomCamera.scale.set(1, 1);
         }
     }
 }

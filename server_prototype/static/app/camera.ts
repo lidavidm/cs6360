@@ -43,9 +43,9 @@ export class ZoomCamera {
 
     update() {
         this.position.x = Math.max(this.position.x, 0);
-        this.position.x = Math.min(this.position.x, this.bounds.width + this.game.width);
+        this.position.x = Math.min(this.position.x, this.bounds.width * this.scale.x - this.game.width);
         this.position.y = Math.max(this.position.y, 0);
-        this.position.y = Math.min(this.position.y, this.bounds.height + this.game.height);
+        this.position.y = Math.min(this.position.y, this.bounds.height * this.scale.y - this.game.height);
 
         this.group.position.x = -this.position.x;
         this.group.position.y = -this.position.y;
