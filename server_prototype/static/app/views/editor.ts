@@ -386,6 +386,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                         trashcan: true,
                         startScale: 1.5,
                     });
+                    Blockly.Css.setTypeIndicatorColours("#CF3", "#FC3", "#FC3");
 
                     controller.setupLevel(args.context);
 
