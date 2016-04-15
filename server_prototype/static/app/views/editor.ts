@@ -198,6 +198,13 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 controller.workspace = Blockly.inject(controller.element, {
                     toolbox: controller.level.toolbox.xml(),
                     trashcan: true,
+                    startScale: 1.5,
+                    grid: {
+                        spacing: 20,
+                        length: 2,
+                        colour: "#777",
+                        snap: true,
+                    },
                 });
                 updateToolbox(context.className);
                 controller.workspace.clear();
@@ -270,12 +277,6 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         args.event.on(level.BaseLevel.NEXT_LEVEL_LOADED, (nextLevel: level.BaseLevel, blocks: EditorContext) => {
             controller.level = nextLevel;
             // TODO: reset editor too
-            controller.workspace.dispose();
-            controller.workspace = Blockly.inject(controller.element, {
-                toolbox: controller.level.toolbox.xml(),
-                trashcan: true,
-            });
-
             setupLevel(blocks);
 
             // Auto-open toolbox
