@@ -244,6 +244,7 @@ ${this.getRawCode(headless)}
             }
             let workspace = headless ? this.headless : Blockly.mainWorkspace;
             if (headless) {
+                workspace.clear();
                 Blockly.Xml.domToWorkspace(workspace, main.workspace);
             }
             return Blockly.Python.workspaceToCode(workspace) || "# No code here, write some!";
