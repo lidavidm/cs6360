@@ -204,10 +204,23 @@ body {
 
 #editor header .title {
     float: left;
+    height: 3rem;
+    line-height: 3rem;
+    font-size: 1.25rem;
+    margin-left: 0.5rem;
+}
+
+#editor header .title.blink {
+    animation: blink 1s ease-in-out;
 }
 
 #editor header .title span {
-    font-weight: bold;
+}
+
+#editor header .title img {
+    height: 2rem;
+    vertical-align: middle;
+    margin-right: 0.5rem;
 }
 
 #editor header code {
@@ -216,7 +229,7 @@ body {
 
 #editor header button.ui {
     font-size: 1rem;
-    float: right;
+    float: left;
     height: 3rem;
     font-weight: 400;
 
@@ -371,7 +384,7 @@ li.objective img {
 }
 
 #gameControls button.run {
-    background: green;
+    background: rgb(0, 128, 0);
     animation: glow 2s ease-in-out infinite alternate;
 }
 
@@ -510,7 +523,7 @@ li.objective img {
     height: auto;
 }
 
-#victory h1, h2 {
+#victory h1, #victory h2 {
     letter-spacing: 0.1em;
     font-weight: 200;
     text-transform: uppercase;
@@ -662,12 +675,12 @@ button.ui:not([disabled]):active {
 @keyframes glow {
     0% {
         box-shadow: 0px 0px 2px rgba(255, 255, 255, 0.8);
-        opacity: 0.5;
+        background: rgba(0, 128, 0, 0.4);
     }
 
     100% {
         box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.8);
-        opacity: 1;
+        background: rgba(0, 128, 0, 1);
     }
 }
 

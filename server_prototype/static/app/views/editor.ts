@@ -171,6 +171,14 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 updateUserObjects();
             }
             setupLevel(context);
+
+            // Flash title when context changed
+            window.setTimeout(() => {
+                document.querySelector("#editor .title").classList.add("blink");
+                window.setTimeout(() => {
+                    document.querySelector("#editor .title").classList.remove("blink");
+                }, 1000);
+            }, 500);
         });
 
         function updateObjectImage(event: any, block: any) {
@@ -294,7 +302,9 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         let header = [
             m("div.title", [
                 m("span", "Editing: "),
-                m("br"),
+                args.context.className === MAIN ? null : m("img", {
+                    src: Blockly.Blocks.variables.CLASS_IMAGE(args.context.className),
+                }),
                 m("code", args.context.className === MAIN ? "<main>" : `${args.context.className}.${args.context.method}`),
             ]),
         ];
@@ -303,14 +313,14 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             // We can't disable these two buttons, because the game
             // saves invalid code. When they return, they won't be
             // able to go and edit it.
-            header.push(m(<any> "button.ui", {
+            header.unshift(m(<any> "button.ui", {
                 onclick: function() {
                     args.showHierarchy(true);
                 },
                 disabled: args.executing(),
             }, "Class Hierarchy"));
             if (args.context.className !== MAIN) {
-                header.push(m(<any> "button.ui", {
+                header.unshift(m(<any> "button.ui", {
                     onclick: function() {
                         args.changeContext(MAIN, "");
                     },
@@ -319,7 +329,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             }
 
             if (args.level.canUseCodeEditor(args.context) && !usingCodeEditor) {
-                header.push(m(<any> "button.ui", {
+                header.unshift(m(<any> "button.ui", {
                     onclick: function() {
                         if (window.confirm("You will not be able to convert back to blocks - are you sure?")) {
                             args.context.workspace = null;
@@ -340,7 +350,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 }, "Edit as code"));
             }
             else if (args.level.canUseBlockEditor(args.context) && usingCodeEditor) {
-                header.push(m(<any> "button.ui", {
+                header.unshift(m(<any> "button.ui", {
                     onclick: function() {
                         if (window.confirm("You will lose all the code here - are you sure?")) {
                             args.context.code = null;
@@ -373,6 +383,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     controller.workspace = Blockly.inject(element, {
                         toolbox: controller.level.toolbox.xml(),
                         trashcan: true,
+                        startScale: 1.5,
                     });
 
                     controller.setupLevel(args.context);
