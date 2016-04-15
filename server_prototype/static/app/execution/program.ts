@@ -35,6 +35,9 @@ def incrementCounter():
     if counter >= MAX_NUM_EXECUTED_LINES:
         raise RuntimeError("The interpreter timed out. Too many lines were executed.")
 
+def recordDuplicateObject(blockID, name):
+    raise RuntimeError("{} was already instantiated!".format(name))
+
 `;
 
 function indent(code: string, indent: string) {
