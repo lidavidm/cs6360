@@ -337,13 +337,14 @@ Blockly.Blocks["tell"] = {
         this.data = null;
 
         if (!object && !method) {
-            this.setWarningText("I still need a method and an object!", "argumentchecker");
+            this.setWarningText("I need a method and an object!", "argumentchecker");
         }
         else if (!object) {
-            this.setWarningText("I still need an object! Look at the toolbox.", "argumentchecker");
+            this.setWarningText("I need an object! Look to the left.", "argumentchecker");
         }
         else if (!method) {
-            this.setWarningText("I still need a method! Look at the blueprints on the left.", "argumentchecker");
+            var objectClass = getClass(object);
+            this.setWarningText("I need a method! Look left at class " + objectClass + ".", "argumentchecker");
         }
         else {
             var objectClass = getClass(object);
