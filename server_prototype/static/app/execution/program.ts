@@ -49,12 +49,14 @@ export class Program {
     globals: [string, string, number][];
     invalid: boolean;
     hierarchy: ObjectHierarchy;
+    headless: any;
 
     constructor(hierarchy: ObjectHierarchy) {
         this.globals = [];
         this.classes = [];
         this.invalid = false;
         this.hierarchy = hierarchy;
+        this.headless = new Blockly.Workspace();
     }
 
     update(savegame: Savegame) {
@@ -78,14 +80,14 @@ export class Program {
 
     isCodeValid(): boolean {
         if (!this.savegame) return true;
-        let code = this.getCode();
+        let code = this.getCode(true);
 
         return !this.invalid && code.indexOf("raise BlocklyError") === -1;
     }
 
     isCodeParseable(): boolean {
         if (!this.savegame) return true;
-        let code = this.getCode();
+        let code = this.getCode(true);
         // Make sure code doesn't actually run
         code = "if False:\n" + indent(code, "    ");
         console.log(code);
@@ -115,12 +117,12 @@ export class Program {
         this.invalid = invalid;
     }
 
-    getCode(): string {
+    getCode(headless=false): string {
         Blockly.Python.STATEMENT_PREFIX = "recordBlockBegin(%1)\n"
         Blockly.Python.STATEMENT_POSTFIX = "recordBlockEnd(%1)\nincrementCounter()\n"
 
         let support = this.getSupportCode();
-        let code = this.getMainCode();
+        let code = this.getMainCode(headless);
 
         Blockly.Python.STATEMENT_PREFIX = "";
         Blockly.Python.STATEMENT_POSTFIX = "";
@@ -209,7 +211,7 @@ ${methods}
             Blockly.Xml.domToWorkspace(headlessWorkspace, impl);
             let body = Blockly.Python.workspaceToCode(headlessWorkspace);
             if (!body) {
-                body = `raise NotImplementedError("${className}.${methodName} isn't implemented!")`
+                body = `raise NotImplementedError("${methodName} isn't implemented! Check the Class Hierarchy at top.")`
             }
             let indentedBody = indent(body.trim() || "pass", "    ");
             return `${help}def ${methodName}(self):\n${indentedBody}`
@@ -240,7 +242,7 @@ ${this.getRawCode(headless)}
             if (!Blockly.mainWorkspace && !headless) {
                 return "";
             }
-            let workspace = Blockly.mainWorkspace || new Blockly.Workspace();
+            let workspace = headless ? this.headless : Blockly.mainWorkspace;
             if (headless) {
                 Blockly.Xml.domToWorkspace(workspace, main.workspace);
             }
