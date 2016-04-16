@@ -34,7 +34,6 @@ export class Interpreter {
                 var obj: any = world.getObjectByID(id);
 
                 let result = obj[methodName].apply(obj, args);
-                console.log(`${methodName}: ${result}`);
                 if (typeof result === "number") {
                     let pyValue = Sk.ffi.remapToPy(result);
                     return pyValue;

@@ -1136,4 +1136,54 @@ export class Drone extends WorldObject {
             throw new RangeError("Can't fly east! Tried: " + x + ", " + y);
         }
     }
+
+
+    @blocklyMethod("flyNorth", "fly north")
+    flyNorth() {
+        let [x, y] = offsetDirection(this.x, this.y, Direction.NORTH, 1);
+
+        if (!this.activated) {
+            throw new RangeError("Can't fly, not activated!");
+        }
+        else if (this.world.passable(x, y)) {
+            this.setLoc(x, y);
+        }
+        else {
+            this.world.log.record(new StuckDiff(this.id));
+            throw new RangeError("Can't fly north! Tried: " + x + ", " + y);
+        }
+    }
+
+    @blocklyMethod("flyWest", "fly west")
+    flyWest() {
+        let [x, y] = offsetDirection(this.x, this.y, Direction.WEST, 1);
+
+        if (!this.activated) {
+            throw new RangeError("Can't fly, not activated!");
+        }
+        else if (this.world.passable(x, y)) {
+            this.setLoc(x, y);
+        }
+        else {
+            this.world.log.record(new StuckDiff(this.id));
+            throw new RangeError("Can't fly west! Tried: " + x + ", " + y);
+        }
+    }
+
+    @blocklyMethod("flySouth", "fly south")
+    flySouth() {
+        let [x, y] = offsetDirection(this.x, this.y, Direction.SOUTH, 1);
+
+        if (!this.activated) {
+            throw new RangeError("Can't fly, not activated!");
+        }
+        else if (this.world.passable(x, y)) {
+            this.setLoc(x, y);
+        }
+        else {
+            this.world.log.record(new StuckDiff(this.id));
+            throw new RangeError("Can't fly south! Tried: " + x + ", " + y);
+        }
+    }
+
 }

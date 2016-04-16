@@ -26,6 +26,9 @@ export class RescueLevel extends BaseLevel {
         ]);
         this.toolbox.addClass("Drone", asset.Drone.Basic, model.Drone, [
             model.Drone.prototype.flyEast,
+            model.Drone.prototype.flyWest,
+            model.Drone.prototype.flySouth,
+            model.Drone.prototype.flyNorth,
         ]);
         this.toolbox.addObject("rescuer", "RescueRobot");
         this.toolbox.addObject("drone", "Drone");
@@ -123,6 +126,8 @@ export class RescueLevel extends BaseLevel {
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
+
+        this.zoomCamera.position.x = 500;
     }
 
     setUpFading() {

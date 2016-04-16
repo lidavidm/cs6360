@@ -59,7 +59,7 @@ export var OVERRIDES: {
         "rescue": `def rescue(self):
     droneID = super().rescue()
     drone = Drone(droneID)
-    drone.flyEast()
+    drone.flyHome()
 `
     }
 };
