@@ -623,7 +623,7 @@ export class BaseLevel extends Phaser.State {
     }
 
     tooltips(): TooltipView.Tooltip[] {
-        return this.allTooltips[this._tooltipIndex];
+        return this.allTooltips[this._tooltipIndex] || [];
     }
 
     run(): Session {

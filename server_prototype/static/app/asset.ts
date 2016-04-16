@@ -14,4 +14,8 @@ export const Iron = {
 
 export const Gate = {
     Basic: SPRITE_DIR + "gate.png",
-}
+};
+
+export const Drone = {
+    Basic: SPRITE_DIR + "drone.png",
+};

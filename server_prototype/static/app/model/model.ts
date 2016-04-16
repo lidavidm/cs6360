@@ -1,4 +1,4 @@
-function blocklyMethod(funcName: string, friendlyName: string, returnType?: string, args?: [string, string][]): PropertyDecorator {
+export function blocklyMethod(funcName: string, friendlyName: string, returnType?: string, args?: [string, string][]): PropertyDecorator {
     return function(target: any, propertyKey: string) {
         target[propertyKey].funcName = funcName;
         target[propertyKey].friendlyName = friendlyName;
@@ -1044,5 +1044,97 @@ this.world.log.record(new HoldingDiff(this.id, {
     close() {
         this.opened = false;
         this.world.log.record(new VisibilityDiff(this.id, 1));
+    }
+}
+
+export class RescueRobot extends Robot {
+    @blocklyMethod("rescue", "rescue")
+    rescue() {
+        let [x, y] = offsetDirection(this.x, this.y, this.orientation, 1);
+        let objects = this.world.getObjectByLoc(x, y);
+        for (let object of objects) {
+            if (object instanceof Drone) {
+                object.activate();
+                return;
+            }
+        }
+        throw "No drone to activate in front of me!";
+    }
+}
+
+class DroneActivatedDiff extends Diff<Drone> {
+    constructor(drone: Drone) {
+        super(DiffKind.Property, null, drone.getID(), {
+            activated: [false, true],
+        });
+    }
+
+    tween(object: Drone, duration: number): Phaser.Tween {
+        let p = object.getPhaserObject();
+        return p.game.add.tween(object.sprite.position).to({
+            y: -6,
+        }, duration, Phaser.Easing.Quadratic.InOut);
+    }
+}
+
+export class Drone extends WorldObject {
+    sprite: Phaser.Sprite;
+    shadow: Phaser.Sprite;
+    activated: boolean;
+
+    protected phaserObject: Phaser.Group;
+
+    constructor(name: string, x: number, y: number,
+                world: World, group: Phaser.Group, sprite: string) {
+        super(name, x, y, world);
+        this.activated = false;
+        this.phaserObject = world.game.add.group(group);
+        this.phaserObject.position.x = TILE_WIDTH * x + TILE_WIDTH / 2;
+        this.phaserObject.position.y = TILE_HEIGHT * y + TILE_WIDTH / 2;
+        this.phaserObject.pivot.x = TILE_WIDTH / 2;
+        this.phaserObject.pivot.y = TILE_HEIGHT / 2;
+        this.shadow = this.phaserObject.create(0, 2, sprite);
+        this.shadow.width = TILE_WIDTH;
+        this.shadow.height = TILE_WIDTH;
+        this.shadow.tint = 0x000000;
+        this.shadow.alpha = 0.7;
+        this.sprite = this.phaserObject.create(0, 2, sprite);
+        this.sprite.width = TILE_WIDTH;
+        this.sprite.height = TILE_HEIGHT;
+
+        let circle = world.game.add.graphics(0, 0, this.phaserObject);
+        circle.lineStyle(0.5, 0x2222FF, 0.5);
+        circle.drawCircle(TILE_WIDTH / 2, TILE_HEIGHT / 2, 1.41 * TILE_WIDTH);
+    }
+
+    passable(): boolean {
+        return false;
+    }
+
+    phaserReset() {
+        this.phaserObject.alpha = 1.0;
+        this.sprite.position.y = 2;
+        this.activated = false;
+    }
+
+    activate() {
+        this.activated = true;
+        this.world.log.record(new DroneActivatedDiff(this));
+    }
+
+    @blocklyMethod("flyEast", "fly east")
+    flyEast() {
+        let [x, y] = offsetDirection(this.x, this.y, Direction.EAST, 1);
+
+        if (!this.activated) {
+            throw new RangeError("Can't fly, not activated!");
+        }
+        else if (this.world.passable(x, y)) {
+            this.setLoc(x, y);
+        }
+        else {
+            this.world.log.record(new StuckDiff(this.id));
+            throw new RangeError("Can't fly east! Tried: " + x + ", " + y);
+        }
     }
 }
