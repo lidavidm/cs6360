@@ -59,7 +59,10 @@ export var OVERRIDES: {
         "rescue": `def rescue(self):
     droneID = super().rescue()
     drone = Drone(droneID)
-    drone.flyHome()
+    try:
+        drone.flyHome()
+    except NotImplementedError:
+        raise RuntimeError("Make Drone.flyHome tell the drone to go to base!")
 `
     }
 };

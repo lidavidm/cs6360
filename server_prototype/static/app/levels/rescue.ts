@@ -18,10 +18,12 @@ export class RescueLevel extends BaseLevel {
 
         this.toolbox = new Toolbox();
         this.toolbox.addControl("tell");
+        this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
+            model.Robot.prototype.moveForward,
+            model.Robot.prototype.turnRight,
+            model.Robot.prototype.turnLeft,
+        ]);
         this.toolbox.addClass("RescueRobot", asset.Robot.Red, model.RescueRobot, [
-            model.RescueRobot.prototype.moveForward,
-            model.RescueRobot.prototype.turnRight,
-            model.RescueRobot.prototype.turnLeft,
             model.RescueRobot.prototype.rescue,
         ]);
         this.toolbox.addClass("Drone", asset.Drone.Basic, model.Drone, [

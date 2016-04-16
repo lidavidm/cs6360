@@ -1142,7 +1142,7 @@ export class Drone extends WorldObject {
         let [x, y] = offsetDirection(this.x, this.y, Direction.EAST, 1);
 
         if (!this.activated) {
-            throw new RangeError("Can't fly, not activated!");
+            throw new RangeError("Can't fly, not activated! Rescue me first.");
         }
         else if (this.world.passableTerrain(x, y)) {
             this.setLoc(x, y);
@@ -1159,7 +1159,7 @@ export class Drone extends WorldObject {
         let [x, y] = offsetDirection(this.x, this.y, Direction.NORTH, 1);
 
         if (!this.activated) {
-            throw new RangeError("Can't fly, not activated!");
+            throw new RangeError("Can't fly, not activated! Rescue me first.");
         }
         else if (this.world.passableTerrain(x, y)) {
             this.setLoc(x, y);
@@ -1175,7 +1175,7 @@ export class Drone extends WorldObject {
         let [x, y] = offsetDirection(this.x, this.y, Direction.WEST, 1);
 
         if (!this.activated) {
-            throw new RangeError("Can't fly, not activated!");
+            throw new RangeError("Can't fly, not activated! Rescue me first.");
         }
         else if (this.world.passableTerrain(x, y)) {
             this.setLoc(x, y);
@@ -1191,7 +1191,7 @@ export class Drone extends WorldObject {
         let [x, y] = offsetDirection(this.x, this.y, Direction.SOUTH, 1);
 
         if (!this.activated) {
-            throw new RangeError("Can't fly, not activated!");
+            throw new RangeError("Can't fly, not activated! Rescue me first.");
         }
         else if (this.world.passableTerrain(x, y)) {
             this.setLoc(x, y);
