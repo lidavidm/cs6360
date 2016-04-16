@@ -32,8 +32,13 @@ export class Interpreter {
                 args = Sk.ffi.remapToJs(args);
 
                 var obj: any = world.getObjectByID(id);
-                // TODO: catch and throw (in Python) any exceptions
-                obj[methodName].apply(obj, args);
+
+                let result = obj[methodName].apply(obj, args);
+                console.log(`${methodName}: ${result}`);
+                if (typeof result === "number") {
+                    let pyValue = Sk.ffi.remapToPy(result);
+                    return pyValue;
+                }
             }
         );
 
@@ -58,7 +63,8 @@ export class Interpreter {
         );
 
         Sk.builtins.log = new Sk.builtin.func((message: any) => {
-            console.log(Sk.ffi.remapToJs(message));
+            let m = Sk.ffi.remapToJs(message) || message;
+            console.log(m);
         });
 
         /**

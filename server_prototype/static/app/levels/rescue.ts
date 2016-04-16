@@ -52,7 +52,6 @@ export class RescueLevel extends BaseLevel {
                 objective: `Activate the drone [${asset.Drone.Basic}].`,
                 completed: false,
                 predicate: (level) => {
-                    console.log(this.drone.activated);
                     return this.drone.activated;
                 }
             },

@@ -298,7 +298,6 @@ class VisibilityDiff extends Diff<Gate> {
     }
 
     tween(object: Gate, duration=ANIM_DURATION): Phaser.Tween {
-        console.log("ALPHA: " + this.target_alpha);
         let p = object.getPhaserObject();
         return p.game.add.tween(p).to({
             alpha: this.target_alpha,
@@ -1049,13 +1048,13 @@ this.world.log.record(new HoldingDiff(this.id, {
 
 export class RescueRobot extends Robot {
     @blocklyMethod("rescue", "rescue")
-    rescue() {
+    rescue(): number {
         let [x, y] = offsetDirection(this.x, this.y, this.orientation, 1);
         let objects = this.world.getObjectByLoc(x, y);
         for (let object of objects) {
             if (object instanceof Drone) {
                 object.activate();
-                return;
+                return object.getID();
             }
         }
         throw "No drone to activate in front of me!";

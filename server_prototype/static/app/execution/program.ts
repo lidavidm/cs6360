@@ -17,7 +17,7 @@ class JSProxyClass:
     def _proxy(self, attribute):
         jsid = self.jsid
         def _proxy(*args):
-            methodCall(jsid, attribute, args)
+            return methodCall(jsid, attribute, args)
         return _proxy
 class BlocklyError(Exception):
     """
@@ -45,6 +45,24 @@ function indent(code: string, indent: string) {
         return indent + line;
     }).join("\n");
 }
+
+/**
+ * Used to override codegen - for instance, if we need to have a
+ * mostly-in-JS method call Python code.
+ */
+export var OVERRIDES: {
+    [className: string]: {
+        [methodName: string]: string,
+    },
+} = {
+    "RescueRobot": {
+        "rescue": `def rescue(self):
+    droneID = super().rescue()
+    drone = Drone(droneID)
+    drone.flyEast()
+`
+    }
+};
 
 export class Program {
     savegame: Savegame = null;
@@ -151,14 +169,22 @@ export class Program {
         let generateClassCode = (className: string, parent: string, classObj: {
             [method: string]: HTMLElement | string;
         }) => {
-            let methods = "";
+            let methods: string[] = [];
             if (classObj) {
                 methods = Object.keys(classObj).map((methodName) => {
                     return indent(this.getMethodCode(className, methodName), "    ");
-                }).join("\n");
+                });
             }
-            if (!methods.trim()) {
-                methods = "    pass";
+            if (OVERRIDES[className]) {
+                let classOverrides = OVERRIDES[className];
+                for (let method in classOverrides) {
+                    let methodCode = classOverrides[method];
+                    methods.push(indent(methodCode, "    "));
+                }
+            }
+            let methodCode = "    pass";
+            if (methods.length > 0) {
+                methodCode = methods.join("\n");
             }
 
             return `
@@ -168,7 +194,7 @@ class ${className}(${parent}):
             id = constructorCall("${className}")
         JSProxyClass.__init__(self, id)
 
-${methods}
+${methodCode}
 `;
         };
 
