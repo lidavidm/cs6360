@@ -130,6 +130,11 @@ export class RescueLevel extends BaseLevel {
         this.zoomCamera.position.x = 500;
     }
 
+    update() {
+        super.update();
+        this.drone.update();
+    }
+
     setUpFading() {
         Blockly.Blocks.oop.clearFaded();
         Blockly.Blocks.oop.faded['tell'] = true;

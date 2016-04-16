@@ -1123,6 +1123,20 @@ export class Drone extends WorldObject {
         this.world.log.record(new DroneActivatedDiff(this));
     }
 
+    private _deltaY = -0.05;
+    update() {
+        if (this.activated) {
+            this.sprite.position.y += this._deltaY;
+            this.shadow.position.y += 0.5 * this._deltaY;
+            if (this.sprite.position.y < -6) {
+                this._deltaY = 0.05;
+            }
+            if (this.sprite.position.y > -3) {
+                this._deltaY = -0.05;
+            }
+        }
+    }
+
     @blocklyMethod("flyEast", "fly east")
     flyEast() {
         let [x, y] = offsetDirection(this.x, this.y, Direction.EAST, 1);
