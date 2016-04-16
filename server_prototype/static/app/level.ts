@@ -422,6 +422,7 @@ export class BaseLevel extends Phaser.State {
     protected background: Phaser.Group;
     protected middle: Phaser.Group;
     protected foreground: Phaser.Group;
+    protected flying: Phaser.Group;
     protected overlay: Phaser.Group;
 
     protected modelWorld: model.World;
@@ -479,6 +480,7 @@ export class BaseLevel extends Phaser.State {
         this.background = this.game.add.group(this.zoomCamera.group);
         this.middle = this.game.add.group(this.zoomCamera.group);
         this.foreground = this.game.add.group(this.zoomCamera.group);
+        this.flying = this.game.add.group(this.zoomCamera.group);
         this.overlay = this.game.add.group(this.zoomCamera.group);
         this.cursors = this.game.input.keyboard.createCursorKeys();
         this.zoomCamera.scale.set(3, 3);

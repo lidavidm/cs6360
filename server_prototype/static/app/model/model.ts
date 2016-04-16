@@ -563,15 +563,17 @@ export class World {
         }
     }
 
-    passable(x: number, y: number) {
+    passableTerrain(x: number, y: number): boolean {
         if (!this.boundsOkay(x, y)) return false;
 
         let tile = (<any> this.tilemap.layer).data[y][x];
 
         // Need explicit check because property may not be defined
-        if (tile.properties.passable === "false") {
-            return false;
-        }
+        return tile.properties.passable !== "false";
+    }
+
+    passable(x: number, y: number): boolean {
+        if (!this.passableTerrain(x, y)) return false;
 
         let objects = this.getObjectByLoc(x, y);
         for (let object of objects) {
@@ -1107,7 +1109,7 @@ export class Drone extends WorldObject {
     }
 
     passable(): boolean {
-        return false;
+        return true;
     }
 
     phaserReset() {
@@ -1128,7 +1130,7 @@ export class Drone extends WorldObject {
         if (!this.activated) {
             throw new RangeError("Can't fly, not activated!");
         }
-        else if (this.world.passable(x, y)) {
+        else if (this.world.passableTerrain(x, y)) {
             this.setLoc(x, y);
         }
         else {
@@ -1145,7 +1147,7 @@ export class Drone extends WorldObject {
         if (!this.activated) {
             throw new RangeError("Can't fly, not activated!");
         }
-        else if (this.world.passable(x, y)) {
+        else if (this.world.passableTerrain(x, y)) {
             this.setLoc(x, y);
         }
         else {
@@ -1161,7 +1163,7 @@ export class Drone extends WorldObject {
         if (!this.activated) {
             throw new RangeError("Can't fly, not activated!");
         }
-        else if (this.world.passable(x, y)) {
+        else if (this.world.passableTerrain(x, y)) {
             this.setLoc(x, y);
         }
         else {
@@ -1177,7 +1179,7 @@ export class Drone extends WorldObject {
         if (!this.activated) {
             throw new RangeError("Can't fly, not activated!");
         }
-        else if (this.world.passable(x, y)) {
+        else if (this.world.passableTerrain(x, y)) {
             this.setLoc(x, y);
         }
         else {

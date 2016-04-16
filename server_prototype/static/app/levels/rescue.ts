@@ -122,7 +122,7 @@ export class RescueLevel extends BaseLevel {
         this.rescuer = new model.RescueRobot("rescuer", 7, 4, model.Direction.WEST,
                                              this.modelWorld, this.foreground, "robot");
         this.drone = new model.Drone("drone", 4, 4,
-                                     this.modelWorld, this.foreground, "drone");
+                                     this.modelWorld, this.flying, "drone");
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
