@@ -1109,7 +1109,7 @@ export class Drone extends WorldObject {
     }
 
     passable(): boolean {
-        return true;
+        return self.activated;
     }
 
     phaserReset() {
