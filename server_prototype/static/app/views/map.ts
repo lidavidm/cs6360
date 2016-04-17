@@ -49,7 +49,7 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
         }
 
         return m("div#sidebar" + style, [
-            m("div#worldMap", {
+            m("div#worldMap[title=Drag to move]", {
                 config: function(element: HTMLElement, isInitialized: boolean) {
                     // TODO: listen for a new state?
                     if (!isInitialized) {

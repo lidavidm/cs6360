@@ -302,6 +302,7 @@ body {
     height: 320px;
     width: 100%;
     float: left;
+    cursor: move;
 }
 
 #objectives {
