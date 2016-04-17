@@ -19,9 +19,7 @@ export class MovementLevel2 extends BaseLevel {
         ]);
         this.toolbox.addObject("robot", "Robot");
 
-        this.toolbox.addControl("controls_repeat_ext");
-        this.toolbox.addNumber(0);
-
+        this.toolbox.addControl("controls_repeat");
 
         this.objectives = [
             {
@@ -81,6 +79,6 @@ export class MovementLevel2 extends BaseLevel {
     }
 
     blockLimit(context: EditorContext): number {
-        return 5;
+        return 4;
     }
 }

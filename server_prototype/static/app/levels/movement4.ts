@@ -25,8 +25,7 @@ export class MovementLevel4 extends BaseLevel {
         ]);
         this.toolbox.addObject("gate", "Gate");
 
-        this.toolbox.addControl("controls_repeat_ext");
-        this.toolbox.addNumber(0);
+        this.toolbox.addControl("controls_repeat");
 
         this.objectives = [
             {
@@ -97,6 +96,6 @@ export class MovementLevel4 extends BaseLevel {
     }
 
     blockLimit(context: EditorContext): number {
-        return 8;
+        return 7;
     }
 }
