@@ -87,6 +87,9 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                         controller.doneExecuting(true);
                         args.executing(false);
                         m.endComputation();
+                        window.setTimeout(function() {
+                            window.dispatchEvent(new Event("resize"));
+                        }, 500);
                     });
                 },
 
@@ -121,6 +124,9 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                         m.startComputation();
                         controller.session.abort();
                         m.endComputation();
+                        window.setTimeout(function() {
+                            window.dispatchEvent(new Event("resize"));
+                        }, 500);
                     }
                 },
 
