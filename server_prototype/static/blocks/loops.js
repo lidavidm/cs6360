@@ -66,6 +66,41 @@ Blockly.Blocks['controls_repeat_ext'] = {
   }
 };
 
+Blockly.Blocks['controls_repeat'] = {
+  /**
+   * Block for repeat n times (internal number).
+   * The 'controls_repeat_ext' block is preferred as it is more flexible.
+   * @this Blockly.Block
+   */
+  init: function() {
+    var faded = Blockly.Blocks.oop.isFaded("controls_repeat");
+    var message = Blockly.Msg.CONTROLS_REPEAT_TITLE;
+    if (faded) {
+      message = "for _ in range(%1):";
+    }
+
+    this.jsonInit({
+      "message0": message,
+      "args0": [
+        {
+          "type": "field_input",
+          "name": "TIMES",
+          "text": "0"
+        }
+      ],
+      "previousStatement": null,
+      "nextStatement": null,
+      "colour": Blockly.Blocks.loops.HUE,
+      "tooltip": Blockly.Msg.CONTROLS_REPEAT_TOOLTIP,
+      "helpUrl": Blockly.Msg.CONTROLS_REPEAT_HELPURL
+    });
+    this.appendStatementInput('DO')
+        .appendField(Blockly.Msg.CONTROLS_REPEAT_INPUT_DO);
+    this.getField('TIMES').setValidator(
+        Blockly.FieldTextInput.nonnegativeIntegerValidator);
+  }
+};
+
 Blockly.Blocks['controls_whileUntil'] = {
   /**
    * Block for 'do while/until' loop.
