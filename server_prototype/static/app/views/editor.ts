@@ -415,7 +415,10 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         return m("div#editor" + mode, {
             class: args.executing() ? "executing" : "",
         }, [
-            m("header", header),
+            m("header", {
+                key: "editorHeader",
+                class: args.context.className === MAIN ? "" : "blueprint",
+            }, header),
             m("div#workspace", {
                 config: (element: HTMLElement, isInitialized: boolean) => {
                     controller.element = element;

@@ -7,6 +7,9 @@ interface HierarchyController extends _mithril.MithrilController {
     svg: d3.Selection<any>,
     currentClass: _mithril.MithrilProperty<ObjectHierarchy>,
     newMethod: _mithril.MithrilProperty<string>,
+    element: HTMLElement,
+    initialize: () => void,
+    update: () => void,
 }
 
 export interface ObjectHierarchy extends d3.layout.tree.Node {
@@ -31,10 +34,49 @@ export const Component: _mithril.MithrilComponent<HierarchyController> = <any> {
             svg: null,
             currentClass: <any> m.prop(null),
             newMethod: m.prop(""),
+            element: null,
+            update: function() {
+
+            },
+
+            initialize: function() {
+                let element = controller.element;
+                element.innerHTML = "";
+                let margin = {top: 20, right: 20, bottom: 20, left: 80},
+                width = 500 - margin.right - margin.left,
+                height = 500 - margin.top - margin.bottom;
+
+                controller.tree = d3.layout.tree<ObjectHierarchy>()
+                    .size([height, width]);
+
+                controller.diagonal = d3.svg.diagonal()
+                    .projection(function(d) { return [d.y, d.x]; });
+
+                let svg = d3.select(element).append("svg")
+                    .attr("height", "500px")
+                    .attr("width", "500px")
+                    .attr("viewBox", "0 0 500 500");
+                svg.append("defs")
+                    .append("pattern")
+                    .attr("id", "blueprintGrid")
+                    .attr("width", 8)
+                    .attr("height", 8)
+                    .attr("patternUnits", "userSpaceOnUse")
+                    .append("path")
+                    .attr("d", "M 8 0 L 0 0 0 8 8 8")
+                    .attr("fill", "#007")
+                    .attr("stroke", "#FFF")
+                    .style("stroke-width", "0.5");
+
+                controller.svg = svg
+                    .append("g")
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            },
         };
 
         args.event.on(BaseLevel.NEXT_LEVEL_LOADED, () => {
             controller.currentClass(null);
+            controller.initialize();
         });
 
         return controller;
@@ -47,7 +89,7 @@ export const Component: _mithril.MithrilComponent<HierarchyController> = <any> {
         event: PubSub,
         level: BaseLevel,
     }): _mithril.MithrilVirtualElement<HierarchyController> {
-        function update() {
+        controller.update = function update() {
             let i = 0;
             // Compute tree layout
             let nodes = controller.tree.nodes(args.hierarchy).reverse();
@@ -116,39 +158,12 @@ export const Component: _mithril.MithrilComponent<HierarchyController> = <any> {
         }, [
             m(".image", {
                 config: function(element: HTMLElement, isInitialized: boolean) {
+                    controller.element = element;
                     if (!isInitialized) {
-                        let margin = {top: 20, right: 20, bottom: 20, left: 80},
-                        width = 500 - margin.right - margin.left,
-                        height = 500 - margin.top - margin.bottom;
-
-                        controller.tree = d3.layout.tree<ObjectHierarchy>()
-                            .size([height, width]);
-
-                        controller.diagonal = d3.svg.diagonal()
-                            .projection(function(d) { return [d.y, d.x]; });
-
-                        let svg = d3.select(element).append("svg")
-                            .attr("height", "500px")
-                            .attr("width", "500px")
-                            .attr("viewBox", "0 0 500 500");
-                        svg.append("defs")
-                            .append("pattern")
-                            .attr("id", "blueprintGrid")
-                            .attr("width", 8)
-                            .attr("height", 8)
-                            .attr("patternUnits", "userSpaceOnUse")
-                            .append("path")
-                            .attr("d", "M 8 0 L 0 0 0 8 8 8")
-                            .attr("fill", "#007")
-                            .attr("stroke", "#FFF")
-                            .style("stroke-width", "0.5");
-
-                        controller.svg = svg
-                            .append("g")
-                            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                        controller.initialize();
                     }
                     if (args.showHierarchy()) {
-                        update();
+                        controller.update();
                     }
                 }
             }),
