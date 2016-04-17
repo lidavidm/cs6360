@@ -34,7 +34,7 @@ def incrementCounter():
     global counter
     counter = counter + 1
     if counter >= MAX_NUM_EXECUTED_LINES:
-        raise RuntimeError("The interpreter timed out. Too many lines were executed.")
+        raise RuntimeError("Too many blocks run! Did you call a function from inside itself?")
 
 def recordDuplicateObject(blockID, name):
     raise RuntimeError("{} was already instantiated!".format(name))
@@ -169,8 +169,8 @@ export class Program {
     }
 
     getCode(headless=false): string {
-        Blockly.Python.STATEMENT_PREFIX = "recordBlockBegin(%1)\n"
-        Blockly.Python.STATEMENT_POSTFIX = "recordBlockEnd(%1)\nincrementCounter()\n"
+        Blockly.Python.STATEMENT_PREFIX = "recordBlockBegin(%1)\nincrementCounter()\n"
+        Blockly.Python.STATEMENT_POSTFIX = "recordBlockEnd(%1)\n"
 
         let support = this.getSupportCode();
         let code = this.getMainCode(headless);
