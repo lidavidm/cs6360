@@ -40,28 +40,28 @@ export class RescueLevel extends BaseLevel {
 
         this.objectives = [
             {
-                objective: `Write the flyHome method for the drone [${asset.Drone.Basic}].`,
+                objective: `Write the flyHome method for the drone [${asset.Drone.Basic}]`,
                 completed: false,
                 predicate: (level) => {
                     return this.program.getMethodCode("Drone", "flyHome").indexOf("NotImplementedError") === -1;
                 }
             },
             {
-                objective: `Move the robot [${asset.Robot.Red}] to the drone [${asset.Drone.Basic}].`,
+                objective: `Move the robot [${asset.Robot.Red}] to the drone [${asset.Drone.Basic}]`,
                 completed: false,
                 predicate: (level) => {
                     return this.rescuer.getX() == 5 && this.rescuer.getY() == 4;
                 }
             },
             {
-                objective: `Activate the drone [${asset.Drone.Basic}].`,
+                objective: `Activate the drone [${asset.Drone.Basic}]`,
                 completed: false,
                 predicate: (level) => {
                     return this.drone.activated;
                 }
             },
             {
-                objective: `Fly the drone [${asset.Drone.Basic}] home.`,
+                objective: `Fly the drone [${asset.Drone.Basic}] home`,
                 completed: false,
                 predicate: (level) => {
                     return this.drone.getX() == 7 && this.drone.getY() == 4;

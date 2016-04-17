@@ -62,7 +62,7 @@ export var OVERRIDES: {
     try:
         drone.flyHome()
     except NotImplementedError:
-        raise RuntimeError("Make Drone.flyHome tell the drone to go to base!")
+        raise RuntimeError("I called Drone.flyHome but it's not defined!")
 `
     }
 };
