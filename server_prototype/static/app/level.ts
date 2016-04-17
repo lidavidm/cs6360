@@ -310,7 +310,8 @@ export class Toolbox {
         return this._addUserObjects(<HTMLElement> this._tree.documentElement.cloneNode(true));
     }
 
-    methodXml(className: string, hierarchy: ObjectHierarchy): HTMLElement {
+    methodXml(context: EditorContext, hierarchy: ObjectHierarchy): HTMLElement {
+        let className = context.className;
         let clone = <HTMLElement> this._tree.documentElement.cloneNode(true);
         let objects = clone.querySelectorAll("block[type='variables_get']");
         Array.prototype.slice.call(objects).forEach(function(node: HTMLElement) {
@@ -367,6 +368,15 @@ export class Toolbox {
             }
             else {
                 clone.querySelector("category[name='Objects']").appendChild(block);
+            }
+        }
+
+        // Remove the method that we're currently editing
+        let nameNodes = clone.querySelectorAll("field[name='METHOD_NAME']");
+        for (let i = 0; i < nameNodes.length; i++) {
+            let name = nameNodes[i];
+            if (name.textContent === context.method) {
+                name.parentNode.parentNode.removeChild(name.parentNode);
             }
         }
 

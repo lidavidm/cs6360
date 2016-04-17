@@ -219,7 +219,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                         snap: true,
                     },
                 });
-                updateToolbox(context.className);
+                updateToolbox();
                 controller.workspace.clear();
 
                 Blockly.Xml.domToWorkspace(
@@ -270,21 +270,16 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             });
         }
 
-        let lastClassName: string = null;
-        function updateToolbox(className?: string) {
-            if (!className && lastClassName) {
-                className = lastClassName;
-            }
-            lastClassName = className;
+        function updateToolbox() {
             let toolbox = controller.level.toolbox.xml();
-            if (className !== MAIN) {
-                toolbox = controller.level.toolbox.methodXml(className, controller.level.hierarchy);
+            if (controller.context.className !== MAIN) {
+                toolbox = controller.level.toolbox.methodXml(controller.context, controller.level.hierarchy);
             }
             controller.workspace.updateToolbox(toolbox);
         }
 
-        args.event.on(level.BaseLevel.TOOLBOX_UPDATED, (className) => {
-            updateToolbox(className);
+        args.event.on(level.BaseLevel.TOOLBOX_UPDATED, () => {
+            updateToolbox();
         });
 
         args.event.on(level.BaseLevel.NEXT_LEVEL_LOADED, (nextLevel: level.BaseLevel, blocks: EditorContext) => {
