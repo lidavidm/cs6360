@@ -299,13 +299,19 @@ class VisibilityDiff extends Diff<Gate> {
 
     tween(object: Gate, duration=ANIM_DURATION): Phaser.Tween {
         let p = object.getPhaserObject();
-        return p.game.add.tween(p).to({
+        let t = p.game.add.tween(p).to({
             alpha: this.target_alpha,
-        }, duration, Phaser.Easing.Quadratic.InOut);
+        }, 400, Phaser.Easing.Quadratic.InOut);
+        return t;
     }
 
     apply(world: World, object: Gate) {
-        ;
+        if (this.target_alpha == 0){
+            object.opened = true;
+        }
+        else{
+            object.opened = false;
+        }
     }
 }
 
@@ -1054,15 +1060,14 @@ this.world.log.record(new HoldingDiff(this.id, {
 
     @blocklyMethod("open", "open")
     open() {
-        this.opened = true;
         this.world.log.record(
             new VisibilityDiff(this.id, 0));
     }
 
     @blocklyMethod("close", "close")
     close() {
-        this.opened = false;
-        this.world.log.record(new VisibilityDiff(this.id, 1));
+        this.world.log.record(
+            new VisibilityDiff(this.id, 1));
     }
 }
 
