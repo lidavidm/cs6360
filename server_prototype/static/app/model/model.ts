@@ -960,6 +960,45 @@ export class Robot extends WorldObject {
     }
 }
 
+export class DrillRobot extends Robot {
+    mine() {
+        if (this.destructed) {
+            throw new RangeError("Self destructed, can't drill!");
+        }
+
+        let targets: WorldObject[] = this.world.getObjectByLoc(this.x, this.y);
+
+        for (let i = 0; i < targets.length; i++) {
+            if (targets[i] instanceof FixedResource) {
+                let target = <FixedResource> targets[i];
+                target.mine();
+                break;
+            }
+        }
+    }
+}
+
+export class PumpRobot extends Robot {
+    mine() {
+        console.log("PUMPING");
+        if (this.destructed) {
+            throw new RangeError("Self destructed, can't pump!");
+        }
+
+        let targets: WorldObject[] = this.world.getObjectByLoc(this.x, this.y);
+
+        for (let i = 0; i < targets.length; i++) {
+            if (targets[i] instanceof FixedResource) {
+                let target = <FixedResource> targets[i];
+                target.mine();
+                return;
+            }
+        }
+
+        throw "Nothing below me to pump!";
+    }
+}
+
 /**
  * Iron object (basic resource). Doesn't really do much right now
  * and will probably need to be refactored as gameplay elements are ironed out
@@ -1201,5 +1240,101 @@ export class Drone extends WorldObject {
             throw new RangeError("Can't fly south! Tried: " + x + ", " + y);
         }
     }
+}
 
+class ResourceMinedDiff extends Diff<FixedResource> {
+    constructor(resource: FixedResource, tintA: number, tintB: number) {
+        super(DiffKind.Property, null, resource.getID(), {
+            tint: [tintA, tintB],
+        });
+    }
+
+    tween(object: FixedResource, duration: number): Phaser.Tween {
+        let p = object.getPhaserObject();
+        object.mask.tint = this.properties["tint"][1];
+        return null;
+    }
+
+    apply(world: World, object: FixedResource) {
+        object.mask.tint = this.properties["tint"][0];
+    }
+}
+
+
+export class FixedResource extends WorldObject {
+    sprite: Phaser.Sprite;
+    phaserObject: Phaser.Group;
+    mask: Phaser.Sprite;
+    tintColor: number;
+
+    constructor(name: string, x: number, y: number, tintColor: number,
+                world: World, group: Phaser.Group, sprite: string) {
+        super(name, x, y, world);
+        this.phaserObject = world.game.add.group(group);
+        this.phaserObject.position.x = TILE_WIDTH * x + TILE_WIDTH / 2;
+        this.phaserObject.position.y = TILE_HEIGHT * y + TILE_WIDTH / 2;
+        this.phaserObject.pivot.x = TILE_WIDTH / 2;
+        this.phaserObject.pivot.y = TILE_HEIGHT / 2;
+
+        this.sprite = this.phaserObject.create(0, 0, sprite);
+        this.sprite.width = TILE_WIDTH;
+        this.sprite.height = TILE_HEIGHT;
+
+        this.mask = this.phaserObject.create(0, 0, sprite);
+        this.mask.width = TILE_WIDTH;
+        this.mask.height = TILE_HEIGHT;
+        this.mask.tint = 0x000000;
+        this.mask.alpha = 1.0;
+
+        this.tintColor = tintColor;
+        world.log.record(new ResourceMinedDiff(this, 0x000000, 0x000000));
+
+        let circle = world.game.add.graphics(0, 0, this.phaserObject);
+        circle.lineStyle(0.5, 0x00A5FF, 0.5);
+        circle.drawCircle(TILE_WIDTH / 2, TILE_HEIGHT / 2, 1.41 * TILE_WIDTH);
+        circle.drawCircle(TILE_WIDTH / 2, TILE_HEIGHT / 2, 1.63 * TILE_WIDTH);
+    }
+
+    passable(): boolean {
+        return true;
+    }
+
+    mine() {
+        this.mask.tint = 0x000000;
+        this.world.log.record(new ResourceMinedDiff(this, this.mask.tint, 0x000000));
+    }
+
+    fill() {
+        this.mask.tint = this.tintColor;
+        console.log("FILL");
+        this.world.log.record(new ResourceMinedDiff(this, this.mask.tint, this.tintColor));
+    }
+
+    phaserReset() {
+        this.phaserObject.width = TILE_WIDTH;
+        this.phaserObject.height = TILE_HEIGHT;
+        this.phaserObject.alpha = 1.0;
+    }
+}
+
+export class LinkedResource extends FixedResource {
+    other: FixedResource;
+
+    constructor(name: string, x: number, y: number, tintColor: number,
+                world: World, group: Phaser.Group, sprite: string,
+                other: FixedResource) {
+        super(name, x, y, tintColor, world, group, sprite);
+        this.other = other;
+    }
+
+    mine() {
+        console.log("LINKED MINE");
+        super.mine();
+        this.other.fill();
+    }
+
+    fill() {
+        super.fill();
+        this.other.mine();
+    }
 }
