@@ -420,7 +420,6 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 config: (element: HTMLElement, isInitialized: boolean) => {
                     controller.element = element;
                     if (isInitialized) {
-                        this.resizeBlockly();
                         return;
                     }
 
@@ -484,11 +483,4 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             }),
         ]);
     },
-
-    resizeBlockly: function() {
-        // https://groups.google.com/forum/#!topic/blockly/WE7x-HPh81A
-        // According to above link, window resize event is needed for
-        // Blockly to resize itself
-        window.dispatchEvent(new Event("resize"));
-    }
 };
