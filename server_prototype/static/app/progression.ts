@@ -45,6 +45,7 @@ import {HierarchyLevel3} from "levels/hierarchy3";
 import {BasicsLevel1} from "levels/basic1";
 import {BasicsLevel2} from "levels/basic2";
 import {Alpha1Level} from "levels/alpha1";
+import {FrackingLevel} from "levels/fracking";
 
 export const DEFAULT_PROGRESSION = new Progression([
     ["movement1", MovementLevel1],
