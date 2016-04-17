@@ -98,9 +98,9 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     controller.editor.getSession().removeMarker(controller.readonlyRangeId);
                 }
 
+                let code = context.code;
+                let lines = code.split("\n");
                 if (context.className === MAIN) {
-                    let code = context.code;
-                    let lines = code.split("\n");
                     let index = 0;
                     for (let line of lines) {
                         if (line.indexOf("Beginning of main code") > -1) {
@@ -111,7 +111,14 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     controller.readonlyRange = new Range(0, 0, index, 10000);
                 }
                 else {
-                    controller.readonlyRange = new Range(0, 0, 2, 10000);
+                    let end = 10000;
+                    for (let line of lines) {
+                        console.log(line);
+                        if (line.indexOf(":") > -1) {
+                            end = line.indexOf(":") + 1;
+                        }
+                    }
+                    controller.readonlyRange = new Range(0, 0, 2, end);
                     controller.readonlyRangeId =
                         controller.editor.getSession().addMarker(controller.readonlyRange, "readonly");
                 }
@@ -458,6 +465,13 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
 
                             if (controller.readonlyRange &&
                                 controller.readonlyRange.intersects(editor.getSelectionRange())) {
+                                // Allow enter key at end so that if
+                                // the body is deleted, they can still
+                                // edit it
+                                let sr = editor.getSelectionRange();
+                                let rr = controller.readonlyRange.end;
+                                let selectionIsOneChar = sr.start.row === sr.end.row && sr.start.column === sr.end.column;
+                                if (selectionIsOneChar && keyCode === 13 && sr.end.row === rr.row && sr.end.column === rr.column) return;
                                 return {
                                     command: "null",
                                     passEvent: false,
