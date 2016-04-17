@@ -59,7 +59,6 @@ export const MainComponent = {
         let savegame = Savegame.newGame(firstLevelName);
         if (window.localStorage["0"]) {
             savegame = Savegame.parse(window.localStorage["0"]);
-            savegame.currentLevel = firstLevelName;
         }
 
         let controller = Object.create(null);
