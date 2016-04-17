@@ -28,16 +28,26 @@ class BlocklyError(Exception):
         self.blockID = blockID
         self.message = message
 
+class HelpError(Exception):
+    def __init__(self, message):
+        self.message = message
+
+    def __repr__(self):
+        return self.message
+
+    def __str__(self):
+        return self.message
+
 counter = 0
 MAX_NUM_EXECUTED_LINES = 200
 def incrementCounter():
     global counter
     counter = counter + 1
     if counter >= MAX_NUM_EXECUTED_LINES:
-        raise RuntimeError("Too many blocks run! Did you call a function from inside itself?")
+        raise HelpError("Too many blocks run! Did you call a function from inside itself?")
 
 def recordDuplicateObject(blockID, name):
-    raise RuntimeError("{} was already instantiated!".format(name))
+    raise HelpError("{} was already instantiated!".format(name))
 
 `;
 
@@ -63,7 +73,7 @@ export var OVERRIDES: {
     try:
         drone.flyHome()
     except NotImplementedError:
-        raise RuntimeError("I called Drone.flyHome but it's not defined!")
+        raise HelpError("I called Drone.flyHome but it's not defined!")
 `
     }
 };
@@ -256,7 +266,7 @@ ${methodCode}
         return classes;
     }
 
-    getMethodCode(className: string, methodName: string): string {
+    getMethodCode(className: string, methodName: string, userFacing=false): string {
         let savedClasses = this.savegame.loadAll();
         let classObj = savedClasses[className];
         let impl = classObj[methodName];
@@ -270,7 +280,12 @@ ${methodCode}
             Blockly.Xml.domToWorkspace(headlessWorkspace, impl);
             let body = Blockly.Python.workspaceToCode(headlessWorkspace);
             if (!body) {
-                body = `raise NotImplementedError("${methodName} isn't implemented! Check the Class Hierarchy at top.")`
+                if (userFacing) {
+                    body = "# Write your method here\npass";
+                }
+                else {
+                    body = `raise NotImplementedError("${methodName} isn't implemented! Check the Class Hierarchy at top.")`
+                }
             }
             let indentedBody = indent(body.trim() || "pass", "    ");
             return `${help}def ${methodName}(self):\n${indentedBody}`

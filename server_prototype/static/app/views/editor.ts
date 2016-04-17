@@ -165,7 +165,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
 
         args.event.on(level.BaseLevel.CONTEXT_CHANGED, (context: EditorContext) => {
             if (!controller.level.canUseBlockEditor(context) && !context.code) {
-                let code = controller.level.program.getMethodCode(context.className, context.method);
+                let code = controller.level.program.getMethodCode(context.className, context.method, true);
                 context.code = code;
             }
 
@@ -346,7 +346,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                                 args.context.code = code;
                             }
                             else {
-                                let code = controller.level.program.getMethodCode(args.context.className, args.context.method);
+                                let code = controller.level.program.getMethodCode(args.context.className, args.context.method, true);
                                 args.context.code = code;
                             }
                             controller.editor.getSession().setValue(args.context.code);
