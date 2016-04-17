@@ -500,6 +500,11 @@ li.objective img {
     text-align: center;
 }
 
+#congratulations ul {
+    list-style-type: none;
+    padding: 0;
+}
+
 #congratulations p {
     margin-top: 0;
 }
