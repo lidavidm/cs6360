@@ -572,14 +572,29 @@ export class BaseLevel extends Phaser.State {
         Blockly.Blocks.oop.setHierarchy(this.hierarchy);
     }
 
+    lastX: number = null;
+    lastY: number = null;
+
     update() {
         this.zoomCamera.update();
-
-        if (!this.game.input.activePointer.withinGame) return;
 
         // TODO: update the grid offset to match the camera (so that
         // we don't have to create a grid that covers the entire map,
         // which hurts performance)
+
+        if (this.game.input.mousePointer.isUp) {
+            this.lastX = this.lastY = null;
+        }
+        else if (this.game.input.mousePointer.isDown) {
+            if (this.lastX !== null) {
+                let dx = this.game.input.mousePointer.position.x - this.lastX;
+                let dy = this.game.input.mousePointer.position.y - this.lastY;
+                this.zoomCamera.position.x -= dx / 1.5;
+                this.zoomCamera.position.y -= dy / 1.5;
+            }
+            this.lastX = this.game.input.mousePointer.position.x;
+            this.lastY = this.game.input.mousePointer.position.y;
+        }
 
         if (this.cursors.up.isDown) {
             this.zoomCamera.position.y -= 4;
