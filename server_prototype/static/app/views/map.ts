@@ -118,7 +118,9 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
 
                 onabort: () => {
                     if (controller.session) {
+                        m.startComputation();
                         controller.session.abort();
+                        m.endComputation();
                     }
                 },
 

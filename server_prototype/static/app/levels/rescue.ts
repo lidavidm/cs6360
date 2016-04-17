@@ -14,7 +14,7 @@ export class RescueLevel extends BaseLevel {
 
         this.missionTitle = "Eye Opener";
 
-        this.missionText = ["One of the surveilance drones just stopped. We need to get it working or we'll lose visuals on your area."];
+        this.missionText = ["One of the surveilance drones just stopped. We need to reboot it or we'll lose visuals on your area."];
 
         this.toolbox = new Toolbox();
         this.toolbox.addControl("tell");
@@ -24,7 +24,7 @@ export class RescueLevel extends BaseLevel {
             model.Robot.prototype.turnLeft,
         ]);
         this.toolbox.addClass("RescueRobot", asset.Robot.Red, model.RescueRobot, [
-            model.RescueRobot.prototype.rescue,
+            model.RescueRobot.prototype.rebootTarget,
         ]);
         this.toolbox.addClass("Drone", asset.Drone.Basic, model.Drone, [
             model.Drone.prototype.flyEast,

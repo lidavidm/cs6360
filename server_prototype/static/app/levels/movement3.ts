@@ -1,4 +1,5 @@
 import * as model from "model/model";
+import {EditorContext, MAIN} from "model/editorcontext";
 import {BaseLevel, Toolbox} from "level";
 import * as TooltipView from "views/tooltip";
 import * as python from "execution/python";
@@ -87,5 +88,9 @@ export class MovementLevel3 extends BaseLevel {
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
+    }
+
+    blockLimit(context: EditorContext): number {
+        return 8;
     }
 }

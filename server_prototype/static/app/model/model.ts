@@ -1049,8 +1049,8 @@ this.world.log.record(new HoldingDiff(this.id, {
 }
 
 export class RescueRobot extends Robot {
-    @blocklyMethod("rescue", "rescue")
-    rescue(): number {
+    @blocklyMethod("rebootTarget", "rebootTarget")
+    rebootTarget(): number {
         let [x, y] = offsetDirection(this.x, this.y, this.orientation, 1);
         let objects = this.world.getObjectByLoc(x, y);
         for (let object of objects) {
@@ -1059,7 +1059,7 @@ export class RescueRobot extends Robot {
                 return object.getID();
             }
         }
-        throw "No drone to activate in front of me!";
+        throw "No drone to reboot in front of me!";
     }
 }
 
@@ -1109,7 +1109,7 @@ export class Drone extends WorldObject {
     }
 
     passable(): boolean {
-        return self.activated;
+        return this.activated;
     }
 
     phaserReset() {

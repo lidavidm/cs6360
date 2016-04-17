@@ -99,4 +99,8 @@ export class FuncDefsLevel1 extends BaseLevel {
         Blockly.Blocks.oop.clearFaded();
         Blockly.Blocks.oop.faded['tell'] = true;
     }
+
+    blockLimit(context: EditorContext): number {
+        return 8;
+    }
 }
