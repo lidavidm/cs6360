@@ -128,7 +128,7 @@ export class Program {
             let count = this.headless.getAllBlocks().length;
             let limit = this.blockLimit(mainContext);
 
-            if (count > limit) {
+            if (limit != null && count > limit) {
                 return MAIN;
             }
         }
