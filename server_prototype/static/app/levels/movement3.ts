@@ -67,6 +67,7 @@ export class MovementLevel3 extends BaseLevel {
         super.create();
 
         this.zoomCamera.position.x = 120;
+        this.zoomCamera.position.y = 100;
 
         let map = this.game.add.tilemap("lava");
         map.addTilesetImage("cave2", "tiles");
