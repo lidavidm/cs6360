@@ -41,6 +41,7 @@ export const Component: _mithril.MithrilComponent<HierarchyController> = <any> {
 
             initialize: function() {
                 let element = controller.element;
+                if (!element) return;
                 element.innerHTML = "";
                 let margin = {top: 20, right: 20, bottom: 20, left: 80},
                 width = 500 - margin.right - margin.left,

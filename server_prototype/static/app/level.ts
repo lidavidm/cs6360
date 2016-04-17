@@ -29,6 +29,7 @@ export class Toolbox {
         [name: string]: string
     };
     private _enableSuper: boolean;
+    private _classText: string;
 
     private static INLINE_XML: string = `<xml></xml>`;
     private static CATEGORY_XML: string = `
@@ -40,7 +41,7 @@ export class Toolbox {
 </xml>
 `;
 
-    constructor(inline=false, enableSuper=false) {
+    constructor(inline=false, classText="blueprint", enableSuper=false) {
         let parser = new DOMParser();
         this._tree = parser.parseFromString(inline ? Toolbox.INLINE_XML : Toolbox.CATEGORY_XML, "text/xml");
         this._inline = inline;
@@ -51,6 +52,7 @@ export class Toolbox {
         this._objectParent = inline ? this._tree.documentElement : this._tree.querySelector("category[name='Objects']");
         this._controlParent = inline ? this._tree.documentElement : this._tree.querySelector("category[name='Commands']");
         this._classParent = null;
+        this._classText = classText;
     }
 
     /**
@@ -85,7 +87,7 @@ export class Toolbox {
         }
 
         let method_type = "method_" + className;
-        category.setAttribute("name", "class " + className);
+        category.setAttribute("name", this._classText + " " + className);
         category.setAttribute("class", "blueprint");
 
         let method_blocks: HTMLElement[] = [];

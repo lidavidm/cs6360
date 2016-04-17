@@ -300,6 +300,10 @@ body {
     linear-gradient(90deg, rgba(255, 255, 255, 0.2) 1px, transparent 1px);
 }
 
+.blueprint .blocklyTreeIcon {
+    display: none !important;
+}
+
 .blueprint.blocklyTreeRow:hover:not(.blocklyTreeSelected) {
     background-color: #00A;
 }

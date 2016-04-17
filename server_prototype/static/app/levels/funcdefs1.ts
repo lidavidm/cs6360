@@ -16,7 +16,7 @@ export class FuncDefsLevel1 extends BaseLevel {
 
         this.missionText = ["You need to get your robot back to base! Start by writing and using a function to turn left."];
 
-        this.toolbox = new Toolbox();
+        this.toolbox = new Toolbox(false, "class", false);
         this.toolbox.addControl("tell");
         this.toolbox.addClass("SmallRobot", asset.Robot.Red, model.Robot, [
             model.Robot.prototype.moveForward,
