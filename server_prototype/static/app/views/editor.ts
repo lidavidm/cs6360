@@ -16,6 +16,8 @@ interface EditorController extends _mithril.MithrilController {
     readonlyRange: AceAjax.Range,
     readonlyRangeId: number,
     onunload: () => void,
+    numBlocks: _mithril.MithrilProperty<number>,
+    context: EditorContext,
 }
 
 interface Args {
@@ -44,6 +46,8 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             editor: null,
             readonlyRange: null,
             readonlyRangeId: -1,
+            numBlocks: m.prop(0),
+            context: null,
 
             onunload: function() {
                 if (controller.workspace) {
@@ -55,6 +59,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             },
 
             changeListener: function(event: any) {
+                controller.numBlocks(controller.workspace.getAllBlocks().length);
                 controller.level.event.broadcast(
                     level.BaseLevel.WORKSPACE_UPDATED,
                     Blockly.Xml.workspaceToDom(controller.workspace));
@@ -63,7 +68,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     updateObjectImage(event, block);
                 }
 
-                for (let block of controller.workspace.getTopBlocks()) {
+                for (let block of controller.workspace.getAllBlocks()) {
                     if (block.warning) {
                         block.warning.setVisible(true);
                         break;
@@ -188,6 +193,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         }
 
         function setupLevel(context: EditorContext) {
+            controller.context = context;
             if (context.code) {
                 // TODO: if code-only, use fallback
                 controller.editor.getSession().setValue(context.code);
@@ -367,6 +373,35 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         let mode = ".blockly";
         if (usingCodeEditor || !args.level.canUseBlockEditor(args.context)) {
             mode = ".ace";
+        }
+
+        if (mode === ".blockly") {
+            let limit = args.level.blockLimit(args.context);
+            if (limit !== null && args.context.className === MAIN) {
+                let percent = Math.min(100, Math.ceil(100 * controller.numBlocks() / limit));
+                let color = controller.numBlocks() > limit ? "orange" : "green";
+                let bg = `linear-gradient(to right, ${color} ${percent}%, black ${percent + 1}%, black 100%)`;
+
+                header.push(m("div#memoryBar", {
+                    key: "memoryBar",
+                    style: {
+                        background: bg,
+                    },
+                }, [
+                    m("strong", "Memory Used: "),
+                    m("span.use", controller.numBlocks()),
+                    "/",
+                    m("span.limit", limit.toString()),
+                    " blocks",
+                ]));
+            }
+            else {
+                header.push(m("div#memoryBar", {
+                    key: "memoryBar",
+                }, [
+                    m("strong", "Unlimited Memory"),
+                ]));
+            }
         }
 
         return m("div#editor" + mode, {

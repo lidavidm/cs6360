@@ -60,12 +60,12 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                     }
                 },
             }),
-            m.component(Objectives.Component, args.level.objectives),
             m.component(Controls.Component, {
                 executing: args.executing,
                 doneExecuting: controller.doneExecuting,
                 paused: controller.paused,
                 valid: args.level.isCodeValid(),
+                memoryUsage: args.level.program.validateMemoryUsage(),
 
                 onrun: () => {
                     if (!args.level.program.isCodeParseable()) {
@@ -100,6 +100,10 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                     }
 
                     args.event.broadcast("runInvalid");
+                },
+
+                onrunmemory: () => {
+                    args.event.broadcast("runMemory");
                 },
 
                 onreset: () => {
@@ -137,6 +141,7 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                     }
                 }
             }),
+            m.component(Objectives.Component, args.level.objectives),
         ]);
     },
 };

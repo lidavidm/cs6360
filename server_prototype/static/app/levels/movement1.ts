@@ -108,4 +108,8 @@ export class MovementLevel1 extends BaseLevel {
         }
         return super.fallbackWorkspace(context);
     }
+
+    blockLimit(context: EditorContext): number {
+        return 3;
+    }
 }

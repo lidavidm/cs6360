@@ -5,6 +5,7 @@ import {Toolbox} from "level";
 import {MAIN} from "model/editorcontext";
 import {World} from "model/model";
 import {ObjectHierarchy} from "views/hierarchy";
+import {EditorContext} from "model/editorcontext";
 
 const PROXY_CLASS = `
 class JSProxyClass:
@@ -67,6 +68,8 @@ export var OVERRIDES: {
     }
 };
 
+type BlockLimit = (context: EditorContext) => number;
+
 export class Program {
     savegame: Savegame = null;
     classes: string[];
@@ -74,13 +77,15 @@ export class Program {
     invalid: boolean;
     hierarchy: ObjectHierarchy;
     headless: any;
+    blockLimit: BlockLimit;
 
-    constructor(hierarchy: ObjectHierarchy) {
+    constructor(hierarchy: ObjectHierarchy, blockLimit: BlockLimit) {
         this.globals = [];
         this.classes = [];
         this.invalid = false;
         this.hierarchy = hierarchy;
         this.headless = new Blockly.Workspace();
+        this.blockLimit = blockLimit;
     }
 
     update(savegame: Savegame) {
@@ -107,6 +112,28 @@ export class Program {
         let code = this.getCode(true);
 
         return !this.invalid && code.indexOf("raise BlocklyError") === -1;
+    }
+
+    validateMemoryUsage(): string {
+        if (!this.savegame) return null;
+
+        let mainContext = {
+            className: MAIN,
+            method: "",
+        };
+        let main = this.savegame.load(mainContext);
+        if (main.workspace) {
+            this.headless.clear();
+            Blockly.Xml.domToWorkspace(this.headless, main.workspace);
+            let count = this.headless.getAllBlocks().length;
+            let limit = this.blockLimit(mainContext);
+
+            if (count > limit) {
+                return MAIN;
+            }
+        }
+
+        return null;
     }
 
     isCodeParseable(): boolean {

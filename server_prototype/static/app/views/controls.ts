@@ -13,8 +13,10 @@ export const Component: _mithril.MithrilComponent<ControlsController> = <any> {
         doneExecuting: _mithril.MithrilProperty<boolean>,
         paused: _mithril.MithrilProperty<boolean>,
         valid: boolean,
+        memoryUsage: string,
         onrun?: () => void,
         onruninvalid?: () => void,
+        onrunmemory?: () => void,
         onreset?: () => void,
         onabort?: () => void,
         onpause?: () => void,
@@ -33,16 +35,24 @@ export const Component: _mithril.MithrilComponent<ControlsController> = <any> {
         else if (!args.executing()) {
             let cssClass = args.valid ? ".run" : ".runInvalid";
             let text = args.valid ? "Run" : "Invalid Code";
+            if (args.memoryUsage !== null) {
+                cssClass = ".runMemory";
+                text = "Over Memory Limit";
+            }
+
             buttons.push(m(<any> ("button" + cssClass), {
                 onclick: function() {
                     if (!args.valid) {
                         if (args.onruninvalid) {
                             args.onruninvalid();
                         }
-                        return;
-                    };
-
-                    if (args.onrun) {
+                    }
+                    else if (args.memoryUsage !== null) {
+                        if (args.onrunmemory) {
+                            args.onrunmemory();
+                        }
+                    }
+                    else if (args.onrun) {
                         args.onrun();
                     }
                 },

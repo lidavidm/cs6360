@@ -455,7 +455,7 @@ export class BaseLevel extends Phaser.State {
         this.allowArbitraryUserMethods = false;
 
         this.initialize();
-        this.program = new Program(this.hierarchy);
+        this.program = new Program(this.hierarchy, this.blockLimit.bind(this));
     }
 
     initialize() {
@@ -511,6 +511,14 @@ export class BaseLevel extends Phaser.State {
      */
     canUseBlockEditor(context: EditorContext): boolean {
         return true;
+    }
+
+    /**
+     * Return the limit on the number of blocks, or null if there is
+     * no limit.
+     */
+    blockLimit(context: EditorContext): number {
+        return null;
     }
 
     /**
