@@ -5,7 +5,7 @@ import * as asset from "asset";
 
 export class IronLevel extends BaseLevel {
     public modelWorld: model.World;
-    public robot: model.Robot;
+    public robot: model.MineRobot;
     public irons: model.Iron[];
 
     initialize() {
@@ -16,17 +16,20 @@ export class IronLevel extends BaseLevel {
             "Gather more iron so we can build some new robots. You might find it convenient to define a moveAndMine method."
         ];
 
-        this.toolbox = new Toolbox();
+        this.toolbox = new Toolbox(false, "class", false);
         this.toolbox.addControl("tell");
+        this.toolbox.addControl("controls_repeat");
+
         this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
             model.Robot.prototype.turnRight,
-            model.Robot.prototype.mine,
+            model.Robot.prototype.turnLeft,
         ]);
-        this.toolbox.addObject("robot", "Robot");
+        this.toolbox.addClass("MineRobot", asset.Robot.Red, model.MineRobot, [
+            model.MineRobot.prototype.mine,
+        ]);
 
-        this.toolbox.addControl("controls_repeat_ext");
-        this.toolbox.addNumber(0);
+        this.toolbox.addObject("miner", "MineRobot");
 
         this.objectives = [
             {
@@ -48,10 +51,16 @@ export class IronLevel extends BaseLevel {
             children: [
                 {
                     name: "Robot",
-                    children: [],
-                    methods: ["moveForward", "turnRight", "mine"],
-                    userMethods: ["temporaryLeft", "moveAndMine"]
-                },
+                    children: [
+                        {
+                            name: "MineRobot",
+                            children: [],
+                            methods: ["mine"],
+                            userMethods: ["moveAndMine"]
+                        },
+                    ],
+                    methods: ["moveForward", "turnRight", "turnLeft"],
+                },  
             ],
         };
 
@@ -65,7 +74,7 @@ export class IronLevel extends BaseLevel {
 
         this.game.load.image("tiles", "assets/tilesets/cave2.png");
         this.game.load.tilemap("outside", "assets/maps/small_world.json", null, Phaser.Tilemap.TILED_JSON);
-        this.game.load.image("robot", asset.Robot.Basic);
+        this.game.load.image("miner", asset.Robot.Red);
         this.game.load.image("iron", asset.Iron.Basic);
     }
 
@@ -86,8 +95,8 @@ export class IronLevel extends BaseLevel {
         this.cursors = this.game.input.keyboard.createCursorKeys();
         this.initWorld(map);
 
-        this.robot = new model.Robot("robot", 7, 4, model.Direction.SOUTH,
-                                     this.modelWorld, this.foreground, "robot");
+        this.robot = new model.MineRobot("miner", 7, 4, model.Direction.SOUTH,
+                                     this.modelWorld, this.foreground, "miner");
         this.irons = [];
         this.irons.push(new model.Iron("iron", 7, 6,
                                    this.modelWorld, this.middle, "iron"));
@@ -107,5 +116,9 @@ export class IronLevel extends BaseLevel {
     setUpFading() {
         Blockly.Blocks.oop.clearFaded();
         Blockly.Blocks.oop.faded['tell'] = true;
+    }
+
+    blockLimit(context: EditorContext): number {
+        return 21;
     }
 }

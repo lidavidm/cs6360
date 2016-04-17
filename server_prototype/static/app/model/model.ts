@@ -938,11 +938,7 @@ export class Robot extends WorldObject {
         }
     }
 
-    /*
-     * Tries to pick up one obeject on the same tile as this Robot. Which object
-     * is unspecified. Returns a promise that is resolved once the target object's
-     * pick up animation plays, or rejects if the object is not Iron
-     */
+    //todo: remove this method and make fracking robots extend MineRobot
     @blocklyMethod("mine", "mine")
     mine() {
         if (this.destructed) {
@@ -1020,6 +1016,32 @@ export class Iron extends WorldObject {
         this.phaserObject.width = TILE_WIDTH;
         this.phaserObject.height = TILE_HEIGHT;
         this.phaserObject.alpha = 1.0;
+    }
+}
+
+export class MineRobot extends Robot {
+    /*
+     * Tries to pick up one object on the same tile as this Robot. Which object
+     * is unspecified. Returns a promise that is resolved once the target object's
+     * pick up animation plays, or rejects if the object is not Iron
+     */
+    @blocklyMethod("mine", "mine")
+    mine() {
+        console.log("MINING");
+        if (this.destructed) {
+            throw new RangeError("Self destructed, can't pick up anything!");
+        }
+
+        let targets: WorldObject[] = this.world.getObjectByLoc(this.x, this.y);
+        let target: WorldObject = null;
+
+        for (let i = 0; i < targets.length; i++) {
+            if (targets[i] !== this) {
+                target = targets[i];
+                break;
+            }
+        }
+        this.hold(target);
     }
 }
 
