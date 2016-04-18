@@ -14,19 +14,23 @@ class: center, middle, title
 - Not really accomplished: poor level design
 - Concept progression developed and implemented
 - Solution: more levels, revisit how best to motivate and teach concepts
+    - Variety of objects: drones, wells, etc. instead of just mining
+    - Introduce one concept or fade one block per level
+    - Later levels recombine earlier concepts
 
 ---
 
 # UI Improvements
 
 ![](connections.png)
+Highlight everything you can connect to
 
 ![](buttons.png)
 
 
 ---
 
-![](tooltip.png)
+![](tooltip.png) Contextual errors, customized for the level objectives
 
 ![](contextualtooltip1.png)
 ![](contextualtooltip2.png)
@@ -38,8 +42,10 @@ class: center, middle, title
 
 - Motivating, interesting level design
 - Further UI refinements
+    - Make sure user can always find anything introduced
 - Write and integrate the pre-test and post-test
-- Integrate logging
+    - Will be integrated into the game itself
+- Implement logging
 
 ---
 
@@ -120,10 +126,8 @@ Person B: non-CS major, took CS 1110 a few semesters ago
     - Relatively no trouble using tell block, finding class methods, using repeat block.
     - Took a while to notice the class hierarchy features
     - Thrown off a little by fading.
-
 - Like:
     Interested in playing more, but with a better progression and learning curve
-
 - Learn: No, had forgotten much of 1110 and the game did not successfully
   reteach syntax
 
@@ -133,7 +137,7 @@ Person B: non-CS major, took CS 1110 a few semesters ago
 
 Person C: CS major, taken all core classes
 
-- Similar to in-class feedback. (include this slide or not?)
+- Similar to in-class feedback.
 - Specific suggestions:
     - highlight new things when introduced (blocks and methods)
     - visual distinction between editing environments (main vs. method), such as background color
@@ -174,6 +178,7 @@ font-size: 42px;
     display: none;
 }
 img {
+float: left;
 max-height: 250px;
 box-shadow: 0px 1px 10px rgba(255, 255, 255, 0.8);
 }
