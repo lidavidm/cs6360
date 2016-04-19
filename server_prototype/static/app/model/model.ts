@@ -949,7 +949,7 @@ export class Robot extends WorldObject {
         let target: WorldObject = null;
 
         for (let i = 0; i < targets.length; i++) {
-            if (targets[i] !== this) {
+            if (targets[i] !== this && targets[i] instanceof Iron) {
                 target = targets[i];
                 break;
             }
@@ -1035,7 +1035,7 @@ export class MineRobot extends Robot {
         let target: WorldObject = null;
 
         for (let i = 0; i < targets.length; i++) {
-            if (targets[i] !== this) {
+            if (targets[i] !== this && targets[i] instanceof Iron) {
                 target = targets[i];
                 break;
             }

@@ -21,7 +21,7 @@ export class FrackingLevel extends BaseLevel {
         this.toolbox = new Toolbox(false, "class", false);
         this.toolbox.addControl("tell");
         this.toolbox.addControl("new");
-        this.toolbox.addClasses(["FrackingRobot"]);
+        this.toolbox.addClasses(["Robot", "FrackingRobot"]);
         this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
             model.Robot.prototype.turnRight,
@@ -90,6 +90,7 @@ export class FrackingLevel extends BaseLevel {
 
         this.game.load.image("tiles", "assets/tilesets/cave2.png");
         this.game.load.tilemap("outside", "assets/maps/small_world.json", null, Phaser.Tilemap.TILED_JSON);
+        this.game.load.image("robot", asset.Robot.Basic);
         this.game.load.image("robotBlue", asset.Robot.Blue);
         this.game.load.image("well", asset.Misc.Well);
     }
@@ -132,6 +133,11 @@ export class FrackingLevel extends BaseLevel {
         if (!this.modelWorld.passable(7, 4)) {
             return null;
         }
-        return new model.FrackingRobot(varName, 7, 4, model.Direction.WEST, this.modelWorld, this.middle, "robotBlue");
+        if (className === "Robot") {
+            return new model.Robot(varName, 7, 4, model.Direction.WEST, this.modelWorld, this.middle, "robot");
+        }
+        else {
+            return new model.FrackingRobot(varName, 7, 4, model.Direction.WEST, this.modelWorld, this.middle, "robotBlue");
+        }
     }
 }
