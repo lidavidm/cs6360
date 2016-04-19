@@ -17,6 +17,7 @@ export class MovementLevel3 extends BaseLevel {
         this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
             model.Robot.prototype.turnRight,
+            model.Robot.prototype.turnLeft,
         ]);
         this.toolbox.addObject("robot", "Robot");
 
@@ -49,7 +50,7 @@ export class MovementLevel3 extends BaseLevel {
         this.missionTitle = "Turn of Events";
 
         this.missionText = [
-            "We've uploaded a turn right function! It should help with that corner!"
+            "We've uploaded turn functions! They should help with that corner!"
         ];
     }
 

@@ -17,6 +17,7 @@ export class MovementLevel4 extends BaseLevel {
         this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
             model.Robot.prototype.turnRight,
+            model.Robot.prototype.turnLeft,
         ]);
         this.toolbox.addObject("robot", "Robot");
 

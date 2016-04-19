@@ -50,10 +50,12 @@ export class MovementLevel1 extends BaseLevel {
 
         this.allTooltips = [
             [
-                new TooltipView.Tooltip(TooltipView.Region.Controls,
-                    "Load your code onto the robot and run it."),
-                new TooltipView.Tooltip(TooltipView.Region.Workspace,
-                    "A command has already been prepped for you!"),
+                // Leaving these around just in case
+                // However, I think they are unneccessary
+                // new TooltipView.Tooltip(TooltipView.Region.Controls,
+                //     "Load your code onto the robot and run it."),
+                // new TooltipView.Tooltip(TooltipView.Region.Workspace,
+                //     "A command has already been prepped for you!"),
             ],
         ];
 
