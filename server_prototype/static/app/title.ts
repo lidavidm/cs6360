@@ -17,7 +17,7 @@ export const TitleComponent: _mithril.MithrilComponent<TitleController> = {
         let startGame = () => {
             window.setTimeout(() => {
                 m.route("/game");
-            }, 2500)
+            }, 1250)
 
             document.querySelector(".titleContainer").classList.add("vanish");
         };
@@ -50,6 +50,23 @@ export const TitleComponent: _mithril.MithrilComponent<TitleController> = {
                         href: "https://github.com/lidavidm/cs6360"
                     }, "repository on Github"),
                     " for more details. Developed as a class project for CS 6360 (Spring 2016) at Cornell."
+                ]),
+                m("p", [
+                    "Uses assets from the ",
+                    m("a[href=http://opengameart.org/content/robot-pack]", "robot pack"),
+                    " and the ",
+                    m("a[href=http://kenney.nl/assets/roguelike-caves-dungeons]", "roguelike pack"),
+                    ", with modifications, under the ",
+                    m("a[href=https://creativecommons.org/publicdomain/zero/1.0/]", "CC0 license"),
+                    ". The images of Mars and Earth are from NASA and are ",
+                    m("a[href=http://www.nasa.gov/multimedia/guidelines/index.html]", "uncopyrighted"),
+                    ". The ",
+                    m("a[href=http://opengameart.org/content/cave-tileset-0]", "cave tileset"),
+                    " and the ",
+                    m("a[href=http://opengameart.org/content/denzis-scifi-tilesets]", "scifi tileset"),
+                    " are used, with modifications, under the ",
+                    m("a[href=https://creativecommons.org/licenses/by/3.0/us/]", "CC-BY-3.0 license"),
+                    ".",
                 ]),
             ])
         ]);
