@@ -27,9 +27,28 @@ Blockly.Python['tell'] = function(block) {
     else if (!method) {
         return excTemplate("This block needs a method!");
     }
-    else if (block.data === "type_error") {
+
+    if (block.data === "type_error") {
         return excTemplate("Type error!");
     }
+
+    var objectClass = getClass(this.childObject());
+    var methodClass = getClass(this.childMethod());
+    var methodIsOnSupertype = false;
+
+    var superClass = objectClass;
+    while (superClass) {
+        if (superClass === methodClass) {
+            methodIsOnSupertype = true;
+            break;
+        }
+        superClass = Blockly.Blocks.oop.getParentInHierarchy(superClass);
+    }
+
+    if (objectClass !== methodClass || methodIsOnSupertype) {
+        return excTemplate("Type error!");
+    }
+
     // TODO: code generation for provided arguments
     var method = method.getFieldValue("METHOD_NAME");
     var code = object + "." + method + "(";
