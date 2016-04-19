@@ -292,7 +292,7 @@ class HoldingDiff extends Diff<Robot> {
 class VisibilityDiff extends Diff<Gate> {
     target_alpha: number;
 
-    constructor(id:number, target_alpha:number) {
+    constructor(id: number, target_alpha: number) {
         super(DiffKind.Property, null, id);
         this.target_alpha = target_alpha;
     }
@@ -306,10 +306,10 @@ class VisibilityDiff extends Diff<Gate> {
     }
 
     apply(world: World, object: Gate) {
-        if (this.target_alpha == 0){
+        if (this.target_alpha === 0) {
             object.opened = true;
         }
-        else{
+        else {
             object.opened = false;
         }
     }
@@ -1062,6 +1062,8 @@ export class Gate extends WorldObject {
         this.sprite = this.phaserObject.create(0, 0, sprite);
         this.sprite.width = TILE_WIDTH;
         this.sprite.height = TILE_HEIGHT;
+
+        this.close();
     }
 
     passable() {
@@ -1074,20 +1076,16 @@ export class Gate extends WorldObject {
         this.phaserObject.alpha = 1.0;
     }
 
-/*
-this.world.log.record(new HoldingDiff(this.id, {
-    holdingIDs: [orig, newIDs],
-}));
-*/
-
     @blocklyMethod("open", "open")
     open() {
+        this.opened = true;
         this.world.log.record(
             new VisibilityDiff(this.id, 0));
     }
 
     @blocklyMethod("close", "close")
     close() {
+        this.opened = false;
         this.world.log.record(
             new VisibilityDiff(this.id, 1));
     }
