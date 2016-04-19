@@ -1027,7 +1027,6 @@ export class MineRobot extends Robot {
      */
     @blocklyMethod("mine", "mine")
     mine() {
-        console.log("MINING");
         if (this.destructed) {
             throw new RangeError("Self destructed, can't pick up anything!");
         }
@@ -1254,10 +1253,19 @@ class ResourceMinedDiff extends Diff<FixedResource> {
         });
     }
 
-    tween(object: FixedResource, duration: number): Phaser.Tween {
+    tween(object: FixedResource, duration=ANIM_DURATION): Phaser.Tween {
         let p = object.getPhaserObject();
         object.mask.tint = this.properties["tint"][1];
-        return null;
+        if (this.properties["mined"][1]) {
+            return p.game.add.tween(object.circle).to({
+                alpha: 0,
+            }, duration / 2, Phaser.Easing.Quadratic.InOut);
+        }
+        else {
+            return p.game.add.tween(object.circle).to({
+                alpha: 1,
+            }, duration / 2, Phaser.Easing.Quadratic.InOut);
+        }
     }
 
     apply(world: World, object: FixedResource) {
@@ -1271,6 +1279,7 @@ export class FixedResource extends WorldObject {
     sprite: Phaser.Sprite;
     phaserObject: Phaser.Group;
     mask: Phaser.Sprite;
+    circle: Phaser.Group;
     tintColor: number;
 
     mined: boolean;
@@ -1299,8 +1308,9 @@ export class FixedResource extends WorldObject {
         this.tintColor = tintColor;
         world.log.record(new ResourceMinedDiff(this, 0x000000, 0x000000, false));
 
-        let circle = world.game.add.graphics(0, 0, this.phaserObject);
-        circle.lineStyle(0.5, 0x00A5FF, 0.5);
+        this.circle = world.game.add.group(this.phaserObject);
+        let circle = world.game.add.graphics(0, 0, this.circle);
+        circle.lineStyle(0.5, tintColor, 0.5);
         circle.drawCircle(TILE_WIDTH / 2, TILE_HEIGHT / 2, 1.41 * TILE_WIDTH);
         circle.drawCircle(TILE_WIDTH / 2, TILE_HEIGHT / 2, 1.63 * TILE_WIDTH);
     }
@@ -1310,23 +1320,22 @@ export class FixedResource extends WorldObject {
     }
 
     mine() {
-        console.log("MINE", this.id);
         this.mask.tint = 0x000000;
         this.world.log.record(new ResourceMinedDiff(this, this.mask.tint, 0x000000, true));
         this.mined = true;
+        this.circle.alpha = 0;
     }
 
     fill() {
-        console.log("FILL", this.id);
         this.mask.tint = this.tintColor;
         this.world.log.record(new ResourceMinedDiff(this, this.mask.tint, this.tintColor, false));
         this.mined = false;
+        this.circle.alpha = 1;
     }
 
     phaserReset() {
-        this.phaserObject.width = TILE_WIDTH;
-        this.phaserObject.height = TILE_HEIGHT;
         this.phaserObject.alpha = 1.0;
+        this.circle.alpha = this.mined ? 0.0 : 1.0;
     }
 }
 
@@ -1341,8 +1350,8 @@ export class LinkedResource extends FixedResource {
     }
 
     mine() {
-        super.mine();
         this.other.fill();
+        super.mine();
     }
 
     fill() {

@@ -112,6 +112,7 @@ export class FrackingLevel extends BaseLevel {
         this.oil = new model.FixedResource("oil", 2, 5, 0xaba938, this.modelWorld, this.middle, "well");
         this.well = new model.LinkedResource("well", 2, 4, 0x0000FF, this.modelWorld, this.middle, "well", this.oil);
 
+        this.oil.mine();
         this.well.fill();
 
         this.modelWorld.log.recordInitEnd();
