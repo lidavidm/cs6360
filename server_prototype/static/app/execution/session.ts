@@ -3,7 +3,9 @@ import {Program} from "program";
 import {Diff, DiffKind, Log} from "model/model";
 import {PubSub} from "pubsub";
 
-type DiffRunner = (diff: Diff<any>, resolve: () => void, reject: () => void) => void;
+type DiffRunner = (diff: Diff<any>, initialized: {
+    [id: number]: boolean,
+}, resolve: () => void, reject: () => void) => void;
 
 export class Session {
     aborted: boolean = false;
@@ -47,7 +49,9 @@ export class Session {
         });
     }
 
-    private runDiffWrapper(diff: Diff<any>) {
+    private runDiffWrapper(diff: Diff<any>, initialized: {
+        [id: number]: boolean,
+    }) {
         return new Promise((resolve, reject) => {
             if (this.aborted) {
                 reject();
@@ -56,12 +60,12 @@ export class Session {
             }
             else if (this.paused && diff.kind === DiffKind.BeginningOfBlock) {
                 this.pauseContext = () => {
-                    this.runDiff(diff, resolve, reject);
+                    this.runDiff(diff, initialized, resolve, reject);
                 };
                 return;
             }
 
-            this.runDiff(diff, resolve, reject);
+            this.runDiff(diff, initialized, resolve, reject);
         })
     }
 

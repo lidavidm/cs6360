@@ -389,7 +389,7 @@ export class Log {
         this.log.push(new Diff(DiffKind.EndOfBlock, blockID));
     }
 
-    replay(callback: (diff: Diff<any>) => Promise<{}>, replayInit=false): Promise<{}> {
+    replay(callback: (diff: Diff<any>, initialized: { [id: number]: boolean }) => Promise<{}>, replayInit=false): Promise<{}> {
         return new Promise((resolve, reject) => {
             let programCounter = 0;
             // Whether we are done with the reset steps.
@@ -467,7 +467,7 @@ export class Log {
                     advanceStep();
                 }
                 else if (reset) {
-                    callback(diff).then(advanceStep, () => {
+                    callback(diff, dynamicObjectsInitialized).then(advanceStep, () => {
                         resolve();
                         // aborted. do nothing.
                     });

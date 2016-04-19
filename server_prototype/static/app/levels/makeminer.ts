@@ -67,8 +67,8 @@ export class MakeMiner extends BaseLevel {
             {
                 objective: `Try gathering Iron [${asset.Iron.Basic}]!`,
                 completed: false,
-                predicate: (level) => {
-                    return this.miner.lastPickedUp() !== null;
+                predicate: (level, initialized) => {
+                    return initialized[this.miner.getID()] && this.miner.lastPickedUp() !== null;
                 }
             },
         ];

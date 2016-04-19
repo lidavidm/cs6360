@@ -27,7 +27,7 @@ import * as TooltipView from "views/tooltip";
 export interface Objective<T> {
     objective: string,
     completed: boolean,
-    predicate: (level: T) => boolean,
+    predicate: (level: T, completed?: { [id: number]: boolean }) => boolean,
 }
 
 /**
@@ -692,9 +692,9 @@ export class BaseLevel extends Phaser.State {
         });
 
         return new Promise((resolve, reject) => {
-            this.modelWorld.log.replay((diff) => {
+            this.modelWorld.log.replay((diff, initialized) => {
                 return new Promise((resolve, reject) => {
-                    this.runDiff(diff, resolve, reject, true);
+                    this.runDiff(diff, initialized, resolve, reject, true);
                 });
             }, true).then(() => {
                 resolve();
@@ -702,13 +702,13 @@ export class BaseLevel extends Phaser.State {
         });
     }
 
-    private checkObjectives(resolve: () => void) {
+    private checkObjectives(initialized: { [id: number]: boolean }, resolve: () => void) {
         m.startComputation();
         let objectiveCompleted = false;
 
         for (let objective of this.objectives) {
             if (!objective.completed) {
-                objective.completed = objective.predicate(this);
+                objective.completed = objective.predicate(this, initialized);
                 objectiveCompleted = objectiveCompleted || objective.completed;
             }
         }
@@ -725,7 +725,7 @@ export class BaseLevel extends Phaser.State {
         m.endComputation();
     }
 
-    runDiff(diff: model.Diff<any>, resolve: () => void, reject: () => void, resetting=false) {
+    runDiff(diff: model.Diff<any>, initialized: { [id: number]: boolean }, resolve: () => void, reject: () => void, resetting=false) {
         switch (diff.kind) {
         case model.DiffKind.BeginningOfBlock:
             this.event.broadcast(BaseLevel.BLOCK_EXECUTED, diff.data);
@@ -738,7 +738,7 @@ export class BaseLevel extends Phaser.State {
 
         case model.DiffKind.EndOfInit:
             if (!resetting) {
-                this.checkObjectives(resolve);
+                this.checkObjectives(initialized, resolve);
             }
             break;
 
@@ -757,7 +757,7 @@ export class BaseLevel extends Phaser.State {
             }
             if (!tween) {
                 if (!resetting) {
-                    this.checkObjectives(resolve);
+                    this.checkObjectives(initialized, resolve);
                 } else {
                     resolve();
                 }
@@ -771,7 +771,7 @@ export class BaseLevel extends Phaser.State {
             }
             lastTween.onComplete.add(() => {
                 if (!resetting) {
-                    this.checkObjectives(resolve);
+                    this.checkObjectives(initialized, resolve);
                 } else {
                     resolve();
                 }
