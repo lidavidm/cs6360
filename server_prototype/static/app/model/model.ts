@@ -314,11 +314,11 @@ class VisibilityDiff extends Diff<Gate> {
         this.target_alpha = target_alpha;
     }
 
-    tween(object: Gate, duration=ANIM_DURATION): Phaser.Tween {
+    tween(object: Gate, duration=(ANIM_DURATION/2)): Phaser.Tween {
         let p = object.getPhaserObject();
         let t = p.game.add.tween(p).to({
             alpha: this.target_alpha,
-        }, 400, Phaser.Easing.Quadratic.InOut);
+        }, duration, Phaser.Easing.Quadratic.InOut);
         return t;
     }
 
@@ -1087,23 +1087,20 @@ export class Gate extends WorldObject {
     }
 
     phaserReset() {
-        this.phaserObject.width = TILE_WIDTH;
-        this.phaserObject.height = TILE_HEIGHT;
         this.phaserObject.alpha = 1.0;
+        this.opened = false;
     }
 
     @blocklyMethod("open", "open")
     open() {
         this.opened = true;
-        this.world.log.record(
-            new VisibilityDiff(this.id, 0));
+        this.world.log.record(new VisibilityDiff(this.id, 0));
     }
 
     @blocklyMethod("close", "close")
     close() {
-        this.opened = false;
-        this.world.log.record(
-            new VisibilityDiff(this.id, 1));
+        this.opened = false
+        this.world.log.record(new VisibilityDiff(this.id, 1));
     }
 }
 
