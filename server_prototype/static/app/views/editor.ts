@@ -197,6 +197,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 controller.level.program.flagInvalid(false);
             }
             else {
+                controller.numBlocks(controller.workspace.getAllBlocks().length);
                 updateUserObjects();
             }
             setupLevel(context);
