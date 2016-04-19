@@ -14,7 +14,7 @@ export class FrackingLevel extends BaseLevel {
     initialize() {
         super.initialize();
 
-        this.missionTitle = "American Business";
+        this.missionTitle = "American Spirit";
 
         this.missionText = ["We need oil for your robots. Here's an overridden robot you can construct - when you tell one to mine, it drills or pumps instead."];
 
