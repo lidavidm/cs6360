@@ -24,4 +24,5 @@ export const Drone = {
 
 export const Misc = {
     Well: SPRITE_DIR + "generic_well.png",
+    Base: SPRITE_DIR + "base.png"
 };
