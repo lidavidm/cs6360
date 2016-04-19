@@ -45,7 +45,7 @@ Blockly.Python['tell'] = function(block) {
         superClass = Blockly.Blocks.oop.getParentInHierarchy(superClass);
     }
 
-    if (objectClass !== methodClass || methodIsOnSupertype) {
+    if (objectClass !== methodClass && !methodIsOnSupertype) {
         return excTemplate("Type error!");
     }
 
