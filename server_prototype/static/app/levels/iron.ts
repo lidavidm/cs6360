@@ -24,6 +24,7 @@ import * as asset from "asset";
 export class IronLevel extends BaseLevel {
     public modelWorld: model.World;
     public robot: model.MineRobot;
+    public other_robot: model.Robot;
     public irons: model.Iron[];
 
     initialize() {
@@ -48,6 +49,7 @@ export class IronLevel extends BaseLevel {
         ]);
 
         this.toolbox.addObject("miner", "MineRobot");
+        this.toolbox.addObject("robot", "Robot");
 
         this.objectives = [
             {
@@ -113,11 +115,11 @@ export class IronLevel extends BaseLevel {
         this.cursors = this.game.input.keyboard.createCursorKeys();
         this.initWorld(map);
 
-        this.robot = new model.MineRobot("miner", 7, 4, model.Direction.SOUTH,
+        this.robot = new model.MineRobot("miner", 7, 6, model.Direction.SOUTH,
                                      this.modelWorld, this.foreground, "miner");
+        this.other_robot = new model.Robot("robot", 8, 4, model.Direction.EAST,
+                                     this.modelWorld, this.foreground, "robot");
         this.irons = [];
-        this.irons.push(new model.Iron("iron", 7, 6,
-                                   this.modelWorld, this.middle, "iron"));
         this.irons.push(new model.Iron("iron", 5, 6,
                                    this.modelWorld, this.middle, "iron"));
         this.irons.push(new model.Iron("iron", 4, 6,

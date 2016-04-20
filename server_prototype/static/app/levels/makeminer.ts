@@ -26,7 +26,7 @@ export class MakeMiner extends BaseLevel {
     public robot: model.Robot;
     public miner: model.MineRobot;
     public dynamicRobots: model.Robot[];
-    public irons: model.Iron[];
+    public iron: model.Iron;
 
     initialize() {
         super.initialize();
@@ -83,7 +83,7 @@ export class MakeMiner extends BaseLevel {
                             name: "MineRobot",
                             children: [],
                             methods: ["mine"],
-                            userMethods: ["moveAndMine"]
+                            userMethods: []
                         },
                     ],
                     methods: ["moveForward", "turnRight", "turnLeft"],
@@ -121,9 +121,8 @@ export class MakeMiner extends BaseLevel {
         this.initWorld(map);
         this.robot = new model.Robot("robot", 8, 4, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
-         this.irons = [];
-         this.irons.push(new model.Iron("iron", 7, 6,
-                                    this.modelWorld, this.middle, "iron"));
+        this.iron = new model.Iron("iron", 7, 6,
+                                    this.modelWorld, this.middle, "iron");
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
