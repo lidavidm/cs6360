@@ -17,6 +17,7 @@
 
 import * as MainView from "main";
 import * as VictoryView from "views/victory";
+import * as Logging from "logging";
 
 interface TitleController {
 
@@ -90,9 +91,9 @@ export const TitleComponent: _mithril.MithrilComponent<TitleController> = {
     }
 };
 
+Logging.initialize();
 m.route(document.body, "/", {
     "/": TitleComponent,
-    // "/cinematic": CinematicComponent,
     "/game": MainView.MainComponent,
     "/victory": VictoryView.Component,
 });
