@@ -119,6 +119,13 @@ export class Toolbox {
             method_blocks.push(block);
         }
 
+        if (methods.length === 0) {
+            let block = this._tree.createElement("block");
+            block.setAttribute("type", "no_methods");
+            block.setAttribute("disabled", "true");
+            category.appendChild(block);
+        }
+
         return method_blocks;
     }
 

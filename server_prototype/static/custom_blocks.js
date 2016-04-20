@@ -487,3 +487,13 @@ Blockly.Blocks['while'] = {
     this.setNextStatement(true);
   }
 };
+
+Blockly.Blocks['no_methods'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("No methods exist.");
+    this.setColour(0);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.example.com/');
+  }
+};
