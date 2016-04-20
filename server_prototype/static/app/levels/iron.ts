@@ -141,6 +141,11 @@ export class IronLevel extends BaseLevel {
     }
 
     blockLimit(context: EditorContext): number {
-        return 13;
+        if (context.className === MAIN) {
+            return 13;
+        }
+        else {
+            return 6;
+        }
     }
 }

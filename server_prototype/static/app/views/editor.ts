@@ -197,7 +197,6 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 controller.level.program.flagInvalid(false);
             }
             else {
-                controller.numBlocks(controller.workspace.getAllBlocks().length);
                 updateUserObjects();
             }
             setupLevel(context);
@@ -244,6 +243,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     controller.workspace,
                     context.workspace || controller.level.fallbackWorkspace(context));
                 fixWorkspace();
+                controller.numBlocks(controller.workspace.getAllBlocks().length);
             }
 
             let lastBlockExecuted: any = null;
@@ -398,7 +398,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
 
         if (mode === ".blockly") {
             let limit = args.level.blockLimit(args.context);
-            if (limit !== null && args.context.className === MAIN) {
+            if (limit !== null) {
                 let percent = Math.min(100, Math.ceil(100 * controller.numBlocks() / limit));
                 let color = controller.numBlocks() > limit ? "orange" : "green";
                 let bg = `linear-gradient(to right, ${color} ${percent}%, black ${percent + 1}%, black 100%)`;

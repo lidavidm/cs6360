@@ -436,7 +436,10 @@ li.objective img {
 
 #gameControls button.runMemory {
     background: orange;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 #gameControls button.abort {

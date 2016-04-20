@@ -124,22 +124,77 @@ export class Program {
         return !this.invalid && code.indexOf("raise BlocklyError") === -1;
     }
 
-    validateMemoryUsage(): string {
+    validateMemoryUsage(): EditorContext {
         if (!this.savegame) return null;
 
-        let mainContext = {
+        let validateContext = (context: EditorContext) => {
+            let saved = this.savegame.load(context);
+            if (saved.workspace) {
+                this.headless.clear();
+                Blockly.Xml.domToWorkspace(this.headless, saved.workspace);
+                let count = this.headless.getAllBlocks().length;
+                let limit = this.blockLimit(context);
+
+                console.log(context.className, context.method, count, limit);
+                if (limit != null && count > limit) {
+                    return context;
+                }
+            }
+            return null;
+        }
+
+        let temp = validateContext({
             className: MAIN,
             method: "",
-        };
-        let main = this.savegame.load(mainContext);
-        if (main.workspace) {
-            this.headless.clear();
-            Blockly.Xml.domToWorkspace(this.headless, main.workspace);
-            let count = this.headless.getAllBlocks().length;
-            let limit = this.blockLimit(mainContext);
+        });
+        if (temp) {
+            return temp;
+        }
 
-            if (limit != null && count > limit) {
-                return MAIN;
+        let validateClass = function (className: string, classObj: {
+            [method: string]: HTMLElement | string;
+        }) {
+            if (classObj) {
+                for (let method of Object.keys(classObj)) {
+                    let result = validateContext({
+                        className: className,
+                        method: method,
+                    });
+
+                    if (result) {
+                        return result;
+                    }
+                }
+            }
+            return null;
+        };
+
+        let savedClasses = this.savegame.loadAll();
+        if (this.hierarchy) {
+            let classQueue: ObjectHierarchy[] = [this.hierarchy];
+            while (classQueue.length > 0) {
+                let classDesc = classQueue.pop();
+                let className = classDesc.name;
+                let classObj = savedClasses[className];
+                let result = validateClass(className, classObj);
+                if (result !== null) {
+                    return result;
+                }
+
+                if (classDesc.children) {
+                    for (let child of classDesc.children) {
+                        classQueue.push(child);
+                    }
+                }
+            }
+        }
+        else {
+            for (let className of this.classes) {
+                let classObj = savedClasses[className];
+                let result = validateClass(className, classObj);
+                if (result !== null) {
+                    return result;
+                }
             }
         }
 

@@ -127,7 +127,8 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                 },
 
                 onrunmemory: () => {
-                    args.event.broadcast("runMemory");
+                    let context = args.level.program.validateMemoryUsage();
+                    args.changeContext(context.className, context.method);
                 },
 
                 onreset: () => {

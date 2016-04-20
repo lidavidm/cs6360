@@ -16,6 +16,7 @@
 // along with Tell Me to Survive.  If not, see <http://www.gnu.org/licenses/>.
 
 import PubSub = require("pubsub");
+import {EditorContext, MAIN} from "model/editorcontext";
 
 interface ControlsController extends _mithril.MithrilController {
 }
@@ -31,7 +32,7 @@ export const Component: _mithril.MithrilComponent<ControlsController> = <any> {
         paused: _mithril.MithrilProperty<boolean>,
         speed: _mithril.MithrilProperty<number>,
         valid: boolean,
-        memoryUsage: string,
+        memoryUsage: EditorContext,
         onrun?: () => void,
         onruninvalid?: () => void,
         onrunmemory?: () => void,
@@ -55,7 +56,11 @@ export const Component: _mithril.MithrilComponent<ControlsController> = <any> {
             let text = args.valid ? "Run" : "Invalid Code";
             if (args.memoryUsage !== null) {
                 cssClass = ".runMemory";
-                text = "Over Memory Limit";
+                let overLimit = args.memoryUsage.className + "." + args.memoryUsage.method;
+                if (args.memoryUsage.className === MAIN) {
+                    overLimit = "main";
+                }
+                text = "Over Memory Limit: " + overLimit;
             }
 
             buttons.push(m(<any> ("button" + cssClass), {
