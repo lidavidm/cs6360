@@ -680,8 +680,8 @@ export class BaseLevel extends Phaser.State {
         return this.allTooltips[this._tooltipIndex] || [];
     }
 
-    run(): Session {
-        return new Session(this.interpreter, this.modelWorld.log, this.program, this.runDiff.bind(this));
+    run(speed: _mithril.MithrilProperty<number>): Session {
+        return new Session(this.interpreter, this.modelWorld.log, this.program, this.runDiff.bind(this, speed));
     }
 
     runReset(): Promise<{}> {
@@ -694,7 +694,7 @@ export class BaseLevel extends Phaser.State {
         return new Promise((resolve, reject) => {
             this.modelWorld.log.replay((diff, initialized) => {
                 return new Promise((resolve, reject) => {
-                    this.runDiff(diff, initialized, resolve, reject, true);
+                    this.runDiff(m.prop(0), diff, initialized, resolve, reject, true);
                 });
             }, true).then(() => {
                 resolve();
@@ -725,7 +725,7 @@ export class BaseLevel extends Phaser.State {
         m.endComputation();
     }
 
-    runDiff(diff: model.Diff<any>, initialized: { [id: number]: boolean }, resolve: () => void, reject: () => void, resetting=false) {
+    runDiff(speed: _mithril.MithrilProperty<number>, diff: model.Diff<any>, initialized: { [id: number]: boolean }, resolve: () => void, reject: () => void, resetting=false) {
         switch (diff.kind) {
         case model.DiffKind.BeginningOfBlock:
             this.event.broadcast(BaseLevel.BLOCK_EXECUTED, diff.data);
@@ -753,7 +753,7 @@ export class BaseLevel extends Phaser.State {
             if (resetting) {
                 var tween = diff.tween(object, 1);
             } else {
-                var tween = diff.tween(object);
+                var tween = diff.tween(object, 800 * 1 / speed());
             }
             if (!tween) {
                 if (!resetting) {

@@ -29,6 +29,7 @@ interface MapController extends _mithril.MithrilController {
     doneExecuting: _mithril.MithrilProperty<boolean>,
     paused: _mithril.MithrilProperty<boolean>,
     session: Session,
+    speed: _mithril.MithrilProperty<number>,
 }
 
 /**
@@ -44,6 +45,7 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
             doneExecuting: m.prop(false),
             paused: m.prop(false),
             session: null,
+            speed: m.prop(1),
         };
 
         args.event.on(level.BaseLevel.NEXT_LEVEL_LOADED, () => {
@@ -82,6 +84,7 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                 doneExecuting: controller.doneExecuting,
                 paused: controller.paused,
                 valid: args.level.isCodeValid(),
+                speed: controller.speed,
                 memoryUsage: args.level.program.validateMemoryUsage(),
 
                 onrun: () => {
@@ -96,7 +99,8 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
 
                     args.changeContext(MAIN, "");
                     args.executing(true);
-                    let session = args.level.run();
+                    console.log(controller.speed());
+                    let session = args.level.run(controller.speed);
                     controller.session = session;
                     session.then(() => {
                         controller.session = null;

@@ -29,6 +29,7 @@ export const Component: _mithril.MithrilComponent<ControlsController> = <any> {
         executing: _mithril.MithrilProperty<boolean>,
         doneExecuting: _mithril.MithrilProperty<boolean>,
         paused: _mithril.MithrilProperty<boolean>,
+        speed: _mithril.MithrilProperty<number>,
         valid: boolean,
         memoryUsage: string,
         onrun?: () => void,
@@ -83,21 +84,15 @@ export const Component: _mithril.MithrilComponent<ControlsController> = <any> {
                     }
                 },
             }, "Abort"));
-            buttons.push(m(<any> "button.pause", {
-                onclick: function() {
-                    if (args.onpause) {
-                        args.onpause();
-                    }
+            buttons.push("Slow");
+            buttons.push(m("input[type=range][min=0.5][max=2.0][step=0.1]", {
+                value: args.speed(),
+                onchange: function(event: any) {
+                    let value = parseFloat(event.target.value);
+                    args.speed(value);
                 },
-            }, args.paused() ? "Resume" : "Pause"));
-            buttons.push(m(<any> "button.step", {
-                onclick: function() {
-                    if (args.onstep) {
-                        args.onstep();
-                    }
-                },
-                disabled: !args.paused(),
-            }, "Step"));
+            }));
+            buttons.push("Fast");
         }
         return m("nav#gameControls", buttons);
     }
