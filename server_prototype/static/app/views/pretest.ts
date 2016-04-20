@@ -15,37 +15,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with Tell Me to Survive.  If not, see <http://www.gnu.org/licenses/>.
 
-class MultipleChoiceQuestion {
-    text: string;
-    choices: string[];
+import * as TestView from "views/test";
+import {MultipleChoiceQuestion} from "views/test";
 
-    constructor(text: string, choices: string[]) {
-        this.text = text;
-        this.choices = choices;
-    }
-}
-
-class SurveyScaleQuestion {
-    text: string;
-
-    constructor(text: string) {
-        this.text = text;
-    }
-}
-
-class SurveyFeedbackQuestion {
-    text: string;
-
-    constructor(text: string) {
-        this.text = text;
-    }
-}
-
-type Question = MultipleChoiceQuestion | SurveyFeedbackQuestion | SurveyScaleQuestion;
-
-type Quiz = Question[];
-
-const SAMPLE_QUESTIONS = [
+const PRETEST = [
     new MultipleChoiceQuestion("This is a sample question?", [
         "I dunno",
         "If you're seeing this something went wrong",
@@ -64,74 +37,21 @@ const SAMPLE_QUESTIONS = [
 ];
 
 interface PretestController extends _mithril.MithrilController {
-    currentQuestion: _mithril.MithrilProperty<number>;
-    answers: string[],
 }
 
 export const Component: _mithril.MithrilComponent<PretestController> = <any> {
     controller: function(): PretestController {
-        return {
-            currentQuestion: m.prop(0),
-            answers: [],
-        };
+        return {};
     },
 
     view: function(controller: PretestController): _mithril.MithrilVirtualElement<PretestController> {
-        return m("div#test", [
-            m("header", m("h1", "RCAT: Robot Commander Aptitude Test")),
-            m("div#progress", [
-                `Question ${controller.currentQuestion() + 1} of ${SAMPLE_QUESTIONS.length}`,
-                m("div#progressBar", {
-                    style: {
-                        width: (((controller.currentQuestion() + 1) / SAMPLE_QUESTIONS.length) * 100).toString() + "%",
-                    },
-                }),
-            ]),
-            m("div#question", {
-                // Force mithril to recreate the elements on redraw
-                key: "question" + controller.currentQuestion(),
-            }, (function() {
-                let question = SAMPLE_QUESTIONS[controller.currentQuestion()];
+        return m.component(TestView.Component, {
+            oncomplete: function(answers: string[]) {
+                alert("Test complete!");
+                m.route("/");
+            },
 
-                if (question instanceof MultipleChoiceQuestion) {
-                    return [
-                        m("p", question.text),
-                        m("radiogroup",
-                          m("ol", question.choices.map(function(choice, index) {
-                              return m("li", [
-                                  m("input[type=radio]", {
-                                      id: "answer" + index,
-                                      name: "answer",
-                                      checked: "",
-                                      onchange: function() {
-                                          if (controller.answers.length > controller.currentQuestion()) {
-                                              controller.answers.pop();
-                                          }
-                                          controller.answers.push(choice);
-                                      },
-                                  }),
-                                  m("label", {
-                                      "for": "answer" + index,
-                                  }, choice),
-                              ]);
-                          }))),
-                    ];
-                }
-            })()),
-            m("div#controls", [
-                m(".clearfix"),
-                m("button.ui.next", {
-                    disabled: controller.answers.length > controller.currentQuestion() ? "": "disabled",
-                    onclick: function() {
-                        controller.currentQuestion(controller.currentQuestion() + 1);
-                        if (controller.currentQuestion() >= SAMPLE_QUESTIONS.length) {
-                            // TODO:
-                            alert(controller.answers);
-                            controller.currentQuestion(0);
-                        }
-                    }
-                }, "Next"),
-            ]),
-        ]);
+            questions: PRETEST,
+        })
     }
 }
