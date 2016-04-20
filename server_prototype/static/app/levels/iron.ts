@@ -95,6 +95,7 @@ export class IronLevel extends BaseLevel {
         this.game.load.image("tiles", "assets/tilesets/cave2.png");
         this.game.load.tilemap("outside", "assets/maps/small_world.json", null, Phaser.Tilemap.TILED_JSON);
         this.game.load.image("miner", asset.Robot.Red);
+        this.game.load.image("robot", asset.Robot.Basic);
         this.game.load.image("iron", asset.Iron.Basic);
     }
 
@@ -102,6 +103,7 @@ export class IronLevel extends BaseLevel {
         super.create();
 
         this.zoomCamera.position.x = 1000;
+        this.zoomCamera.position.y = 128;
 
         let map = this.game.add.tilemap("outside");
         map.addTilesetImage("cave2", "tiles");
@@ -139,6 +141,6 @@ export class IronLevel extends BaseLevel {
     }
 
     blockLimit(context: EditorContext): number {
-        return 21;
+        return 13;
     }
 }

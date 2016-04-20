@@ -145,6 +145,6 @@ export class MakeMiner extends BaseLevel {
     }
 
     blockLimit(context: EditorContext): number {
-        return null;
+        return 9;
     }
 }
