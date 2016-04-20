@@ -65,12 +65,14 @@ const SAMPLE_QUESTIONS = [
 
 interface PretestController extends _mithril.MithrilController {
     currentQuestion: _mithril.MithrilProperty<number>;
+    answers: string[],
 }
 
 export const Component: _mithril.MithrilComponent<PretestController> = <any> {
     controller: function(): PretestController {
         return {
-            currentQuestion: m.prop(1),
+            currentQuestion: m.prop(0),
+            answers: [],
         };
     },
 
@@ -85,7 +87,10 @@ export const Component: _mithril.MithrilComponent<PretestController> = <any> {
                     },
                 }),
             ]),
-            m("div#question", (function() {
+            m("div#question", {
+                // Force mithril to recreate the elements on redraw
+                key: "question" + controller.currentQuestion(),
+            }, (function() {
                 let question = SAMPLE_QUESTIONS[controller.currentQuestion()];
 
                 if (question instanceof MultipleChoiceQuestion) {
@@ -95,10 +100,15 @@ export const Component: _mithril.MithrilComponent<PretestController> = <any> {
                           m("ol", question.choices.map(function(choice, index) {
                               return m("li", [
                                   m("input[type=radio]", {
-                                      group: "answer",
-                                      label: choice,
                                       id: "answer" + index,
                                       name: "answer",
+                                      checked: "",
+                                      onchange: function() {
+                                          if (controller.answers.length > controller.currentQuestion()) {
+                                              controller.answers.pop();
+                                          }
+                                          controller.answers.push(choice);
+                                      },
                                   }),
                                   m("label", {
                                       "for": "answer" + index,
@@ -111,10 +121,12 @@ export const Component: _mithril.MithrilComponent<PretestController> = <any> {
             m("div#controls", [
                 m(".clearfix"),
                 m("button.ui.next", {
+                    disabled: controller.answers.length > controller.currentQuestion() ? "": "disabled",
                     onclick: function() {
                         controller.currentQuestion(controller.currentQuestion() + 1);
                         if (controller.currentQuestion() >= SAMPLE_QUESTIONS.length) {
                             // TODO:
+                            alert(controller.answers);
                             controller.currentQuestion(0);
                         }
                     }
