@@ -16,6 +16,7 @@
 // along with Tell Me to Survive.  If not, see <http://www.gnu.org/licenses/>.
 
 import * as MainView from "main";
+import * as PretestView from "views/pretest";
 import * as VictoryView from "views/victory";
 import * as Logging from "logging";
 
@@ -94,6 +95,7 @@ export const TitleComponent: _mithril.MithrilComponent<TitleController> = {
 Logging.initialize();
 m.route(document.body, "/", {
     "/": TitleComponent,
+    "/pretest": PretestView.Component,
     "/game": MainView.MainComponent,
     "/victory": VictoryView.Component,
 });
