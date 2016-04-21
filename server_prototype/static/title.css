@@ -77,7 +77,7 @@ along with Tell Me to Survive.  If not, see <http://www.gnu.org/licenses/>.
     width: 52em;
 }
 
-.titleContainer.vanish {
+.vanish {
     animation: 1s fade-out ease-out;
     opacity: 0;
 }

@@ -40,7 +40,11 @@ export const Component: _mithril.MithrilComponent<PretestController> = <any> {
         return m.component(TestView.Component, {
             oncomplete: function(answers: string[]) {
                 alert("Test complete!");
-                m.route("/");
+                // TODO: save the answers
+                window.setTimeout(() => {
+                    m.route("/game");
+                }, 1250);
+                document.getElementById("test").classList.add("vanish");
             },
 
             questions: PRETEST,

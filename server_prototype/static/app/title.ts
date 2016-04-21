@@ -35,7 +35,12 @@ export const TitleComponent: _mithril.MithrilComponent<TitleController> = {
 
         let startGame = () => {
             window.setTimeout(() => {
-                m.route("/game");
+                if (hasLastGame) {
+                    m.route("/game");
+                }
+                else {
+                    m.route("/pretest");
+                }
             }, 1250)
 
             document.querySelector(".titleContainer").classList.add("vanish");
@@ -54,6 +59,7 @@ export const TitleComponent: _mithril.MithrilComponent<TitleController> = {
                 m("button.ui.restart", {
                     onclick: function() {
                         delete window.localStorage["0"];
+                        hasLastGame = false;
                         startGame();
                     },
                     disabled: hasLastGame ? "" : "disabled",
