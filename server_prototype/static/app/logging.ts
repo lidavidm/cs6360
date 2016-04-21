@@ -22,18 +22,12 @@ function loggingUrl(endpoint: string): string {
 }
 
 export function initialize() {
-    if (!window.localStorage["uuid"]) {
-        console.debug("Grabbing UUID:", loggingUrl("uuid"));
-        m.request({
-            method: "GET",
-            url: loggingUrl("uuid"),
-            deserialize: function(v) { return v; },
-        }).then(function(uuid) {
-            window.localStorage["uuid"] = uuid;
-        });
-    }
 }
 
-export function uuid() {
-    return window.localStorage["uuid"];
+export function newUuid(): _mithril.Thennable<string> {
+    return m.request({
+        method: "GET",
+        url: loggingUrl("uuid"),
+        deserialize: function(v) { return v; },
+    });
 }

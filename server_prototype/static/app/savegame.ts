@@ -16,6 +16,7 @@
 // along with Tell Me to Survive.  If not, see <http://www.gnu.org/licenses/>.
 
 import {EditorContext, MAIN} from "model/editorcontext";
+import * as Logging from "logging";
 
 interface SavedCode {
     workspace: string,
@@ -32,11 +33,24 @@ export class Savegame {
     currentLevel: string;
     savedBlocks: { [level: string]: HTMLElement | string };
     classes: SavedClasses;
+    uuid: string;
 
-    constructor(level: string) {
+    constructor(level: string, uuid?: string) {
         this.currentLevel = level;
         this.savedBlocks = Object.create(null);
         this.classes = Object.create(null);
+
+        if (uuid) {
+            console.log("Saved UUID:", uuid);
+            this.uuid = uuid;
+        }
+        else {
+            Logging.newUuid().then((uuid) => {
+                console.log("New UUID: ", uuid);
+                this.uuid = uuid;
+                window.localStorage["0"] = this.stringify();
+            });
+        }
     }
 
     stringifyCode(input: HTMLElement | string): SavedCode {
@@ -58,6 +72,9 @@ export class Savegame {
         let json = Object.create(null);
         json["currentLevel"] = this.currentLevel;
         json["savedBlocks"] = Object.create(null);
+        if (this.uuid) {
+            json["uuid"] = this.uuid;
+        }
 
         for (let level in this.savedBlocks) {
             if (this.savedBlocks[level]) {
@@ -148,7 +165,7 @@ export class Savegame {
 
     static parse(json: string): Savegame {
         let parsed = JSON.parse(json);
-        let game = new Savegame(parsed["currentLevel"]);
+        let game = new Savegame(parsed["currentLevel"], parsed["uuid"] || undefined);
         for (let level in parsed["savedBlocks"]) {
             let parsedLevel = parsed["savedBlocks"][level];
             game.savedBlocks[level] = Savegame.parseCode(parsedLevel);
