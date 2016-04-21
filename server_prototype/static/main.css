@@ -651,6 +651,11 @@ li.objective img {
     font-size: 1.25rem;
 }
 
+#test textarea {
+    display: block;
+    margin: 0 auto;
+}
+
 #test .next {
     position: absolute;
     bottom: 0;

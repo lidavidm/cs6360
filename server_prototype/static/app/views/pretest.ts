@@ -16,7 +16,7 @@
 // along with Tell Me to Survive.  If not, see <http://www.gnu.org/licenses/>.
 
 import * as TestView from "views/test";
-import {MultipleChoiceQuestion} from "views/test";
+import {MultipleChoiceQuestion, SurveyScaleQuestion, SurveyFeedbackQuestion} from "views/test";
 
 const PRETEST = [
     new MultipleChoiceQuestion("This is a sample question?", [
@@ -24,16 +24,8 @@ const PRETEST = [
         "If you're seeing this something went wrong",
         "Blame David",
     ]),
-    new MultipleChoiceQuestion("This is a sample question?", [
-        "I dunno",
-        "If you're seeing this something went wrong",
-        "Blame David",
-    ]),
-    new MultipleChoiceQuestion("This is a sample question?", [
-        "I dunno",
-        "If you're seeing this something went wrong",
-        "Blame David",
-    ]),
+    new SurveyScaleQuestion("I enjoyed this game."),
+    new SurveyFeedbackQuestion("Please enter any thoughts you have here."),
 ];
 
 interface PretestController extends _mithril.MithrilController {

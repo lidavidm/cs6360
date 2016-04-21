@@ -77,12 +77,16 @@ export const Component: _mithril.MithrilComponent<TestController> = <any> {
                 key: "question" + controller.currentQuestion(),
             }, (function() {
                 let question = args.questions[controller.currentQuestion()];
+                let result = [m("p", question.text)];
 
-                if (question instanceof MultipleChoiceQuestion) {
-                    return [
-                        m("p", question.text),
+                if (question instanceof MultipleChoiceQuestion || question instanceof SurveyScaleQuestion) {
+                    let choices = ["Strongly Agree", "Agree", "Neutral", "Disagree", "Strongly Disagree"];
+                    if (question instanceof MultipleChoiceQuestion) {
+                        choices = question.choices;
+                    }
+                    result.push(
                         m("radiogroup",
-                          m("ol", question.choices.map(function(choice, index) {
+                          m("ol", choices.map(function(choice, index) {
                               return m("li", [
                                   m("input[type=radio]", {
                                       id: "answer" + index,
@@ -99,9 +103,22 @@ export const Component: _mithril.MithrilComponent<TestController> = <any> {
                                       "for": "answer" + index,
                                   }, choice),
                               ]);
-                          }))),
-                    ];
+                          })))
+                    );
                 }
+                else if (question instanceof SurveyFeedbackQuestion) {
+                    controller.answers.push("");
+                    result.push(m("textarea", {
+                        placeholder: "Enter any feedback here...",
+                        cols: 80,
+                        rows: 15,
+                        oninput: function(event: any) {
+                            controller.answers[controller.answers.length - 1] = event.target.value;
+                        }
+                    }));
+                }
+
+                return result;
             })()),
             m("div#controls", [
                 m(".clearfix"),
