@@ -132,7 +132,13 @@ export const MainComponent = {
 
                     let newLevelName = DEFAULT_PROGRESSION.nextLevel(savegame.currentLevel);
                     if (!newLevelName) {
-                        m.route("/victory");
+                        window.setTimeout(function() {
+                            window.setTimeout(function() {
+                                m.route("/posttest", {}, true);
+                            }, 1250);
+
+                            document.querySelector(".controller").classList.add("vanish");
+                        }, 500);
                         return;
                     }
 

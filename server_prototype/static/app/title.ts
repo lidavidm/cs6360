@@ -17,6 +17,7 @@
 
 import * as MainView from "main";
 import * as PretestView from "views/pretest";
+import * as PosttestView from "views/posttest";
 import * as VictoryView from "views/victory";
 import * as Logging from "logging";
 
@@ -36,10 +37,10 @@ export const TitleComponent: _mithril.MithrilComponent<TitleController> = {
         let startGame = () => {
             window.setTimeout(() => {
                 if (hasLastGame) {
-                    m.route("/game");
+                    m.route("/game", {}, true);
                 }
                 else {
-                    m.route("/pretest");
+                    m.route("/pretest", {}, true);
                 }
             }, 1250)
 
@@ -102,6 +103,7 @@ Logging.initialize();
 m.route(document.body, "/", {
     "/": TitleComponent,
     "/pretest": PretestView.Component,
+    "/posttest": PosttestView.Component,
     "/game": MainView.MainComponent,
     "/victory": VictoryView.Component,
 });

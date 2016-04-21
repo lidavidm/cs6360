@@ -18,7 +18,7 @@
 import * as TestView from "views/test";
 import {MultipleChoiceQuestion, SurveyScaleQuestion, SurveyFeedbackQuestion} from "views/test";
 
-const PRETEST = [
+const TEST = [
     new MultipleChoiceQuestion("This is a sample question?", [
         "I dunno",
         "If you're seeing this something went wrong",
@@ -28,26 +28,26 @@ const PRETEST = [
     new SurveyFeedbackQuestion("Please enter any thoughts you have here."),
 ];
 
-interface PretestController extends _mithril.MithrilController {
+interface PosttestController extends _mithril.MithrilController {
 }
 
-export const Component: _mithril.MithrilComponent<PretestController> = <any> {
-    controller: function(): PretestController {
+export const Component: _mithril.MithrilComponent<PosttestController> = <any> {
+    controller: function(): PosttestController {
         return {};
     },
 
-    view: function(controller: PretestController): _mithril.MithrilVirtualElement<PretestController> {
+    view: function(controller: PosttestController): _mithril.MithrilVirtualElement<PosttestController> {
         return m.component(TestView.Component, {
             oncomplete: function(answers: string[]) {
                 alert("Test complete!");
                 // TODO: save the answers
                 window.setTimeout(() => {
-                    m.route("/game", {}, true);
+                    m.route("/victory", {}, true);
                 }, 1250);
                 document.getElementById("test").classList.add("vanish");
             },
 
-            questions: PRETEST,
+            questions: TEST,
         })
     }
 }
