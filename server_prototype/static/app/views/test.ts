@@ -51,6 +51,7 @@ interface TestController extends _mithril.MithrilController {
 interface Args {
     questions: Question[],
     oncomplete: (answers: string[]) => void,
+    title: string,
 }
 
 export const Component: _mithril.MithrilComponent<TestController> = <any> {
@@ -63,7 +64,7 @@ export const Component: _mithril.MithrilComponent<TestController> = <any> {
 
     view: function(controller: TestController, args: Args): _mithril.MithrilVirtualElement<TestController> {
         return m("div#test", [
-            m("header", m("h1", "RCAT: Robot Commander Aptitude Test")),
+            m("header", m("h1", args.title)),
             m("div#progress", [
                 `Question ${controller.currentQuestion() + 1} of ${args.questions.length}`,
                 m("div#progressBar", {

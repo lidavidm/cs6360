@@ -48,6 +48,7 @@ export const Component: _mithril.MithrilComponent<PosttestController> = <any> {
             },
 
             questions: TEST,
+            title: "RCPT: Robot Commander Proficiency Test",
         })
     }
 }

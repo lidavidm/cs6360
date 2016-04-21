@@ -48,6 +48,8 @@ export const Component: _mithril.MithrilComponent<PretestController> = <any> {
             },
 
             questions: PRETEST,
+
+            title: "RCAT: Robot Commander Aptitude Test",
         })
     }
 }

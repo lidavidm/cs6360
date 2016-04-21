@@ -135,7 +135,6 @@ export class Program {
                 let count = this.headless.getAllBlocks().length;
                 let limit = this.blockLimit(context);
 
-                console.log(context.className, context.method, count, limit);
                 if (limit != null && count > limit) {
                     return context;
                 }
