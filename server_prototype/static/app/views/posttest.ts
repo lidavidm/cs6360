@@ -41,8 +41,9 @@ export const Component: _mithril.MithrilComponent<PosttestController> = <any> {
         return m.component(TestView.Component, {
             oncomplete: function(answers: string[]) {
                 alert("Test complete!");
-                // TODO: get UUID
-                Logging.saveAnswers(null, "pretest", answers);
+                let uuid = m.route.param("uuid");
+                alert(uuid);
+                Logging.saveAnswers(uuid, "pretest", answers);
                 window.setTimeout(() => {
                     m.route("/victory", {}, true);
                 }, 1250);
@@ -51,6 +52,6 @@ export const Component: _mithril.MithrilComponent<PosttestController> = <any> {
 
             questions: TEST,
             title: "RCPT: Robot Commander Proficiency Test",
-        })
+        });
     }
 }

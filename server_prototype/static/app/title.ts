@@ -42,7 +42,7 @@ export const TitleComponent: _mithril.MithrilComponent<TitleController> = {
                 else {
                     m.route("/pretest", {}, true);
                 }
-            }, 1250)
+            }, 1250);
 
             document.querySelector(".titleContainer").classList.add("vanish");
         };

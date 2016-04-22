@@ -34,6 +34,7 @@ interface PretestController extends _mithril.MithrilController {
 
 export const Component: _mithril.MithrilComponent<PretestController> = <any> {
     controller: function(): PretestController {
+        // TODO: grab UUID and pass it to the main game
         return {};
     },
 
@@ -52,6 +53,6 @@ export const Component: _mithril.MithrilComponent<PretestController> = <any> {
             questions: PRETEST,
 
             title: "RCAT: Robot Commander Aptitude Test",
-        })
+        });
     }
 }

@@ -134,7 +134,7 @@ export const MainComponent = {
                     if (!newLevelName) {
                         window.setTimeout(function() {
                             window.setTimeout(function() {
-                                m.route("/posttest", {}, true);
+                                m.route("/posttest", { uuid: savegame.uuid }, true);
                             }, 1250);
 
                             document.querySelector(".controller").classList.add("vanish");
