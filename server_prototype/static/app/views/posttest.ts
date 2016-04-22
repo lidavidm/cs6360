@@ -16,6 +16,7 @@
 // along with Tell Me to Survive.  If not, see <http://www.gnu.org/licenses/>.
 
 import * as TestView from "views/test";
+import * as Logging from "logging";
 import {MultipleChoiceQuestion, SurveyScaleQuestion, SurveyFeedbackQuestion} from "views/test";
 
 const TEST = [
@@ -40,7 +41,8 @@ export const Component: _mithril.MithrilComponent<PosttestController> = <any> {
         return m.component(TestView.Component, {
             oncomplete: function(answers: string[]) {
                 alert("Test complete!");
-                // TODO: save the answers
+                // TODO: get UUID
+                Logging.saveAnswers(null, "pretest", answers);
                 window.setTimeout(() => {
                     m.route("/victory", {}, true);
                 }, 1250);

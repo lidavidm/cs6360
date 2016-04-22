@@ -24,6 +24,10 @@ function loggingUrl(endpoint: string): string {
 export function initialize() {
 }
 
+export function saveAnswers(uuid: string, test: string, answers: string[]) {
+    // TODO:
+}
+
 export function newUuid(): _mithril.Thennable<string> {
     return m.request({
         method: "GET",
