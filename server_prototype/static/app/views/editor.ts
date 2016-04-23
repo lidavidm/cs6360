@@ -453,6 +453,14 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 config: (element: HTMLElement, isInitialized: boolean) => {
                     controller.element = element;
                     if (isInitialized) {
+                        // Manually hide the toolbox (otherwise it flashes when executing code)
+                        let toolbox = <HTMLElement> document.querySelector(".blocklyToolboxDiv");
+                        if (mode === ".ace") {
+                            toolbox.style.display = "none";
+                        }
+                        else {
+                            toolbox.style.display = "block";
+                        }
                         return;
                     }
 

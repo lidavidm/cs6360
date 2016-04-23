@@ -250,8 +250,17 @@ export class Program {
         Blockly.Python.STATEMENT_POSTFIX = "recordBlockEnd(%1)\n"
 
         let support = this.getSupportCode();
-        let supportLines = (support.match(/\n/g) || []).length;
-        let code = this.getMainCode(headless);
+        let supportLines = (support.match(/\n/g) || []).length + 1;
+        let main = this.savegame.load({
+            className: MAIN,
+            method: null,
+        });
+
+        // Avoid duplicating global declarations
+        let code = this.getRawCode(headless);
+        if (main.workspace) {
+            code = this.getMainCode(headless);
+        }
 
         Blockly.Python.STATEMENT_PREFIX = "";
         Blockly.Python.STATEMENT_POSTFIX = "";
