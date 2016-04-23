@@ -73,9 +73,12 @@ interface MainController extends _mithril.MithrilController {
 export const MainComponent = {
     controller: function(): MainController {
         let firstLevelName = DEFAULT_PROGRESSION.getLevelName(0);
-        let savegame = Savegame.newGame(firstLevelName);
+        let savegame: Savegame = null;
         if (window.localStorage["0"]) {
             savegame = Savegame.parse(window.localStorage["0"]);
+        }
+        else {
+            savegame = Savegame.newGame(firstLevelName);
         }
 
         let controller = Object.create(null);

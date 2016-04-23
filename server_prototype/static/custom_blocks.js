@@ -32,7 +32,6 @@ Blockly.Blocks.oop.setHierarchy = function(hierarchy) {
     Blockly.Blocks.oop.hierarchy = {};
     if (!hierarchy) return;
     traverse(hierarchy, null);
-    console.log(Blockly.Blocks.oop.hierarchy);
 };
 
 Blockly.Blocks.oop.getParentInHierarchy = function(className) {

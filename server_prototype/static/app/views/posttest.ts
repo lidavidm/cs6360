@@ -17,6 +17,7 @@
 
 import * as TestView from "views/test";
 import * as Logging from "logging";
+import {Savegame} from "savegame";
 import {MultipleChoiceQuestion, SurveyScaleQuestion, SurveyFeedbackQuestion} from "views/test";
 
 const TEST = [
@@ -40,10 +41,9 @@ export const Component: _mithril.MithrilComponent<PosttestController> = <any> {
     view: function(controller: PosttestController): _mithril.MithrilVirtualElement<PosttestController> {
         return m.component(TestView.Component, {
             oncomplete: function(answers: string[]) {
+                let savegame = Savegame.parse(window.localStorage["0"]);
                 alert("Test complete!");
-                let uuid = m.route.param("uuid");
-                alert(uuid);
-                Logging.saveAnswers(uuid, "pretest", answers);
+                Logging.saveAnswers(savegame.uuid, "pretest", answers);
                 window.setTimeout(() => {
                     m.route("/victory", {}, true);
                 }, 1250);

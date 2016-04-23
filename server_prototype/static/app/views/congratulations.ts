@@ -48,7 +48,6 @@ export const Component: _mithril.MithrilComponent<CongratulationsController> = <
         controller.nextLevel = args.level;
 
         args.event.on(level.BaseLevel.NEXT_LEVEL_LOADED, (nextLevel) => {
-            console.log(nextLevel);
             controller.nextLevel = nextLevel;
             controller.loaded(true);
         });

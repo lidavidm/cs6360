@@ -130,7 +130,6 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 else {
                     let end = 10000;
                     for (let line of lines) {
-                        console.log(line);
                         if (line.indexOf(":") > -1) {
                             end = line.indexOf(":") + 1;
                         }
