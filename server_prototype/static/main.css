@@ -608,7 +608,8 @@ li.objective img {
 
 #test {
     color: #FFF;
-    width: 60rem;
+    max-width: 60rem;
+    min-width: 40rem;
     margin: 2rem auto;
 
     border: 1px solid #FFF;

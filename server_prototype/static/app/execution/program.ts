@@ -119,7 +119,7 @@ export class Program {
 
     isCodeValid(): boolean {
         if (!this.savegame) return true;
-        let code = this.getCode(true);
+        let [code, offset] = this.getCode(true);
 
         return !this.invalid && code.indexOf("raise BlocklyError") === -1;
     }
@@ -202,7 +202,7 @@ export class Program {
 
     isCodeParseable(): boolean {
         if (!this.savegame) return true;
-        let code = this.getCode(true);
+        let [code, offset] = this.getCode(true);
         // Make sure code doesn't actually run
         code = "if False:\n" + indent(code, "    ");
         console.log(code);
@@ -232,17 +232,22 @@ export class Program {
         this.invalid = invalid;
     }
 
-    getCode(headless=false): string {
+    /**
+     * Generate the program code. Returns the code, along with the
+     * offset of the main method.
+     */
+    getCode(headless=false): [string, number] {
         Blockly.Python.STATEMENT_PREFIX = "recordBlockBegin(%1)\nincrementCounter()\n"
         Blockly.Python.STATEMENT_POSTFIX = "recordBlockEnd(%1)\n"
 
         let support = this.getSupportCode();
+        let supportLines = (support.match(/\n/g) || []).length;
         let code = this.getMainCode(headless);
 
         Blockly.Python.STATEMENT_PREFIX = "";
         Blockly.Python.STATEMENT_POSTFIX = "";
 
-        return [support, code].join("\n");
+        return [[support, code].join("\n"), supportLines];
     }
 
     getSupportCode(): string {

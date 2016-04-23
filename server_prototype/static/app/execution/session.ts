@@ -17,6 +17,7 @@ export class Session {
     program: Program;
     runDiff: DiffRunner;
     promise: Promise<{}>;
+    offset: number;
 
     constructor(interpreter: Interpreter, log: Log, program: Program, runDiff: DiffRunner) {
         this.interpreter = interpreter;
@@ -25,11 +26,14 @@ export class Session {
         log.reset();
         this.promise = new Promise(this.execute.bind(this));
         this.runDiff = runDiff;
+        this.offset = 0;
     }
 
     private execute(resolveOuter: () => void, rejectOuter: () => void) {
         this.log.reset();
-        this.interpreter.run(this.program.getCode()).then(() => {
+        let [code, offset] = this.program.getCode();
+        this.offset = offset;
+        this.interpreter.run(code).then(() => {
             this.replay(resolveOuter);
         }, (err: any) => {
             console.log(err);
