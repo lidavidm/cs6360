@@ -218,9 +218,27 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         function setupLevel(context: EditorContext) {
             controller.context = context;
             if (context.code) {
-                // TODO: if code-only, use fallback
+                if (!controller.editor) return;
                 controller.editor.getSession().setValue(context.code);
                 controller.markReadonly(context);
+            }
+            else if (!controller.level.canUseBlockEditor(context)) {
+                if (context.className === MAIN) {
+                    if (controller.level.program.globals.length === 0) {
+                        controller.level.program.event.on("globals_defined", () => {
+                            setupLevel(context);
+                        });
+                        return;
+                    }
+                    else {
+                        context.code = controller.level.program.getMainCode();
+                    }
+                }
+                else {
+                    context.code = controller.level.program.getMethodCode(context.className, context.method, true);
+                }
+                setupLevel(context);
+                return;
             }
             else {
                 controller.workspace.dispose();
@@ -324,7 +342,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         }
 
         // Cast to bool
-        let usingCodeEditor = !!args.context.code;
+        let usingCodeEditor = !!args.context.code || !controller.level.canUseBlockEditor(args.context);
 
         let header = [
             m("div.title", [

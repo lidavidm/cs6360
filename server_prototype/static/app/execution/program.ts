@@ -1,5 +1,6 @@
 declare var Sk: any;
 
+import {PubSub} from "pubsub";
 import {Savegame} from "savegame";
 import {Toolbox} from "level";
 import {MAIN} from "model/editorcontext";
@@ -73,7 +74,7 @@ export var OVERRIDES: {
     try:
         drone.flyHome()
     except NotImplementedError:
-        raise HelpError("I called Drone.flyHome but it's not defined!")
+        raise HelpError("I called Drone.flyHome, but it's not defined! Check the Class Hierarchy at top.")
 `
     }
 };
@@ -89,6 +90,8 @@ export class Program {
     headless: any;
     blockLimit: BlockLimit;
 
+    event: PubSub;
+
     constructor(hierarchy: ObjectHierarchy, blockLimit: BlockLimit) {
         this.globals = [];
         this.classes = [];
@@ -96,6 +99,7 @@ export class Program {
         this.hierarchy = hierarchy;
         this.headless = new Blockly.Workspace();
         this.blockLimit = blockLimit;
+        this.event = new PubSub();
     }
 
     update(savegame: Savegame) {
@@ -115,6 +119,11 @@ export class Program {
             }
             this.instantiateGlobal(name, className, modelObject.getID());
         }
+
+        // XXX this is a hack - when main method can only be edited in
+        // code, we need to wait until globals are instantiated in
+        // order to generate the code
+        this.event.broadcast("globals_defined");
     }
 
     isCodeValid(): boolean {
