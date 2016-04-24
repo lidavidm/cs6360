@@ -676,6 +676,10 @@ export abstract class WorldObject {
         return this.y;
     }
 
+    getWorld(): World {
+        return this.world;
+    }
+
     passable(): boolean {
         return true;
     }
@@ -1131,6 +1135,22 @@ class DroneActivatedDiff extends Diff<Drone> {
         return p.game.add.tween(object.sprite.position).to({
             y: -6,
         }, duration, Phaser.Easing.Quadratic.InOut);
+    }
+}
+
+export class ObjectiveCircle extends WorldObject {
+    constructor(name: string, x: number, y: number,
+                world: World, group: Phaser.Group) {
+        super(name, x, y, world);
+        this.phaserObject = world.game.add.group(group);
+        this.phaserObject.position.x = TILE_WIDTH * x + TILE_WIDTH / 2;
+        this.phaserObject.position.y = TILE_HEIGHT * y + TILE_WIDTH / 2;
+        this.phaserObject.pivot.x = TILE_WIDTH / 2;
+        this.phaserObject.pivot.y = TILE_HEIGHT / 2;
+        let circle = world.game.add.graphics(0, 0, this.phaserObject);
+        circle.lineStyle(0.5, 0x10DE16, 0.5);
+        circle.drawCircle(TILE_WIDTH / 2, TILE_HEIGHT / 2, 1.41 * TILE_WIDTH);
+        circle.drawCircle(TILE_WIDTH / 2, TILE_HEIGHT / 2, 1.63 * TILE_WIDTH);
     }
 }
 
