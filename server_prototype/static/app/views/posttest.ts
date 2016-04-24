@@ -18,16 +18,13 @@
 import * as TestView from "views/test";
 import * as Logging from "logging";
 import {Savegame} from "savegame";
-import {MultipleChoiceQuestion, SurveyScaleQuestion, SurveyFeedbackQuestion} from "views/test";
+import {MultipleChoiceQuestion, SurveyScaleQuestion, SurveyFeedbackQuestion, SurveyCheckboxQuestion} from "views/test";
 
 const TEST = [
-    new MultipleChoiceQuestion("This is a sample question?", [
-        "I dunno",
-        "If you're seeing this something went wrong",
-        "Blame David",
-    ]),
     new SurveyScaleQuestion("I enjoyed this game."),
-    new SurveyFeedbackQuestion("Please enter any thoughts you have here."),
+    new SurveyScaleQuestion("Before playing, I knew object-oriented programming."),
+    new SurveyScaleQuestion("After playing, I know object-oriented programming better."),
+    new SurveyFeedbackQuestion("Please enter any additional thoughts you have:"),
 ];
 
 interface PosttestController extends _mithril.MithrilController {
