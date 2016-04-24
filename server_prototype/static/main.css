@@ -459,6 +459,20 @@ li.objective img {
     background: orange;
 }
 
+#gameControls .speed-control {
+    display: inline-block;
+    float: right;
+    height: 100%;
+    width: 66%;
+    text-align: center;
+    font-size: 1.25rem;
+}
+
+#gameControls .speed-control input[type=range] {
+    height: 100%;
+    vertical-align: middle;
+}
+
 #editor.executing {
     width: calc(100% - 480px);
 }

@@ -89,15 +89,17 @@ export const Component: _mithril.MithrilComponent<ControlsController> = <any> {
                     }
                 },
             }, "Abort"));
-            buttons.push("Slow");
-            buttons.push(m("input[type=range][min=0.5][max=2.0][step=0.1]", {
-                value: args.speed(),
-                onchange: function(event: any) {
-                    let value = parseFloat(event.target.value);
-                    args.speed(value);
-                },
-            }));
-            buttons.push("Fast");
+            buttons.push(m(".speed-control", [
+                "Slow",
+                m("input[type=range][min=0.5][max=2.0][step=0.1]", {
+                    value: args.speed(),
+                    onchange: function(event: any) {
+                        let value = parseFloat(event.target.value);
+                        args.speed(value);
+                    },
+                }),
+                "Fast"
+            ]));
         }
         return m("nav#gameControls", buttons);
     }
