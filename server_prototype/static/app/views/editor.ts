@@ -262,6 +262,24 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 fixWorkspace();
                 controller.numBlocks(controller.workspace.getAllBlocks().length);
             }
+        }
+
+        function updateToolbox() {
+            let toolbox = controller.level.toolbox.xml();
+            if (controller.context.className !== MAIN) {
+                toolbox = controller.level.toolbox.methodXml(controller.context, controller.level.hierarchy);
+            }
+            controller.workspace.updateToolbox(toolbox);
+        }
+
+        args.event.on(level.BaseLevel.TOOLBOX_UPDATED, () => {
+            updateToolbox();
+        });
+
+        args.event.on(level.BaseLevel.NEXT_LEVEL_LOADED, (nextLevel: level.BaseLevel, blocks: EditorContext) => {
+            controller.level = nextLevel;
+            controller.numBlocks(0);
+            setupLevel(blocks);
 
             let lastBlockExecuted: any = null;
 
@@ -301,27 +319,12 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     }
                     return;
                 }
-                alert(err);
+                else {
+                    alert(err);
+                    let code = controller.editor.getSession().getValue();
+                    controller.editor.getSession().setValue(code + "\n# Exception: " + err);
+                }
             });
-        }
-
-        function updateToolbox() {
-            let toolbox = controller.level.toolbox.xml();
-            if (controller.context.className !== MAIN) {
-                toolbox = controller.level.toolbox.methodXml(controller.context, controller.level.hierarchy);
-            }
-            controller.workspace.updateToolbox(toolbox);
-        }
-
-        args.event.on(level.BaseLevel.TOOLBOX_UPDATED, () => {
-            updateToolbox();
-        });
-
-        args.event.on(level.BaseLevel.NEXT_LEVEL_LOADED, (nextLevel: level.BaseLevel, blocks: EditorContext) => {
-            controller.level = nextLevel;
-            controller.numBlocks(0);
-            // TODO: reset editor too
-            setupLevel(blocks);
 
             // Auto-open toolbox
             let toolbox = controller.workspace.toolbox_;

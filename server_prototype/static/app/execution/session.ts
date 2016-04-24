@@ -35,15 +35,16 @@ export class Session {
             this.replay(resolveOuter);
         }, (err: any) => {
             console.log(err);
+            let recordedErr = err.toString();
+            if (err.nativeError) {
+                recordedErr = err.nativeError.message || err.nativeError;
+            }
             if (err.traceback && err.traceback.length > 0) {
                 let lastTB = err.traceback[err.traceback.length - 1];
                 let line = lastTB.lineno;
                 let actualLine = line - offset;
-                console.log(actualLine, line, offset);
-            }
-            let recordedErr = err.toString();
-            if (err.nativeError) {
-                recordedErr = err.nativeError.message || err.nativeError;
+
+                recordedErr = `On line ${actualLine}: ${recordedErr}`;
             }
             this.log.record(new Diff(DiffKind.Error, recordedErr));
 

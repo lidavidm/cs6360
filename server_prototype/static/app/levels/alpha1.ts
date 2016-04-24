@@ -16,6 +16,7 @@
 // along with Tell Me to Survive.  If not, see <http://www.gnu.org/licenses/>.
 
 import * as model from "../model/model";
+import {EditorContext, MAIN} from "model/editorcontext";
 import {BaseLevel, Toolbox} from "../level";
 import * as TooltipView from "../views/tooltip";
 import * as python from "../execution/python";
@@ -48,6 +49,17 @@ export class Alpha1Level extends BaseLevel {
         this.toolbox.addClasses(["Robot", "number"]);
         this.toolbox.addNumber(4);
         this.toolbox.addBooleans();
+
+        this.hierarchy = {
+            name: "object",
+            children: [
+                {
+                    name: "Robot",
+                    methods: [ "turnLeft", "turnRight", "moveForward", "moveBackward", ],
+                    userMethods: [ "test", ],
+                },
+            ]
+        };
 
         // Define the objectives. The predicate is checked after
         // executing each block. It will be run if and only if the
@@ -125,5 +137,13 @@ export class Alpha1Level extends BaseLevel {
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
+    }
+
+    canUseBlockEditor(context: EditorContext): boolean {
+        return context.className !== MAIN;
+    }
+
+    canUseCodeEditor(context: EditorContext): boolean {
+        return context.className === MAIN;
     }
 }
