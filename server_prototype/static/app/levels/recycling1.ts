@@ -36,7 +36,7 @@ export class RecyclingLevel extends BaseLevel {
 
         this.objectives = [
             {
-                objective: `Move the old robot [${asset.Robot.Basic}] as far west as possible`,
+                objective: `Move the old robot [${asset.Robot.Basic}] 7 spaces west`,
                 completed: false,
                 predicate: (level) => {
                     return this.robot.getX() == 1;
@@ -59,7 +59,10 @@ export class RecyclingLevel extends BaseLevel {
         ];
 
         this.allTooltips = [
-            [],
+            [
+                new TooltipView.Tooltip(TooltipView.Region.ButtonBar,
+                    "This level can be solved with 27 blocks!"),
+            ],
         ];
 
         this.hierarchy = {
@@ -126,12 +129,11 @@ export class RecyclingLevel extends BaseLevel {
     }
 
     blockLimit(context: EditorContext): number {
-        return null;
-        // if (context.className === MAIN) {
-        //     return 13;
-        // }
-        // else {
-        //     return 6;
-        // }
+        if (context.className === MAIN) {
+            return 35;
+        }
+        else {
+            return 6;
+        }
     }
 }
