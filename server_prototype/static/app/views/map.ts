@@ -99,7 +99,6 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
 
                     args.changeContext(MAIN, "");
                     args.executing(true);
-                    console.log(controller.speed());
                     let session = args.level.run(controller.speed);
                     controller.session = session;
                     session.then(() => {

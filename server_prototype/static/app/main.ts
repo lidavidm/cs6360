@@ -200,6 +200,19 @@ export const MainComponent = {
         return m("div.controller", [
             m(<any> "div#main", {
                 key: "main",
+                config: function(element: HTMLElement, isInitialized: boolean) {
+                    if (!isInitialized) {
+                        controller.event.broadcast(
+                            level.BaseLevel.NEXT_LEVEL_LOADED,
+                            controller.level,
+                            controller.savegame.load({
+                                className: MAIN,
+                                method: "",
+                                workspace: null,
+                            })
+                        );
+                    }
+                },
             }, m.component(GameWidget, controller)),
             m(<any> "div#tooltip", {
                 key: "tooltip",
