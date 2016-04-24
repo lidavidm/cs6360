@@ -53,7 +53,7 @@ export class IronLevel extends BaseLevel {
 
         this.objectives = [
             {
-                objective: "Collect all the iron (5)",
+                objective: "Collect all the iron (4)",
                 completed: false,
                 predicate: (level) => {
                     for (var iron of level.irons) {
