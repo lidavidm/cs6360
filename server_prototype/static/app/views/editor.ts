@@ -253,6 +253,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                         snap: true,
                     },
                 });
+                controller.workspace.addChangeListener(controller.changeListener);
                 updateToolbox();
                 controller.workspace.clear();
 
@@ -282,8 +283,6 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             setupLevel(blocks);
 
             let lastBlockExecuted: any = null;
-
-            controller.workspace.addChangeListener(controller.changeListener);
 
             // TODO: highlighting for code execution?
             controller.level.event.on(level.BaseLevel.BLOCK_EXECUTED, (blockID) => {
@@ -472,6 +471,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                         trashcan: true,
                         startScale: 1.5,
                     });
+                    controller.workspace.addChangeListener(controller.changeListener);
                     Blockly.Css.setTypeIndicatorColours("#CF3", "#FC3", "#FC3");
 
                     controller.setupLevel(args.context);
