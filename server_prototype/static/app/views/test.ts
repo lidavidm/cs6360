@@ -108,7 +108,10 @@ export const Component: _mithril.MithrilComponent<TestController> = <any> {
                     );
                 }
                 else if (question instanceof SurveyFeedbackQuestion) {
-                    controller.answers.push("");
+                    if (controller.answers.length < controller.currentQuestion() + 1) {
+                        controller.answers.push("");
+                    }
+
                     result.push(m("textarea", {
                         placeholder: "Enter any feedback here...",
                         cols: 80,
