@@ -42,15 +42,18 @@ export class ScoutLevel extends BaseLevel {
             {
                 objective: `Create a new drone [${asset.Drone.Basic}]`,
                 completed: false,
-                predicate: (level) => {
-                    return this.drone != null;
+                predicate: (level, initialized) => {
+                    return this.drone != null &&
+                           initialized[this.drone.getID()] &&
+                           this.drone.getX() == 7 &&
+                           this.drone.getY() == 4;
                 }
             },
             {
                 objective: `Send the drone [${asset.Drone.Basic}] to the potential launch site in the southwest`,
                 completed: false,
-                predicate: (level) => {
-                    return this.drone.getX() == 2 && this.drone.getY() == 6;
+                predicate: (level, initialized) => {
+                    return initialized[this.drone.getID()] && this.drone.getX() == 2 && this.drone.getY() == 6;
                 }
             },
         ];
