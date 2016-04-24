@@ -5,102 +5,98 @@ import * as TooltipView from "views/tooltip";
 import * as python from "execution/python";
 import * as asset from "asset";
 
-export class RobotRescueLevel1 extends BaseLevel {
-    //public robot: model.Robot;
-    public brokenRobot: model.Robot;
-    //public NewRobot: model.Robot;
+export class RecyclingLevel extends BaseLevel {
+    public robot: model.Robot;
+    public miner: model.MineRobot;
 
     initialize() {
         super.initialize();
 
         this.missionTitle = "Recyling";
         this.missionText = [
-            "Now that you're back at base, get rid of the robot with that awkward turn left function.",
-            "You can INSTANTIATE a new one with the 'new' block, using the new blue prints."
+            "That regular robot isn't very useful. Time to get rid of it.",
         ];
 
-        this.toolbox = new Toolbox();
+        this.toolbox = new Toolbox(false, "class", false);
         this.toolbox.addControl("tell");
-        this.toolbox.addControl("new");
-        this.toolbox.addClasses(["BrokenRobot", "NewRobot"]);
-        this.toolbox.addClass("NewRobot", asset.Robot.Basic, model.Robot, [
+        this.toolbox.addControl("controls_repeat");
+
+        this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
             model.Robot.prototype.turnRight,
             model.Robot.prototype.turnLeft,
-            model.Robot.prototype.mine,
-        ]);
-
-        this.toolbox.addClass("BrokenRobot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.selfDestruct,
         ]);
+        this.toolbox.addClass("MineRobot", asset.Robot.Red, model.MineRobot, [
+            model.MineRobot.prototype.mine,
+        ]);
 
-        this.toolbox.addObject("brokenRobot", "BrokenRobot");
-
-
-        this.toolbox.addControl("controls_repeat_ext");
-        this.toolbox.addNumber(0);
+        this.toolbox.addObject("miner", "MineRobot");
+        this.toolbox.addObject("robot", "Robot");
 
         this.objectives = [
             {
-                objective: `Destroy the old robot [${asset.Robot.Basic}]`,
+                objective: `Move the old robot [${asset.Robot.Basic}] as far west as possible`,
                 completed: false,
                 predicate: (level) => {
-                    return this.brokenRobot.destructed;
+                    return this.robot.getX() == 1;
                 }
             },
             {
-                objective: `Construct a new robot [${asset.Robot.Basic}]`,
+                objective: `Move the miner [${asset.Robot.Red}] back to base [${asset.Misc.Base}]`,
                 completed: false,
                 predicate: (level) => {
-                    for (let object of this.modelWorld.getObjectByLoc(17, 4)){
-                        if (object !== null && object.getName() !== "brokenRobot"){
-                            return true;
-                        }
-                    }
-                    return false;
+                    return this.miner.getX() ==  7 && this.miner.getY() == 4;
+                }
+            },
+            {
+                objective: `Self-destruct the old robot [${asset.Robot.Basic}]`,
+                completed: false,
+                predicate: (level) => {
+                    return this.robot.destructed;
                 }
             },
         ];
 
         this.allTooltips = [
-            [
-                new TooltipView.Tooltip(TooltipView.Region.Toolbox,
-                    "Use the blue prints object to create a new robot!"),
-                new TooltipView.Tooltip(TooltipView.Region.ButtonBar,
-                    "Get overviews of the blue prints in the object heirarchy."),
-            ],
+            [],
         ];
 
         this.hierarchy = {
             name: "object",
             children: [
                 {
-                    name: "BrokenRobot",
-                    children: [],
-                    methods: ["selfDestruct"],
-                    userMethods: [],
-                },
-                {
-                    name: "NewRobot",
-                    children: [],
-                    methods: ["moveForward", "turnRight", "turnLeft", "mine"],
-                    userMethods: ["advance"],
+                    name: "Robot",
+                    children: [
+                        {
+                            name: "MineRobot",
+                            children: [],
+                            methods: ["mine"],
+                            userMethods: ["moveAndMine"]
+                        },
+                    ],
+                    methods: ["moveForward", "turnRight", "turnLeft", "selfDestruct"],
                 },
             ],
         };
+
+        this.setUpFading();
     }
 
     preload() {
         super.preload();
 
         this.game.load.image("tiles", "assets/tilesets/cave2.png");
-        this.game.load.tilemap("outside", "assets/maps/outside.json", null, Phaser.Tilemap.TILED_JSON);
+        this.game.load.tilemap("outside", "assets/maps/small_world.json", null, Phaser.Tilemap.TILED_JSON);
+        this.game.load.image("miner", asset.Robot.Red);
         this.game.load.image("robot", asset.Robot.Basic);
     }
 
     create() {
         // Create the world objects here.
         super.create();
+
+        this.zoomCamera.position.x = 1000;
 
         let map = this.game.add.tilemap("outside");
         map.addTilesetImage("cave2", "tiles");
@@ -114,18 +110,28 @@ export class RobotRescueLevel1 extends BaseLevel {
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
         this.initWorld(map);
-        this.brokenRobot = new model.Robot("brokenRobot", 17, 4, model.Direction.EAST,
+        this.miner = new model.MineRobot("miner", 3, 7, model.Direction.SOUTH,
+                                     this.modelWorld, this.foreground, "miner");
+        this.robot = new model.Robot("robot", 8, 4, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
     }
 
-    instantiateObject(className: string, varName: string): model.WorldObject {
-        if (!this.modelWorld.passable(17, 4)) {
-            return null;
-        }
-        return new model.Robot(varName, 17, 4, model.Direction.WEST,
-                               this.modelWorld, this.foreground, "robot");
+    setUpFading() {
+        Blockly.Blocks.oop.clearFaded();
+        Blockly.Blocks.oop.faded['tell'] = true;
+        Blockly.Blocks.oop.faded['controls_repeat'] = true;
+    }
+
+    blockLimit(context: EditorContext): number {
+        return null;
+        // if (context.className === MAIN) {
+        //     return 13;
+        // }
+        // else {
+        //     return 6;
+        // }
     }
 }
