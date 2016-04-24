@@ -41,11 +41,21 @@ export class SurveyFeedbackQuestion {
     }
 }
 
-export type Question = MultipleChoiceQuestion | SurveyFeedbackQuestion | SurveyScaleQuestion;
+export class SurveyCheckboxQuestion {
+    text: string;
+    choices: string[];
+
+    constructor(text: string, choices: string[]) {
+        this.text = text;
+        this.choices = choices;
+    }
+}
+
+export type Question = MultipleChoiceQuestion | SurveyFeedbackQuestion | SurveyScaleQuestion | SurveyCheckboxQuestion;
 
 interface TestController extends _mithril.MithrilController {
     currentQuestion: _mithril.MithrilProperty<number>;
-    answers: string[],
+    answers: any[],
 }
 
 interface Args {
@@ -105,6 +115,38 @@ export const Component: _mithril.MithrilComponent<TestController> = <any> {
                                   }, choice),
                               ]);
                           })))
+                    );
+                }
+                else if (question instanceof SurveyCheckboxQuestion) {
+                    let choices = question.choices;
+                    let chosen: { [choice: string]: boolean } = {};
+                    for (let choice of choices) {
+                        chosen[choice] = false;
+                    }
+                    if (controller.answers.length < controller.currentQuestion() + 1) {
+                        controller.answers.push(chosen);
+                    }
+                    result.push(
+                        m("ul", choices.map(function(choice, index) {
+                            return m("li", [
+                                m("input[type=checkbox]", {
+                                    id: "answer" + index,
+                                    name: "answer",
+                                    onchange: function(ev: any) {
+                                        if (ev.target.checked) {
+                                            chosen[choice] = true;
+                                        }
+                                        else {
+                                            chosen[choice] = false;
+                                        }
+                                        controller.answers[controller.answers.length - 1] = chosen;
+                                    },
+                                }),
+                                m("label", {
+                                    "for": "answer" + index,
+                                }, choice),
+                            ]);
+                        }))
                     );
                 }
                 else if (question instanceof SurveyFeedbackQuestion) {
