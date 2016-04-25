@@ -17,9 +17,9 @@
 
 import * as TestView from "views/test";
 import * as Logging from "logging";
-import {MultipleChoiceQuestion, Code} from "views/test";
+import {MultipleChoiceQuestion, Question, Code} from "views/test";
 
-const PRETEST = [
+export const PRETEST: Question[] = [
     new MultipleChoiceQuestion("Student is a subclass of Person. Person defines a method called 'sleep', but Student does not. What happens if you tell a Student object to sleep?", null, [
         "(an error occurs)",
         "The student does nothing",
