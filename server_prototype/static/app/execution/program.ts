@@ -68,8 +68,8 @@ export var OVERRIDES: {
     },
 } = {
     "RescueRobot": {
-        "rescue": `def rescue(self):
-    droneID = super().rescue()
+        "rebootTarget": `def rebootTarget(self):
+    droneID = super().rebootTarget()
     drone = Drone(droneID)
     try:
         drone.flyHome()
