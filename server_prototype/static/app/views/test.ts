@@ -15,13 +15,32 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with Tell Me to Survive.  If not, see <http://www.gnu.org/licenses/>.
 
+export class Code {
+    code: string;
+
+    constructor(code: string) {
+        this.code = code;
+    }
+}
+
+export function renderChoice(choice: Code | string): _mithril.MithrilVirtualElement<any> {
+    if (choice instanceof Code) {
+        return m("pre", choice.code);
+    }
+    return choice;
+}
+
 export class MultipleChoiceQuestion {
     text: string;
-    choices: string[];
+    code: string;
+    choices: (Code | string)[];
+    image: string;
 
-    constructor(text: string, choices: string[]) {
+    constructor(text: string, code: string, choices: (Code | string)[], image?: string) {
         this.text = text;
+        this.code = code;
         this.choices = choices;
+        this.image = image || null;
     }
 }
 
@@ -90,8 +109,19 @@ export const Component: _mithril.MithrilComponent<TestController> = <any> {
                 let question = args.questions[controller.currentQuestion()];
                 let result = [m("p", question.text)];
 
+                if (question instanceof MultipleChoiceQuestion) {
+                    if (question.code) {
+                        result.push(m("pre", question.code));
+                    }
+                    if (question.image) {
+                        result.push(m("img", {
+                            src: question.image,
+                        }));
+                    }
+                }
+
                 if (question instanceof MultipleChoiceQuestion || question instanceof SurveyScaleQuestion) {
-                    let choices = ["Strongly Agree", "Agree", "Neutral", "Disagree", "Strongly Disagree"];
+                    let choices: (Code | string)[] = ["Strongly Agree", "Agree", "Neutral", "Disagree", "Strongly Disagree"];
                     if (question instanceof MultipleChoiceQuestion) {
                         choices = question.choices;
                     }
@@ -112,7 +142,7 @@ export const Component: _mithril.MithrilComponent<TestController> = <any> {
                                   }),
                                   m("label", {
                                       "for": "answer" + index,
-                                  }, choice),
+                                  }, renderChoice(choice)),
                               ]);
                           })))
                     );

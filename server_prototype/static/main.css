@@ -662,8 +662,17 @@ li.objective img {
     padding-bottom: 3rem;
 }
 
+#test img {
+    float: right;
+    max-width: 40%;
+}
+
 #test p {
     font-size: 1.25rem;
+}
+
+#test pre {
+    font-size: 1rem;
 }
 
 #test textarea {

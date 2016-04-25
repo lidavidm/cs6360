@@ -17,16 +17,51 @@
 
 import * as TestView from "views/test";
 import * as Logging from "logging";
-import {MultipleChoiceQuestion, SurveyScaleQuestion, SurveyFeedbackQuestion} from "views/test";
+import {MultipleChoiceQuestion, Code} from "views/test";
 
 const PRETEST = [
-    new MultipleChoiceQuestion("This is a sample question?", [
-        "I dunno",
-        "If you're seeing this something went wrong",
-        "Blame David",
+    new MultipleChoiceQuestion("Student is a subclass of Person. Person defines a method called 'sleep', but Student does not. What happens if you tell a Student object to sleep?", null, [
+        "(an error occurs)",
+        "The student does nothing",
+        "The student sleeps like a Person",
     ]),
-    new SurveyScaleQuestion("I enjoyed this game."),
-    new SurveyFeedbackQuestion("Please enter any thoughts you have here."),
+
+    new MultipleChoiceQuestion("The class Bird has two methods, 'fly' and 'chirp'. What code (if any) is needed here to prevent an error?", `# Add code here
+tweety.chirp()
+tweety.chirp()
+tweety.fly()`, [
+        "(no code needed)",
+        "tweety.fly",
+        "tweety = Bird",
+        "tweety = Bird()",
+    ]),
+
+    new MultipleChoiceQuestion("The class Robot has three methods: 'moveForward' (move forward by one square), 'turnLeft' (rotate 90° left), and 'turnRight' (rotate 90° right). Looking at the map, what code should be added below to move the robot to the red B?", `robot = Robot()
+# Add code here`, [
+        "(no code needed)",
+        new Code("turnRight()\nmoveForward()\nmoveForward()"),
+        new Code("turnLeft()\nmoveForward()\nmoveForward()"),
+        new Code("robot.moveLeft()\nrobot.moveLeft()"),
+        new Code("robot.turnRight()\nrobot.moveForward()\nrobot.moveForward()"),
+    ], "assets/pretest_map.png"),
+
+    new MultipleChoiceQuestion("The class Dog has a method 'makeSound' that prints the string \"woof\". The class Wolf is a subclass of Dog, which has a method 'makeSound' that prints the string \"awooo!\" What is the result of the following code?", `fido = Wolf()
+fido.makeSound()`, [
+        "(nothing is printed)",
+        "(an error occurs)",
+        "awooo!",
+        "woof",
+        "awooo! woof",
+    ]),
+
+    new MultipleChoiceQuestion("The class Robot has three methods: 'moveForward', 'turnLeft', and 'turnRight'. The class MineRobot is a subclass of Robot and has one method, 'mine'. Given the following code, what code could be added that would cause an error?", `wall_e = MineRobot()
+# Add code here `, [
+        "(none of these cause an error)",
+        "wall_e.mine()",
+        "wall_e.turnLeft()",
+        "wall_e.turnRight()",
+        "wall_e.moveForward()",
+    ]),
 ];
 
 interface PretestController extends _mithril.MithrilController {
