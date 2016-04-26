@@ -203,6 +203,7 @@ export const Component: _mithril.MithrilComponent<TestController> = <any> {
                     onclick: function() {
                         controller.currentQuestion(controller.currentQuestion() + 1);
                         if (controller.currentQuestion() >= args.questions.length) {
+                            console.log(controller.answers);
                             args.oncomplete(controller.answers);
                         }
                     }

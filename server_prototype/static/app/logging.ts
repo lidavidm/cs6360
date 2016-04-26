@@ -15,6 +15,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with Tell Me to Survive.  If not, see <http://www.gnu.org/licenses/>.
 
+import {Savegame} from "savegame";
+import {EditorContext} from "model/editorcontext";
+
 const LOGGING_SERVER = "http://localhost:3000";
 
 function loggingUrl(endpoint: string): string {
@@ -30,7 +33,18 @@ var global_state = {
 };
 
 export function initialize() {
-    // TODO: initialize UUID
+    let uuid = window.localStorage["uuid"];
+    if (uuid) {
+        console.log("Saved UUID:", uuid);
+        global_state.uuid = uuid;
+    }
+    else {
+        newUuid().then(function(uuid) {
+            console.log("New UUID: ", uuid);
+            global_state.uuid = uuid;
+            window.localStorage["uuid"] = uuid;
+        });
+    }
 }
 
 export function startGame() {
@@ -97,15 +111,23 @@ export function recordGeneric(levelName: string, action: string, data: string) {
     });
 }
 
-export function recordWorkspace() {
+export function recordSavegame(savegame: Savegame) {
 
 }
 
-export function recordContextSwitch() {
+export function recordWorkspace(context: EditorContext, workspace: Element | string) {
 
 }
 
-export function recordCodeRun() {
+export function recordContextSwitch(context: EditorContext) {
+
+}
+
+export function recordCodeRun(event: string, code?: string) {
+
+}
+
+export function recordRuntimeException(exception: string) {
 
 }
 

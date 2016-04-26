@@ -23,6 +23,7 @@ import pubsub = require("pubsub");
 import {MAIN} from "model/editorcontext";
 import {Session} from "execution/session";
 import {PubSub} from "pubsub";
+import * as Logging from "logging";
 
 interface MapController extends _mithril.MithrilController {
     phaser: Phaser.Game,
@@ -70,7 +71,6 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
         return m("div#sidebar" + style, [
             m("div#worldMap[title=Drag to move]", {
                 config: function(element: HTMLElement, isInitialized: boolean) {
-                    // TODO: listen for a new state?
                     if (!isInitialized) {
                         controller.phaser = new Phaser.Game(
                             "100", "100", Phaser.CANVAS, element);
@@ -90,6 +90,7 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                 onrun: () => {
                     if (!args.level.program.isCodeParseable()) {
                         // TODO: report the error somehow
+                        Logging.recordCodeRun("unparseable");
                         args.level.program.flagInvalid(true);
                         return;
                     }
@@ -116,22 +117,26 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                 onruninvalid: () => {
                     if (!args.level.program.isCodeParseable()) {
                         // TODO: report the error somehow
+                        Logging.recordCodeRun("unparseable");
                         args.level.program.flagInvalid(true);
                     }
                     else {
                         args.level.program.flagInvalid(false);
                     }
 
+                    Logging.recordCodeRun("invalid");
                     args.event.broadcast("runInvalid");
                 },
 
                 onrunmemory: () => {
                     let context = args.level.program.validateMemoryUsage();
+                    Logging.recordCodeRun("outOfMemory");
                     args.changeContext(context.className, context.method);
                 },
 
                 onreset: () => {
                     args.level.runReset().then(() => {
+                        Logging.recordCodeRun("reset");
                         m.startComputation();
                         args.executing(false);
                         controller.doneExecuting(false);
@@ -142,6 +147,7 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
 
                 onabort: () => {
                     if (controller.session) {
+                        Logging.recordCodeRun("abort");
                         m.startComputation();
                         controller.session.abort();
                         m.endComputation();

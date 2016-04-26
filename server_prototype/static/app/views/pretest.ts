@@ -77,8 +77,7 @@ export const Component: _mithril.MithrilComponent<PretestController> = <any> {
         return m.component(TestView.Component, {
             oncomplete: function(answers: string[]) {
                 alert("Test complete!");
-                // TODO: get UUID
-                Logging.saveAnswers(null, "pretest", answers);
+                Logging.saveAnswers("pretest", answers);
                 window.setTimeout(() => {
                     m.route("/game", {}, true);
                 }, 1250);

@@ -19,6 +19,7 @@ import level = require("level");
 import pubsub = require("pubsub");
 import * as HierarchyView from "./hierarchy";
 import {EditorContext, MAIN} from "model/editorcontext";
+import * as Logging from "logging";
 
 interface EditorController extends _mithril.MithrilController {
     level: level.BaseLevel,
@@ -187,6 +188,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
         });
 
         args.event.on(level.BaseLevel.CONTEXT_CHANGED, (context: EditorContext) => {
+            Logging.recordContextSwitch(context);
             if (!controller.level.canUseBlockEditor(context) && !context.code) {
                 let code = controller.level.program.getMethodCode(context.className, context.method, true);
                 context.code = code;

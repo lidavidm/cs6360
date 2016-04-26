@@ -2,6 +2,7 @@ import {Interpreter} from "python";
 import {Program} from "program";
 import {Diff, DiffKind, Log} from "model/model";
 import {PubSub} from "pubsub";
+import * as Logging from "logging";
 
 type DiffRunner = (diff: Diff<any>, initialized: {
     [id: number]: boolean,
@@ -30,10 +31,13 @@ export class Session {
     private execute(resolveOuter: () => void, rejectOuter: () => void) {
         this.log.reset();
         let [code, offset] = this.program.getCode();
+        Logging.recordCodeRun("normal", code);
 
         this.interpreter.run(code).then(() => {
+            Logging.recordCodeRun("finished");
             this.replay(resolveOuter);
         }, (err: any) => {
+            Logging.recordRuntimeException(JSON.stringify(err));
             console.log(err);
             let recordedErr = err.toString();
             if (err.nativeError) {

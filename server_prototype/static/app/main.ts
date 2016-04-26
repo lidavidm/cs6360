@@ -26,6 +26,7 @@ import {DEFAULT_PROGRESSION} from "progression";
 import {Savegame} from "savegame";
 import {EditorContext, MAIN} from "model/editorcontext";
 import * as HierarchyView from "views/hierarchy";
+import * as Logging from "logging";
 
 interface GameController extends _mithril.MithrilController {
 }
@@ -100,6 +101,7 @@ export const MainComponent = {
         };
 
         controller.setLevel = function(newLevel: level.BaseLevel) {
+            Logging.startLevel(savegame.currentLevel);
             controller.context = {
                 className: MAIN,
                 method: "",
@@ -114,7 +116,13 @@ export const MainComponent = {
             newLevel.loadHierarchy(savegame.loadAll());
             m.endComputation();
 
+            let lastSavedTime = 0;
             newLevel.event.on(level.BaseLevel.WORKSPACE_UPDATED, (blocks: HTMLElement | string) => {
+                if (Date.now() - lastSavedTime > 5000) {
+                    // Save every 5 seconds at most
+                    lastSavedTime = Date.now();
+                    Logging.recordWorkspace(controller.context, blocks);
+                }
                 m.startComputation();
                 if (typeof blocks === "string") {
                     controller.context.code = blocks;
@@ -128,6 +136,8 @@ export const MainComponent = {
 
             newLevel.event.on(level.BaseLevel.OBJECTIVES_UPDATED, () => {
                 if (newLevel.isComplete()) {
+                    Logging.recordSavegame(savegame);
+                    Logging.finishLevel();
                     controller.loadScreenOldLevel = newLevel;
                     newLevel.tooltips().forEach((tooltip) => {
                         tooltip.hide();
@@ -137,7 +147,7 @@ export const MainComponent = {
                     if (!newLevelName) {
                         window.setTimeout(function() {
                             window.setTimeout(function() {
-                                m.route("/posttest", { uuid: savegame.uuid }, true);
+                                m.route("/posttest", {}, true);
                             }, 1250);
 
                             document.querySelector(".controller").classList.add("vanish");
