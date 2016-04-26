@@ -30,7 +30,7 @@ export class BackToBase extends BaseLevel {
     initialize() {
         super.initialize();
 
-        this.missionTitle = "Doing Donuts";
+        this.missionTitle = "Homecoming";
         this.missionText = [
             "You've escaped the cave. Head back to base."
         ];
@@ -46,10 +46,6 @@ export class BackToBase extends BaseLevel {
         ]);
 
         this.toolbox.addObject("robot", "Robot");
-
-        this.fallback = <HTMLElement[]> [
-            this.toolbox.addControl("tell", false, [], []),
-        ];
 
         this.objectives = [
             {
@@ -97,16 +93,6 @@ export class BackToBase extends BaseLevel {
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
-    }
-
-    fallbackWorkspace(context: EditorContext): HTMLElement {
-        if (context.className === MAIN) {
-            let doc = this.fallback.map((node) => {
-                return node.outerHTML;
-            }).join("\n");
-            return Blockly.Xml.textToDom(`<xml>${doc}</xml>`);
-        }
-        return super.fallbackWorkspace(context);
     }
 
     blockLimit(context: EditorContext): number {
