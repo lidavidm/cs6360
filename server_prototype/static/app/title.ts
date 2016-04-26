@@ -68,9 +68,6 @@ export const TitleComponent: _mithril.MithrilComponent<TitleController> = {
                 }, "Restart"),
             ]),
             m("article", [
-                m("p", ["Image credit: ", m("a", {
-                    href: "http://www.nasa.gov/image-feature/jpl/pia19839/strata-at-base-of-mount-sharp",
-                }, "NASA")]),
                 m("p", [
                     "This application is free software, licensed under the GNU AGPLv3. See our ",
                     m("a", {
@@ -93,8 +90,11 @@ export const TitleComponent: _mithril.MithrilComponent<TitleController> = {
                     m("a[href=http://opengameart.org/content/denzis-scifi-tilesets]", "scifi tileset"),
                     " are used, with modifications, under the ",
                     m("a[href=https://creativecommons.org/licenses/by/3.0/us/]", "CC-BY-3.0 license"),
-                    ".",
+                    ". The rocket sprite is used under the terms of the CC-BY-3.0 license. Attribution: Saturn V Pixel Rocket by Michael J Pierce @ IsometricRobot.com."
                 ]),
+                m("p", ["Image credit: ", m("a", {
+                    href: "http://www.nasa.gov/image-feature/jpl/pia19839/strata-at-base-of-mount-sharp",
+                }, "NASA")]),
             ])
         ]);
     }
