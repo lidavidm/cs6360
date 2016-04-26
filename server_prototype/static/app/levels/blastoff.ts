@@ -178,7 +178,7 @@ export class BlastOffLevel extends BaseLevel {
     setUpFading() {
         Blockly.Blocks.oop.clearFaded();
         Blockly.Blocks.oop.faded['tell'] = true;
-        Blockly.Blocks.oop.faded['controls_repeat_ext'] = true;
+        Blockly.Blocks.oop.faded['controls_repeat'] = true;
         Blockly.Blocks.oop.faded['new'] = true;
     }
 

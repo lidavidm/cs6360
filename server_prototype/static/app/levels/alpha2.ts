@@ -29,7 +29,7 @@ export class Alpha2Level extends BaseLevel {
 
         this.toolbox = new Toolbox();
         this.toolbox.addControl("tell");
-        this.toolbox.addControl("controls_repeat_ext");
+        this.toolbox.addControl("controls_repeat");
         this.toolbox.addControl("controls_if");
         this.toolbox.addClass("Robot", "assets/sprites/robot_3Dblue.png", model.Robot);
         this.toolbox.addObject("robot", "Robot");

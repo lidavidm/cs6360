@@ -36,7 +36,7 @@ export class Alpha1Level extends BaseLevel {
         this.toolbox = new Toolbox();
         this.toolbox.addControl("tell");
         this.toolbox.addControl("new");
-        this.toolbox.addControl("controls_repeat_ext");
+        this.toolbox.addControl("controls_repeat");
         this.toolbox.addControl("controls_if");
         this.toolbox.addControl("logic_compare");
         this.toolbox.addControl("logic_operation");

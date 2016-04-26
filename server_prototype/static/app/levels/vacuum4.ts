@@ -36,7 +36,7 @@ export class VacuumLevel4 extends BaseLevel {
 
         this.toolbox = new Toolbox();
         this.toolbox.addControl("tell");
-        this.toolbox.addControl("controls_repeat_ext");
+        this.toolbox.addControl("controls_repeat");
         this.toolbox.addClass("SmallRobot", asset.Robot.Red, model.Robot, [
             model.Robot.prototype.moveForward,
             model.Robot.prototype.moveBackward,
@@ -122,6 +122,6 @@ export class VacuumLevel4 extends BaseLevel {
     setUpFading() {
         Blockly.Blocks.oop.clearFaded();
         Blockly.Blocks.oop.faded['tell'] = true;
-        Blockly.Blocks.oop.faded['controls_repeat_ext'] = true;
+        Blockly.Blocks.oop.faded['controls_repeat'] = true;
     }
 }

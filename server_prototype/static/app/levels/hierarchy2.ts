@@ -54,7 +54,7 @@ export class HierarchyLevel2 extends BaseLevel {
 
         this.toolbox.addObject("smallRobot", "SmallRobot");
 
-        this.toolbox.addControl("controls_repeat_ext");
+        this.toolbox.addControl("controls_repeat");
         this.toolbox.addNumber(0);
 
         this.objectives = [
@@ -149,6 +149,6 @@ export class HierarchyLevel2 extends BaseLevel {
     setUpFading() {
         Blockly.Blocks.oop.clearFaded();
         Blockly.Blocks.oop.faded['tell'] = true;
-        Blockly.Blocks.oop.faded['controls_repeat_ext'] = true;
+        Blockly.Blocks.oop.faded['controls_repeat'] = true;
     }
 }
