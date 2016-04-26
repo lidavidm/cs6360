@@ -21,11 +21,101 @@ function loggingUrl(endpoint: string): string {
     return LOGGING_SERVER + "/" + endpoint;
 }
 
+var global_state = {
+    session_id: "",
+    dynamic_quest_id: "",
+    session_seq_id: 0,
+    quest_seq_id: 0,
+    uuid: "",
+};
+
 export function initialize() {
+    // TODO: initialize UUID
 }
 
-export function saveAnswers(uuid: string, test: string, answers: string[]) {
-    // TODO:
+export function startGame() {
+    return m.request({
+        method: "GET",
+        url: loggingUrl("start_session"),
+        data: {
+            client_timestamp: Date.now(),
+        },
+        deserialize: function(v) { return v; },
+    }).then(function(session_id: any) {
+        global_state.session_id = session_id;
+        global_state.session_seq_id = 0;
+    });
+}
+
+export function startLevel(levelName: string) {
+    global_state.session_seq_id += 1;
+    return m.request({
+        method: "GET",
+        url: loggingUrl("start_level"),
+        data: {
+            client_timestamp: Date.now(),
+            session_id: global_state.session_id,
+            session_seq_id: global_state.session_seq_id,
+            level_name: levelName,
+            uuid: global_state.uuid,
+        },
+        deserialize: function(v) { return v; },
+    }).then(function(dynamic_quest_id: any) {
+        global_state.dynamic_quest_id = dynamic_quest_id;
+        global_state.quest_seq_id = 0;
+    });
+}
+
+export function finishLevel() {
+    return m.request({
+        method: "GET",
+        url: loggingUrl("finish_level"),
+        data: {
+            dynamic_quest_id: global_state.dynamic_quest_id,
+        },
+        deserialize: function(v) { return v; },
+    });
+}
+
+export function recordGeneric(levelName: string, action: string, data: string) {
+    global_state.quest_seq_id += 1;
+    return m.request({
+        method: "GET",
+        url: loggingUrl("start_level"),
+        data: {
+            client_timestamp: Date.now(),
+            session_id: global_state.session_id,
+            session_seq_id: global_state.session_seq_id,
+            level_name: levelName,
+            quest_seq_id: global_state.quest_seq_id,
+            uuid: global_state.uuid,
+            action_id: action,
+            dynamic_quest_id: global_state.dynamic_quest_id,
+            action_detail: data,
+        },
+        deserialize: function(v) { return v; },
+    });
+}
+
+export function recordWorkspace() {
+
+}
+
+export function recordContextSwitch() {
+
+}
+
+export function recordCodeRun() {
+
+}
+
+export function beginTest(testName: string) {
+    startLevel("TEST_" + testName);
+}
+
+export function saveAnswers(testName: string, answers: string[]) {
+    recordGeneric("TEST_" + testName, "finish_test", JSON.stringify(answers));
+    finishLevel();
 }
 
 export function newUuid(): _mithril.Thennable<string> {
