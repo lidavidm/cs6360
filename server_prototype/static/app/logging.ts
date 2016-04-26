@@ -30,6 +30,7 @@ var global_state = {
     session_seq_id: 0,
     quest_seq_id: 0,
     uuid: "",
+    level: "",
 };
 
 export function initialize() {
@@ -63,6 +64,7 @@ export function startGame() {
 
 export function startLevel(levelName: string) {
     global_state.session_seq_id += 1;
+    global_state.level = levelName;
     return m.request({
         method: "GET",
         url: loggingUrl("start_level"),
@@ -112,23 +114,37 @@ export function recordGeneric(levelName: string, action: string, data: string) {
 }
 
 export function recordSavegame(savegame: Savegame) {
-
+    return recordGeneric(global_state.level, "savegame", savegame.stringify());
 }
 
-export function recordWorkspace(context: EditorContext, workspace: Element | string) {
-
+export function recordWorkspace(context: EditorContext, workspace: HTMLElement | string) {
+    return recordGeneric(global_state.level, "workspace", JSON.stringify({
+        context: {
+            className: context.className,
+            method: context.method,
+        },
+        workspace: (workspace instanceof HTMLElement) ? workspace.outerHTML : workspace,
+    }));
 }
 
 export function recordContextSwitch(context: EditorContext) {
-
+    return recordGeneric(global_state.level, "context_switch", JSON.stringify({
+        context: {
+            className: context.className,
+            method: context.method,
+        },
+    }));
 }
 
 export function recordCodeRun(event: string, code?: string) {
-
+    return recordGeneric(global_state.level, "execute", JSON.stringify({
+        event: event,
+        code: code,
+    }));
 }
 
 export function recordRuntimeException(exception: string) {
-
+    return recordGeneric(global_state.level, "exception", exception);
 }
 
 export function beginTest(testName: string) {
