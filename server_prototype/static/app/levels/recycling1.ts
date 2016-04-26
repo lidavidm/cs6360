@@ -20,6 +20,8 @@ export class RecyclingLevel extends BaseLevel {
         this.toolbox = new Toolbox(false, "class", false);
         this.toolbox.addControl("tell");
         this.toolbox.addControl("controls_repeat");
+        this.toolbox.addControl("new");
+        this.toolbox.addClasses(["Robot", "MineRobot"]);
 
         this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
@@ -61,7 +63,7 @@ export class RecyclingLevel extends BaseLevel {
         this.allTooltips = [
             [
                 new TooltipView.Tooltip(TooltipView.Region.ButtonBar,
-                    "This level can be solved with 27 blocks!"),
+                    "This level can be solved with 25 blocks!"),
             ],
         ];
 
