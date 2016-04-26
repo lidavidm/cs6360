@@ -22,13 +22,18 @@ export class ScoutLevel extends BaseLevel {
         this.toolbox.addControl("tell");
         this.toolbox.addControl("controls_repeat");
         this.toolbox.addControl("new");
-        this.toolbox.addClasses(["Drone"]);
+        this.toolbox.addClasses(["Robot", "MineRobot", "FrackingRobot", "Drone"]);
 
         this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
             model.Robot.prototype.turnRight,
             model.Robot.prototype.turnLeft,
             model.Robot.prototype.selfDestruct,
+        ]);
+        this.toolbox.addClass("MineRobot", asset.Robot.Red, model.MineRobot, [
+            model.MineRobot.prototype.mine,
+        ]);
+        this.toolbox.addClass("FrackingRobot", asset.Robot.Blue, model.FrackingRobot, [
         ]);
         this.toolbox.addClass("Drone", asset.Drone.Basic, model.Drone, [
             model.Drone.prototype.flyEast,
@@ -58,15 +63,34 @@ export class ScoutLevel extends BaseLevel {
             },
         ];
 
-        this.allTooltips = [[]];
+        this.allTooltips = [
+            [
+                new TooltipView.Tooltip(TooltipView.Region.ButtonBar,
+                    "This level can be solved with 10 blocks!"),
+            ],
+        ];
 
         this.hierarchy = {
             name: "object",
             children: [
                 {
                     name: "Robot",
-                    methods: ["moveForward", "turnRight", "turnLeft"],
-                    children: [],
+                    children: [
+                        {
+                            name: "MineRobot",
+                            children: [
+                                {
+                                    name: "FrackingRobot",
+                                    children: [],
+                                    methods: [],
+                                    userMethods: [],
+                                }
+                            ],
+                            methods: ["mine"],
+                            userMethods: ["moveAndMine"]
+                        },
+                    ],
+                    methods: ["moveForward", "turnRight", "turnLeft", "selfDestruct"],
                 },
                 {
                     name: "Drone",
@@ -128,6 +152,15 @@ export class ScoutLevel extends BaseLevel {
         Blockly.Blocks.oop.faded['tell'] = true;
         Blockly.Blocks.oop.faded['controls_repeat_ext'] = true;
         Blockly.Blocks.oop.faded['new'] = true;
+    }
+
+    blockLimit(context: EditorContext): number {
+        if (context.className === MAIN) {
+            return 15;
+        }
+        else {
+            return null;
+        }
     }
 
     instantiateObject(className: string, varName: string): model.WorldObject {
