@@ -33,7 +33,7 @@ export class RescueLevel extends BaseLevel {
         ]);
         this.toolbox.addClass("FrackingRobot", asset.Robot.Blue, model.FrackingRobot, [
         ]);
-        this.toolbox.addClass("RescueRobot", asset.Robot.Red, model.RescueRobot, [
+        this.toolbox.addClass("RescueRobot", asset.Robot.Pink, model.RescueRobot, [
             model.RescueRobot.prototype.rebootTarget,
         ]);
         this.toolbox.addClass("Drone", asset.Drone.Basic, model.Drone, [
@@ -42,10 +42,8 @@ export class RescueLevel extends BaseLevel {
             model.Drone.prototype.flySouth,
             model.Drone.prototype.flyNorth,
         ]);
-        this.toolbox.addObject("rescuer", "RescueRobot");
+
         this.toolbox.addObject("drone", "Drone");
-
-
 
         this.objectives = [
             {
@@ -56,7 +54,7 @@ export class RescueLevel extends BaseLevel {
                 }
             },
             {
-                objective: `Move the robot [${asset.Robot.Red}] to the drone [${asset.Drone.Basic}]`,
+                objective: `Move the robot [${asset.Robot.Pink}] to the drone [${asset.Drone.Basic}]`,
                 completed: false,
                 predicate: (level) => {
                     return this.rescuer.getX() == 5 && this.rescuer.getY() == 4;
@@ -79,8 +77,6 @@ export class RescueLevel extends BaseLevel {
         ];
 
         this.allTooltips = [[]];
-
-
 
         this.hierarchy = {
             name: "object",
@@ -127,7 +123,7 @@ export class RescueLevel extends BaseLevel {
 
         this.game.load.image("tiles", "assets/tilesets/cave2.png");
         this.game.load.tilemap("outside", "assets/maps/small_world.json", null, Phaser.Tilemap.TILED_JSON);
-        this.game.load.image("robot", asset.Robot.Red);
+        this.game.load.image("rescueRobot", asset.Robot.Pink);
         this.game.load.image("drone", asset.Drone.Basic);
     }
 
@@ -145,8 +141,7 @@ export class RescueLevel extends BaseLevel {
             "Tile Layer 2", this.game.width, this.game.height, this.background);
 
         this.initWorld(map);
-        this.rescuer = new model.RescueRobot("rescuer", 7, 4, model.Direction.WEST,
-                                             this.modelWorld, this.foreground, "robot");
+
         this.drone = new model.Drone("drone", 4, 4,
                                      this.modelWorld, this.flying, "drone");
 
@@ -166,4 +161,15 @@ export class RescueLevel extends BaseLevel {
         Blockly.Blocks.oop.faded['tell'] = true;
         Blockly.Blocks.oop.faded['controls_repeat'] = true;
     }
+
+    instantiateObject(className: string, varName: string): model.WorldObject {
+        if (!this.modelWorld.passable(7, 4)) {
+            return null;
+        }
+        this.rescuer = new model.RescueRobot("rescuer", 7, 4, model.Direction.WEST,
+                                             this.modelWorld, this.foreground, "rescueRobot");
+        return this.rescuer;
+    }
+
+
 }
