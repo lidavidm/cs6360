@@ -1108,6 +1108,27 @@ export class Gate extends WorldObject {
     }
 }
 
+class RebootDiff<T extends HasOrientation> extends Diff<T> {
+    constructor(id: number) {
+        super(DiffKind.Property, null, id, {});
+    }
+
+    tween(object: T, duration: number): Phaser.Tween {
+        let p = object.getPhaserObject();
+        let [x, y] = offsetDirection(p.position.x, p.position.y, object.orientation, 8);
+        let t1 = p.game.add.tween(p.position).to({
+            x: x,
+            y: y,
+        }, duration / 2, Phaser.Easing.Quadratic.InOut);
+        let t2 = p.game.add.tween(p.position).to({
+            x: p.position.x,
+            y: p.position.y,
+        }, duration / 2, Phaser.Easing.Quadratic.InOut);
+        t1.chain(t2);
+        return t1;
+    }
+}
+
 export class RescueRobot extends Robot {
     @blocklyMethod("rebootTarget", "rebootTarget")
     rebootTarget(): number {
@@ -1115,6 +1136,7 @@ export class RescueRobot extends Robot {
         let objects = this.world.getObjectByLoc(x, y);
         for (let object of objects) {
             if (object instanceof Drone) {
+                this.world.log.record(new RebootDiff(this.getID()));
                 object.activate();
                 return object.getID();
             }
