@@ -20,18 +20,21 @@ export class FrackingLevel extends BaseLevel {
 
         this.toolbox = new Toolbox(false, "class", false);
         this.toolbox.addControl("tell");
+        this.toolbox.addControl("controls_repeat");
         this.toolbox.addControl("new");
-        this.toolbox.addClasses(["Robot", "FrackingRobot"]);
+        this.toolbox.addClasses(["Robot", "MineRobot", "FrackingRobot"]);
+
         this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
             model.Robot.prototype.turnRight,
             model.Robot.prototype.turnLeft,
-            model.Robot.prototype.mine,
+            model.Robot.prototype.selfDestruct,
+        ]);
+        this.toolbox.addClass("MineRobot", asset.Robot.Red, model.MineRobot, [
+            model.MineRobot.prototype.mine,
         ]);
         this.toolbox.addClass("FrackingRobot", asset.Robot.Blue, model.FrackingRobot, [
         ]);
-
-        this.toolbox.addControl("controls_repeat");
 
         this.objectives = [
             {
@@ -62,22 +65,34 @@ export class FrackingLevel extends BaseLevel {
             },
         ];
 
-        this.allTooltips = [[]];
+        this.allTooltips = [
+            [
+                new TooltipView.Tooltip(TooltipView.Region.ButtonBar,
+                    "This level can be solved with 18 blocks!"),
+            ],
+        ];
 
         this.hierarchy = {
             name: "object",
             children: [
                 {
                     name: "Robot",
-                    methods: ["moveForward", "turnRight", "turnLeft"],
                     children: [
                         {
-                            name: "FrackingRobot",
-                            children: [],
-                            methods: [],
-                            userMethods: [],
+                            name: "MineRobot",
+                            children: [
+                                {
+                                    name: "FrackingRobot",
+                                    children: [],
+                                    methods: [],
+                                    userMethods: [],
+                                }
+                            ],
+                            methods: ["mine"],
+                            userMethods: ["moveAndMine"]
                         },
                     ],
+                    methods: ["moveForward", "turnRight", "turnLeft", "selfDestruct"],
                 },
             ],
         };
@@ -126,7 +141,7 @@ export class FrackingLevel extends BaseLevel {
     setUpFading() {
         Blockly.Blocks.oop.clearFaded();
         Blockly.Blocks.oop.faded['tell'] = true;
-        Blockly.Blocks.oop.faded['controls_repeat_ext'] = true;
+        Blockly.Blocks.oop.faded['controls_repeat'] = true;
     }
 
     instantiateObject(className: string, varName: string): model.WorldObject {
@@ -138,6 +153,15 @@ export class FrackingLevel extends BaseLevel {
         }
         else {
             return new model.FrackingRobot(varName, 7, 4, model.Direction.WEST, this.modelWorld, this.middle, "robotBlue");
+        }
+    }
+
+    blockLimit(context: EditorContext): number {
+        if (context.className === MAIN) {
+            return 18;
+        }
+        else {
+            return null;
         }
     }
 }
