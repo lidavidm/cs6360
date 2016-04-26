@@ -25,6 +25,7 @@ export const Robot = {
     Red: SPRITE_DIR + "robot_3Dred.png",
     Blue: SPRITE_DIR + "robot_3Dbluer.png",
     Yellow: SPRITE_DIR + "robot_3Dyellow.png",
+    Pink: SPRITE_DIR + "robot_3Dpink.png",
 };
 
 export const Iron = {
@@ -41,5 +42,9 @@ export const Drone = {
 
 export const Misc = {
     Well: SPRITE_DIR + "generic_well.png",
-    Base: SPRITE_DIR + "base.png"
+    Base: SPRITE_DIR + "base.png",
+    Platform_0: SPRITE_DIR + "stack_0.png",
+    Platform_1: SPRITE_DIR + "stack_1.png",
+    Platform_2: SPRITE_DIR + "stack_2.png",
+    Platform_3: SPRITE_DIR + "stack_3.png",
 };
