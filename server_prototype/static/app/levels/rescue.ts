@@ -18,10 +18,20 @@ export class RescueLevel extends BaseLevel {
 
         this.toolbox = new Toolbox();
         this.toolbox.addControl("tell");
+        this.toolbox.addControl("controls_repeat");
+        this.toolbox.addControl("new");
+        this.toolbox.addClasses(["Robot", "MineRobot", "FrackingRobot", "RescueRobot", "Drone"]);
+
         this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
             model.Robot.prototype.turnRight,
             model.Robot.prototype.turnLeft,
+            model.Robot.prototype.selfDestruct,
+        ]);
+        this.toolbox.addClass("MineRobot", asset.Robot.Red, model.MineRobot, [
+            model.MineRobot.prototype.mine,
+        ]);
+        this.toolbox.addClass("FrackingRobot", asset.Robot.Blue, model.FrackingRobot, [
         ]);
         this.toolbox.addClass("RescueRobot", asset.Robot.Red, model.RescueRobot, [
             model.RescueRobot.prototype.rebootTarget,
@@ -35,8 +45,7 @@ export class RescueLevel extends BaseLevel {
         this.toolbox.addObject("rescuer", "RescueRobot");
         this.toolbox.addObject("drone", "Drone");
 
-        this.toolbox.addControl("controls_repeat_ext");
-        this.toolbox.addNumber(0);
+
 
         this.objectives = [
             {
@@ -71,13 +80,27 @@ export class RescueLevel extends BaseLevel {
 
         this.allTooltips = [[]];
 
+
+
         this.hierarchy = {
             name: "object",
             children: [
                 {
                     name: "Robot",
-                    methods: ["moveForward", "turnRight", "turnLeft"],
                     children: [
+                        {
+                            name: "MineRobot",
+                            children: [
+                                {
+                                    name: "FrackingRobot",
+                                    children: [],
+                                    methods: [],
+                                    userMethods: [],
+                                }
+                            ],
+                            methods: ["mine"],
+                            userMethods: ["moveAndMine"]
+                        },
                         {
                             name: "RescueRobot",
                             children: [],
@@ -85,6 +108,7 @@ export class RescueLevel extends BaseLevel {
                             userMethods: [],
                         },
                     ],
+                    methods: ["moveForward", "turnRight", "turnLeft", "selfDestruct"],
                 },
                 {
                     name: "Drone",
