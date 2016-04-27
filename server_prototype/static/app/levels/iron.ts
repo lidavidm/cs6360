@@ -58,12 +58,21 @@ export class IronLevel extends BaseLevel {
                 objective: "Collect all the iron (4)",
                 completed: false,
                 predicate: (level) => {
-                    for (var iron of level.irons) {
-                        if (!level.robot.holding(iron)) {
-                            return false;
+                    if (this.robot){
+                        for (var iron of this.irons){
+                            if (!this.robot.holding(iron)){
+                                return false
+                            }
                         }
+                        return true;
                     }
-                    return true;
+
+                    // for (var iron of level.irons) {
+                    //     if (!level.robot.holding(iron)) {
+                    //         return false;
+                    //     }
+                    // }
+                    // return true;
                 }
             }
         ];
