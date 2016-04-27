@@ -1417,11 +1417,12 @@ export class LinkedResource extends FixedResource {
 
 export class Rocket extends WorldObject {
     sprite: Phaser.Sprite;
+    flame: Phaser.Sprite;
     shadow: Phaser.Sprite;
     crop: Phaser.Rectangle;
 
     constructor(name: string, x: number, y: number,
-                world: World, group: Phaser.Group, sprite: string) {
+                world: World, group: Phaser.Group, sprite: string, flameSprite: string) {
         super(name, x, y, world);
         this.phaserObject = world.game.add.group(group);
         this.phaserObject.position.x = TILE_WIDTH * x + TILE_WIDTH / 2;
@@ -1449,6 +1450,9 @@ export class Rocket extends WorldObject {
         this.crop = new Phaser.Rectangle(0, 393, 105, 393);
         this.sprite.crop(this.crop);
 
+        this.flame = this.phaserObject.create(0, 16, flameSprite);
+        this.flame.alpha = 0;
+
         this.phaserObject.alpha = 0;
 
         this.setLoc(x, y);
@@ -1462,13 +1466,21 @@ export class Rocket extends WorldObject {
         this.world.log.record(new BlastOffDiff(this));
     }
 
+    private t = 3;
     update() {
         this.sprite.updateCrop();
+        this.flame.tint = 0x111111 * this.t;
+        this.t++;
+        if (this.t > 0xF) {
+            this.t = 3;
+        }
     }
 
     phaserReset() {
         this.phaserObject.alpha = 0;
         this.sprite.position.y = -44 + 60;
+        this.flame.alpha = 0;
+        this.flame.position.y = 16;
         this.crop = new Phaser.Rectangle(0, 393, 105, 393);
         this.sprite.crop(this.crop);
     }
@@ -1505,8 +1517,22 @@ class BlastOffDiff extends Diff<Rocket> {
 
     tween(object: Rocket, duration: number): Phaser.Tween {
         let p = object.getPhaserObject();
-        return p.game.add.tween(object.sprite.position).to({
+        let t1 = p.game.add.tween(object.flame).to({
+            alpha: 1,
+        }, duration / 3, Phaser.Easing.Quadratic.InOut);
+
+        let t2 = p.game.add.tween(object.sprite.position).to({
             y: -300,
         }, duration * 5, Phaser.Easing.Quadratic.InOut);
+        let t3 = p.game.add.tween(object.flame.position).to({
+            y: -300 + 16,
+        }, duration * 5, Phaser.Easing.Quadratic.InOut);
+
+        t2.onStart.add(function() {
+            t3.start();
+        });
+
+        t1.chain(t2);
+        return t1;
     }
 }

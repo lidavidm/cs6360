@@ -122,6 +122,7 @@ export class Alpha1Level extends BaseLevel {
         this.game.load.image("robot", "assets/sprites/robot_3Dblue.png");
         this.game.load.image("iron", "assets/sprites/iron.png");
         this.game.load.image("rocket", asset.Misc.Rocket);
+        this.game.load.image("flame", asset.Misc.Flame);
     }
 
     create() {
@@ -136,7 +137,7 @@ export class Alpha1Level extends BaseLevel {
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
         this.initWorld(map);
-        this.rocket = new model.Rocket("rocket", 3, 3, this.modelWorld, this.foreground, "rocket");
+        this.rocket = new model.Rocket("rocket", 3, 3, this.modelWorld, this.foreground, "rocket", "flame");
         this.robot = new model.Robot("robot", 1, 1, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
 
