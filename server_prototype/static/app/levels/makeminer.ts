@@ -58,10 +58,8 @@ export class MakeMiner extends BaseLevel {
             {
                 objective: `Make a MineRobot [${asset.Robot.Red}].`,
                 completed: false,
-                predicate: (level) => {
-                    for (let object of this.modelWorld.getObjectByLoc(7, 4)){
-                        return object.getID() > 1
-                    }
+                predicate: (level, initialized) => {
+                    return initialized[this.miner.getID()];
                 }
             },
             {

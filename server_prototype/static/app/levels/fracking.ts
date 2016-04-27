@@ -6,8 +6,7 @@ import * as python from "execution/python";
 import * as asset from "asset";
 
 export class FrackingLevel extends BaseLevel {
-    public pumpRobot: model.Robot;
-    public drillRobot: model.Robot;
+    public frackingRobot: model.Robot;
     public oil: model.FixedResource;
     public well: model.FixedResource;
 
@@ -40,13 +39,8 @@ export class FrackingLevel extends BaseLevel {
             {
                 objective: `Create a FrackingRobot [${asset.Robot.Blue}]`,
                 completed: false,
-                predicate: (level) => {
-                    let objects = this.modelWorld.getObjectByLoc(7, 4);
-                    for (let object of objects) {
-                        if (object instanceof model.FrackingRobot) {
-                            return true;
-                        }
-                    }
+                predicate: (level, initialized) => {
+                    return initialized[this.frackingRobot.getID()];
                 }
             },
             {
@@ -152,7 +146,9 @@ export class FrackingLevel extends BaseLevel {
             return new model.Robot(varName, 7, 4, model.Direction.WEST, this.modelWorld, this.middle, "robot");
         }
         else {
-            return new model.FrackingRobot(varName, 7, 4, model.Direction.WEST, this.modelWorld, this.middle, "robotBlue");
+            this.frackingRobot = new model.FrackingRobot(varName, 7, 4,
+                model.Direction.WEST, this.modelWorld, this.middle, "robotBlue");
+            return this.frackingRobot;
         }
     }
 
