@@ -146,14 +146,14 @@ export class FrackingLevel extends BaseLevel {
             return null;
         }
 
-        if (className == "Robot") {
+        if (className === "Robot") {
             return new model.Robot(varName, 7, 4, model.Direction.WEST, this.modelWorld, this.middle, "robot");
         }
         else if (className === "MineRobot") {
             return new model.MineRobot(varName, 7, 4, model.Direction.SOUTH,
                                    this.modelWorld, this.foreground, "mineRobot");
         }
-        else if (className = "FrackingRobot") {
+        else if (className === "FrackingRobot") {
             this.frackingRobot = new model.FrackingRobot(varName, 7, 4,
                 model.Direction.WEST, this.modelWorld, this.middle, "frackingRobot");
             return this.frackingRobot;

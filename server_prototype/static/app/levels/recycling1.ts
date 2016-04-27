@@ -146,7 +146,7 @@ export class RecyclingLevel extends BaseLevel {
             return null;
         }
 
-        if (className == "Robot") {
+        if (className === "Robot") {
             return new model.Robot(varName, 7, 4, model.Direction.WEST, this.modelWorld, this.middle, "robot");
         }
         else if (className === "MineRobot") {
