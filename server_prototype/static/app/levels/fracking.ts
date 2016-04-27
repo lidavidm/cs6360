@@ -40,24 +40,21 @@ export class FrackingLevel extends BaseLevel {
                 objective: `Create a FrackingRobot [${asset.Robot.Blue}]`,
                 completed: false,
                 predicate: (level, initialized) => {
-                    if (this.frackingRobot != null){
-                        return initialized[this.frackingRobot.getID()];
-                    }
-
+                    return this.frackingRobot && initialized[this.frackingRobot.getID()];
                 }
             },
             {
                 objective: `Pump water into the northern well with mine()`,
                 completed: false,
                 predicate: (level) => {
-                    return this.well.mined === true;
+                    return this.well && this.well.mined === true;
                 }
             },
             {
                 objective: `Drill into the southern well with mine()`,
                 completed: false,
                 predicate: (level) => {
-                    return this.well.mined === true && this.oil.mined === true;
+                    return this.well && this.oil && this.well.mined === true && this.oil.mined === true;
                 }
             },
         ];
