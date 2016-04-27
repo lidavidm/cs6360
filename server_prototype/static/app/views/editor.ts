@@ -225,6 +225,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                 controller.markReadonly(context);
             }
             else if (!controller.level.canUseBlockEditor(context)) {
+                context = controller.context = controller.level.program.savegame.load(context);
                 if (context.className === MAIN) {
                     if (controller.level.program.globals.length === 0) {
                         controller.level.program.event.on("globals_defined", () => {
@@ -232,11 +233,11 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                         });
                         return;
                     }
-                    else {
+                    else if (!context.code) {
                         context.code = controller.level.program.getMainCode();
                     }
                 }
-                else {
+                else if (!context.code) {
                     context.code = controller.level.program.getMethodCode(context.className, context.method, true);
                 }
                 setupLevel(context);

@@ -4440,7 +4440,7 @@ declare module Phaser {
         z: number;
 
         bringToTop(): Phaser.Sprite;
-        crop(rect: Phaser.Rectangle, copy: boolean): void;
+        crop(rect: Phaser.Rectangle, copy?: boolean): void;
         checkTransform(wt: PIXI.Matrix): void;
         damage(amount: number): Phaser.Sprite;
         destroy(destroyChildren?: boolean): void;
