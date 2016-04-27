@@ -150,4 +150,20 @@ export class IronLevel extends BaseLevel {
             return 6;
         }
     }
+
+    instantiateObject(className: string, varName: string): model.WorldObject {
+        if (!this.modelWorld.passable(7, 4)) {
+            return null;
+        }
+        if (className === "MineRobot") {
+            return new model.MineRobot(varName, 7, 4, model.Direction.SOUTH,
+                                   this.modelWorld, this.foreground, "miner");
+        }
+        else if (className == "Robot") {
+            return new model.Robot(varName, 7, 4, model.Direction.WEST, this.modelWorld, this.middle, "robot");
+        }
+        else {
+            return null;
+        }
+    }
 }

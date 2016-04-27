@@ -143,7 +143,6 @@ export class MakeMiner extends BaseLevel {
         else {
             return null;
         }
-
     }
 
     setUpFading() {
