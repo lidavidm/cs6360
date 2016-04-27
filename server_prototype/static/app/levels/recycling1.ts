@@ -41,21 +41,21 @@ export class RecyclingLevel extends BaseLevel {
                 objective: `Move the old robot [${asset.Robot.Basic}] 7 spaces west`,
                 completed: false,
                 predicate: (level) => {
-                    return this.robot.getX() == 1;
+                    return this.robot && this.robot.getX() == 1;
                 }
             },
             {
                 objective: `Move the miner [${asset.Robot.Red}] back to base [${asset.Misc.Base}]`,
                 completed: false,
                 predicate: (level) => {
-                    return this.miner.getX() ==  7 && this.miner.getY() == 4;
+                    return this.miner && this.miner.getX() ==  7 && this.miner.getY() == 4;
                 }
             },
             {
                 objective: `Self-destruct the old robot [${asset.Robot.Basic}]`,
                 completed: false,
                 predicate: (level) => {
-                    return this.robot.destructed;
+                    return this.robot && this.robot.destructed;
                 }
             },
         ];
