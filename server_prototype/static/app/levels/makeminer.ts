@@ -25,7 +25,6 @@ import * as asset from "asset";
 export class MakeMiner extends BaseLevel {
     public robot: model.Robot;
     public miner: model.MineRobot;
-    public dynamicRobots: model.Robot[];
     public iron: model.Iron;
 
     initialize() {
@@ -59,14 +58,14 @@ export class MakeMiner extends BaseLevel {
                 objective: `Make a MineRobot [${asset.Robot.Red}].`,
                 completed: false,
                 predicate: (level, initialized) => {
-                    return initialized[this.miner.getID()];
+                    return this.miner && initialized[this.miner.getID()];
                 }
             },
             {
                 objective: `Try gathering Iron [${asset.Iron.Basic}]!`,
                 completed: false,
                 predicate: (level, initialized) => {
-                    return initialized[this.miner.getID()] && this.miner.lastPickedUp() !== null;
+                    return this.miner && initialized[this.miner.getID()] && this.miner.lastPickedUp() !== null;
                 }
             },
         ];
