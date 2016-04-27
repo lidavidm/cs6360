@@ -28,6 +28,8 @@ export class HeavyLiftingLevel extends BaseLevel {
     */
 
     drones: model.Drone[] = [];
+    pieces: model.PlatformPiece[] = [];
+    lifter: model.HeavyLifter;
 
     initialize() {
         super.initialize();
@@ -50,6 +52,7 @@ export class HeavyLiftingLevel extends BaseLevel {
             model.Robot.prototype.moveForward,
             model.Robot.prototype.turnRight,
             model.Robot.prototype.turnLeft,
+            model.Robot.prototype.moveBackward,
             model.Robot.prototype.selfDestruct,
         ]);
         this.toolbox.addClass("MineRobot", asset.Robot.Red, model.MineRobot, [
@@ -66,7 +69,12 @@ export class HeavyLiftingLevel extends BaseLevel {
             model.Drone.prototype.flySouth,
             model.Drone.prototype.flyNorth,
         ]);
-        /*Heavy Lifter Type Here*/
+        this.toolbox.addClass("HeavyLifter", asset.Robot.Red, model.HeavyLifter, [
+            model.HeavyLifter.prototype.pickUp,
+            model.HeavyLifter.prototype.drop,
+        ]);
+
+        this.toolbox.addObject("lifter", "HeavyLifter");
 
         /*Add Sprites, predicates*/
         this.objectives = [
@@ -117,8 +125,12 @@ export class HeavyLiftingLevel extends BaseLevel {
                             children: [],
                             methods: ["rescue"],
                             userMethods: [],
-                        }
-                        /* Add HeavyLifter */
+                        },
+                        {
+                            name: "HeavyLifter",
+                            children: [],
+                            methods: ["pickUp", "drop"],
+                        },
                     ],
                     methods: [],
                     userMethods: ["halfRectangle"],
@@ -146,7 +158,11 @@ export class HeavyLiftingLevel extends BaseLevel {
         this.game.load.image("robot", asset.Robot.Basic);
 
         /* We need another color of robot! */
-
+        this.game.load.image("lifter", asset.Robot.Red);
+        this.game.load.image("platform_0", asset.Misc.Platform_0);
+        this.game.load.image("platform_1", asset.Misc.Platform_1);
+        this.game.load.image("platform_2", asset.Misc.Platform_2);
+        this.game.load.image("platform_3", asset.Misc.Platform_3);
     }
 
     create() {
@@ -163,7 +179,15 @@ export class HeavyLiftingLevel extends BaseLevel {
 
         this.initWorld(map);
 
+        let spriteList = ["platform_0", "platform_1", "platform_2", "platform_3"];
+
         /* Create Objects Here */
+        this.pieces.push(new model.PlatformPiece("piece", 5, 4, this.modelWorld, this.foreground, spriteList));
+        this.pieces.push(new model.PlatformPiece("piece", 5, 4, this.modelWorld, this.foreground, spriteList));
+        this.pieces.push(new model.PlatformPiece("piece", 5, 4, this.modelWorld, this.foreground, spriteList));
+        this.pieces.push(new model.PlatformPiece("piece", 5, 4, this.modelWorld, this.foreground, spriteList));
+
+        this.lifter = new model.HeavyLifter("lifter", 5, 3, model.Direction.SOUTH, this.modelWorld, this.foreground, "lifter");
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
