@@ -42,6 +42,8 @@ export class ScoutLevel extends BaseLevel {
             model.Drone.prototype.flyNorth,
         ]);
 
+        // this.toolbox.addObject("drone", "Drone");
+
 
         this.objectives = [
             {
@@ -109,7 +111,10 @@ export class ScoutLevel extends BaseLevel {
 
         this.game.load.image("tiles", "assets/tilesets/cave2.png");
         this.game.load.tilemap("outside", "assets/maps/small_world.json", null, Phaser.Tilemap.TILED_JSON);
+
         this.game.load.image("robot", asset.Robot.Red);
+        this.game.load.image("mineRobot", asset.Robot.Red);
+        this.game.load.image("frackingRobot", asset.Robot.Blue);
         this.game.load.image("drone", asset.Drone.Basic);
     }
 
@@ -133,11 +138,9 @@ export class ScoutLevel extends BaseLevel {
 
         this.landing_pad = new model.ObjectiveCircle("landing_pad", 2, 6,
                                         this.modelWorld, this.foreground);
-
+        // this.drone = new model.Drone("drone", 7, 4, this.modelWorld, this.foreground, "drone");
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
-
-
     }
 
     update() {
@@ -154,21 +157,38 @@ export class ScoutLevel extends BaseLevel {
         Blockly.Blocks.oop.faded['new'] = true;
     }
 
-    blockLimit(context: EditorContext): number {
-        if (context.className === MAIN) {
-            return 15;
-        }
-        else {
-            return null;
-        }
-    }
+    // blockLimit(context: EditorContext): number {
+    //     if (context.className === MAIN) {
+    //         return 15;
+    //     }
+    //     else {
+    //         return null;
+    //     }
+    // }
 
     instantiateObject(className: string, varName: string): model.WorldObject {
         if (!this.modelWorld.passable(7, 4)) {
             return null;
         }
-        this.drone = new model.Drone(varName, 7, 4, this.modelWorld, this.foreground, "drone");
-        this.drone.activate();
-        return this.drone;
+
+        if (className === "Robot") {
+            return new model.Robot(varName, 7, 4, model.Direction.WEST, this.modelWorld, this.middle, "robot");
+        }
+        else if (className === "MineRobot") {
+            return new model.MineRobot(varName, 7, 4, model.Direction.SOUTH,
+                                   this.modelWorld, this.foreground, "mineRobot");
+        }
+        else if (className === "FrackingRobot") {
+            return new model.FrackingRobot(varName, 7, 4,
+                model.Direction.WEST, this.modelWorld, this.middle, "frackingRobot");
+        }
+        else if (className === "Drone") {
+            this.drone = new model.Drone(varName, 7, 4, this.modelWorld, this.foreground, "drone");
+            this.drone.activate();
+            return this.drone;
+        }
+        else {
+            return null;
+        }
     }
 }
