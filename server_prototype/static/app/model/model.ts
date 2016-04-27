@@ -121,6 +121,9 @@ class MovementDiff<T extends WorldObject> extends Diff<T> {
     tween(object: T, duration=ANIM_DURATION): Phaser.Tween {
         let p = object.getPhaserObject();
         if (p === null) return null;
+        if (object instanceof PlatformPiece) {
+            duration = 1;
+        }
         let tween = p.game.add.tween(p.position).to({
             x: object.getX() * TILE_WIDTH + TILE_WIDTH / 2,
             y: object.getY() * TILE_HEIGHT + TILE_HEIGHT / 2,
@@ -1534,5 +1537,230 @@ class BlastOffDiff extends Diff<Rocket> {
 
         t1.chain(t2);
         return t1;
+    }
+}
+
+class PickUpDiff extends Diff<HeavyLifter> {
+    constructor(id: number, properties: PropertyDiff) {
+        super(DiffKind.Property, null, id, properties);
+    }
+
+    tween(object: HeavyLifter, duration=ANIM_DURATION): Phaser.Tween {
+        let lifter = object.getPhaserObject();
+        let t1 = lifter.game.add.tween(lifter).to({
+            rotation: lifter.rotation + 8 * Math.PI,
+        }, duration, Phaser.Easing.Quadratic.InOut);
+
+        let groundObjects = object.getWorld().getObjectByLoc(object.getX(), object.getY());
+        let count: number = 0;
+        for (var o of groundObjects) {
+            if (o instanceof PlatformPiece) {
+                count = count + 1;
+            }
+        }
+
+        for (var o of groundObjects) {
+            if (o instanceof PlatformPiece) {
+                o.setSpriteIndex(count - 1);
+            }
+        }
+
+        let lifted = object.getLastPicked();
+        if (lifted === null) return t1;
+        let p = lifted.getPhaserObject();
+
+        t1.onComplete.add(() => {
+            lifter.rotation -= 8 * Math.PI;
+            p.alpha = 0;
+        });
+
+        return t1;
+    }
+
+    apply(world: World, object: HeavyLifter) {
+        super.apply(world, object);
+        world.removeObject(object.getLastPicked());
+    }
+}
+
+class DropDiff extends Diff<HeavyLifter> {
+    constructor(id: number, properties: PropertyDiff) {
+        super(DiffKind.Property, null, id, properties);
+    }
+
+    tween(object: HeavyLifter, duration=ANIM_DURATION): Phaser.Tween {
+        let holder = object.getPhaserObject();
+        let t1 = holder.game.add.tween(holder).to({
+            rotation: holder.rotation + 8 * Math.PI,
+        }, duration, Phaser.Easing.Quadratic.InOut);
+
+        let groundObjects = object.getWorld().getObjectByLoc(object.getX(), object.getY());
+        let count: number = 0;
+        // at this point, the most recently dropped piece is already in groundObjects
+        for (var o of groundObjects) {
+            if (o instanceof PlatformPiece) {
+                count = count + 1;
+            }
+        }
+
+        for (var o of groundObjects) {
+            if (o instanceof PlatformPiece) {
+                o.setSpriteIndex(count - 1);
+            }
+        }
+
+        let dropped = object.getLastDropped();
+        if (dropped === null) return t1;
+        let p = dropped.getPhaserObject();
+        p.position.x = object.getX() * TILE_WIDTH + TILE_WIDTH/2;
+        p.position.y = object.getY() * TILE_HEIGHT + TILE_HEIGHT/2;
+
+        t1.onComplete.add(() => {
+            holder.rotation -= 8 * Math.PI;
+            p.alpha = 1;
+        });
+
+        return t1;
+    }
+
+    apply(world: World, object: HeavyLifter) {
+        super.apply(world, object);
+    }
+}
+
+export class PlatformPiece extends WorldObject {
+    sprites: Phaser.Sprite[];
+    phaserObject: Phaser.Group;
+    spriteIndex: number;
+    initialIndex: number;
+    
+    constructor(name:string, x:number, y:number,
+                world: World, group: Phaser.Group, sprites: string[]) {
+        super(name, x, y, world);
+        this.sprites = [];
+        this.phaserObject = world.game.add.group(group);
+        this.phaserObject.position.x = TILE_WIDTH * x + TILE_WIDTH / 2;
+        this.phaserObject.position.y = TILE_HEIGHT * y + TILE_WIDTH / 2;
+        this.phaserObject.pivot.x = TILE_WIDTH / 2;
+        this.phaserObject.pivot.y = TILE_HEIGHT / 2;
+        for (var i = 0; i < sprites.length; i++) {
+            
+            let sprite = this.phaserObject.create(0, 0, sprites[i]);
+            sprite.width = TILE_WIDTH;
+            sprite.height = TILE_HEIGHT;
+            this.sprites.push(sprite);
+        }
+
+        let groundObjects: WorldObject[] = world.getObjectByLoc(x, y);
+        let pieces: PlatformPiece[] = [];
+        for (var o of groundObjects) {
+            if (o instanceof PlatformPiece) {
+                pieces.push(o)
+            }
+        }
+        this.initialIndex = pieces.length - 1
+        for (var p of pieces) {
+            p.setSpriteIndex(this.initialIndex);
+            p.initialIndex = this.initialIndex;
+        }
+        
+        let circle = world.game.add.graphics(0, 0, this.phaserObject);
+        circle.lineStyle(0.5, 0xFFA500, 0.5);
+        circle.drawCircle(TILE_WIDTH / 2, TILE_HEIGHT / 2, 1.41 * TILE_WIDTH);
+        circle.drawCircle(TILE_WIDTH / 2, TILE_HEIGHT / 2, 1.63 * TILE_WIDTH);
+    }
+
+    passable(): boolean {
+        return true;
+    }
+
+    phaserReset() {
+        this.phaserObject.width = TILE_WIDTH;
+        this.phaserObject.height = TILE_HEIGHT;
+        this.phaserObject.alpha = 1.0;
+
+        this.setSpriteIndex(this.initialIndex);
+    }
+
+    setSpriteIndex(i: number) {
+        this.spriteIndex = i;
+        for (var k = 0; k < this.sprites.length; k++) {
+            if (k === this.spriteIndex) {
+                this.sprites[k].alpha = 1;
+            } else {
+                this.sprites[k].alpha = 0;
+            }
+        }
+    }
+}
+
+export class HeavyLifter extends Robot {
+
+    lastPicked: WorldObject = null;
+    lastDropped: WorldObject = null;
+
+    @blocklyMethod("pickUp", "pickUp")
+    pickUp() {
+        if (this.destructed) {
+            throw new RangeError("Self destructed, can't pick up anything!");
+        }
+
+        let targets: WorldObject[] = this.world.getObjectByLoc(this.getX(), this.getY());
+        let target: WorldObject = null;
+
+        for (let i = 0; i < targets.length; i++) {
+            if (targets[i] !== this && targets[i] instanceof PlatformPiece) {
+                target = targets[i];
+                break;
+            }
+        }
+
+        let oldLastPicked = this.lastPicked;
+        this.lastPicked = target;
+
+        let orig = this.holdingIDs.slice(0);
+        let newIDs = this.holdingIDs.slice(0);
+        if (target !== null) {
+            newIDs.push(target.getID());
+            this.world.removeObject(target);
+        }
+        this.holdingIDs = newIDs.slice(0);
+        this.world.log.record(new PickUpDiff(this.id, {
+            holdingIDs: [orig, newIDs],
+            lastPicked: [oldLastPicked, this.lastPicked]
+        }));
+    }
+
+    @blocklyMethod("drop", "drop")
+    drop() {
+        if (this.destructed) {
+            throw new RangeError("Self destructed, can't do anything!");
+        }
+
+        if (this.holdingIDs.length === 0) {
+            throw "This robot is not holding anything.";
+        }
+
+        let orig = this.holdingIDs.slice(0);
+        let newIDs = this.holdingIDs.slice(1);
+
+        let dropped: WorldObject = this.world.getObjectByID(orig[0]);
+        dropped.setLoc(this.getX(), this.getY());
+        let oldLastDropped = this.lastDropped;
+        this.lastDropped = dropped;
+        this.holdingIDs = newIDs.slice(0);
+
+        this.world.log.record(new DropDiff(this.id, {
+            holdingIDs: [orig, newIDs],
+            lastDropped: [oldLastDropped, this.lastDropped]
+        }));
+    }
+
+    getLastPicked(): WorldObject {
+        return this.lastPicked;
+    }
+
+    getLastDropped(): WorldObject {
+        return this.lastDropped;
     }
 }
