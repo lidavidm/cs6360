@@ -57,21 +57,21 @@ export class RescueLevel extends BaseLevel {
                 objective: `Move the robot [${asset.Robot.Pink}] to the drone [${asset.Drone.Basic}]`,
                 completed: false,
                 predicate: (level) => {
-                    return this.rescuer.getX() == 5 && this.rescuer.getY() == 4;
+                    return this.rescuer && this.rescuer.getX() == 5 && this.rescuer.getY() == 4;
                 }
             },
             {
                 objective: `Activate the drone [${asset.Drone.Basic}]`,
                 completed: false,
                 predicate: (level) => {
-                    return this.drone.activated;
+                    return this.drone && this.drone.activated;
                 }
             },
             {
                 objective: `Fly the drone [${asset.Drone.Basic}] home`,
                 completed: false,
                 predicate: (level) => {
-                    return this.drone.getX() == 7 && this.drone.getY() == 4;
+                    return this.drone && this.drone.getX() == 7 && this.drone.getY() == 4;
                 }
             },
         ];
@@ -123,8 +123,13 @@ export class RescueLevel extends BaseLevel {
 
         this.game.load.image("tiles", "assets/tilesets/cave2.png");
         this.game.load.tilemap("outside", "assets/maps/small_world.json", null, Phaser.Tilemap.TILED_JSON);
+
+        this.game.load.image("robot", asset.Robot.Red);
+        this.game.load.image("mineRobot", asset.Robot.Red);
+        this.game.load.image("frackingRobot", asset.Robot.Blue);
         this.game.load.image("rescueRobot", asset.Robot.Pink);
         this.game.load.image("drone", asset.Drone.Basic);
+
     }
 
     create() {
@@ -166,10 +171,31 @@ export class RescueLevel extends BaseLevel {
         if (!this.modelWorld.passable(7, 4)) {
             return null;
         }
-        this.rescuer = new model.RescueRobot("rescuer", 7, 4, model.Direction.WEST,
-                                             this.modelWorld, this.foreground, "rescueRobot");
-        return this.rescuer;
-    }
 
+        if (className === "Robot") {
+            return new model.Robot(varName, 7, 4, model.Direction.WEST, this.modelWorld, this.middle, "robot");
+        }
+        else if (className === "MineRobot") {
+            return new model.MineRobot(varName, 7, 4, model.Direction.SOUTH,
+                                   this.modelWorld, this.foreground, "mineRobot");
+        }
+        else if (className === "FrackingRobot") {
+            return new model.FrackingRobot(varName, 7, 4,
+                model.Direction.WEST, this.modelWorld, this.middle, "frackingRobot");
+        }
+        else if (className == "RescueRobot") {
+            this.rescuer = new model.RescueRobot("rescuer", 7, 4, model.Direction.WEST,
+                                                 this.modelWorld, this.foreground, "rescueRobot");
+            return this.rescuer;
+        }
+        else if (className === "Drone") {
+            this.drone = new model.Drone(varName, 7, 4, this.modelWorld, this.foreground, "drone");
+            this.drone.activate();
+            return this.drone;
+        }
+        else {
+            return null;
+        }
+    }
 
 }
