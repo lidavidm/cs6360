@@ -40,7 +40,10 @@ export class FrackingLevel extends BaseLevel {
                 objective: `Create a FrackingRobot [${asset.Robot.Blue}]`,
                 completed: false,
                 predicate: (level, initialized) => {
-                    return initialized[this.frackingRobot.getID()];
+                    if (this.frackingRobot != null){
+                        return initialized[this.frackingRobot.getID()];
+                    }
+
                 }
             },
             {
