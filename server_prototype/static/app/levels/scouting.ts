@@ -50,7 +50,7 @@ export class ScoutLevel extends BaseLevel {
                 objective: `Create a new drone [${asset.Drone.Basic}]`,
                 completed: false,
                 predicate: (level, initialized) => {
-                    return this.drone != null &&
+                    return this.drone &&
                            initialized[this.drone.getID()] &&
                            this.drone.getX() == 7 &&
                            this.drone.getY() == 4;
@@ -60,7 +60,10 @@ export class ScoutLevel extends BaseLevel {
                 objective: `Send the drone [${asset.Drone.Basic}] to the potential launch site in the southwest`,
                 completed: false,
                 predicate: (level, initialized) => {
-                    return initialized[this.drone.getID()] && this.drone.getX() == 2 && this.drone.getY() == 6;
+                    return this.drone &&
+                           initialized[this.drone.getID()] &&
+                           this.drone.getX() == 2 &&
+                           this.drone.getY() == 6;
                 }
             },
         ];
@@ -138,7 +141,7 @@ export class ScoutLevel extends BaseLevel {
 
         this.landing_pad = new model.ObjectiveCircle("landing_pad", 2, 6,
                                         this.modelWorld, this.foreground);
-        // this.drone = new model.Drone("drone", 7, 4, this.modelWorld, this.foreground, "drone");
+
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
     }
@@ -157,14 +160,14 @@ export class ScoutLevel extends BaseLevel {
         Blockly.Blocks.oop.faded['new'] = true;
     }
 
-    // blockLimit(context: EditorContext): number {
-    //     if (context.className === MAIN) {
-    //         return 15;
-    //     }
-    //     else {
-    //         return null;
-    //     }
-    // }
+    blockLimit(context: EditorContext): number {
+        if (context.className === MAIN) {
+            return 15;
+        }
+        else {
+            return null;
+        }
+    }
 
     instantiateObject(className: string, varName: string): model.WorldObject {
         if (!this.modelWorld.passable(7, 4)) {
