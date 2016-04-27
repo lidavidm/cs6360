@@ -167,6 +167,10 @@ export class RescueLevel extends BaseLevel {
         Blockly.Blocks.oop.faded['controls_repeat'] = true;
     }
 
+    canUseBlockEditor(context: EditorContext): boolean {
+        return !(context.className === "Drone" && context.method === "flyHome");
+    }
+
     instantiateObject(className: string, varName: string): model.WorldObject {
         if (!this.modelWorld.passable(7, 4)) {
             return null;
