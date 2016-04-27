@@ -99,8 +99,10 @@ export class MakeMiner extends BaseLevel {
 
         this.game.load.image("tiles", "assets/tilesets/cave2.png");
         this.game.load.tilemap("outside", "assets/maps/small_world.json", null, Phaser.Tilemap.TILED_JSON);
+
         this.game.load.image("robot", asset.Robot.Basic);
-        this.game.load.image("miner", asset.Robot.Red);
+        this.game.load.image("mineRobot", asset.Robot.Red);
+
         this.game.load.image("iron", asset.Iron.Basic);
     }
 
@@ -132,14 +134,15 @@ export class MakeMiner extends BaseLevel {
         if (!this.modelWorld.passable(7, 4)) {
             return null;
         }
-        if (className === "MineRobot") {
-            this.miner = new model.MineRobot(varName, 7, 4, model.Direction.SOUTH,
-                                   this.modelWorld, this.foreground, "miner");
-            return this.miner;
-        }
-        else if (className == "Robot") {
+        if (className == "Robot") {
             return new model.Robot(varName, 7, 4, model.Direction.WEST, this.modelWorld, this.middle, "robot");
         }
+        else if (className === "MineRobot") {
+            this.miner = new model.MineRobot(varName, 7, 4, model.Direction.SOUTH,
+                                   this.modelWorld, this.foreground, "mineRobot");
+            return this.miner;
+        }
+
         else {
             return null;
         }

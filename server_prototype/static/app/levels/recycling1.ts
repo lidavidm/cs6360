@@ -93,8 +93,10 @@ export class RecyclingLevel extends BaseLevel {
 
         this.game.load.image("tiles", "assets/tilesets/cave2.png");
         this.game.load.tilemap("outside", "assets/maps/small_world.json", null, Phaser.Tilemap.TILED_JSON);
-        this.game.load.image("miner", asset.Robot.Red);
+
         this.game.load.image("robot", asset.Robot.Basic);
+        this.game.load.image("mineRobot", asset.Robot.Red);
+
     }
 
     create() {
@@ -116,7 +118,7 @@ export class RecyclingLevel extends BaseLevel {
 
         this.initWorld(map);
         this.miner = new model.MineRobot("miner", 3, 7, model.Direction.SOUTH,
-                                     this.modelWorld, this.foreground, "miner");
+                                     this.modelWorld, this.foreground, "mineRobot");
         this.robot = new model.Robot("robot", 8, 4, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
 
@@ -143,12 +145,13 @@ export class RecyclingLevel extends BaseLevel {
         if (!this.modelWorld.passable(7, 4)) {
             return null;
         }
-        if (className === "MineRobot") {
-            return new model.MineRobot(varName, 7, 4, model.Direction.SOUTH,
-                                   this.modelWorld, this.foreground, "miner");
-        }
-        else if (className == "Robot") {
+
+        if (className == "Robot") {
             return new model.Robot(varName, 7, 4, model.Direction.WEST, this.modelWorld, this.middle, "robot");
+        }
+        else if (className === "MineRobot") {
+            return new model.MineRobot(varName, 7, 4, model.Direction.SOUTH,
+                                   this.modelWorld, this.foreground, "mineRobot");
         }
         else {
             return null;
