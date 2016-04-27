@@ -132,9 +132,18 @@ export class MakeMiner extends BaseLevel {
         if (!this.modelWorld.passable(7, 4)) {
             return null;
         }
-        this.miner = new model.MineRobot(varName, 7, 4, model.Direction.SOUTH,
-                               this.modelWorld, this.foreground, "miner");
-        return this.miner;
+        if (className === "MineRobot") {
+            this.miner = new model.MineRobot(varName, 7, 4, model.Direction.SOUTH,
+                                   this.modelWorld, this.foreground, "miner");
+            return this.miner;
+        }
+        else if (className == "Robot") {
+            return new model.Robot(varName, 7, 4, model.Direction.WEST, this.modelWorld, this.middle, "robot");
+        }
+        else {
+            return null;
+        }
+
     }
 
     setUpFading() {
