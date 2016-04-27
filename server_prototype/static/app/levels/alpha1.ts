@@ -20,12 +20,14 @@ import {EditorContext, MAIN} from "model/editorcontext";
 import {BaseLevel, Toolbox} from "../level";
 import * as TooltipView from "../views/tooltip";
 import * as python from "../execution/python";
+import * as asset from "asset";
 
 export class Alpha1Level extends BaseLevel {
     // Any model objects you need (besides the world, which is defined
     // as modelWorld. NOTE: this.world is the Phaser world!)
     public robot: model.Robot;
     public iron: model.Iron;
+    public rocket: model.Rocket;
 
     initialize() {
         super.initialize();
@@ -71,6 +73,11 @@ export class Alpha1Level extends BaseLevel {
                 objective: "Move the robot to the iron",
                 completed: false,
                 predicate: (level) => {
+                    if (level.robot.getX() === 1) {
+                        console.log("BUILD");
+                        this.rocket.build();
+                        this.rocket.blastOff();
+                    }
                     return level.robot.getX() === 5 && level.robot.getY() === 1;
                 }
             },
@@ -114,6 +121,7 @@ export class Alpha1Level extends BaseLevel {
         this.game.load.image("tiles", "assets/tilesets/cave.png");
         this.game.load.image("robot", "assets/sprites/robot_3Dblue.png");
         this.game.load.image("iron", "assets/sprites/iron.png");
+        this.game.load.image("rocket", asset.Misc.Rocket);
     }
 
     create() {
@@ -128,6 +136,7 @@ export class Alpha1Level extends BaseLevel {
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
         this.initWorld(map);
+        this.rocket = new model.Rocket("rocket", 3, 3, this.modelWorld, this.foreground, "rocket");
         this.robot = new model.Robot("robot", 1, 1, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
 
@@ -137,6 +146,11 @@ export class Alpha1Level extends BaseLevel {
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
+    }
+
+    update() {
+        super.update();
+        this.rocket.update();
     }
 
     canUseBlockEditor(context: EditorContext): boolean {

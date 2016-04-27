@@ -1414,3 +1414,99 @@ export class LinkedResource extends FixedResource {
         super.fill();
     }
 }
+
+export class Rocket extends WorldObject {
+    sprite: Phaser.Sprite;
+    shadow: Phaser.Sprite;
+    crop: Phaser.Rectangle;
+
+    constructor(name: string, x: number, y: number,
+                world: World, group: Phaser.Group, sprite: string) {
+        super(name, x, y, world);
+        this.phaserObject = world.game.add.group(group);
+        this.phaserObject.position.x = TILE_WIDTH * x + TILE_WIDTH / 2;
+        this.phaserObject.position.y = TILE_HEIGHT * y + TILE_WIDTH / 2;
+        this.phaserObject.pivot.x = TILE_WIDTH / 2;
+        this.phaserObject.pivot.y = TILE_HEIGHT / 2;
+
+        // this.shadow = this.phaserObject.create(1, -42, sprite);
+        // this.shadow.width = TILE_WIDTH;
+        // this.shadow.height = 60;
+        // this.shadow.tint = 0x000000;
+        // this.shadow.alpha = 0.7;
+        // this.shadow.pivot.x = 8;
+        // this.shadow.pivot.y = 0;
+        // window["test"] = this.shadow;
+        // this.shadow.rotation = Math.PI / 6;
+        let circle = world.game.add.graphics(0, 0, this.phaserObject);
+        this.sprite = this.phaserObject.create(0, -44 + 60, sprite);
+        this.sprite.width = 16;
+        this.sprite.height = 60;
+
+        circle.lineStyle(0.5, 0xFF2222, 0.5);
+        circle.drawCircle(TILE_WIDTH / 2, TILE_HEIGHT / 2, 1.41 * TILE_WIDTH);
+
+        this.crop = new Phaser.Rectangle(0, 393, 105, 393);
+        this.sprite.crop(this.crop);
+
+        this.phaserObject.alpha = 0;
+
+        this.setLoc(x, y);
+    }
+
+    build() {
+        this.world.log.record(new BuildRocketDiff(this));
+    }
+
+    blastOff() {
+        this.world.log.record(new BlastOffDiff(this));
+    }
+
+    update() {
+        this.sprite.updateCrop();
+    }
+
+    phaserReset() {
+        this.phaserObject.alpha = 0;
+        this.sprite.position.y = -44 + 60;
+        this.crop = new Phaser.Rectangle(0, 393, 105, 393);
+        this.sprite.crop(this.crop);
+    }
+}
+
+class BuildRocketDiff extends Diff<Rocket> {
+    constructor(rocket: Rocket) {
+        super(DiffKind.Property, null, rocket.getID(), {});
+    }
+
+    tween(object: Rocket, duration: number): Phaser.Tween {
+        let p = object.getPhaserObject();
+        let t1 = p.game.add.tween(p).to({
+            alpha: 1,
+        }, duration, Phaser.Easing.Quadratic.InOut);
+        let t2 = p.game.add.tween(object.crop).to({
+            y: 0,
+        }, duration, Phaser.Easing.Quadratic.InOut);
+        let t3 = p.game.add.tween(object.sprite.position).to({
+            y: -44,
+        }, duration, Phaser.Easing.Quadratic.InOut);
+        t1.chain(t2);
+        t2.onStart.add(function() {
+            t3.start();
+        });
+        return t1;
+    }
+}
+
+class BlastOffDiff extends Diff<Rocket> {
+    constructor(rocket: Rocket) {
+        super(DiffKind.Property, null, rocket.getID(), {});
+    }
+
+    tween(object: Rocket, duration: number): Phaser.Tween {
+        let p = object.getPhaserObject();
+        return p.game.add.tween(object.sprite.position).to({
+            y: -300,
+        }, duration * 5, Phaser.Easing.Quadratic.InOut);
+    }
+}

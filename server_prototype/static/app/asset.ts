@@ -47,4 +47,5 @@ export const Misc = {
     Platform_1: SPRITE_DIR + "stack_1.png",
     Platform_2: SPRITE_DIR + "stack_2.png",
     Platform_3: SPRITE_DIR + "stack_3.png",
+    Rocket: SPRITE_DIR + "rocket.png",
 };
