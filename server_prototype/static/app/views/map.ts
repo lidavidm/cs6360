@@ -102,6 +102,10 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                     args.executing(true);
                     let session = args.level.run(controller.speed);
                     controller.session = session;
+                    window.setTimeout(function() {
+                        window.dispatchEvent(new Event("resize"));
+                    }, 500);
+
                     session.then(() => {
                         controller.session = null;
                         m.startComputation();
