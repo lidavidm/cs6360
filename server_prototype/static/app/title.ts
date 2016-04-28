@@ -35,7 +35,6 @@ export const TitleComponent: _mithril.MithrilComponent<TitleController> = {
         let hasLastGame = !!lastGame;
 
         let startGame = () => {
-            Logging.startGame();
             window.setTimeout(() => {
                 if (hasLastGame) {
                     m.route("/game", {}, true);
