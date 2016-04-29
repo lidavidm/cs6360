@@ -18,15 +18,15 @@
 import {BaseLevel} from "level";
 
 export class Progression {
-    levels: [string, any][];
-    levelMap: { [name: string]: [number, any] };
+    levels: [string, any, number][];
+    levelMap: { [name: string]: [number, any, number] };
 
-    constructor(levels: [string, any][]) {
+    constructor(levels: [string, any, number][]) {
         this.levels = levels;
         this.levelMap = Object.create(null);
 
-        this.levels.forEach(([name, level], index) => {
-            this.levelMap[name] = [index, level];
+        this.levels.forEach(([name, level, id], index) => {
+            this.levelMap[name] = [index, level, id];
         });
     }
 
@@ -38,8 +38,12 @@ export class Progression {
         return this.levels[index][0];
     }
 
+    getLevelID(name: string): number {
+        return this.levelMap[name][2];
+    }
+
     nextLevel(name: string): string {
-        let [index, _] = this.levelMap[name];
+        let [index, _, __] = this.levelMap[name];
         let nextIndex = index + 1;
         if (nextIndex >= this.levels.length) return null;
         return this.levels[nextIndex][0];
@@ -64,18 +68,22 @@ import {RescueLevel} from "levels/rescue";
 import {HeavyLiftingLevel} from "levels/heavylifting";
 import {BlastOffLevel} from "levels/blastoff";
 
+
+// DO NOT DUPLICATE IDS. OTHERWISE WE CAN'T TELL THEM APART IN THE
+// LOGS. IDs do not need to be sequential.
+// DO NOT USE NEGATIVE NUMBERS. Those are used for the pretest/posttest.
 export const DEFAULT_PROGRESSION = new Progression([
-    ["movement1", MovementLevel1],
-    ["movement2", MovementLevel2],
-    ["movement3", MovementLevel3],
-    ["movement4", MovementLevel4],
-    ["backtobase", BackToBase],
-    ["makeminer", MakeMiner],
-    ["iron", IronLevel],
-    ["recycling1", RecyclingLevel],
-    ["fracking", FrackingLevel],
-    ["scouting", ScoutLevel],
-    ["rescue", RescueLevel],
-    ["heavylifting", HeavyLiftingLevel],
-    ["blastoff", BlastOffLevel],
+    ["movement1", MovementLevel1, 0],
+    ["movement2", MovementLevel2, 1],
+    ["movement3", MovementLevel3, 2],
+    ["movement4", MovementLevel4, 3],
+    ["backtobase", BackToBase, 4],
+    ["makeminer", MakeMiner, 5],
+    ["iron", IronLevel, 6],
+    ["recycling1", RecyclingLevel, 7],
+    ["fracking", FrackingLevel, 8],
+    ["scouting", ScoutLevel, 9],
+    ["rescue", RescueLevel, 10],
+    ["heavylifting", HeavyLiftingLevel, 11],
+    ["blastoff", BlastOffLevel, 12],
 ]);
