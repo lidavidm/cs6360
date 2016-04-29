@@ -206,13 +206,6 @@ export class HeavyLiftingLevel extends BaseLevel {
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
     }
 
-    update() {
-        super.update();
-        this.drones.forEach( function(d) {
-            d.update();
-        });
-    }
-
     setUpFading() {
         Blockly.Blocks.oop.clearFaded();
         Blockly.Blocks.oop.faded['tell'] = true;
