@@ -21,6 +21,8 @@ import {Savegame} from "savegame";
 import {MultipleChoiceQuestion, SurveyScaleQuestion, SurveyFeedbackQuestion, SurveyCheckboxQuestion, Question} from "views/test";
 import {PRETEST} from "views/pretest";
 
+const POSTTEST_ID = -20;
+
 const TEST: Question[] = PRETEST.slice().concat([
     new SurveyScaleQuestion("I enjoyed this game."),
     new SurveyScaleQuestion("Before playing, I knew object-oriented programming."),
@@ -39,7 +41,7 @@ export const Component: _mithril.MithrilComponent<PosttestController> = <any> {
     view: function(controller: PosttestController): _mithril.MithrilVirtualElement<PosttestController> {
         return m.component(TestView.Component, {
             oncomplete: function(answers: string[]) {
-                Logging.saveAnswers("pretest", answers);
+                Logging.saveAnswers(POSTTEST_ID, answers);
                 window.setTimeout(() => {
                     m.route("/victory", {}, true);
                 }, 1250);

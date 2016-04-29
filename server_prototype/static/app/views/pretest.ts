@@ -19,6 +19,8 @@ import * as TestView from "views/test";
 import * as Logging from "logging";
 import {MultipleChoiceQuestion, Question, Code} from "views/test";
 
+const PRETEST_ID = -10;
+
 export const PRETEST: Question[] = [
     new MultipleChoiceQuestion("Student is a subclass of Person. Person defines a method called 'sleep', but Student does not. What happens if you tell a Student object to sleep?", null, [
         "(an error occurs)",
@@ -77,7 +79,7 @@ export const Component: _mithril.MithrilComponent<PretestController> = <any> {
         return m.component(TestView.Component, {
             oncomplete: function(answers: string[]) {
                 alert("Test complete!");
-                Logging.saveAnswers("pretest", answers);
+                Logging.saveAnswers(PRETEST_ID, answers);
                 window.setTimeout(() => {
                     m.route("/game", {}, true);
                 }, 1250);

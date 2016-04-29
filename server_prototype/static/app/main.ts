@@ -101,7 +101,7 @@ export const MainComponent = {
         };
 
         controller.setLevel = function(newLevel: level.BaseLevel) {
-            Logging.startLevel(savegame.currentLevel);
+            Logging.startLevel(DEFAULT_PROGRESSION.getLevelID(savegame.currentLevel));
             controller.context = {
                 className: MAIN,
                 method: "",

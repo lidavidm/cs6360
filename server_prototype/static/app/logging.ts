@@ -39,7 +39,7 @@ var global_state = {
     session_seq_id: 0,
     quest_seq_id: 0,
     uuid: "",
-    level: "",
+    level: -100,
 };
 
 function request(endpoint: string, data: {
@@ -79,14 +79,14 @@ export function initialize() {
     }
 }
 
-export function startLevel(levelName: string) {
+export function startLevel(levelID: number) {
     global_state.session_seq_id += 1;
-    global_state.level = levelName;
+    global_state.level = levelID;
     return request("player_quest.php", {
         client_timestamp: Date.now(),
         session_id: global_state.session_id,
         session_seq_id: global_state.session_seq_id,
-        quest_id: levelName,
+        quest_id: levelID,
         user_id: global_state.uuid,
     }).then(function(response: any) {
         global_state.dynamic_quest_id = response.dynamic_quest_id;
@@ -100,11 +100,11 @@ export function finishLevel() {
     });
 }
 
-export function recordGeneric(levelName: string, action: Action, data: string) {
+export function recordGeneric(levelID: number, action: Action, data: string) {
     global_state.quest_seq_id += 1;
     return request("player_action.php", {
         client_timestamp: Date.now(),
-        quest_id: levelName,
+        quest_id: levelID,
         quest_seq_id: global_state.quest_seq_id,
         user_id: global_state.uuid,
         action_id: action,
@@ -149,11 +149,11 @@ export function recordRuntimeException(exception: string) {
     return recordGeneric(global_state.level, Action.Exception, exception);
 }
 
-export function beginTest(testName: string) {
-    startLevel("TEST_" + testName);
+export function beginTest(testID: number) {
+    startLevel(testID);
 }
 
-export function saveAnswers(testName: string, answers: string[]) {
-    recordGeneric("TEST_" + testName, Action.FinishTest, JSON.stringify(answers));
+export function saveAnswers(testID: number, answers: string[]) {
+    recordGeneric(testID, Action.FinishTest, JSON.stringify(answers));
     finishLevel();
 }
