@@ -156,11 +156,6 @@ export class RescueLevel extends BaseLevel {
         this.zoomCamera.position.x = 500;
     }
 
-    update() {
-        super.update();
-        this.drone.update();
-    }
-
     setUpFading() {
         Blockly.Blocks.oop.clearFaded();
         Blockly.Blocks.oop.faded['tell'] = true;
@@ -193,9 +188,9 @@ export class RescueLevel extends BaseLevel {
             return this.rescuer;
         }
         else if (className === "Drone") {
-            this.drone = new model.Drone(varName, 7, 4, this.modelWorld, this.foreground, "drone");
-            this.drone.activate();
-            return this.drone;
+            let newDrone = new model.Drone(varName, 7, 4, this.modelWorld, this.foreground, "drone");
+            newDrone.activate();
+            return newDrone;
         }
         else {
             return null;

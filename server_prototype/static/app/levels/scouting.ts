@@ -6,7 +6,7 @@ import * as python from "execution/python";
 import * as asset from "asset";
 
 export class ScoutLevel extends BaseLevel {
-    public drone: model.Drone;
+    public drones: model.Drone[];
     public landing_pad: model.ObjectiveCircle;
 
     initialize() {
@@ -42,28 +42,34 @@ export class ScoutLevel extends BaseLevel {
             model.Drone.prototype.flyNorth,
         ]);
 
-        // this.toolbox.addObject("drone", "Drone");
-
-
         this.objectives = [
             {
                 objective: `Create a new drone [${asset.Drone.Basic}]`,
                 completed: false,
                 predicate: (level, initialized) => {
-                    return this.drone &&
-                           initialized[this.drone.getID()] &&
-                           this.drone.getX() == 7 &&
-                           this.drone.getY() == 4;
+                    for (var d in this.modelWorld.objects) {
+                        let obj = this.modelWorld.objects[d];
+                        if ( initialized[obj.getID()] && obj instanceof model.Drone ) {
+                            return true;
+                        }
+                    }
+                    return false;
                 }
             },
             {
                 objective: `Send the drone [${asset.Drone.Basic}] to the potential launch site in the southwest`,
                 completed: false,
                 predicate: (level, initialized) => {
-                    return this.drone &&
-                           initialized[this.drone.getID()] &&
-                           this.drone.getX() == 2 &&
-                           this.drone.getY() == 6;
+                    for (var d in this.modelWorld.objects) {
+                        let obj = this.modelWorld.objects[d];
+                        if (initialized[obj.getID()] &&
+                            obj instanceof model.Drone &&
+                            obj.getX() === 2 &&
+                            obj.getY() === 6) {
+                                return true;
+                            }
+                    }
+                    return false;
                 }
             },
         ];
@@ -146,13 +152,6 @@ export class ScoutLevel extends BaseLevel {
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
     }
 
-    update() {
-        super.update();
-        if (this.drone != null) {
-            this.drone.update();
-        }
-    }
-
     setUpFading() {
         Blockly.Blocks.oop.clearFaded();
         Blockly.Blocks.oop.faded['tell'] = true;
@@ -162,7 +161,7 @@ export class ScoutLevel extends BaseLevel {
 
     blockLimit(context: EditorContext): number {
         if (context.className === MAIN) {
-            return 15;
+            return 10;
         }
         else {
             return null;
@@ -186,9 +185,10 @@ export class ScoutLevel extends BaseLevel {
                 model.Direction.WEST, this.modelWorld, this.middle, "frackingRobot");
         }
         else if (className === "Drone") {
-            this.drone = new model.Drone(varName, 7, 4, this.modelWorld, this.foreground, "drone");
-            this.drone.activate();
-            return this.drone;
+            let newDrone = new model.Drone(varName, 7, 4, this.modelWorld, this.foreground, "drone");
+            //this.drones.push(newDrone);
+            newDrone.activate();
+            return newDrone;
         }
         else {
             return null;
