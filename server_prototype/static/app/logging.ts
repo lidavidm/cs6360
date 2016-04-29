@@ -24,6 +24,15 @@ function loggingUrl(endpoint: string): string {
     return LOGGING_SERVER + "/" + endpoint;
 }
 
+enum Action {
+    Savegame = 0,
+    Workspace = 1,
+    ContextSwitch = 2,
+    Execute = 3,
+    Exception = 4,
+    FinishTest = 5,
+}
+
 var global_state = {
     session_id: "",
     dynamic_quest_id: "",
@@ -91,7 +100,7 @@ export function finishLevel() {
     });
 }
 
-export function recordGeneric(levelName: string, action: string, data: string) {
+export function recordGeneric(levelName: string, action: Action, data: string) {
     global_state.quest_seq_id += 1;
     return request("player_action.php", {
         client_timestamp: Date.now(),
@@ -107,11 +116,11 @@ export function recordGeneric(levelName: string, action: string, data: string) {
 }
 
 export function recordSavegame(savegame: Savegame) {
-    return recordGeneric(global_state.level, "savegame", savegame.stringify());
+    return recordGeneric(global_state.level, Action.Savegame, savegame.stringify());
 }
 
 export function recordWorkspace(context: EditorContext, workspace: HTMLElement | string) {
-    return recordGeneric(global_state.level, "workspace", JSON.stringify({
+    return recordGeneric(global_state.level, Action.Workspace, JSON.stringify({
         context: {
             className: context.className,
             method: context.method,
@@ -121,7 +130,7 @@ export function recordWorkspace(context: EditorContext, workspace: HTMLElement |
 }
 
 export function recordContextSwitch(context: EditorContext) {
-    return recordGeneric(global_state.level, "context_switch", JSON.stringify({
+    return recordGeneric(global_state.level, Action.ContextSwitch, JSON.stringify({
         context: {
             className: context.className,
             method: context.method,
@@ -130,14 +139,14 @@ export function recordContextSwitch(context: EditorContext) {
 }
 
 export function recordCodeRun(event: string, code?: string) {
-    return recordGeneric(global_state.level, "execute", JSON.stringify({
+    return recordGeneric(global_state.level, Action.Execute, JSON.stringify({
         event: event,
         code: code,
     }));
 }
 
 export function recordRuntimeException(exception: string) {
-    return recordGeneric(global_state.level, "exception", exception);
+    return recordGeneric(global_state.level, Action.Exception, exception);
 }
 
 export function beginTest(testName: string) {
@@ -145,6 +154,6 @@ export function beginTest(testName: string) {
 }
 
 export function saveAnswers(testName: string, answers: string[]) {
-    recordGeneric("TEST_" + testName, "finish_test", JSON.stringify(answers));
+    recordGeneric("TEST_" + testName, Action.FinishTest, JSON.stringify(answers));
     finishLevel();
 }
