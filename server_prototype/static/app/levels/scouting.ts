@@ -6,7 +6,6 @@ import * as python from "execution/python";
 import * as asset from "asset";
 
 export class ScoutLevel extends BaseLevel {
-    public drones: model.Drone[];
     public landing_pad: model.ObjectiveCircle;
 
     initialize() {
