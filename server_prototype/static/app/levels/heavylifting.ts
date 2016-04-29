@@ -27,9 +27,9 @@ export class HeavyLiftingLevel extends BaseLevel {
     * probably robot and iron sheets
     */
 
-    drones: model.Drone[] = [];
     pieces: model.PlatformPiece[] = [];
     lifter: model.HeavyLifter;
+    landing_pad: model.ObjectiveCircle;
 
     initialize() {
         super.initialize();
@@ -45,9 +45,7 @@ export class HeavyLiftingLevel extends BaseLevel {
         this.toolbox.addControl("controls_repeat");
         this.toolbox.addControl("new");
 
-        /*Add HeavyLifter Class*/
-
-        this.toolbox.addClasses(["Robot", "MineRobot", "FrackingRobot", "RescueRobot", "Drone"])
+        this.toolbox.addClasses(["Robot", "MineRobot", "FrackingRobot", "RescueRobot", "Drone", "HeavyLifter"])
         this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
             model.Robot.prototype.turnRight,
@@ -60,7 +58,7 @@ export class HeavyLiftingLevel extends BaseLevel {
         ]);
         this.toolbox.addClass("FrackingRobot", asset.Robot.Blue, model.FrackingRobot, [
         ]);
-        this.toolbox.addClass("RescueRobot", asset.Robot.Red, model.RescueRobot, [
+        this.toolbox.addClass("RescueRobot", asset.Robot.Pink, model.RescueRobot, [
             model.RescueRobot.prototype.rebootTarget,
         ]);
         this.toolbox.addClass("Drone", asset.Drone.Basic, model.Drone, [
@@ -69,12 +67,10 @@ export class HeavyLiftingLevel extends BaseLevel {
             model.Drone.prototype.flySouth,
             model.Drone.prototype.flyNorth,
         ]);
-        this.toolbox.addClass("HeavyLifter", asset.Robot.Red, model.HeavyLifter, [
+        this.toolbox.addClass("HeavyLifter", asset.Robot.Yellow, model.HeavyLifter, [
             model.HeavyLifter.prototype.pickUp,
             model.HeavyLifter.prototype.drop,
         ]);
-
-        this.toolbox.addObject("lifter", "HeavyLifter");
 
         /*Add Sprites, predicates*/
         this.objectives = [
@@ -82,21 +78,33 @@ export class HeavyLiftingLevel extends BaseLevel {
                 objective: `Define a halfRectangle method`,
                 completed: false,
                 predicate: (level, initialized) => {
-                    return false;
+                    return this.program.getMethodCode("Robot", "halfRectangle").indexOf("NotImplementedError") === -1;
                 }
             },
             {
                 objective: `Create a HeavyLifter robot`,
                 completed: false,
                 predicate: (level, initialized) => {
-                    return false;
+                    return this.lifter && initialized[this.lifter.getID()];
                 }
             },
             {
                 objective: `Carry all four pieces to the launch site`,
                 completed: false,
                 predicate: (level, initialized) => {
-                    return false;
+                    if (this.pieces.length > 0){
+                        for (var p of this.pieces) {
+                            if (p.getX() != 2 ||
+                                p.getY() != 6){
+                                    return false;
+                                }
+                        }
+                        return true;
+                    }
+                    else {
+                            return true;
+                    }
+
                 }
             }
         ];
@@ -156,9 +164,13 @@ export class HeavyLiftingLevel extends BaseLevel {
         this.game.load.tilemap("outside", "assets/maps/small_world.json", null, Phaser.Tilemap.TILED_JSON);
 
         this.game.load.image("robot", asset.Robot.Basic);
+        this.game.load.image("mineRobot", asset.Robot.Red);
+        this.game.load.image("frackingRobot", asset.Robot.Blue);
+        this.game.load.image("rescueRobot", asset.Robot.Pink);
+        this.game.load.image("heavyLifter", asset.Robot.Yellow);
+        this.game.load.image("drone", asset.Drone.Basic);
 
         /* We need another color of robot! */
-        this.game.load.image("lifter", asset.Robot.Red);
         this.game.load.image("platform_0", asset.Misc.Platform_0);
         this.game.load.image("platform_1", asset.Misc.Platform_1);
         this.game.load.image("platform_2", asset.Misc.Platform_2);
@@ -187,7 +199,8 @@ export class HeavyLiftingLevel extends BaseLevel {
         this.pieces.push(new model.PlatformPiece("piece", 5, 4, this.modelWorld, this.foreground, spriteList));
         this.pieces.push(new model.PlatformPiece("piece", 5, 4, this.modelWorld, this.foreground, spriteList));
 
-        this.lifter = new model.HeavyLifter("lifter", 5, 3, model.Direction.SOUTH, this.modelWorld, this.foreground, "lifter");
+        this.landing_pad = new model.ObjectiveCircle("landing_pad", 2, 6,
+                                        this.modelWorld, this.foreground);
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
@@ -215,22 +228,21 @@ export class HeavyLiftingLevel extends BaseLevel {
         if (className == "Robot") {
             return new model.Robot(varName, 7, 4, model.Direction.WEST, this.modelWorld, this.middle, "robot");
         }
-        else if (className = "MineRobot") {
+        else if (className === "MineRobot") {
             return new model.MineRobot(varName, 7, 4, model.Direction.WEST, this.modelWorld, this.middle, "mineRobot");
         }
-        else if (className = "FrackingRobot") {
+        else if (className === "FrackingRobot") {
             return new model.FrackingRobot(varName, 7, 4, model.Direction.WEST, this.modelWorld, this.middle, "frackingRobot");
         }
-        else if (className = "RescueRobot") {
+        else if (className === "RescueRobot") {
             return new model.RescueRobot(varName, 7, 4, model.Direction.WEST, this.modelWorld, this.middle, "rescueRobot");
         }
-        else if (className = "HeavyLifter") {
-            /* Will need to add this! */
-            //return new model.HeavyLifter(varName, 7, 4, model.Direction.WEST, this.modelWorld, this.middle, "heavyLifter");
+        else if (className === "HeavyLifter") {
+            this.lifter = new model.HeavyLifter(varName, 7, 4, model.Direction.WEST, this.modelWorld, this.middle, "heavyLifter");
+            return this.lifter;
         }
-        else if (className = "Drone") {
+        else if (className === "Drone") {
             let newDrone = new model.Drone(varName, 7, 4, this.modelWorld, this.foreground, "drone");
-            this.drones.push(newDrone);
             newDrone.activate();
             return newDrone;
         }
