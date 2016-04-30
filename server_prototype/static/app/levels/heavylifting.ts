@@ -23,9 +23,6 @@ import * as python from "execution/python";
 import * as asset from "asset";
 
 export class HeavyLiftingLevel extends BaseLevel {
-    /*whatever objects we need go here
-    * probably robot and iron sheets
-    */
 
     pieces: model.PlatformPiece[] = [];
     lifter: model.HeavyLifter;

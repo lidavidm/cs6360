@@ -44,11 +44,12 @@ export class BlastOffLevel extends BaseLevel {
 
         /*Add HeavyLifter Class*/
 
-        this.toolbox.addClasses(["Robot", "MineRobot", "FrackingRobot", "RescueRobot", "Drone"])
+        this.toolbox.addClasses(["Robot", "MineRobot", "FrackingRobot", "RescueRobot", "Drone", "HeavyLifter"])
         this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
             model.Robot.prototype.turnRight,
             model.Robot.prototype.turnLeft,
+            model.Robot.prototype.moveBackward,
             model.Robot.prototype.selfDestruct,
         ]);
         this.toolbox.addClass("MineRobot", asset.Robot.Red, model.MineRobot, [
@@ -56,7 +57,7 @@ export class BlastOffLevel extends BaseLevel {
         ]);
         this.toolbox.addClass("FrackingRobot", asset.Robot.Blue, model.FrackingRobot, [
         ]);
-        this.toolbox.addClass("RescueRobot", asset.Robot.Red, model.RescueRobot, [
+        this.toolbox.addClass("RescueRobot", asset.Robot.Pink, model.RescueRobot, [
             model.RescueRobot.prototype.rebootTarget,
         ]);
         this.toolbox.addClass("Drone", asset.Drone.Basic, model.Drone, [
@@ -65,7 +66,10 @@ export class BlastOffLevel extends BaseLevel {
             model.Drone.prototype.flySouth,
             model.Drone.prototype.flyNorth,
         ]);
-        /*Heavy Lifter Type Here*/
+        this.toolbox.addClass("HeavyLifter", asset.Robot.Yellow, model.HeavyLifter, [
+            model.HeavyLifter.prototype.pickUp,
+            model.HeavyLifter.prototype.drop,
+        ]);
 
         /*Add Sprites, predicates*/
         this.objectives = [
@@ -116,8 +120,12 @@ export class BlastOffLevel extends BaseLevel {
                             children: [],
                             methods: ["rescue"],
                             userMethods: [],
-                        }
-                        /* Add HeavyLifter */
+                        },
+                        {
+                            name: "HeavyLifter",
+                            children: [],
+                            methods: ["pickUp", "drop"],
+                        },
                     ],
                     methods: [],
                     userMethods: ["halfRectangle"],
@@ -143,8 +151,11 @@ export class BlastOffLevel extends BaseLevel {
         this.game.load.tilemap("outside", "assets/maps/small_world.json", null, Phaser.Tilemap.TILED_JSON);
 
         this.game.load.image("robot", asset.Robot.Basic);
-
-        /* We need another color of robot! */
+        this.game.load.image("mineRobot", asset.Robot.Red);
+        this.game.load.image("frackingRobot", asset.Robot.Blue);
+        this.game.load.image("rescueRobot", asset.Robot.Pink);
+        this.game.load.image("heavyLifter", asset.Robot.Yellow);
+        this.game.load.image("drone", asset.Drone.Basic);
 
     }
 
@@ -168,13 +179,6 @@ export class BlastOffLevel extends BaseLevel {
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
     }
 
-    update() {
-        super.update();
-        this.drones.forEach( function(d) {
-            d.update();
-        });
-    }
-
     setUpFading() {
         Blockly.Blocks.oop.clearFaded();
         Blockly.Blocks.oop.faded['tell'] = true;
@@ -190,22 +194,20 @@ export class BlastOffLevel extends BaseLevel {
         if (className == "Robot") {
             return new model.Robot(varName, 7, 4, model.Direction.WEST, this.modelWorld, this.middle, "robot");
         }
-        else if (className = "MineRobot") {
+        else if (className === "MineRobot") {
             return new model.MineRobot(varName, 7, 4, model.Direction.WEST, this.modelWorld, this.middle, "mineRobot");
         }
-        else if (className = "FrackingRobot") {
+        else if (className === "FrackingRobot") {
             return new model.FrackingRobot(varName, 7, 4, model.Direction.WEST, this.modelWorld, this.middle, "frackingRobot");
         }
-        else if (className = "RescueRobot") {
+        else if (className === "RescueRobot") {
             return new model.RescueRobot(varName, 7, 4, model.Direction.WEST, this.modelWorld, this.middle, "rescueRobot");
         }
-        else if (className = "HeavyLifter") {
-            /* Will need to add this! */
-            //return new model.HeavyLifter(varName, 7, 4, model.Direction.WEST, this.modelWorld, this.middle, "heavyLifter");
+        else if (className === "HeavyLifter") {
+            return new model.HeavyLifter(varName, 7, 4, model.Direction.WEST, this.modelWorld, this.middle, "heavyLifter");
         }
-        else if (className = "Drone") {
+        else if (className === "Drone") {
             let newDrone = new model.Drone(varName, 7, 4, this.modelWorld, this.foreground, "drone");
-            this.drones.push(newDrone);
             newDrone.activate();
             return newDrone;
         }
