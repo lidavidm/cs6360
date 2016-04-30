@@ -92,19 +92,20 @@ export class HeavyLiftingLevel extends BaseLevel {
                 objective: `Carry all four pieces to the launch site`,
                 completed: false,
                 predicate: (level, initialized) => {
-                    if (this.pieces.length > 0){
-                        for (var p of this.pieces) {
-                            if (p.getX() != 2 ||
-                                p.getY() != 6){
-                                    return false;
-                                }
+                    if (this.pieces.length === 0) {
+                        return false;
+                    }
+                    let groundObjects = this.modelWorld.getObjectByLoc(2, 6);
+                    let count = 0;
+                    for (var o of groundObjects) {
+                        if (o instanceof model.PlatformPiece) {
+                            let p = o.getPhaserObject();
+                            if (p.alpha === 1) {
+                                count = count + 1;
+                            }
                         }
-                        return true;
                     }
-                    else {
-                            return true;
-                    }
-
+                    return count === this.pieces.length;
                 }
             }
         ];
