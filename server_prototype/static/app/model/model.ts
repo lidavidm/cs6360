@@ -581,6 +581,10 @@ export class World {
         let x:number = obj.getX();
         let y:number = obj.getY();
 
+        if (this.map[x][y].indexOf(obj) === -1) {
+            return;
+        }
+
         if (this.boundsOkay(x,y)) {
             this.map[x][y].splice(this.map[x][y].indexOf(obj), 1);
         }
@@ -1579,7 +1583,9 @@ class PickUpDiff extends Diff<HeavyLifter> {
 
     apply(world: World, object: HeavyLifter) {
         super.apply(world, object);
-        world.removeObject(object.getLastPicked());
+        if (object.getLastPicked() !== null) {
+            world.removeObject(object.getLastPicked());
+        }
     }
 }
 

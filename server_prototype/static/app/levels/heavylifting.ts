@@ -194,10 +194,10 @@ export class HeavyLiftingLevel extends BaseLevel {
         let spriteList = ["platform_0", "platform_1", "platform_2", "platform_3"];
 
         /* Create Objects Here */
-        this.pieces.push(new model.PlatformPiece("piece", 5, 4, this.modelWorld, this.foreground, spriteList));
-        this.pieces.push(new model.PlatformPiece("piece", 5, 4, this.modelWorld, this.foreground, spriteList));
-        this.pieces.push(new model.PlatformPiece("piece", 5, 4, this.modelWorld, this.foreground, spriteList));
-        this.pieces.push(new model.PlatformPiece("piece", 5, 4, this.modelWorld, this.foreground, spriteList));
+        this.pieces.push(new model.PlatformPiece("piece", 5, 4, this.modelWorld, this.middle, spriteList));
+        this.pieces.push(new model.PlatformPiece("piece", 5, 4, this.modelWorld, this.middle, spriteList));
+        this.pieces.push(new model.PlatformPiece("piece", 5, 4, this.modelWorld, this.middle, spriteList));
+        this.pieces.push(new model.PlatformPiece("piece", 5, 4, this.modelWorld, this.middle, spriteList));
 
         this.landing_pad = new model.ObjectiveCircle("landing_pad", 2, 6,
                                         this.modelWorld, this.foreground);
