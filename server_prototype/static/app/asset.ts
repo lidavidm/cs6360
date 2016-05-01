@@ -49,4 +49,5 @@ export const Misc = {
     Platform_3: SPRITE_DIR + "stack_3.png",
     Rocket: SPRITE_DIR + "rocket.png",
     Flame: SPRITE_DIR + "flame.png",
+    LaunchPad: SPRITE_DIR + "launchpad.png",
 };
