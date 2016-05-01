@@ -1881,8 +1881,8 @@ export class AbsorbRobotDiff extends Diff<Robot> {
         let t = p.game.add.tween(p).to({
             width: 0,
             height: 0,
-            x: this.new_x * TILE_WIDTH,
-            y: this.new_y * TILE_HEIGHT,
+            x: this.new_x * TILE_WIDTH + TILE_WIDTH / 2,
+            y: this.new_y * TILE_HEIGHT + TILE_HEIGHT / 2,
             alpha: 0,
         }, duration, Phaser.Easing.Quadratic.InOut);
 
