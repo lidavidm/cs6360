@@ -88,6 +88,7 @@ export class Program {
     invalid: boolean;
     hierarchy: ObjectHierarchy;
     headless: any;
+    instantiated: boolean;
     blockLimit: BlockLimit;
 
     event: PubSub;
@@ -100,6 +101,7 @@ export class Program {
         this.headless = new Blockly.Workspace();
         this.blockLimit = blockLimit;
         this.event = new PubSub();
+        this.instantiated = false;
     }
 
     update(savegame: Savegame) {
@@ -123,6 +125,7 @@ export class Program {
         // XXX this is a hack - when main method can only be edited in
         // code, we need to wait until globals are instantiated in
         // order to generate the code
+        this.instantiated = true;
         this.event.broadcast("globals_defined");
     }
 

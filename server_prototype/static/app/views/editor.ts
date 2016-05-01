@@ -227,7 +227,8 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             else if (!controller.level.canUseBlockEditor(context)) {
                 context = controller.context = controller.level.program.savegame.load(context);
                 if (context.className === MAIN) {
-                    if (controller.level.program.globals.length === 0) {
+                    if (!controller.level.program.instantiated) {
+                        console.log("No globals");
                         controller.level.program.event.on("globals_defined", () => {
                             setupLevel(context);
                         });
