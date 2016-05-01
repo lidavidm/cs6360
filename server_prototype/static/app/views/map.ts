@@ -104,7 +104,7 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                     controller.session = session;
                     window.setTimeout(function() {
                         window.dispatchEvent(new Event("resize"));
-                    }, 500);
+                    }, 200);
 
                     session.then(() => {
                         controller.session = null;
@@ -114,7 +114,7 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                         m.endComputation();
                         window.setTimeout(function() {
                             window.dispatchEvent(new Event("resize"));
-                        }, 500);
+                        }, 200);
                     });
                 },
 
@@ -157,7 +157,7 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                         m.endComputation();
                         window.setTimeout(function() {
                             window.dispatchEvent(new Event("resize"));
-                        }, 500);
+                        }, 200);
                     }
                 },
 

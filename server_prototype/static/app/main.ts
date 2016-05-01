@@ -239,6 +239,7 @@ export const MainComponent = {
                 onContinue: () => {
                     controller.loadScreenOldLevel = null;
                     controller.level.setupCamera();
+                    window.dispatchEvent(new Event("resize"));
                 },
                 event: controller.event,
             }),
