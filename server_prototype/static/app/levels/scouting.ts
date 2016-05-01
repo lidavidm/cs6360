@@ -121,12 +121,14 @@ export class ScoutLevel extends BaseLevel {
         this.game.load.image("drone", asset.Drone.Basic);
     }
 
+    setupCamera() {
+        this.zoomCamera.position.x = 80;
+        this.zoomCamera.position.y = 100;
+    }
+
     create() {
         // Create the world objects here.
         super.create();
-
-        this.zoomCamera.position.x = 1000;
-        this.zoomCamera.position.y = 128;
 
         let map = this.game.add.tilemap("outside");
         map.addTilesetImage("cave2", "tiles");
@@ -180,7 +182,6 @@ export class ScoutLevel extends BaseLevel {
         }
         else if (className === "Drone") {
             let newDrone = new model.Drone(varName, 7, 4, this.modelWorld, this.foreground, "drone");
-            //this.drones.push(newDrone);
             newDrone.activate();
             return newDrone;
         }

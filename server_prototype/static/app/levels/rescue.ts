@@ -135,6 +135,10 @@ export class RescueLevel extends BaseLevel {
 
     }
 
+    setupCamera() {
+        this.zoomCamera.position.x = 500;
+    }
+
     create() {
         // Create the world objects here.
         super.create();
@@ -155,8 +159,6 @@ export class RescueLevel extends BaseLevel {
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
-
-        this.zoomCamera.position.x = 500;
     }
 
     setUpFading() {

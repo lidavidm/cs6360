@@ -90,10 +90,6 @@ export class MovementLevel2 extends BaseLevel {
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
     }
 
-    setupCamera() {
-        this.zoomCamera.position.x = 300;
-    }
-
     blockLimit(context: EditorContext): number {
         return 4;
     }

@@ -115,6 +115,11 @@ export class IronLevel extends BaseLevel {
         this.game.load.image("iron", asset.Iron.Basic);
     }
 
+    setupCamera() {
+        this.zoomCamera.position.x = 115;
+        this.zoomCamera.position.y = 125;
+    }
+
     create() {
         super.create();
 
@@ -148,8 +153,6 @@ export class IronLevel extends BaseLevel {
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
-
-        this.zoomCamera.position.x = 300;
     }
 
     setUpFading() {

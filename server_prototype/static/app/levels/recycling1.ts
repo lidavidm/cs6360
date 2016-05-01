@@ -99,11 +99,14 @@ export class RecyclingLevel extends BaseLevel {
 
     }
 
+    setupCamera() {
+        this.zoomCamera.position.x = 115;
+        this.zoomCamera.position.y = 125;
+    }
+
     create() {
         // Create the world objects here.
         super.create();
-
-        this.zoomCamera.position.x = 1000;
 
         let map = this.game.add.tilemap("outside");
         map.addTilesetImage("cave2", "tiles");

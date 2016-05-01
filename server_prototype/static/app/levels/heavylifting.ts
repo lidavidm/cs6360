@@ -179,6 +179,11 @@ export class HeavyLiftingLevel extends BaseLevel {
         this.game.load.image("platform_3", asset.Misc.Platform_3);
     }
 
+    setupCamera() {
+        this.zoomCamera.position.x = 80;
+        this.zoomCamera.position.y = 100;
+    }
+
     create() {
         super.create();
 

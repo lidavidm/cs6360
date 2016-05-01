@@ -107,6 +107,11 @@ export class FrackingLevel extends BaseLevel {
         this.game.load.image("well", asset.Misc.Well);
     }
 
+    setupCamera() {
+        this.zoomCamera.position.x = 80;
+        this.zoomCamera.position.y = 100;
+    }
+
     create() {
         // Create the world objects here.
         super.create();
@@ -130,9 +135,6 @@ export class FrackingLevel extends BaseLevel {
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
-
-        this.zoomCamera.position.x = 80;
-        this.zoomCamera.position.y = 500;
     }
 
     setUpFading() {

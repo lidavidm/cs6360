@@ -68,6 +68,11 @@ export class MovementLevel4 extends BaseLevel {
         this.game.load.image("gate", asset.Gate.Basic);
     }
 
+    setupCamera() {
+        this.zoomCamera.position.x = 300;
+        this.zoomCamera.position.y = 300;
+    }
+
     create() {
         // Create the world objects here.
         super.create();

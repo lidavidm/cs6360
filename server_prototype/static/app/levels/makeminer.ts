@@ -105,6 +105,10 @@ export class MakeMiner extends BaseLevel {
         this.game.load.image("iron", asset.Iron.Basic);
     }
 
+    setupCamera() {
+        this.zoomCamera.position.x = 300;
+    }
+
     create() {
         super.create();
 

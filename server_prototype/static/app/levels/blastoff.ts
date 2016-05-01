@@ -208,6 +208,11 @@ export class BlastOffLevel extends BaseLevel {
 
     }
 
+    setupCamera() {
+        this.zoomCamera.position.x = 80;
+        this.zoomCamera.position.y = 100;
+    }
+
     create() {
         super.create();
 

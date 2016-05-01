@@ -108,7 +108,7 @@ export class MovementLevel3 extends BaseLevel {
 
     setupCamera() {
         this.zoomCamera.position.x = 300;
-        this.zoomCamera.position.y = 300;
+        this.zoomCamera.position.y = 100;
     }
 
     blockLimit(context: EditorContext): number {
