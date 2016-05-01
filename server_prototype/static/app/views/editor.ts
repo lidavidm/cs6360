@@ -118,18 +118,20 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
 
                 let code = context.code;
                 let lines = code.split("\n");
+                let end = 10000;
                 if (context.className === MAIN) {
                     let index = 0;
+                    let mainBegin = "Beginning of main code";
                     for (let line of lines) {
-                        if (line.indexOf("Beginning of main code") > -1) {
+                        if (line.indexOf(mainBegin) > -1) {
+                            end = line.indexOf(mainBegin) + mainBegin.length;
                             break;
                         }
                         index++;
                     }
-                    controller.readonlyRange = new Range(0, 0, index, 10000);
+                    controller.readonlyRange = new Range(0, 0, index, end);
                 }
                 else {
-                    let end = 10000;
                     for (let line of lines) {
                         if (line.indexOf(":") > -1) {
                             end = line.indexOf(":") + 1;
