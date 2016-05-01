@@ -1502,6 +1502,8 @@ class BuildRocketDiff extends Diff<Rocket> {
     }
 
     tween(object: Rocket, duration: number): Phaser.Tween {
+        duration *= 3;
+
         let p = object.getPhaserObject();
         let t1 = p.game.add.tween(p).to({
             alpha: 1,
@@ -1643,7 +1645,7 @@ export class PlatformPiece extends WorldObject {
     spriteIndex: number;
     initialIndex: number;
 
-    constructor(name:string, x:number, y:number,
+    constructor(name: string, x: number, y: number,
                 world: World, group: Phaser.Group, sprites: string[]) {
         super(name, x, y, world);
         this.sprites = [];
@@ -1704,7 +1706,6 @@ export class PlatformPiece extends WorldObject {
 }
 
 export class HeavyLifter extends Robot {
-
     lastPicked: WorldObject = null;
     lastDropped: WorldObject = null;
 
