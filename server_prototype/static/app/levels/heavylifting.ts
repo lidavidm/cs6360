@@ -72,7 +72,7 @@ export class HeavyLiftingLevel extends BaseLevel {
         /*Add Sprites, predicates*/
         this.objectives = [
             {
-                objective: `Define a halfRectangle method`,
+                objective: `Define a halfRectangle method for the Robot class`,
                 completed: false,
                 predicate: (level, initialized) => {
                     return this.program.getMethodCode("Robot", "halfRectangle").indexOf("NotImplementedError") === -1;
