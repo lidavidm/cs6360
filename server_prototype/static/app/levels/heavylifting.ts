@@ -72,21 +72,21 @@ export class HeavyLiftingLevel extends BaseLevel {
         /*Add Sprites, predicates*/
         this.objectives = [
             {
-                objective: `Define a halfRectangle method for the Robot class`,
+                objective: `Define a halfRectangle method for the Robot [${asset.Robot.Basic}] class`,
                 completed: false,
                 predicate: (level, initialized) => {
                     return this.program.getMethodCode("Robot", "halfRectangle").indexOf("NotImplementedError") === -1;
                 }
             },
             {
-                objective: `Create a HeavyLifter robot`,
+                objective: `Create a HeavyLifter robot [${asset.Robot.Yellow}]`,
                 completed: false,
                 predicate: (level, initialized) => {
                     return this.lifter && initialized[this.lifter.getID()];
                 }
             },
             {
-                objective: `Carry all four pieces to the launch site`,
+                objective: `Carry all four pieces [${asset.Misc.Platform_3}] to the launch site`,
                 completed: false,
                 predicate: (level, initialized) => {
                     if (this.pieces.length === 0) {

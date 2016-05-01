@@ -28,6 +28,8 @@ export class BlastOffLevel extends BaseLevel {
     */
 
     drones: model.Drone[] = [];
+    public rocket: model.Rocket;
+    readyForLaunch: boolean = false;
 
     initialize() {
         super.initialize();
@@ -41,8 +43,6 @@ export class BlastOffLevel extends BaseLevel {
         this.toolbox.addControl("tell");
         this.toolbox.addControl("controls_repeat");
         this.toolbox.addControl("new");
-
-        /*Add HeavyLifter Class*/
 
         this.toolbox.addClasses(["Robot", "MineRobot", "FrackingRobot", "RescueRobot", "Drone", "HeavyLifter"])
         this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
@@ -74,7 +74,10 @@ export class BlastOffLevel extends BaseLevel {
         /*Add Sprites, predicates*/
         this.objectives = [
             {
-                objective: `Create one of each robot`,
+                objective: `Create one of each robot:
+                            [${asset.Robot.Basic}], [${asset.Robot.Red}],
+                            [${asset.Robot.Blue}], [${asset.Robot.Pink}],
+                            [${asset.Robot.Yellow}]`,
                 completed: false,
                 predicate: (level, initialized) => {
                     return false;
@@ -91,7 +94,14 @@ export class BlastOffLevel extends BaseLevel {
                 objective: `Lift off!`,
                 completed: false,
                 predicate: (level, initialized) => {
-                    return false;
+                    if (this.readyForLaunch){
+                        this.rocket.build();
+                        this.rocket.blastOff();
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
                 }
             }
         ];
@@ -157,6 +167,9 @@ export class BlastOffLevel extends BaseLevel {
         this.game.load.image("heavyLifter", asset.Robot.Yellow);
         this.game.load.image("drone", asset.Drone.Basic);
 
+        this.game.load.image("rocket", asset.Misc.Rocket);
+        this.game.load.image("flame", asset.Misc.Flame);
+
     }
 
     create() {
@@ -174,9 +187,15 @@ export class BlastOffLevel extends BaseLevel {
         this.initWorld(map);
 
         /* Create Objects Here */
+        this.rocket = new model.Rocket("rocket", 2, 6, this.modelWorld, this.foreground, "rocket", "flame");
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
+    }
+
+    update() {
+        super.update();
+        this.rocket.update();
     }
 
     setUpFading() {
