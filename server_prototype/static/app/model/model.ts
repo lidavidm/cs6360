@@ -1427,6 +1427,7 @@ export class Rocket extends WorldObject {
     flame: Phaser.Sprite;
     shadow: Phaser.Sprite;
     crop: Phaser.Rectangle;
+    completed: boolean = false;
 
     constructor(name: string, x: number, y: number,
                 world: World, group: Phaser.Group, sprite: string, flameSprite: string) {
@@ -1471,6 +1472,7 @@ export class Rocket extends WorldObject {
 
     blastOff() {
         this.world.log.record(new BlastOffDiff(this));
+        this.world.log.record(new FinishDiff(this));
     }
 
     private t = 3;
@@ -1490,6 +1492,16 @@ export class Rocket extends WorldObject {
         this.flame.position.y = 16;
         this.crop = new Phaser.Rectangle(0, 393, 105, 393);
         this.sprite.crop(this.crop);
+    }
+}
+
+class FinishDiff extends Diff<Rocket> {
+    constructor(rocket: Rocket) {
+        super(DiffKind.Property, null, rocket.getID(), {});
+    }
+
+    apply(world: World, object: Rocket) {
+        object.completed = true;
     }
 }
 
@@ -1639,7 +1651,7 @@ export class PlatformPiece extends WorldObject {
     phaserObject: Phaser.Group;
     spriteIndex: number;
     initialIndex: number;
-    
+
     constructor(name:string, x:number, y:number,
                 world: World, group: Phaser.Group, sprites: string[]) {
         super(name, x, y, world);
@@ -1650,7 +1662,7 @@ export class PlatformPiece extends WorldObject {
         this.phaserObject.pivot.x = TILE_WIDTH / 2;
         this.phaserObject.pivot.y = TILE_HEIGHT / 2;
         for (var i = 0; i < sprites.length; i++) {
-            
+
             let sprite = this.phaserObject.create(0, 0, sprites[i]);
             sprite.width = TILE_WIDTH;
             sprite.height = TILE_HEIGHT;
@@ -1669,7 +1681,7 @@ export class PlatformPiece extends WorldObject {
             p.setSpriteIndex(this.initialIndex);
             p.initialIndex = this.initialIndex;
         }
-        
+
         let circle = world.game.add.graphics(0, 0, this.phaserObject);
         circle.lineStyle(0.5, 0xFFA500, 0.5);
         circle.drawCircle(TILE_WIDTH / 2, TILE_HEIGHT / 2, 1.41 * TILE_WIDTH);
@@ -1768,5 +1780,122 @@ export class HeavyLifter extends Robot {
 
     getLastDropped(): WorldObject {
         return this.lastDropped;
+    }
+}
+
+export class LaunchPad extends WorldObject {
+    sprite: Phaser.Sprite;
+    phaserObject: Phaser.Group;
+    myRobots: Robot[] = [];
+
+    constructor(name:string, x:number, y:number, world:World, group:Phaser.Group, sprite:string) {
+        super(name, x, y, world);
+
+        this.phaserObject = world.game.add.group(group);
+        this.phaserObject.position.x = TILE_WIDTH * x + TILE_WIDTH / 2;
+        this.phaserObject.position.y = TILE_HEIGHT * y + TILE_WIDTH / 2;
+        this.phaserObject.pivot.x = TILE_WIDTH / 2;
+        this.phaserObject.pivot.y = TILE_HEIGHT / 2;
+
+        this.sprite = this.phaserObject.create(0, 0, sprite);
+        this.sprite.width = TILE_WIDTH;
+        this.sprite.height = TILE_HEIGHT;
+
+        let c_circ = world.game.add.graphics(0, 0, this.phaserObject);
+        c_circ.lineStyle(1, 0xA4B4C6, 1);
+        c_circ.drawCircle(TILE_WIDTH / 2, TILE_HEIGHT / 2, 1.41 * TILE_WIDTH);
+
+        let n_circ = world.game.add.graphics(0, TILE_HEIGHT, this.phaserObject);
+        n_circ.lineStyle(1, 0xA96A50, 1);
+        n_circ.drawCircle(TILE_WIDTH / 2, TILE_HEIGHT / 2, 1.41 * TILE_WIDTH);
+
+        let s_circ = world.game.add.graphics(0, -1*TILE_HEIGHT, this.phaserObject);
+        s_circ.lineStyle(1, 0xABA938, 1);
+        s_circ.drawCircle(TILE_WIDTH / 2, TILE_HEIGHT / 2, 1.41 * TILE_WIDTH);
+
+        let e_circ = world.game.add.graphics(-1*TILE_WIDTH, 0, this.phaserObject);
+        e_circ.lineStyle(1, 0xF287DC, 1);
+        e_circ.drawCircle(TILE_WIDTH / 2, TILE_HEIGHT / 2, 1.41 * TILE_WIDTH);
+
+        let w_circ = world.game.add.graphics(TILE_WIDTH, 0, this.phaserObject);
+        w_circ.lineStyle(1, 0x397EAC, 1);
+        w_circ.drawCircle(TILE_WIDTH / 2, TILE_HEIGHT / 2, 1.41 * TILE_WIDTH);
+    }
+
+    readyForLaunch() {
+
+        let surroundings: WorldObject[] = [];
+
+        let c = this.world.getObjectByLoc(this.x, this.y);
+        let n = this.world.getObjectByLoc(this.x, this.y-1);
+        let s = this.world.getObjectByLoc(this.x, this.y+1);
+        let e = this.world.getObjectByLoc(this.x+1, this.y);
+        let w = this.world.getObjectByLoc(this.x-1, this.y);
+
+        surroundings = surroundings.concat(c).concat(n).concat(s).concat(e).concat(w);
+
+        let unique: String[] = [];
+        for (let r of surroundings) {
+            let myType = "";
+
+            if ( r instanceof Robot ) {
+                if (r instanceof FrackingRobot) {
+                    myType = "Fracking";
+                }
+                else if (r instanceof MineRobot) {
+                    myType = "Mining";
+                }
+                else if (r instanceof RescueRobot) {
+                    myType = "Rescue";
+                }
+                else if (r instanceof HeavyLifter) {
+                    myType = "Lifter";
+                }
+                else {
+                    myType = "Basic";
+                }
+
+                this.myRobots.push(r);
+
+                if (myType !== "" && unique.indexOf(myType) < 0) {
+                    unique.push(myType);
+                }
+
+            }
+        }
+
+        return unique.length >= 5;
+
+    }
+
+    absorbRobots() {
+        for(let r of this.myRobots) {
+            this.world.log.record(new AbsorbRobotDiff(r, this.x, this.y));
+        }
+    }
+}
+
+export class AbsorbRobotDiff extends Diff<Robot> {
+    new_x: number;
+    new_y: number;
+
+    constructor(robot: Robot, new_x: number, new_y: number) {
+        super(DiffKind.Property, null, robot.getID(), {});
+        this.new_x = new_x;
+        this.new_y = new_y;
+    }
+
+    tween(object: Robot, duration=ANIM_DURATION): Phaser.Tween {
+        let p = object.getPhaserObject();
+
+        let t = p.game.add.tween(p).to({
+            width: 0,
+            height: 0,
+            x: this.new_x * TILE_WIDTH,
+            y: this.new_y * TILE_HEIGHT,
+            alpha: 0,
+        }, duration, Phaser.Easing.Quadratic.InOut);
+
+        return t;
     }
 }
