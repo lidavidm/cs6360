@@ -33,7 +33,11 @@ export class Interpreter {
 
                 var obj: any = world.getObjectByID(id);
 
-                let result = obj[methodName].apply(obj, args);
+                let method = obj[methodName];
+                if (typeof method === "undefined") {
+                    throw `I don't know how to ${methodName}!\nMake sure this method is from my class or a superclass.`;
+                }
+                let result = method.apply(obj, args);
                 if (typeof result === "number") {
                     let pyValue = Sk.ffi.remapToPy(result);
                     return pyValue;
