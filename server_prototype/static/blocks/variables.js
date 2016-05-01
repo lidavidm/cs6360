@@ -100,7 +100,10 @@ Blockly.Blocks['variables_get'] = {
    * Update the class image of this block.
    * @this Blockly.Block
    */
-  validate: function() {
+  validate: function(className) {
+    if (typeof className !== "undefined" && className) {
+      this.data = className;
+    }
     var block_class = this.data;
     var image = this.getField("CLASS_IMAGE");
     var image_src = Blockly.Blocks.variables.CLASS_IMAGE(block_class);

@@ -198,6 +198,10 @@ export class Toolbox {
         return changed;
     }
 
+    classOfUserObject(objectName: string): string {
+        return this._userObjects[objectName] || null;
+    }
+
     addControl(name: string, insert=true, fields?: [string, any][], values?: [string, any][], data?: string) {
         let block = this._tree.createElement("block");
         block.setAttribute("type", name);

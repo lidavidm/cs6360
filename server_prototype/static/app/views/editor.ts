@@ -83,7 +83,7 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
                     Blockly.Xml.workspaceToDom(controller.workspace));
                 var block = Blockly.Block.getById(event.blockId);
                 if (block) {
-                    updateObjectImage(event, block);
+                    updateObjectImage(block);
                 }
 
                 for (let block of controller.workspace.getAllBlocks()) {
@@ -163,6 +163,12 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             if (controller.level.toolbox.setUserObjects(objects)) {
                 updateToolbox();
             }
+
+            for (let block of blocks) {
+                if (block["type"] === "variables_get") {
+                    block.validate(controller.level.toolbox.classOfUserObject(block.getFieldValue("VAR")));
+                }
+            }
         }
 
         // Workaround for issue #49
@@ -213,9 +219,9 @@ export const Component: _mithril.MithrilComponent<EditorController> = <any> {
             }, 500);
         });
 
-        function updateObjectImage(event: any, block: any) {
+        function updateObjectImage(block: any) {
             if (block && block["type"] === "variables_get") {
-                block.validate();
+                block.validate(controller.level.toolbox.classOfUserObject(block.getFieldValue("VAR")));
             }
         }
 
