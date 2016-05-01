@@ -28,15 +28,6 @@ export const TILE_WIDTH = 16;
 export const TILE_HEIGHT = 16;
 export const ANIM_DURATION = 800;
 
-export interface SerializedObject {
-
-}
-
-export interface Serializable {
-    serialize(): SerializedObject;
-    deserialize(state: SerializedObject): void;
-}
-
 export interface PropertyDiff {
     [property: string]: [any, any],
 }
@@ -1786,7 +1777,6 @@ export class HeavyLifter extends Robot {
 export class LaunchPad extends WorldObject {
     sprite: Phaser.Sprite;
     phaserObject: Phaser.Group;
-    myRobots: Robot[] = [];
 
     constructor(name:string, x:number, y:number, world:World, group:Phaser.Group, sprite:string) {
         super(name, x, y, world);
@@ -1822,8 +1812,7 @@ export class LaunchPad extends WorldObject {
         w_circ.drawCircle(TILE_WIDTH / 2, TILE_HEIGHT / 2, 1.41 * TILE_WIDTH);
     }
 
-    readyForLaunch() {
-
+    private surroundings(): WorldObject[] {
         let surroundings: WorldObject[] = [];
 
         let c = this.world.getObjectByLoc(this.x, this.y);
@@ -1832,13 +1821,15 @@ export class LaunchPad extends WorldObject {
         let e = this.world.getObjectByLoc(this.x+1, this.y);
         let w = this.world.getObjectByLoc(this.x-1, this.y);
 
-        surroundings = surroundings.concat(c).concat(n).concat(s).concat(e).concat(w);
+        return surroundings.concat(c).concat(n).concat(s).concat(e).concat(w);
+    }
 
-        let unique: String[] = [];
-        for (let r of surroundings) {
+    readyForLaunch() {
+        let unique: string[] = [];
+        for (let r of this.surroundings()) {
             let myType = "";
 
-            if ( r instanceof Robot ) {
+            if (r instanceof Robot) {
                 if (r instanceof FrackingRobot) {
                     myType = "Fracking";
                 }
@@ -1855,8 +1846,6 @@ export class LaunchPad extends WorldObject {
                     myType = "Basic";
                 }
 
-                this.myRobots.push(r);
-
                 if (myType !== "" && unique.indexOf(myType) < 0) {
                     unique.push(myType);
                 }
@@ -1865,12 +1854,13 @@ export class LaunchPad extends WorldObject {
         }
 
         return unique.length >= 5;
-
     }
 
     absorbRobots() {
-        for(let r of this.myRobots) {
-            this.world.log.record(new AbsorbRobotDiff(r, this.x, this.y));
+        for (let r of this.surroundings()) {
+            if (r instanceof Robot) {
+                this.world.log.record(new AbsorbRobotDiff(r, this.x, this.y));
+            }
         }
     }
 }

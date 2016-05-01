@@ -149,8 +149,8 @@ export class BlastOffLevel extends BaseLevel {
                        initialized[this.fracker.getID()] &&
                        initialized[this.rescue.getID()] &&
                        initialized[this.lifter.getID()]) {
-                           console.log("All Robots Ready!");
                            if (this.launch_pad.readyForLaunch()) {
+                               console.log("All Robots Ready!");
                                this.launch_pad.absorbRobots();
                                this.rocket.build();
                                this.rocket.blastOff();
