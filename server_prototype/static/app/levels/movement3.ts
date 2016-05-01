@@ -84,9 +84,6 @@ export class MovementLevel3 extends BaseLevel {
         // Create the world objects here.
         super.create();
 
-        this.zoomCamera.position.x = 120;
-        this.zoomCamera.position.y = 100;
-
         let map = this.game.add.tilemap("lava");
         map.addTilesetImage("cave2", "tiles");
 
@@ -99,6 +96,7 @@ export class MovementLevel3 extends BaseLevel {
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
         this.initWorld(map);
+
         this.robot = new model.Robot("robot", 7, 2, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
         this.gate = new model.Gate("gate", 7, 8, this.modelWorld,

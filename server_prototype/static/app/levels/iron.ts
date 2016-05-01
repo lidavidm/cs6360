@@ -55,7 +55,14 @@ export class IronLevel extends BaseLevel {
 
         this.objectives = [
             {
-                objective: "Collect all the iron (4)",
+                objective: `Write the moveAndMine method for the MineRobot [${asset.Robot.Red}]`,
+                completed: false,
+                predicate: (level) => {
+                    return this.program.getMethodCode("MineRobot", "moveAndMine").indexOf("NotImplementedError") === -1;
+                }
+            },
+            {
+                objective: `Collect all the iron [${asset.Iron.Basic}] (5)`,
                 completed: false,
                 predicate: (level) => {
                     if (this.robot){
@@ -66,13 +73,9 @@ export class IronLevel extends BaseLevel {
                         }
                         return true;
                     }
-
-                    // for (var iron of level.irons) {
-                    //     if (!level.robot.holding(iron)) {
-                    //         return false;
-                    //     }
-                    // }
-                    // return true;
+                    else {
+                        return false;
+                    }
                 }
             }
         ];
@@ -115,9 +118,6 @@ export class IronLevel extends BaseLevel {
     create() {
         super.create();
 
-        this.zoomCamera.position.x = 1000;
-        this.zoomCamera.position.y = 128;
-
         let map = this.game.add.tilemap("outside");
         map.addTilesetImage("cave2", "tiles");
 
@@ -135,6 +135,8 @@ export class IronLevel extends BaseLevel {
         this.other_robot = new model.Robot("robot", 8, 4, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");
         this.irons = [];
+        this.irons.push(new model.Iron("iron", 6, 6,
+                                   this.modelWorld, this.middle, "iron"));
         this.irons.push(new model.Iron("iron", 5, 6,
                                    this.modelWorld, this.middle, "iron"));
         this.irons.push(new model.Iron("iron", 4, 6,
@@ -146,6 +148,8 @@ export class IronLevel extends BaseLevel {
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
+
+        this.zoomCamera.position.x = 300;
     }
 
     setUpFading() {

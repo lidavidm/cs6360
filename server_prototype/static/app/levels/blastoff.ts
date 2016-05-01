@@ -98,47 +98,12 @@ export class BlastOffLevel extends BaseLevel {
                            initialized[this.fracker.getID()] &&
                            initialized[this.rescue.getID()] &&
                            initialized[this.lifter.getID()];
-                    // let unique: String[] = [];
-                    // for (let d in this.modelWorld.objects) {
-                    //     let r = this.modelWorld.objects[d];
-                    //     let myType = "";
-                    //
-                    //     if ( r instanceof model.Robot && initialized[(<model.Robot>r).getID()]) {
-                    //         if (r instanceof model.FrackingRobot) {
-                    //             myType = "Fracking";
-                    //         }
-                    //         else if (r instanceof model.MineRobot) {
-                    //             myType = "Mining";
-                    //         }
-                    //         else if (r instanceof model.RescueRobot) {
-                    //             myType = "Rescue";
-                    //         }
-                    //         else if (r instanceof model.HeavyLifter) {
-                    //             myType = "Lifter";
-                    //         }
-                    //         else {
-                    //             myType = "Basic";
-                    //         }
-                    //     }
-                    //
-                    //     if (myType !== "" && unique.indexOf(myType) < 0) {
-                    //         unique.push(myType);
-                    //     }
-                    // }
-                    // return unique.length >= 5;
                 }
             },
             {
-                objective: `Move 4 unique robots to the launch pad [${asset.Misc.LaunchPad}]`,
+                objective: `Move each robot to a circle by the launch pad [${asset.Misc.LaunchPad}]`,
                 completed: false,
                 predicate: (level, initialized) => {
-                    // for ( let r in this.modelWorld.objects) {
-                    //     let obj = this.modelWorld.objects[r];
-                    //     if (obj instanceof model.Robot && !initialized[obj.getID()]) {
-                    //         return false;
-                    //     }
-                    // }
-
                     if(this.basic &&
                        this.miner &&
                        this.fracker &&
@@ -192,7 +157,7 @@ export class BlastOffLevel extends BaseLevel {
                                 },
                             ],
                             methods: ["mine"],
-                            userMethods: [],
+                            userMethods: ["moveAndMine"],
                         },
                         {
                             name: "RescueRobot",
@@ -206,7 +171,7 @@ export class BlastOffLevel extends BaseLevel {
                             methods: ["pickUp", "drop"],
                         },
                     ],
-                    methods: [],
+                    methods: ["moveForward", "turnRight", "turnLeft", "selfDestruct"],
                     userMethods: ["halfRectangle"],
                 },
                 {
@@ -279,36 +244,6 @@ export class BlastOffLevel extends BaseLevel {
         Blockly.Blocks.oop.faded['new'] = true;
     }
 
-    // instantiateObject(className: string, varName: string): model.WorldObject {
-    //     if (!this.modelWorld.passable(7, 4)) {
-    //         return null;
-    //     }
-    //
-    //     if (className == "Robot") {
-    //         return new model.Robot(varName, 7, 4, model.Direction.WEST, this.modelWorld, this.middle, "robot");
-    //     }
-    //     else if (className === "MineRobot") {
-    //         return new model.MineRobot(varName, 7, 4, model.Direction.WEST, this.modelWorld, this.middle, "mineRobot");
-    //     }
-    //     else if (className === "FrackingRobot") {
-    //         return new model.FrackingRobot(varName, 7, 4, model.Direction.WEST, this.modelWorld, this.middle, "frackingRobot");
-    //     }
-    //     else if (className === "RescueRobot") {
-    //         return new model.RescueRobot(varName, 7, 4, model.Direction.WEST, this.modelWorld, this.middle, "rescueRobot");
-    //     }
-    //     else if (className === "HeavyLifter") {
-    //         return new model.HeavyLifter(varName, 7, 4, model.Direction.WEST, this.modelWorld, this.middle, "heavyLifter");
-    //     }
-    //     else if (className === "Drone") {
-    //         let newDrone = new model.Drone(varName, 7, 4, this.modelWorld, this.foreground, "drone");
-    //         newDrone.activate();
-    //         return newDrone;
-    //     }
-    //     else {
-    //         return null;
-    //     }
-    // }
-
     instantiateObject(className: string, varName: string): model.WorldObject {
         if (!this.modelWorld.passable(7, 4)) {
             return null;
@@ -344,12 +279,18 @@ export class BlastOffLevel extends BaseLevel {
         }
     }
 
-    /* Need block limit */
     blockLimit(context: EditorContext): number {
-        return null;
+        if (context.className !== MAIN) {
+            return 6;
+        }
+        else {
+            return null;
+        }
     }
 
     canUseBlockEditor(context: EditorContext): boolean {
-        return context.className !== MAIN && !(context.className === "Robot" && context.method === "halfRectangle");
+        return context.className !== MAIN &&
+                !(context.className === "Robot" && context.method === "halfRectangle") &&
+                !(context.className === "Drone" && context.method === "flyHome");
     }
 }

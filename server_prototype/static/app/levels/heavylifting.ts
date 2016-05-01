@@ -47,7 +47,6 @@ export class HeavyLiftingLevel extends BaseLevel {
             model.Robot.prototype.moveForward,
             model.Robot.prototype.turnRight,
             model.Robot.prototype.turnLeft,
-            model.Robot.prototype.moveBackward,
             model.Robot.prototype.selfDestruct,
         ]);
         this.toolbox.addClass("MineRobot", asset.Robot.Red, model.MineRobot, [
@@ -124,7 +123,7 @@ export class HeavyLiftingLevel extends BaseLevel {
                                 },
                             ],
                             methods: ["mine"],
-                            userMethods: [],
+                            userMethods: ["moveAndMine"],
                         },
                         {
                             name: "RescueRobot",
@@ -138,7 +137,7 @@ export class HeavyLiftingLevel extends BaseLevel {
                             methods: ["pickUp", "drop"],
                         },
                     ],
-                    methods: [],
+                    methods: ["moveForward", "turnRight", "turnLeft", "selfDestruct"],
                     userMethods: ["halfRectangle"],
                 },
                 {
@@ -150,7 +149,12 @@ export class HeavyLiftingLevel extends BaseLevel {
             ]
         };
 
-        this.allTooltips = [[]];
+        this.allTooltips = [
+            [
+                new TooltipView.Tooltip(TooltipView.Region.ButtonBar,
+                    "This level can be solved with 25 blocks!"),
+            ],
+        ];
 
         this.setUpFading();
     }
@@ -204,6 +208,15 @@ export class HeavyLiftingLevel extends BaseLevel {
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
     }
 
+    blockLimit(context: EditorContext): number {
+        if (context.className === MAIN) {
+            return 35;
+        }
+        else {
+            return 6;
+        }
+    }
+
     setUpFading() {
         Blockly.Blocks.oop.clearFaded();
         Blockly.Blocks.oop.faded['tell'] = true;
@@ -240,11 +253,6 @@ export class HeavyLiftingLevel extends BaseLevel {
         else {
             return null;
         }
-    }
-
-    /* Need block limit */
-    blockLimit(context: EditorContext): number {
-        return null;
     }
 
     canUseBlockEditor(context: EditorContext): boolean {

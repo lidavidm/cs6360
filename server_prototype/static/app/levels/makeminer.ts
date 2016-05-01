@@ -125,8 +125,6 @@ export class MakeMiner extends BaseLevel {
 
         this.modelWorld.log.recordInitEnd();
         this.program.instantiateGlobals(this.modelWorld, this.toolbox);
-
-        this.zoomCamera.position.x = 300;
     }
 
     instantiateObject(className: string, varName: string): model.WorldObject {

@@ -14,9 +14,12 @@ export class RescueLevel extends BaseLevel {
 
         this.missionTitle = "Eye Opener";
 
-        this.missionText = ["One of the surveilance drones just stopped. We need to reboot it or we'll lose visuals on your area."];
+        this.missionText = [
+            "One of the surveilance drones just stopped. We need to reboot it or we'll lose visuals on your area.",
+            "Rebooting will call it's flyHome method"
+        ];
 
-        this.toolbox = new Toolbox();
+        this.toolbox = new Toolbox(false, "class", false);
         this.toolbox.addControl("tell");
         this.toolbox.addControl("controls_repeat");
         this.toolbox.addControl("new");
@@ -54,10 +57,10 @@ export class RescueLevel extends BaseLevel {
                 }
             },
             {
-                objective: `Move the robot [${asset.Robot.Pink}] to the drone [${asset.Drone.Basic}]`,
+                objective: `Move a RescueRobot [${asset.Robot.Pink}] in front of the drone [${asset.Drone.Basic}]`,
                 completed: false,
-                predicate: (level) => {
-                    return this.rescuer && this.rescuer.getX() == 5 && this.rescuer.getY() == 4;
+                predicate: (level, initialized) => {
+                    return this.rescuer && initialized[this.rescuer.getID()] && this.rescuer.getX() == 5 && this.rescuer.getY() == 4;
                 }
             },
             {
@@ -160,10 +163,20 @@ export class RescueLevel extends BaseLevel {
         Blockly.Blocks.oop.clearFaded();
         Blockly.Blocks.oop.faded['tell'] = true;
         Blockly.Blocks.oop.faded['controls_repeat'] = true;
+        Blockly.Blocks.oop.faded['new'] = true;
     }
 
     canUseBlockEditor(context: EditorContext): boolean {
         return !(context.className === "Drone" && context.method === "flyHome");
+    }
+
+    blockLimit(context: EditorContext): number {
+        if (context.className === MAIN) {
+            return 9;
+        }
+        else {
+            return 6;
+        }
     }
 
     instantiateObject(className: string, varName: string): model.WorldObject {

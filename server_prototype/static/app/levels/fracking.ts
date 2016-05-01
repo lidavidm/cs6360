@@ -165,10 +165,10 @@ export class FrackingLevel extends BaseLevel {
 
     blockLimit(context: EditorContext): number {
         if (context.className === MAIN) {
-            return 18;
+            return 24;
         }
         else {
-            return null;
+            return 6;
         }
     }
 

@@ -17,7 +17,7 @@ export class ScoutLevel extends BaseLevel {
             "Create a drone to inspect a potential rocket launch site in the southwest."
         ]
 
-        this.toolbox = new Toolbox();
+        this.toolbox = new Toolbox(false, "class", false);
         this.toolbox.addControl("tell");
         this.toolbox.addControl("controls_repeat");
         this.toolbox.addControl("new");
@@ -73,12 +73,7 @@ export class ScoutLevel extends BaseLevel {
             },
         ];
 
-        this.allTooltips = [
-            [
-                new TooltipView.Tooltip(TooltipView.Region.ButtonBar,
-                    "This level can be solved with 10 blocks!"),
-            ],
-        ];
+        this.allTooltips = [[]];
 
         this.hierarchy = {
             name: "object",
@@ -105,7 +100,7 @@ export class ScoutLevel extends BaseLevel {
                 {
                     name: "Drone",
                     methods: ["flyNorth", "flySouth", "flyEast", "flyWest"],
-                    userMethods: ["flyHome"],
+                    userMethods: [],
                     children: [],
                 }
             ],
@@ -163,7 +158,7 @@ export class ScoutLevel extends BaseLevel {
             return 10;
         }
         else {
-            return null;
+            return 6;
         }
     }
 

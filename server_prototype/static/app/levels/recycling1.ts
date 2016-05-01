@@ -63,7 +63,7 @@ export class RecyclingLevel extends BaseLevel {
         this.allTooltips = [
             [
                 new TooltipView.Tooltip(TooltipView.Region.ButtonBar,
-                    "This level can be solved with 25 blocks!"),
+                    "This level can be solved with around 27 blocks!"),
             ],
         ];
 
