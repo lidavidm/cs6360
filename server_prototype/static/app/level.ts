@@ -665,6 +665,9 @@ export class BaseLevel extends Phaser.State {
     render() {
     }
 
+    setupCamera() {
+    }
+
     isComplete(): boolean {
         for (let objective of this.objectives) {
             if (!objective.completed) {

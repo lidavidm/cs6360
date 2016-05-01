@@ -238,6 +238,7 @@ export const MainComponent = {
                 level: controller.loadScreenOldLevel,
                 onContinue: () => {
                     controller.loadScreenOldLevel = null;
+                    controller.level.setupCamera();
                 },
                 event: controller.event,
             }),
