@@ -1,9 +1,0 @@
-[submodule "server_prototype/static/blockly"]
-	path = server_prototype/static/blockly
-	url = https://github.com/lidavidm/blockly.git
-[submodule "server_prototype/static/closure-library"]
-	path = server_prototype/static/closure-library
-	url = https://github.com/google/closure-library.git
-[submodule "server_prototype/static/assets"]
-	path = server_prototype/static/assets
-	url = https://github.com/lidavidm/cs6360-assets.git
