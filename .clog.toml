@@ -1,8 +1,0 @@
-[clog]
-repository = "https://github.com/lidavidm/cs6360"
-
-link-style = "github"
-
-changelog = "CHANGELOG.md"
-
-from-latest-tag = true
