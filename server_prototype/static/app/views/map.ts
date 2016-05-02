@@ -141,6 +141,7 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                 onreset: () => {
                     args.level.runReset().then(() => {
                         Logging.recordCodeRun("reset");
+                        args.level.setupCamera();
                         m.startComputation();
                         args.executing(false);
                         controller.doneExecuting(false);
@@ -152,6 +153,7 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                 onabort: () => {
                     if (controller.session) {
                         Logging.recordCodeRun("abort");
+                        args.level.setupCamera();
                         m.startComputation();
                         controller.session.abort();
                         m.endComputation();

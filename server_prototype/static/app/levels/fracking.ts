@@ -62,7 +62,7 @@ export class FrackingLevel extends BaseLevel {
         this.allTooltips = [
             [
                 new TooltipView.Tooltip(TooltipView.Region.ButtonBar,
-                    "This level can be solved with 18 blocks!"),
+                    "This level can be solved with 15 blocks!"),
             ],
         ];
 
