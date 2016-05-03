@@ -50,6 +50,9 @@ def incrementCounter():
 def recordDuplicateObject(blockID, name):
     raise HelpError("{} was already instantiated!".format(name))
 
+def recordDuplicateValue(blockID, name):
+    raise HelpError("Can't make an object called {}, something already is called {}!".format(name, name))
+
 `;
 
 function indent(code: string, indent: string) {

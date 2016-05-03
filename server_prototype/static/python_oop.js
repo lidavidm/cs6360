@@ -73,7 +73,9 @@ Blockly.Python["new"] = function(block) {
     }
     var prefix = "";
     if (Blockly.Python.STATEMENT_PREFIX) {
-        prefix = "try:\n    " + objectName + "\n    recordDuplicateObject('" + block.id + "', '" + objectName + "')\n" + "except NameError:\n    pass\n";
+        var recordDuplicate = "recordDuplicateObject('" + block.id + "', '" + objectName + "')\n";
+        var recordHasValue = "recordDuplicateValue('" + block.id + "', '" + objectName + "')\n";
+        prefix = "try:\n    " + objectName + "\n    if type(" + objectName + ") == type:\n        " + recordHasValue + "    else:\n        " + recordDuplicate + "except NameError:\n    pass\n";
     }
     return prefix + objectName + " = " + className + "()\n";
 };
