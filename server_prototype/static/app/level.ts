@@ -41,7 +41,7 @@ export class Toolbox {
     private _controlParent: Element;
     private _classParent: Element;
     private _classes: string[];
-    private _objects: [string, string][];
+    private _objects: [string, string, boolean][];
     private _userObjects: {
         [name: string]: string
     };
@@ -154,7 +154,7 @@ export class Toolbox {
         return method;
     }
 
-    addObject(name: string, className: string): HTMLElement {
+    addObject(name: string, className: string, visible=true): HTMLElement {
         if (this._classes.indexOf(className) < 0) {
             throw new ReferenceError(`Toolbox error: class ${className} does not exist.`);
         }
@@ -169,8 +169,10 @@ export class Toolbox {
         field.textContent = name;
         block.appendChild(field);
 
-        this._objectParent.appendChild(block);
-        this._objects.push([name, className]);
+        if (visible) {
+            this._objectParent.appendChild(block);
+        }
+        this._objects.push([name, className, visible]);
 
         return block;
     }
@@ -309,7 +311,7 @@ export class Toolbox {
         return this._classes;
     }
 
-    getObjects(): [string, string][] {
+    getObjects(): [string, string, boolean][] {
         return this._objects;
     }
 

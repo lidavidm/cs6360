@@ -16,7 +16,7 @@ export class RescueLevel extends BaseLevel {
 
         this.missionText = [
             "One of the surveilance drones just stopped. We need to reboot it or we'll lose visuals on your area.",
-            "Rebooting will call it's flyHome method"
+            "The drone will call self.flyHome() when it reboots."
         ];
 
         this.toolbox = new Toolbox(false, "class", false);
@@ -46,7 +46,7 @@ export class RescueLevel extends BaseLevel {
             model.Drone.prototype.flyNorth,
         ]);
 
-        this.toolbox.addObject("drone", "Drone");
+        this.toolbox.addObject("drone", "Drone", false);
 
         this.objectives = [
             {
@@ -103,7 +103,7 @@ export class RescueLevel extends BaseLevel {
                         {
                             name: "RescueRobot",
                             children: [],
-                            methods: ["rescue"],
+                            methods: ["rebootTarget"],
                             userMethods: [],
                         },
                     ],
