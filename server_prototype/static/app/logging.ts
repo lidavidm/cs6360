@@ -16,7 +16,7 @@
 // along with Tell Me to Survive.  If not, see <http://www.gnu.org/licenses/>.
 
 import {Savegame} from "savegame";
-import {EditorContext} from "model/editorcontext";
+import {EditorContext, MAIN} from "model/editorcontext";
 
 const LOGGING_SERVER = "https://logging.lidavidm.me";
 
@@ -31,6 +31,8 @@ enum Action {
     Execute = 3,
     Exception = 4,
     FinishTest = 5,
+    SavedClass = 6,
+    SavedLevel = 7,
 }
 
 var global_state = {
@@ -116,7 +118,20 @@ export function recordGeneric(levelID: number, action: Action, data: string) {
 }
 
 export function recordSavegame(savegame: Savegame) {
-    return recordGeneric(global_state.level, Action.Savegame, savegame.stringify());
+    let classes = JSON.parse(savegame.stringify())["classes"];
+    let level = savegame.load({
+        className: MAIN,
+        method: "",
+    });
+    recordGeneric(global_state.level, Action.SavedLevel, JSON.stringify(level));
+
+    for (let className of Object.keys(classes)) {
+        console.log("Saving class", className);
+        let saved = Object.create(null);
+        saved[className] = classes[className];
+        console.log(JSON.stringify(saved));
+        recordGeneric(global_state.level, Action.SavedClass, JSON.stringify(saved));
+    }
 }
 
 export function recordWorkspace(context: EditorContext, workspace: HTMLElement | string) {
