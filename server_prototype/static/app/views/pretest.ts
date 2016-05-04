@@ -44,7 +44,7 @@ tweety.fly()`, [
         new Code("turnRight()\nmoveForward()\nmoveForward()"),
         new Code("turnLeft()\nmoveForward()\nmoveForward()"),
         new Code("robot.moveLeft()\nrobot.moveLeft()"),
-        new Code("robot.turnRight()\nrobot.moveForward()\nrobot.moveForward()"),
+        new Code("robot.turnLeft()\nrobot.moveForward()\nrobot.moveForward()"),
     ], "assets/pretest_map.png"),
 
     new MultipleChoiceQuestion("The class Dog has a method 'makeSound' that prints the string \"woof\". The class Wolf is a subclass of Dog, which has a method 'makeSound' that prints the string \"awooo!\" What is the result of the following code?", `fido = Wolf()
