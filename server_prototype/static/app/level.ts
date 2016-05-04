@@ -646,19 +646,6 @@ export class BaseLevel extends Phaser.State {
             this.lastY = this.game.input.mousePointer.position.y;
         }
 
-        if (this.cursors.up.isDown) {
-            this.zoomCamera.position.y -= 4;
-        }
-        else if (this.cursors.down.isDown) {
-            this.zoomCamera.position.y += 4;
-        }
-        else if (this.cursors.left.isDown) {
-            this.zoomCamera.position.x -= 4;
-        }
-        else if (this.cursors.right.isDown) {
-            this.zoomCamera.position.x += 4;
-        }
-
         // make all drones update correctly
         for (var d in this.modelWorld.objects) {
             let object = this.modelWorld.objects[d];
