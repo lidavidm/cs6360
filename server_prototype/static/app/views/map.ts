@@ -119,12 +119,7 @@ export const Component: _mithril.MithrilComponent<MapController> = <any> {
                 },
 
                 onruninvalid: () => {
-                    if (!args.level.program.isCodeParseable()) {
-                        // TODO: report the error somehow
-                        Logging.recordCodeRun("unparseable");
-                        args.level.program.flagInvalid(true);
-                    }
-                    else {
+                    if (args.level.program.isCodeParseable()) {
                         args.level.program.flagInvalid(false);
                     }
 
