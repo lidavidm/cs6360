@@ -136,8 +136,11 @@ export const MainComponent = {
 
             newLevel.event.on(level.BaseLevel.OBJECTIVES_UPDATED, () => {
                 if (newLevel.isComplete()) {
-                    Logging.recordSavegame(savegame);
-                    Logging.finishLevel();
+                    let finishedLogging = function() {
+                        Logging.finishLevel();
+                        newLevel.game.state.add("Next", nextLevel, true);
+                    };
+                    Logging.recordSavegame(savegame).then(finishedLogging, finishedLogging);
                     controller.loadScreenOldLevel = newLevel;
                     newLevel.tooltips().forEach((tooltip) => {
                         tooltip.hide();
@@ -158,7 +161,6 @@ export const MainComponent = {
                     savegame.currentLevel = newLevelName;
                     let nextLevelProto = DEFAULT_PROGRESSION.getLevel(newLevelName);
                     let nextLevel = new nextLevelProto;
-                    newLevel.game.state.add("Next", nextLevel, true);
                     newLevel.game.load.onLoadComplete.add(() => {
                         newLevel.game.load.onLoadComplete.removeAll();
                         controller.executing(false);

@@ -102,7 +102,7 @@ export function finishLevel() {
     });
 }
 
-export function recordGeneric(levelID: number, action: Action, data: string) {
+export function recordGeneric(levelID: number, action: Action, data: string): _mithril.Thennable<{}> {
     global_state.quest_seq_id += 1;
     return request("player_action.php", {
         client_timestamp: Date.now(),
@@ -118,20 +118,22 @@ export function recordGeneric(levelID: number, action: Action, data: string) {
 }
 
 export function recordSavegame(savegame: Savegame) {
+    let promises: _mithril.Thennable<{}>[] = [];
     let classes = JSON.parse(savegame.stringify())["classes"];
     let level = savegame.load({
         className: MAIN,
         method: "",
     });
-    recordGeneric(global_state.level, Action.SavedLevel, JSON.stringify(level));
+    promises.push(recordGeneric(global_state.level, Action.SavedLevel, JSON.stringify(level)));
 
     for (let className of Object.keys(classes)) {
         console.log("Saving class", className);
         let saved = Object.create(null);
         saved[className] = classes[className];
-        console.log(JSON.stringify(saved));
-        recordGeneric(global_state.level, Action.SavedClass, JSON.stringify(saved));
+        promises.push(recordGeneric(global_state.level, Action.SavedClass, JSON.stringify(saved)));
     }
+
+    return m.sync(promises);
 }
 
 export function recordWorkspace(context: EditorContext, workspace: HTMLElement | string) {
