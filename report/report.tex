@@ -1,0 +1,75 @@
+\documentclass[12pt,notitlepage]{article}
+%% \usepackage[bitstream-charter]{mathdesign}
+%% \usepackage{inconsolata}
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage[utf8x]{inputenc}
+\usepackage[letterpaper]{geometry}
+\usepackage{titlesec}
+\usepackage{booktabs}
+\usepackage{tabu}
+\usepackage{hyperref}
+
+\newcommand\footref[1]{\footnote{\url{#1}}}
+
+\titleformat{\section}{\normalfont\large}{\thesection}{0.5em}{}
+\titleformat{\subsection}{\normalfont}{\thesubsection}{0.5em}{}
+\titlespacing*{\section}{0em}{0.75em}{0.3em}
+
+\begin{document}
+\begingroup
+  \centering
+  {\Large {\tt tell me to survive}: Concreteness Fading and Visual
+    Programming in Teaching Object-Oriented Programming\\[1em]}
+
+  Andy Jiang, Michael Mauer, and David Li\par
+\endgroup
+
+\section{Introduction and Motivation}
+
+Much effort has gone towards methods to teach programming as an
+overall concept, with systems like Alice, Scratch, and CodeSpells
+demonstrating how visual programming can successfully introduce
+students to this field. Our goal is to teach the more specific topic
+of object-oriented programming to novice programmers using these same
+techniques, focusing on how to abstract and represent ideas such as
+inheritance, polymorphism, and interfaces in such a framework.
+Additionally, to reinforce these concepts to an audience already
+somewhat familiar with programming, we will introduce concreteness
+fading to the system, transitioning students from visual programming
+to directly writing code. This will facilitate the learning of these
+specific higher-level concepts and abstractions within computer
+science, which is important to effectively educate and train the next
+generation of computer science and software development students.
+
+\section{Related Work}
+
+The idea of visual programming manipulating robots or other objects in
+a virtual world is not a new one; we list several games and projects
+in the same vein, with some comparison to our project.
+
+\begin{itemize}
+\item CodeSpells\footref{https://codespells.org/}
+\item Scratch\footref{https://scratch.mit.edu/}/Alice\footref{http://www.alice.org/}
+\item Looking Glass\footref{https://lookingglass.wustl.edu/}
+\item Hour of Code\footref{https://code.org/learn}
+\item LightBot\footref{https://lightbot.com/hocflash.html}
+\item Human Resource Machine\footref{https://tomorrowcorporation.com/humanresourcemachine}
+\item Blockly Games\footref{https://blockly-games.appspot.com/}
+\item BlockPy\footref{https://github.com/RealTimeWeb/blockpy}
+\end{itemize}
+
+CodeSpells, Alice, Scratch, and Looking Glass are more free-form;
+instead of specific puzzles or levels to solve, they simply place the
+player in a sandbox. Hour of Code, LightBot, and Human Resource
+Machine take the same puzzle-oriented approach our game does, but lack
+the concreteness fading aspect. Blockly Games
+
+\section{Methodology}
+
+\section{Results}
+
+\section{Conclusions}
+
+\end{document}
