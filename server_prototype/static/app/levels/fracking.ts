@@ -62,7 +62,7 @@ export class FrackingLevel extends BaseLevel {
         this.allTooltips = [
             [
                 new TooltipView.Tooltip(TooltipView.Region.ButtonBar,
-                    "This level can be solved with 15 blocks!"),
+                    "This level can be solved with 12 blocks!"),
             ],
         ];
 
@@ -167,7 +167,7 @@ export class FrackingLevel extends BaseLevel {
 
     blockLimit(context: EditorContext): number {
         if (context.className === MAIN) {
-            return 24;
+            return 20;
         }
         else {
             return 6;
