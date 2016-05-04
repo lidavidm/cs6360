@@ -78,8 +78,6 @@ export class MovementLevel2 extends BaseLevel {
         let layer2 = map.createLayer(
             "Tile Layer 2", this.game.width, this.game.height, this.background);
 
-        this.cursors = this.game.input.keyboard.createCursorKeys();
-
         this.initWorld(map);
         this.robot = new model.Robot("robot", 2, 2, model.Direction.EAST,
                                      this.modelWorld, this.foreground, "robot");

@@ -38,7 +38,7 @@ export class RecyclingLevel extends BaseLevel {
 
         this.objectives = [
             {
-                objective: `Move the old robot [${asset.Robot.Basic}] 7 spaces west`,
+                objective: `Move the old robot [${asset.Robot.Basic}] to a safe distance (7 spaces west)`,
                 completed: false,
                 predicate: (level) => {
                     return this.robot && this.robot.getX() == 1;
@@ -116,8 +116,6 @@ export class RecyclingLevel extends BaseLevel {
 
         let layer2 = map.createLayer(
             "Tile Layer 2", this.game.width, this.game.height, this.background);
-
-        this.cursors = this.game.input.keyboard.createCursorKeys();
 
         this.initWorld(map);
         this.miner = new model.MineRobot("miner", 3, 7, model.Direction.SOUTH,
