@@ -63,7 +63,7 @@ export class RecyclingLevel extends BaseLevel {
         this.allTooltips = [
             [
                 new TooltipView.Tooltip(TooltipView.Region.ButtonBar,
-                    "This level can be solved with around 27 blocks!"),
+                    "This level can be solved with around 25 blocks!"),
             ],
         ];
 
@@ -135,7 +135,7 @@ export class RecyclingLevel extends BaseLevel {
 
     blockLimit(context: EditorContext): number {
         if (context.className === MAIN) {
-            return 35;
+            return 30;
         }
         else {
             return 6;
