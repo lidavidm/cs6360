@@ -1715,6 +1715,12 @@ export class HeavyLifter extends Robot {
             throw new RangeError("Self destructed, can't pick up anything!");
         }
 
+        for (let i = 0; i < this.holdingIDs.length; i++) {
+            if (this.world.getObjectByID(this.holdingIDs[i]) instanceof PlatformPiece) {
+                throw "The robot can only hold one platform piece at a time.";
+            }
+        }
+
         let targets: WorldObject[] = this.world.getObjectByLoc(this.getX(), this.getY());
         let target: WorldObject = null;
 
