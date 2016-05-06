@@ -27,6 +27,8 @@ export class MakeMiner extends BaseLevel {
     public miner: model.MineRobot;
     public iron: model.Iron;
 
+    private fallback: HTMLElement[];
+
     initialize() {
         super.initialize();
 
@@ -39,8 +41,23 @@ export class MakeMiner extends BaseLevel {
         this.toolbox = new Toolbox(false, "class", false);
         this.toolbox.addControl("tell");
         this.toolbox.addControl("controls_repeat");
-        this.toolbox.addControl("new");
-        this.toolbox.addClasses(["Robot", "MineRobot"])
+
+        let create = this.toolbox.addControl("new");
+
+        let classes = this.toolbox.addClasses(["Robot", "MineRobot"])
+
+        let fallbackCreate = <HTMLElement> create.cloneNode(true);
+        let fallbackClass = <HTMLElement> classes[1].cloneNode(true);
+
+        fallbackCreate.setAttribute("x", "220");
+        fallbackCreate.setAttribute("y", "100");
+        fallbackClass.setAttribute("x", "250");
+        fallbackClass.setAttribute("y", "140");
+
+        this.fallback = <HTMLElement[]> [
+            fallbackCreate,
+            fallbackClass
+        ];
 
         this.toolbox.addClass("Robot", asset.Robot.Basic, model.Robot, [
             model.Robot.prototype.moveForward,
@@ -147,6 +164,16 @@ export class MakeMiner extends BaseLevel {
         else {
             return null;
         }
+    }
+
+    fallbackWorkspace(context: EditorContext): HTMLElement {
+        if (context.className === MAIN) {
+            let doc = this.fallback.map((node) => {
+                return node.outerHTML;
+            }).join("\n");
+            return Blockly.Xml.textToDom(`<xml>${doc}</xml>`);
+        }
+        return super.fallbackWorkspace(context);
     }
 
     setUpFading() {
