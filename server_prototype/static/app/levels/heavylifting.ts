@@ -85,7 +85,7 @@ export class HeavyLiftingLevel extends BaseLevel {
                 }
             },
             {
-                objective: `Carry all four pieces [${asset.Misc.Platform_3}] to the launch site`,
+                objective: `Carry all four pieces [${asset.Misc.Platform_3}] to the launch site one at a time`,
                 completed: false,
                 predicate: (level, initialized) => {
                     if (this.pieces.length === 0) {
