@@ -73,11 +73,11 @@ import {BlastOffLevel} from "levels/blastoff";
 // LOGS. IDs do not need to be sequential.
 // DO NOT USE NEGATIVE NUMBERS. Those are used for the pretest/posttest.
 export const DEFAULT_PROGRESSION = new Progression([
-    // ["movement1", MovementLevel1, 0],
-    // ["movement2", MovementLevel2, 1],
-    // ["movement3", MovementLevel3, 2],
-    // ["movement4", MovementLevel4, 3],
-    // ["backtobase", BackToBase, 4],
+    ["movement1", MovementLevel1, 0],
+    ["movement2", MovementLevel2, 1],
+    ["movement3", MovementLevel3, 2],
+    ["movement4", MovementLevel4, 3],
+    ["backtobase", BackToBase, 4],
     ["makeminer", MakeMiner, 5],
     ["iron", IronLevel, 6],
     ["recycling1", RecyclingLevel, 7],
