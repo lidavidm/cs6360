@@ -9,6 +9,7 @@
 \usepackage{graphicx}
 \usepackage{wrapfig}
 \usepackage{caption}
+\usepackage{subcaption}
 \usepackage{hyperref}
 
 \newcommand\footnoteref[1]{\footnote{\url{#1}}}
@@ -92,22 +93,31 @@ certain objectives.
 
 \subsubsection{Concreteness Fading}
 
-\begin{wrapfigure}{R}{0.25\textwidth}
-  \captionsetup{justification=centering}
-  \captionbox{An unfaded method invocation block.\label{fig:block-unfaded}}{
-    \includegraphics[width=2in]{block_unfaded.png}
-  }
-\end{wrapfigure}
-
-Initially, all blocks start off as textual descriptions of what they
-do, e.g.\ ``tell \_ to \_'' for method invocation or ``create a new \_
-called \_'' for object instantiation (see
+Initially, all blocks start off as textual descriptions of
+what they do, e.g.\ ``tell \_ to \_'' for method invocation or
+``create a new \_ called \_'' for object instantiation (see
 \autoref{fig:block-unfaded}). As the player progresses, the labels on
-the blocks are faded into actual Python code. Eventually, the player
-will be given a text editor and asked to write the Python code
-themselves. Some scaffolding always remains; for instance, the object
-hierarchy view always remains accessible after it is introduced, and
-serves as a reference for what classes and methods are available.
+the blocks are faded into actual Python code, as in
+\autoref{fig:block-faded}. Eventually, the player will be given a text
+editor and asked to write the Python code themselves. Some scaffolding
+always remains; for instance, the object hierarchy view always remains
+accessible after it is introduced, and serves as a reference for what
+classes and methods are available.
+
+\begin{figure}[h]
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.5\textwidth]{block_unfaded}
+  \caption{An unfaded method invocation block.}\label{fig:block-unfaded}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.5\textwidth]{block_faded}
+  \caption{The faded method invocation block.}\label{fig:block-faded}
+\end{subfigure}
+\label{fig:test}
+\end{figure}
 
 \subsection{Evaluation}
 
