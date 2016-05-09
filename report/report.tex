@@ -6,13 +6,16 @@
 \usepackage[utf8x]{inputenc}
 \usepackage[letterpaper,margin=1in]{geometry}
 \usepackage{titlesec}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{caption}
 \usepackage{hyperref}
 
 \newcommand\footnoteref[1]{\footnote{\url{#1}}}
 \newcommand\tmts[0]{\texttt{tell me to survive}}
 
 \titleformat{\section}{\normalfont\large}{\thesection}{0.5em}{}
-\titleformat{\subsection}{\textbf}{\thesubsection}{0.5em}{}
+\titleformat{\subsection}{\bfseries}{\thesubsection}{0.5em}{}
 \titleformat{\subsubsection}{\normalfont}{\thesubsubsection}{0.5em}{}
 \titlespacing*{\section}{0em}{0.75em}{0.3em}
 
@@ -78,13 +81,33 @@ either.
 \section{Methodology}
 
 \tmts{} is a purely client-side, web-based game built on
-HTML5/JavaScript using Python as its instructional language.
+HTML5/JavaScript using Python as its instructional language. The core
+concept is manipulating robots in a game world via visual or
+text-based programming in order to solve puzzles and accomplish
+certain objectives.
 
 \subsection{Application Design}
 
 \subsubsection{Concept Progression}
 
 \subsubsection{Concreteness Fading}
+
+\begin{wrapfigure}{R}{0.25\textwidth}
+  \captionsetup{justification=centering}
+  \captionbox{An unfaded method invocation block.\label{fig:block-unfaded}}{
+    \includegraphics[width=2in]{block_unfaded.png}
+  }
+\end{wrapfigure}
+
+Initially, all blocks start off as textual descriptions of what they
+do, e.g.\ ``tell \_ to \_'' for method invocation or ``create a new \_
+called \_'' for object instantiation (see
+\autoref{fig:block-unfaded}). As the player progresses, the labels on
+the blocks are faded into actual Python code. Eventually, the player
+will be given a text editor and asked to write the Python code
+themselves. Some scaffolding always remains; for instance, the object
+hierarchy view always remains accessible after it is introduced, and
+serves as a reference for what classes and methods are available.
 
 \subsection{Evaluation}
 
