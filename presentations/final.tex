@@ -1,12 +1,19 @@
 \documentclass{beamer}
+\usepackage[letterspace=110]{microtype}
 \usepackage[bitstream-charter]{mathdesign}
-\usepackage{inconsolata}
+\usepackage[light]{sourcecodepro}
 \usetheme[background=dark]{metropolis}
 \setbeamercolor{normal text}{fg=white,bg=black}
+\setbeamercolor{title separator}{fg=red,bg=black}
+\setbeamerfont{frametitle}{family=\ttfamily\lsstyle,series=\mdseries,size=\Large}
+\setbeamerfont{title}{family=\ttfamily\lsstyle,series=\mdseries,size=\huge}
 % \useoutertheme{metropolis}
 % \useinnertheme{metropolis}
 % \usefonttheme{metropolis}
 % \usecolortheme{beaver}
+
+\let\theframetitle\frametitle
+\renewcommand\frametitle[1]{\theframetitle{\MakeUppercase{#1}}}
 
 \usepackage[utf8]{inputenc}
 \title{\texttt{tell me to survive}}
