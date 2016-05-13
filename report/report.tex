@@ -105,14 +105,14 @@ basic concepts building up to inheritance. This means that advanced topics
 such as abstract classes and polymorphism are not covered. This is an
 acceptable trade-off because the purpose of this game is not to teach
 OOP in its entirety, but rather to ease the conceptual transition for
-new programmers.\\
+new programmers.
 
-\autoref{fig:progression} lists the progression of requisite skills up 
-to mastery of inheritance (our overall learning objective). Mastering 
-a skill in any given level in the diagram should require mastering 
-every skill in the previous level. For instance, using inheritance 
-effectively requires that the user is writing methods across several 
-classes in the hierarchy, then instantiating different types of objects 
+\autoref{fig:progression} lists the progression of requisite skills up
+to mastery of inheritance (our overall learning objective). Mastering
+a skill in any given level in the diagram should require mastering
+every skill in the previous level. For instance, using inheritance
+effectively requires that the user is writing methods across several
+classes in the hierarchy, then instantiating different types of objects
 with those classes. These individual skills can then be further subdivided
 down to the basics of using our click-and-drag block input system.
 
@@ -124,7 +124,7 @@ they are presented. Thus, we spent quite a bit of time trying to build
 up a level progression which slowly moves concept by concept through the
 skill tree in \autoref{fig:progression}. The basic premise is that there
 should only be about 1 new concept per level. Anything more and users are
-likely to get confused. One of the predominate ways this manifests in our
+likely to get confused. One of the predominant ways this manifests in our
 game play is the introduction of new robots. Different robots introduce
 ideas related to inheritance. At first this is as simple as identifying
 that MineRobot (and other subclasses) can use functions for moving and
@@ -132,7 +132,7 @@ turning from the basic Robot class. However, there are more complex
 applications later on, such as the way that FrackingRobot overrides a
 function from MineRobot. Moreover, as new concepts are introduced, old
 concepts are recombined to make new puzzles. For example, the HeavyLifter
-is used in a context such that it needs to use a function defined in the 
+is used in a context such that it needs to use a function defined in the
 basic Robot class. However, it also requires implementing that method first.
 
 \subsubsection{Concreteness Fading}
@@ -142,22 +142,22 @@ gradual concreteness fading of the actual blocks that the user is
 working with. A key issue here, which we identified in user tests during
 the beta phase, is that changes to the blocks should not happen while
 another concept is introduced because players get overwhelmed by the
-number of new skills required.\\
+number of new skills required.
 
 Thus, in addition to the care we take to introduce one concept at a
 time via our level progression, we also have some levels wherein we
 introduce no new object-oriented concepts. Instead, we pose a simpler
-puzzle focusing on usage of the newly faded block.\\
+puzzle focusing on usage of the newly faded block.
 
-Our fading process has 3 stages. Initially, all blocks start off as 
-textual descriptions of what they do, e.g.\ ``tell \_ to \_'' for 
-method invocation or ``create a new \_ called \_'' for object 
-instantiation (see \autoref{fig:block-unfaded}). As the player 
-progresses, the labels on the blocks are faded into actual Python code, 
-as in \autoref{fig:block-faded}. Eventually, the player will be given 
-a text editor and asked to write the Python code themselves. Some 
-scaffolding always remains; for instance, the object hierarchy view always 
-remains accessible after it is introduced, and serves as a reference for 
+Our fading process has 3 stages. Initially, all blocks start off as
+textual descriptions of what they do, e.g.\ ``tell \_ to \_'' for
+method invocation or ``create a new \_ called \_'' for object
+instantiation (see \autoref{fig:block-unfaded}). As the player
+progresses, the labels on the blocks are faded into actual Python code,
+as in \autoref{fig:block-faded}. Eventually, the player will be given
+a text editor and asked to write the Python code themselves. Some
+scaffolding always remains; for instance, the object hierarchy view always
+remains accessible after it is introduced, and serves as a reference for
 what classes and methods are available.
 
 \begin{figure}[h]
@@ -180,12 +180,12 @@ what classes and methods are available.
 
 \subsubsection{Simplicity}
 
-A key factor motivating our design was a constant process of 
-simplification. Every time we tested after a development cycle, we would 
+A key factor motivating our design was a constant process of
+simplification. Every time we tested after a development cycle, we would
 find small components that greatly confused some users. For example,
 at first for loops had a corresponding number block that needed to be
 placed in the loop. This was rather tedious, so we changed it to a basic
-text input box instead.\\
+text input box instead.
 
 We also decided not to provide more complicated control flow, such as
 boolean logic and other types of loops. In fact, even the tell blocks
@@ -195,19 +195,22 @@ section.
 
 \subsubsection{Restrictions}
 
-The simplifications mentioned above are an important part of not only how 
-we shaped user experience, but also in how we presented puzzles. As mentioned 
-in section 3.1.1, our goal was to focus more on a basic set of OOP concepts 
-and the corresponding syntax. Thus we limited access to features that would 
-increase the complexity of solution code. Instead, solutions are reliant on understanding key OOP concepts.\\
+The simplifications mentioned above are an important part of not only
+how we shaped user experience, but also in how we presented
+puzzles. As mentioned in section 3.1.1, our goal was to focus more on
+a basic set of OOP concepts and the corresponding syntax. Thus we
+limited access to features that would increase the complexity of
+solution code. Instead, solutions are reliant on understanding key OOP
+concepts.
 
-The memory limit in each level is another example of this restriction. Similar
-to the way LightBot forces players to define functions due to lack of space,
-we also create a situation such that there is no way to finish a level under
-the memory limit without defining a method. This is key to our game because it
-forces players to consider the class hierarchy, and actually implement methods
-they can call on objects. Without this restriction, the hierarchy (and thus our
-goal of teaching OOP) could potentially be wholly disregarded.
+The memory limit in each level is another example of this
+restriction. Similar to the way LightBot forces players to define
+functions due to lack of space, we also create a situation such that
+there is no way to finish a level under the memory limit without
+defining a method. This is key to our game because it forces players
+to consider the class hierarchy, and actually implement methods they
+can call on objects. Without this restriction, the hierarchy (and thus
+our goal of teaching OOP) could potentially be wholly disregarded.
 
 \subsubsection{Modularity}
 
@@ -238,8 +241,8 @@ The Pre- and Post-Tests that we gave were identical, 5 question quizzes
 testing both object-oriented python syntax and general concepts. The goal
 was to present questions that test for both practical and more abstract
 understanding. The quizzes were strongly integrated into the game itself,
-presented as an "Robot Commander Aptitude Test" and a "Robot Commander 
-Proficiency Test" 
+presented as an ``Robot Commander Aptitude Test'' and a ``Robot Commander
+Proficiency Test''.
 
 \subsection{Subjective Impressions}
 
