@@ -98,11 +98,10 @@ certain objectives.
 \label{fig:progression}
 \end{figure}
 
-When setting out to teach a concept as broad as object-oriented
-programming, we needed to be careful not to overshoot a practical
-scope. As such, to limit game length and complexity, we selected a few
-basic concepts building up to inheritance. This means that advanced topics
-such as abstract classes and polymorphism are not covered. This is an
+We limited our scope to the concepts in \autoref{fig:progression} in
+order to limit the game length and complexity, and because of
+implementation constraints. This means that advanced topics such as
+abstract classes and polymorphism are not covered. This is an
 acceptable trade-off because the purpose of this game is not to teach
 OOP in its entirety, but rather to ease the conceptual transition for
 new programmers.
@@ -121,31 +120,29 @@ down to the basics of using our click-and-drag block input system.
 
 Key to helping players master concepts is the order and pace at which
 they are presented. Thus, we spent quite a bit of time trying to build
-up a level progression which slowly moves concept by concept through the
-skill tree in \autoref{fig:progression}. The basic premise is that there
-should only be about 1 new concept per level. Anything more and users are
-likely to get confused. One of the predominant ways this manifests in our
-game play is the introduction of new robots. Different robots introduce
-ideas related to inheritance. At first this is as simple as identifying
-that MineRobot (and other subclasses) can use functions for moving and
-turning from the basic Robot class. However, there are more complex
-applications later on, such as the way that FrackingRobot overrides a
-function from MineRobot. Moreover, as new concepts are introduced, old
-concepts are recombined to make new puzzles. For example, the HeavyLifter
-is used in a context such that it needs to use a function defined in the
-basic Robot class. However, it also requires implementing that method first.
+up a level progression which slowly moves concept by concept through
+the skill tree in \autoref{fig:progression}. The basic premise is that
+there should only be about 1 new concept per level; otherwise, users
+are likely to get confused. One of the predominant ways this manifests
+in our game play is the introduction of new robots. Different robots
+introduce ideas related to inheritance. At first this is as simple as
+identifying that MineRobot (and other subclasses) can use functions
+for moving and turning from the basic Robot class. However, there are
+more complex applications later on, such as the way that FrackingRobot
+overrides a function from MineRobot. Moreover, as new concepts are
+introduced, old concepts are recombined to make new puzzles. For
+example, the HeavyLifter is used in a context such that it needs to
+use a function defined in the basic Robot class. However, it also
+requires implementing that method first.
 
 \subsubsection{Concreteness Fading}
 
 Of course, the progression of actual concepts works in tandem with the
 gradual concreteness fading of the actual blocks that the user is
-working with. A key issue here, which we identified in user tests during
-the beta phase, is that changes to the blocks should not happen while
-another concept is introduced because players get overwhelmed by the
-number of new skills required.
-
-Thus, in addition to the care we take to introduce one concept at a
-time via our level progression, we also have some levels wherein we
+working with. A key issue here, which we identified in user tests
+during the beta phase, is that changes to the blocks should not happen
+while another concept is introduced because players get overwhelmed by
+the number of new skills required. Thus, we have some levels where we
 introduce no new object-oriented concepts. Instead, we pose a simpler
 puzzle focusing on usage of the newly faded block.
 
@@ -178,48 +175,28 @@ what classes and methods are available.
 
 \subsection{Application Design}
 
-\subsubsection{Simplicity}
-
 A key factor motivating our design was a constant process of
-simplification. Every time we tested after a development cycle, we would
-find small components that greatly confused some users. For example,
-at first for loops had a corresponding number block that needed to be
-placed in the loop. This was rather tedious, so we changed it to a basic
-text input box instead.
-
-We also decided not to provide more complicated control flow, such as
-boolean logic and other types of loops. In fact, even the tell blocks
-are greatly simplified. Notice that no functions take parameters or
-return values. This is an intentional choice, discussed in the following
-section.
-
-\subsubsection{Restrictions}
-
-The simplifications mentioned above are an important part of not only
-how we shaped user experience, but also in how we presented
-puzzles. As mentioned in section 3.1.1, our goal was to focus more on
-a basic set of OOP concepts and the corresponding syntax. Thus we
-limited access to features that would increase the complexity of
-solution code. Instead, solutions are reliant on understanding key OOP
+simplification, driven by user testing. For example, at first for
+loops had a corresponding number block that needed to be placed in the
+loop. This was rather tedious, so we changed it to a basic text input
+box instead. We also decided not to provide more complicated control
+flow, such as boolean logic and other types of loops. In fact, even
+the tell blocks are greatly simplified. Notice that no functions take
+parameters or return values. Our goal was to focus more on a basic set
+of OOP concepts and the corresponding syntax. Thus, we limited access
+to features that would increase the complexity of solution
+code. Instead, solutions are reliant on understanding key OOP
 concepts.
 
 The memory limit in each level is another example of this
 restriction. Similar to the way LightBot forces players to define
-functions due to lack of space, we also create a situation such that
-there is no way to finish a level under the memory limit without
-defining a method. This is key to our game because it forces players
-to consider the class hierarchy, and actually implement methods they
-can call on objects. Without this restriction, the hierarchy (and thus
-our goal of teaching OOP) could potentially be wholly disregarded.
-
-\subsubsection{Modularity}
-
-Our game's back end also deserves mention here, because its modularity is
-extremely useful in developing the game as an educational tool. The process for
-creating a level is extremely generalized, so the existing framework can
-be used to easily add, remove, and reorder levels testing new concepts.
-In short, it can easily be reconfigured to test more or fewer concepts than
-it currently does based on the situation.
+functions due to lack of space, we also design levels such that there
+is no way to finish under the memory limit without defining a
+method. This forces players to consider the class hierarchy and
+actually implement methods they call on objects. Without this
+restriction, the hierarchy (and thus our goal of teaching OOP) could
+potentially be disregarded.
+% TODO: did we find a user that actually did that?
 
 \subsection{Evaluation}
 
