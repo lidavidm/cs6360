@@ -33,25 +33,25 @@
 \section{Introduction and Motivation}
 
 Much effort has gone towards methods to teach programming as an
-overall concept, with systems like Alice, Scratch, and CodeSpells
+overall concept, with systems like Scratch and CodeSpells
 demonstrating how visual programming can successfully introduce
 students to this field. Our goal is to teach the more specific topic
 of object-oriented programming to novice programmers using these same
 techniques, focusing on how to abstract and represent ideas such as
-method definitions, subclassing, and overriding in such a framework.
-Additionally, to reinforce these concepts to an audience already
-somewhat familiar with programming, we will introduce concreteness
-fading to the system, transitioning students from visual programming
-to directly writing code. This will facilitate the learning of these
-specific higher-level concepts and abstractions within computer
-science, which is important to effectively educate and train the next
-generation of computer science and software development students.
+method definitions, subclassing, and overriding. Additionally, to
+reinforce these concepts to an audience already somewhat familiar with
+programming, we will introduce concreteness fading, transitioning
+students from visual programming to directly writing code. This will
+facilitate the learning of these specific higher-level concepts and
+abstractions within computer science, which is important to
+effectively educate and train the next generation of computer science
+and software development students.
 
 \section{Related Work}
 
 The idea of visual programming manipulating robots or other objects in
-a virtual world is not a new one; we list several games and projects
-in the same vein, with some comparison to our project.
+a virtual world is not new; we list several games and projects in the
+same vein, with some comparison to our project.
 
 \begin{multicols}{2}
 \begin{itemize}
@@ -68,19 +68,18 @@ in the same vein, with some comparison to our project.
 
 CodeSpells, Alice, Scratch, and Looking Glass are more free-form;
 instead of specific puzzles or levels to solve, they simply place the
-player in a sandbox. Looking Glass tries to come up with metaphors for
-object-oriented concepts, and manages to cover more of them than our
-project does, but does not employ concreteness fading. Hour of Code,
-LightBot, and Human Resource Machine take the same puzzle-oriented
-approach our game does, but also lack the concreteness fading
-aspect. Blockly Games is the most similar to our approach, initially
-using blocks whose labels transition from text descriptions to code,
-then changing to a text editor at the end. However, it does not
-present a consistent game, changing the theme and mechanics of the
-game every few levels. BlockPy is more advanced, enabling the player
-to seamlessly switch between code and visual programming (and
-translating one to the other), but does not use concreteness fading
-either.
+player in a sandbox. Looking Glass has metaphors for object-oriented
+concepts, and covers more of them than our project does, but does not
+employ concreteness fading. Hour of Code, LightBot, and Human Resource
+Machine take the same puzzle-oriented approach our game does, but also
+lack the concreteness fading aspect. Blockly Games is the most similar
+to our approach, initially using blocks whose labels transition from
+text descriptions to code, then changing to a text editor at the
+end. However, it does not present a consistent game, changing the
+theme and mechanics every few levels. BlockPy is more advanced,
+enabling the player to seamlessly switch between code and visual
+programming (and translating one to the other), but does not use
+concreteness fading either.
 
 \section{Methodology}
 
@@ -88,11 +87,9 @@ either.
 HTML5/JavaScript using Python as its instructional language. The core
 concept is manipulating robots in a game world via visual or
 text-based programming in order to solve puzzles and accomplish
-certain objectives.
+objectives.
 
 \subsection{Concepts}
-
-\subsubsection{Learning Goals}
 
 \begin{figure}[h]
   \centering
@@ -118,36 +115,21 @@ classes in the hierarchy, then instantiating different types of objects
 with those classes. These individual skills can then be further subdivided
 down to the basics of using our click-and-drag block input system.
 
-
-\subsubsection{Concept Progression}
-
-Key to helping players master concepts is the order and pace at which
-they are presented. Thus, we spent quite a bit of time trying to build
-up a level progression which slowly moves concept by concept through
-the skill tree in \autoref{fig:progression}. The basic premise is that
-there should only be about 1 new concept per level; otherwise, users
-are likely to get confused. One of the predominant ways this manifests
-in our game play is the introduction of new robots. Different robots
-introduce ideas related to inheritance. At first this is as simple as
-identifying that MineRobot (and other subclasses) can use functions
-for moving and turning from the basic Robot class. However, there are
-more complex applications later on, such as the way that FrackingRobot
-overrides a function from MineRobot. Moreover, as new concepts are
-introduced, old concepts are recombined to make new puzzles. For
-example, the HeavyLifter is used in a context such that it needs to
-use a function defined in the basic Robot class. However, it also
-requires implementing that method first.
+The level progression slowly moves concept by concept through the
+skill tree, trying to introduce only one new concept per level;
+otherwise, users are likely to get confused. For example, consider how
+new robot types are introduced. At first the player must identify that
+\texttt{MineRobot} (and other subclasses) can use functions for moving
+and turning from the basic \texttt{Robot} class. Later on, there are
+more complex relations, such as the way that \texttt{FrackingRobot}
+overrides a function from \texttt{MineRobot}. Moreover, as new
+concepts are introduced, old concepts are recombined to make new
+puzzles. For example, the \texttt{HeavyLifter} is used in a context
+such that it needs to use a function defined in the basic
+\texttt{Robot} class. However, it also requires implementing that
+method first.
 
 \subsubsection{Concreteness Fading}
-
-Of course, the progression of actual concepts works in tandem with the
-gradual concreteness fading of the actual blocks that the user is
-working with. A key issue here, which we identified in user tests
-during the beta phase, is that changes to the blocks should not happen
-while another concept is introduced because players get overwhelmed by
-the number of new skills required. Thus, we have some levels where we
-introduce no new object-oriented concepts. Instead, we pose a simpler
-puzzle focusing on usage of the newly faded block.
 
 Our fading process has 3 stages. Initially, all blocks start off as
 textual descriptions of what they do, e.g.\ ``tell \_ to \_'' for
@@ -159,6 +141,12 @@ a text editor and asked to write the Python code themselves. Some
 scaffolding always remains; for instance, the object hierarchy view always
 remains accessible after it is introduced, and serves as a reference for
 what classes and methods are available.
+
+Beta testing found that changes to the blocks should not happen while
+another concept is introduced, because otherwise, players are
+overwhelmed by the number of new skills required. Thus, some levels
+introduce no new object-oriented concepts, and instead, pose a simpler
+puzzle focusing on usage of a newly faded block.
 
 \begin{figure}[h]
 \centering
@@ -178,27 +166,24 @@ what classes and methods are available.
 
 \subsection{Application Design}
 
-A key factor motivating our design was a constant process of
-simplification, driven by user testing. For example, at first for
-loops had a corresponding number block that needed to be placed in the
-loop. This was rather tedious, so we changed it to a basic text input
-box instead. We also decided not to provide more complicated control
-flow, such as boolean logic and other types of loops. In fact, even
-the tell blocks are greatly simplified. Notice that no functions take
-parameters or return values. Our goal was to focus more on a basic set
-of OOP concepts and the corresponding syntax. Thus, we limited access
-to features that would increase the complexity of solution
-code. Instead, solutions are reliant on understanding key OOP
-concepts.
+Through user testing, we simplified our block interface as much as
+possible. For instance, the repeat block was changed from accepting a
+block subexpression to just a number. The player does not have access
+to more complicated control flow such as branches and for loops. In
+fact, even method invocation was simplified by ignoring parameters and
+return values. Our goal was to focus more on a basic set of OOP
+concepts and the corresponding syntax. Thus, we limited access to
+features that would increase the complexity of solution code, while
+ensuring that the player must use object-oriented concepts to solve
+the level.
 
-The memory limit in each level is another example of this
-restriction. Similar to the way LightBot forces players to define
-functions due to lack of space, we also design levels such that there
-is no way to finish under the memory limit without defining a
-method. This forces players to consider the class hierarchy and
-actually implement methods they call on objects. Without this
-restriction, the hierarchy (and thus our goal of teaching OOP) could
-potentially be disregarded.
+To further enforce object-oriented thinking, we imposed a block
+limit. Similar to the way LightBot forces players to define functions
+due to lack of space, we design levels such that there is no way to
+finish within the block limit without defining a method. This forces
+players to consider the class hierarchy and actually implement useful
+methods they call on objects. Without this restriction, the hierarchy
+(and thus our goal of teaching OOP) could potentially be disregarded.
 % TODO: did we find a user that actually did that?
 
 \subsection{Evaluation}
