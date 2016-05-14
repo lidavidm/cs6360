@@ -49,16 +49,23 @@
 % but not together.
 \begin{frame}
 \frametitle{Related Work}
-\begin{itemize}[<+->]
-% Scratch, CodeSpells, Blockly Games, LightBot, Human Resource Machine
+\begin{itemize}
 % in fact, this is a pretty standard appraoch!
-\item Visual Programming
+\item<1-> Visual Programming
+  \begin{itemize}
+  \item Scratch, Looking Glass, CodeSpells, Blockly Games, LightBot,
+    Human Resource Machine, …
+  \end{itemize}
 % Blockly Games (but not one coherent game)
-\item Concreteness Fading
-% LookingGlass (CodeSpells?)
-\item Objects
-% LightBot
-\item Robots
+\item<2-> Concreteness Fading
+  \begin{itemize}
+  \item Blockly Games
+  \end{itemize}
+\item<3-> Object-Oriented Programming
+  \begin{itemize}
+  \item Looking Glass, CodeSpells
+  \end{itemize}
+% LightBot is hardly relevant separately, "robots" is just a theme.
 \end{itemize}
 \end{frame}
 
@@ -73,7 +80,9 @@
 \frametitle{Final Project}
 \begin{itemize}[<+->]
 % Maybe the concept progression could go here
-\item Scope: fundamentals
+\item Idea: solve puzzles with object-oriented code
+\item Scope: OOP fundamentals
+% TODO: ease transition from what to what?
 \item Goal: ease transition
 \end{itemize}
 \end{frame}
@@ -81,10 +90,10 @@
 \begin{frame}
 \frametitle{Final Project}
 Force use of OOP via:
-\begin{itemize}[<+->]
+\begin{itemize}
 % Verbally cover the examples from the write-up
-\item Simplicity
-\item Restrictions
+\item Limited block complexity
+\item Block limit
 \end{itemize}
 \end{frame}
 
@@ -95,18 +104,18 @@ Force use of OOP via:
 \begin{frame}
 \frametitle{Concreteness Fading}
 Three stages
-\begin{itemize}[<+->]
+\begin{enumerate}
 % Probably want pictures for this part...?
 \item Textual description
 \item Python syntax on blocks
 \item Code editor
-\end{itemize}
+\end{enumerate}
 \end{frame}
 
 \begin{frame}
 \frametitle{Concreteness Fading}
 Considerations
-\begin{itemize}[<+->]
+\begin{itemize}
 \item Fading + new concept = confusion
 \item Scaffolding
 \end{itemize}
@@ -114,9 +123,8 @@ Considerations
 
 \begin{frame}
 \frametitle{User Study}
-\begin{itemize}[<+->]
-\item Built in test
-\item "Robot Commander Aptitude Test"
+\begin{itemize}
+\item ``Robot Commander Aptitude Test''
 \item 5 questions
 \item Mix of syntax and concepts
 % Once we have a definite number of results, this might
