@@ -210,6 +210,12 @@ object-oriented experience (e.g.\ CS 1110 but not CS 2110).
 
 \section{Results}
 
+Our results are partially open data: all analysis scripts are under
+the same license as the project itself (AGPLv3) and anonymized data is
+available as well (random user IDs and completion time stats). This is
+available in a separate repository,
+\url{https://github.com/lidavidm/cs6360_analysis}.
+
 \subsection{Pre- and Post-Test}
 
 % reminder: update numbers
@@ -217,7 +223,7 @@ object-oriented experience (e.g.\ CS 1110 but not CS 2110).
 for those 12 people was 3.167 (s = 1.267). The mean post-test score was
 4.25 (s = 0.754). We performed a paired t-test on the pre-test scores and
 the post-test scores, and we found that the difference in means was
-statistically significant, t(11) = 3.767, p = 0.003.
+statistically significant, $t(11) = 3.767$, $p = 0.003$.
 
 These results suggest that by playing the game, the players improved their
 understanding of the concepts tested by the 5 questions, namely classes and
@@ -295,7 +301,7 @@ We also had the chance to evaluate some players in person.
 % did more than one person do this?
 One interesting behavior that we observed occurred when method definitions
 faded from a block editor to a text editor. Some players who had trouble
-recalling the exact syntax returned to the 'main' method, which was still in
+recalling the exact syntax returned to the \texttt{main} method, which was still in
 block-editor mode. They used the blocks, whose text had already faded into
 python code, as references for the method that they wanted to type. Given that
 we did not tell the players about concreteness fading, this is perhaps evidence
@@ -311,7 +317,8 @@ mode.
 As for engagement statistics, we captured when each player started and
 ended each level. This gives us a lower bound on the time spent to
 complete a playthrough, as the end-of-level event was not always
-recorded.
+recorded. The mean completion time was 7196 seconds, or almost exactly
+two hours.
 
 \subsection{TODO}
 
