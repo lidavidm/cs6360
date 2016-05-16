@@ -12,6 +12,7 @@
 \usepackage{subcaption}
 \usepackage{hyperref}
 \usepackage{multicol}
+\usepackage{booktabs}
 \usepackage{tabu}
 
 \newcommand\footnoteref[1]{\footnote{\url{#1}}}
@@ -191,11 +192,11 @@ methods they call on objects. Without this restriction, the hierarchy
 
 We evaluated the performance of the game by administering a pre-test
 and post-test to all people who completed the game. Both tests were
-entirely identical, 5 multiple-choice question quizzes testing both 
-object-oriented Python syntax and general concepts. Each question had 
-one correct answer, and a player's score can be any integer between 
-0 and 5 inclusive. The goal was to present questions that test for both 
-practical and more abstract understanding. The quizzes were strongly 
+entirely identical, 5 multiple-choice question quizzes testing both
+object-oriented Python syntax and general concepts. Each question had
+one correct answer, and a player's score can be any integer between
+0 and 5 inclusive. The goal was to present questions that test for both
+practical and more abstract understanding. The quizzes were strongly
 integrated into the game itself, presented as an
 ``Robot Commander Aptitude Test'' and a ``Robot Commander Proficiency
 Test''.
@@ -212,21 +213,20 @@ object-oriented experience (e.g.\ CS 1110 but not CS 2110).
 \subsection{Pre- and Post-Test}
 
 11 people completed the game and the post-test. The mean pre-test score
-for those 11 people was 3.364 (s = 1.120). The mean post-test score was 
-4.273 (s = 0.786). We performed a paired t-test on the pre-test scores and 
-the post-test scores, and we found that the difference in means was 
+for those 11 people was 3.364 (s = 1.120). The mean post-test score was
+4.273 (s = 0.786). We performed a paired t-test on the pre-test scores and
+the post-test scores, and we found that the difference in means was
 statistically significant, t(10) = 3.627, p < 0.01.
 
 \subsection{Subjective Impressions}
 
-Our post-test also included four extra questions that were opinion-based. 
-Three of those consisted of asking the player how much they agreed with 
+Our post-test also included four extra questions that were opinion-based.
+Three of those consisted of asking the player how much they agreed with
 the following three statements.
 
 \begin{tabu}{Xlll}
 \toprule
 Statement & Mean score \\
-\hline
 \midrule
 I enjoyed this game. & 1.18 \\
 Before playing, I knew object-oriented programming. & 0.09 \\
@@ -235,17 +235,17 @@ After playing, I knew object-oriented programming better. & 1.27\\
 \\
 \end{tabu}
 
-The mean scores were obtained by mapping the five possible answers to integer 
+The mean scores were obtained by mapping the five possible answers to integer
 values as follows and computing the arithmetic mean normally:\\
-Strongly Agree -> 2; Agree -> 1; Neutral -> 0; Disagree -> -1; Strongly Disagree -> -2
+\centerline{Strongly Agree → 2; Agree → 1; Neutral → 0; Disagree → -1; Strongly Disagree → -2}
 
 These data are evidence that the game is relatively engaging and that players
 perceived themselves getting better at object-oriented programming by playing
-the game. However, these results may be partially due to the Hawthorne effect. 
+the game. However, these results may be partially due to the Hawthorne effect.
 
-The ninth and final question was free response and asked for any general 
-comments on the game. Overall, players responded positively. Not all left 
-feedback; many pointed out minor issues with the interface, such as the 
+The ninth and final question was free response and asked for any general
+comments on the game. Overall, players responded positively. Not all left
+feedback; many pointed out minor issues with the interface, such as the
 relatively slow animation speed, unclear directions, and lack of examples.
 
 We also had the chance to evaluate some players in person.
