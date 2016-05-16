@@ -2,6 +2,8 @@
 \usepackage[letterspace=110]{microtype}
 \usepackage[bitstream-charter]{mathdesign}
 \usepackage[light]{sourcecodepro}
+\usepackage{caption}
+\captionsetup[figure]{labelformat=empty}
 \usetheme{metropolis}
 \setbeamercolor{normal text}{fg=black,bg=white}
 \setbeamercolor{title separator}{fg=red,bg=white}
@@ -27,16 +29,17 @@
 % I'm adding some comments to elucidate what I'm thinking about saying
 % for each of these slides
 
-\begin{itemize}[<+->]
+\begin{itemize}
+\item<1-> Lots of programming games already
 % So we have to teach people how do OOP ("summative"...?)
 % paradigm shift is hard
-\item Object-oriented programming?
+\item<2-> Object-oriented programming?
 % The issue is in teaching to think in classes and objects ("formative"...?)
-\item Object-oriented thinking!
+\item<3-> Object-oriented thinking!
 % Comparing to the real world is a good way to explain. logical.
-\item Concepts from real world examples
+\item<4-> Concepts from real world examples
 % The trick is to go from concepts to to code, which is concreteness fading
-\item Concepts to code?
+\item<5->\alt<6->{\textbf{Game mechanics} to code?}{Concepts to code?}
 \end{itemize}
 \end{frame}
 
@@ -45,24 +48,66 @@
 % but not together.
 \begin{frame}
 \frametitle{Related Work}
-\begin{itemize}
-% in fact, this is a pretty standard appraoch!
-\item<1-> Visual Programming
-  \begin{itemize}
-  \item Scratch, Looking Glass, CodeSpells, Blockly Games, LightBot,
-    Human Resource Machine, …
-  \end{itemize}
-% Blockly Games (but not one coherent game)
-\item<2-> Concreteness Fading
-  \begin{itemize}
-  \item Blockly Games
-  \end{itemize}
-\item<3-> Object-Oriented Programming
-  \begin{itemize}
-  \item Looking Glass, CodeSpells
-  \end{itemize}
-% LightBot is hardly relevant separately, "robots" is just a theme.
-\end{itemize}
+\begin{columns}[onlytextwidth]
+  % This is ugly as fuck, sorry
+  \begin{column}{.3\textwidth}
+    \alt<2->{
+      \alt<3->{
+        \alt<4->{
+        \begin{figure}
+          \includegraphics[width=\textwidth]{scratch}\\
+          \includegraphics[width=\textwidth]{blocklygames_unfaded}\\
+          \includegraphics[width=\textwidth]{blocklygames_faded}
+        \end{figure}
+
+        }{
+          \begin{figure}
+            \includegraphics[width=1.2\textwidth]{lookingglass}
+            \caption{Looking Glass OOP (credit: Looking Glass tutorial)}
+          \end{figure}
+        }
+      }{
+        \begin{figure}
+          \includegraphics[width=\textwidth]{blocklygames_unfaded}
+        \end{figure}
+        \begin{figure}
+          \includegraphics[width=\textwidth]{blocklygames_faded}
+          \caption{Blockly Games concreteness fading}
+        \end{figure}
+      }
+    }{
+      \begin{figure}
+        \includegraphics[width=\textwidth]{scratch}
+        \caption{Scratch's block interface}
+      \end{figure}
+    }
+  \end{column}
+  \begin{column}{.65\textwidth}
+    \alt<4->{\textbf{Key inspirations:}}{}
+    \begin{itemize}
+      % in fact, this is a pretty standard appraoch!
+    \item<1-> Visual Programming
+      \begin{itemize}
+      \item\alt<4->{\textbf{Scratch}}{Scratch}, Looking Glass,
+        CodeSpells, \alt<4->{\textbf{Blockly Games}}{Blockly Games},
+        \alt<4->{\textbf{LightBot}}{LightBot}, Human Resource Machine,
+        …
+      \end{itemize}
+      % Blockly Games (but not one coherent game)
+    \item<2-> Concreteness Fading
+      \begin{itemize}
+      \item\alt<4->{\textbf{Blockly Games}}{Blockly Games}
+      \end{itemize}
+    \item<3-> Object-Oriented Programming
+      \begin{itemize}
+      \item Looking Glass, CodeSpells
+      \end{itemize}
+    \end{itemize}
+    % The \alt things give us a copy of the slide at the end with the
+    % relevant things bolded - this highlights our direct inspirations for
+    % what we are doing
+  \end{column}
+\end{columns}
 \end{frame}
 
 \begin{frame}
@@ -97,23 +142,47 @@ Force use of OOP via:
 % but I thought putting on to the slide didn't look very good
 % besides, despite more bullet points the previous section might
 % take more time
-\begin{frame}
+\begin{frame}[fragile]
 \frametitle{Concreteness Fading}
-Three stages
-\begin{enumerate}
-% Probably want pictures for this part...?
-\item Textual description
-\item Python syntax on blocks
-\item Code editor
-\end{enumerate}
+\begin{columns}[onlytextwidth]
+  \begin{column}{.45\textwidth}
+    \begin{figure}
+      \includegraphics[width=\textwidth]{../report/block_unfaded}
+    \end{figure}
+    \vspace{-7mm}\centerline{$\Downarrow $}\vspace{-2.5mm}
+    \begin{figure}
+      \includegraphics[width=\textwidth]{../report/block_faded}
+    \end{figure}
+    \vspace{-5mm}\centerline{$\Downarrow $}\vspace{-2.5mm}
+\begin{verbatim}
+robot.moveForward()
+robot.turnRight()
+\end{verbatim}
+  \end{column}
+  \begin{column}{.45\textwidth}
+    Three stages:
+    \begin{enumerate}
+    \item Textual description
+    \item Python syntax on blocks
+    \item Code editor
+    \end{enumerate}
+  \end{column}
+\end{columns}
 \end{frame}
 
 \begin{frame}
 \frametitle{Concreteness Fading}
-Considerations
+Considerations:
 \begin{itemize}
-\item Fading + new concept = confusion
-\item Scaffolding
+\item<1-> \alt<2>{\textbf{Fading + new concept = confusion}}{Fading + new concept = confusion}
+  \begin{itemize}
+  \item<2-> Introduce either a new concept or a faded block per level
+  \end{itemize}
+\item<1-> \alt<3>{\textbf{Scaffolding}}{Scaffolding}
+  \begin{itemize}
+  \item<3-> Keep object hierarchy, warnings, tooltips after fading
+  \item<3-> Unintended: players used faded blocks to help them write code
+  \end{itemize}
 \end{itemize}
 \end{frame}
 
