@@ -212,6 +212,7 @@ object-oriented experience (e.g.\ CS 1110 but not CS 2110).
 
 \subsection{Pre- and Post-Test}
 
+% reminder: update numbers
 11 people completed the game and the post-test. The mean pre-test score
 for those 11 people was 3.364 (s = 1.120). The mean post-test score was
 4.273 (s = 0.786). We performed a paired t-test on the pre-test scores and
@@ -248,12 +249,15 @@ description, we were not able to include a control group in this study.
 Another point to be wary of is when the pretest and posttest were completed.
 Since the game was also distributed through the Internet and progress is
 automatically saved in the browser cache, the pretest, game levels, and
-posttest did not all have to completed in one session. For example, one of the
-players included in our analysis finished the posttest about five days after
-they finished the pretest. In these cases, something other than the game could
-have contributed to learning.
+posttest did not all have to completed in a single session. For example, one of
+the players included in our analysis finished the posttest about five days
+after they finished the pretest. In these cases, playing the game was not the
+only activity that occurred between the completions of both tests, and those
+other activities could have also contributed to learning.
 % alternative: remove from analysis, along with other data points with long
 % periods between pretest and posttest. might not affect the results significantly?
+
+% discuss survivorship bias? and number of completed pretests?
 
 \subsection{Subjective Impressions}
 
@@ -282,11 +286,26 @@ the game. However, these results may be partially due to the Hawthorne effect.
 
 The ninth and final question was free response and asked for any general
 comments on the game. Overall, players responded positively. Not all left
-feedback; many pointed out minor issues with the interface, such as the
-relatively slow animation speed, unclear directions, and lack of examples.
+feedback; many pointed out minor issues with usability and the interface,
+such as the relatively slow animation speed, unclear directions, and lack
+of examples.
 
 We also had the chance to evaluate some players in person.
-% TODO: Andy's experience
+
+% did more than one person do this?
+One interesting behavior that we observed occurred when method definitions
+faded from a block editor to a text editor. Some players who had trouble
+recalling the exact syntax returned to the 'main' method, which was still in
+block-editor mode. They used the blocks, whose text had already faded into
+python code, as references for the method that they wanted to type. Given that
+we did not tell the players about concreteness fading, this is perhaps evidence
+that concreteness fading can be effectively applied to programming games, and
+also that it was a good choice to make the fading as granular as possible.
+However, players also said that they wished the interface allowed them to more
+easily use the technique just discussed. Thus, a potential improvement is to
+make example blocks or example code more accessible when in the text-editor
+mode.
+
 % TODO: Anything from Michael?
 
 As for engagement statistics, we captured when each player started and
