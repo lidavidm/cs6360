@@ -14,6 +14,8 @@
 \usepackage{multicol}
 \usepackage{booktabs}
 \usepackage{tabu}
+\usepackage{tikz}
+\usepackage{pgfplots}
 
 \newcommand\footnoteref[1]{\footnote{\url{#1}}}
 \newcommand\tmts[0]{\texttt{tell me to survive}}
@@ -315,8 +317,21 @@ As for engagement statistics, we captured when each player started and
 ended each level. This gives us a lower bound on the time spent to
 complete a playthrough, as the end-of-level event was not always
 recorded. The mean completion time was 7196 seconds, or almost exactly
-two hours.
+two hours. \autoref{fig:level-completion-time} shows the mean
+completion time per level. However, the variance (unshown) is very
+high, and the raw data looked suspect (e.g.\ one user completed level
+10, the method overriding level, in only 47 seconds). Thus, the
+figures here should be taken with a grain of salt.
 
+\begin{figure}
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}[xlabel=Level, ylabel={Mean Completion Time (minutes)}, xtick=data]
+      \addplot table[domain=1:13, col sep=comma] {level-completion-time.csv};
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Mean level completion times, in minutes}\label{fig:level-completion-time}
+\end{figure}
 \subsection{TODO}
 
 \section{Conclusions}
