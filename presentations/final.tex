@@ -254,7 +254,7 @@ Confounding factors:
 \begin{figure}
   \centering
   \begin{tikzpicture}
-    \begin{axis}[width=\textwidth,height=8cm,xlabel=Level, ylabel={Mean Completion Time (minutes)}, xtick=data]
+    \begin{axis}[mlineplot,width=\textwidth,height=8cm,xlabel=Level, ylabel={Mean Completion Time (minutes)}, xtick=data]
       \addplot table[y error=yerr, col sep=comma] {../report/level-completion-time.csv};
     \end{axis}
   \end{tikzpicture}
@@ -265,7 +265,7 @@ Confounding factors:
 \begin{figure}
   \centering
   \begin{tikzpicture}
-    \begin{axis}[width=\textwidth,height=8cm,xlabel=Level, ylabel={Number of Tries}, xtick=data]
+    \begin{axis}[mlineplot,width=\textwidth,height=8cm,xlabel=Level, ylabel={Number of Tries}, xtick=data]
       \addplot[/pgfplots/error bars/.cd, y dir = both, y explicit] table[y error=yerr, col sep=comma] {../report/try-count.csv};
     \end{axis}
   \end{tikzpicture}
@@ -290,7 +290,8 @@ Subjective impressions:
 \begin{figure}
   \centering
   \begin{tikzpicture}
-    \begin{axis}[height=6cm,width=\textwidth,xlabel=Level, ylabel={Number of Players}, xtick=data]
+    \begin{axis}[mlineplot,height=6cm,width=\textwidth,xlabel=Level,
+      ylabel={Number of Players}, xtick=data,ymin=0,ytick={0, 10, 20, 30, 40}]
       \addplot table[col sep=comma] {../report/num-players.csv};
     \end{axis}
   \end{tikzpicture}
