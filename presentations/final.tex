@@ -1,6 +1,8 @@
 \documentclass{beamer}
 \usepackage{booktabs}
 \usepackage{tabu}
+\usepackage{tikz}
+\usepackage{pgfplots}
 \usepackage[letterspace=110]{microtype}
 \usepackage[bitstream-charter]{mathdesign}
 \usepackage[light]{sourcecodepro}
@@ -216,6 +218,13 @@ Considerations:
 
 \begin{frame}
 \frametitle{Results}
+Individual questions:
+\input{../report/mcnemar_table}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Results}
 Confounding factors:
 \begin{itemize}
 \item<1-> Learning during the pre-test
@@ -225,7 +234,29 @@ Confounding factors:
 
 \begin{frame}
 \frametitle{Results}
-Graphs
+\begin{columns}[onlytextwidth]
+  \begin{column}{.5\textwidth}
+\begin{figure}
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}[width=\textwidth,height=8cm,xlabel=Level, ylabel={Mean Completion Time (minutes)}, xtick=data]
+      \addplot table[y error=yerr, col sep=comma] {../report/level-completion-time.csv};
+    \end{axis}
+  \end{tikzpicture}
+\end{figure}
+  \end{column}
+
+  \begin{column}{.5\textwidth}
+\begin{figure}
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}[width=\textwidth,height=8cm,xlabel=Level, ylabel={Number of Tries}, xtick=data]
+      \addplot[/pgfplots/error bars/.cd, y dir = both, y explicit] table[y error=yerr, col sep=comma] {../report/try-count.csv};
+    \end{axis}
+  \end{tikzpicture}
+\end{figure}
+  \end{column}
+\end{columns}
 \end{frame}
 
 \begin{frame}
@@ -258,5 +289,21 @@ General feedback:
 
 \begin{frame}
 \frametitle{Conclusions}
+\begin{itemize}
+\item Statistically significant increase in
+  \begin{itemize}
+  \item Overall mean
+  \item Performance on instantiation question
+  \end{itemize}
+\item Engagement is still a question
+\end{itemize}
+
+Future work:
+
+\begin{itemize}
+\item More object-oriented concepts
+\item Improved testing methodology
+\end{itemize}
+
 \end{frame}
 \end{document}
