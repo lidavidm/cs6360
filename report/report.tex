@@ -192,7 +192,7 @@ methods they call on objects. Without this restriction, the hierarchy
 One way around this restriction is to code the solution for an entire
 level inside of a method that has been faded to the code editor. We
 saw this happen once in our testing. However, in the end, this is
-actually beneficial because the user is writes more object-oriented 
+actually beneficial because the user is writes more object-oriented
 python code than originally expected.
 
 \subsection{Evaluation}
@@ -225,18 +225,40 @@ available in a separate repository,
 
 \subsection{Pre- and Post-Test}
 
-% reminder: update numbers
 12 people completed the game and the post-test. The mean pre-test score
 for those 12 people was 3.167 (s = 1.267). The mean post-test score was
 4.25 (s = 0.754). We performed a paired t-test on the pre-test scores and
 the post-test scores, and we found that the difference in means was
 statistically significant, $t(11) = 3.767$, $p = 0.003$.
 
-These results suggest that by playing the game, the players improved their
-understanding of the concepts tested by the 5 questions, namely classes and
-objects, method calls, initialization, inheritance, and overriding. Thus, we
-can reasonably claim that the game is successful at teaching some of our
-proposed learning objectives.
+These results suggest that by playing the game, the players improved
+their understanding of the concepts tested by the 5 questions, namely
+classes and objects, method calls, initialization, inheritance, and
+overriding. Thus, we can reasonably claim that the game is successful
+at teaching some of our proposed learning objectives. Looking
+specifically at which questions did or did not improve after playing
+the game, we can run McNemar's test on each individual question. (This
+test compares paired binomial data; in this case, we are comparing the
+proportion of users who got the question right before and after on
+each individual question.)
+
+\begin{center}
+\begin{tabu}{lllll}
+\toprule
+Question & Concepts & Significant? & $p$ & $\chi^2$ \\
+\midrule
+1 & Inheritance & No & 0.2482 & 1.333 \\
+2 & Instantiation & Yes & 0.2482 & 1.333 \\
+3 & Method invocation & No & 0.1336 & 2.250 \\
+4 & Overriding & 0.4795 & 0.500 \\
+5 & Subclassing & 0.4795 & 0.500 \\
+\bottomrule
+\\
+\end{tabu}
+\end{center}
+Thus, we improved posttest results significantly on only one question,
+dealing with object instantiation. This lines up with our mean scores,
+which improved by approximately a point.
 
 A potential confounding factor is that the correct answer to the second
 test question can be inferred based on example code provided in later
@@ -327,7 +349,10 @@ two hours. \autoref{fig:level-completion-time} shows the mean
 completion time per level. However, the standard error (unshown) is
 very high, and the raw data looked suspect (e.g.\ one user completed
 level 10, the method overriding level, in only 47 seconds). Thus, the
-figures here should be taken with a grain of salt.
+figures here should be taken with a grain of salt. The number of tries
+per level (see \autoref{fig:level-try-count}) followed expectations:
+initial levels required only a few tries, and later levels took more
+tries, with the number varying more by player.
 
 \begin{figure}
   \centering
@@ -339,12 +364,34 @@ figures here should be taken with a grain of salt.
   \caption{Mean number of tries per level}\label{fig:level-try-count}
 \end{figure}
 
-The number of tries per level (see \autoref{fig:level-try-count})
-followed expectations: initial levels required only a few tries, and
-later levels took more tries, with the number varying more by player.
-
 \section{Conclusions}
 
+Although we should keep in mind the issues with the design of the
+test, we did demonstrate a statistically significant improvement in
+test scores. Furthermore, the fact that the players were able to
+complete the game meant that their skills transferred from
+manipulating blocks to writing code. Indeed, as the anecdote above
+demonstrates, some players used the blocks to help them with Python
+syntax! Thus, our idea of combining visual programming and
+concreteness fading was able to successfully teach instantiation,
+based on the comparison of which questions improved between pretest
+and posttest. Overriding did not seem to be reinforced.
+
+However, it should be noted that we had to individually work with all
+testers who completed the test. We did this because of time
+constraints in finding test subjects, but it does skew the subjective
+enjoyment of the game, in that those who never completed it did not
+report their impressions.
+
 \subsection{Future Work}
+
+The current game only implements a few object-oriented features, and
+does not try to tackle the more complex ones, such as
+polymorphism. And while the expressiveness of the block language was
+purposely limited to simplify levels, being able to use parameters,
+define subclasses, and more would enable us to cover more
+object-oriented concepts. As discussed previously, we would also like
+to improve our testing methodology to account for biases and mistakes
+in the test design.
 
 \end{document}
