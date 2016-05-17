@@ -309,27 +309,42 @@ them to more easily use the technique just discussed. Thus, a potential
 improvement is to make example blocks or example code more accessible when
 in the text-editor mode.
 
+\begin{figure}
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}[xlabel=Level, ylabel={Mean Completion Time (minutes)}, xtick=data]
+      \addplot table[y error=yerr, col sep=comma] {level-completion-time.csv};
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Mean level completion times, in minutes}\label{fig:level-completion-time}
+\end{figure}
+
 As for engagement statistics, we captured when each player started and
 ended each level. This gives us a lower bound on the time spent to
 complete a playthrough, as the end-of-level event was not always
 recorded. The mean completion time was 7196 seconds, or almost exactly
 two hours. \autoref{fig:level-completion-time} shows the mean
-completion time per level. However, the variance (unshown) is very
-high, and the raw data looked suspect (e.g.\ one user completed level
-10, the method overriding level, in only 47 seconds). Thus, the
+completion time per level. However, the standard error (unshown) is
+very high, and the raw data looked suspect (e.g.\ one user completed
+level 10, the method overriding level, in only 47 seconds). Thus, the
 figures here should be taken with a grain of salt.
 
 \begin{figure}
   \centering
   \begin{tikzpicture}
-    \begin{axis}[xlabel=Level, ylabel={Mean Completion Time (minutes)}, xtick=data]
-      \addplot table[domain=1:13, col sep=comma] {level-completion-time.csv};
+    \begin{axis}[xlabel=Level, ylabel={Number of Tries}, xtick=data]
+      \addplot[/pgfplots/error bars/.cd, y dir = both, y explicit] table[y error=yerr, col sep=comma] {try-count.csv};
     \end{axis}
   \end{tikzpicture}
-  \caption{Mean level completion times, in minutes}\label{fig:level-completion-time}
+  \caption{Mean number of tries per level}\label{fig:level-try-count}
 \end{figure}
-\subsection{TODO}
+
+The number of tries per level (see \autoref{fig:level-try-count})
+followed expectations: initial levels required only a few tries, and
+later levels took more tries, with the number varying more by player.
 
 \section{Conclusions}
+
+\subsection{Future Work}
 
 \end{document}
