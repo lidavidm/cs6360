@@ -272,6 +272,15 @@ Subjective impressions:
 \begin{frame}
 \frametitle{Results}
 
+\begin{figure}
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}[height=6cm,width=\textwidth,xlabel=Level, ylabel={Number of Players}, xtick=data]
+      \addplot table[col sep=comma] {../report/num-players.csv};
+    \end{axis}
+  \end{tikzpicture}
+\end{figure}
+
 Mean completion time (estimated): \textasciitilde{}2 hours
 \end{frame}
 
@@ -294,12 +303,17 @@ General feedback:
   \begin{itemize}
   \item Overall mean
   \item Performance on instantiation question
+  \item Test design is questionable
   \end{itemize}
 \item Engagement is still a question
+  \begin{itemize}
+  \item Needed to work closely with testers
+  \end{itemize}
 \end{itemize}
+\end{frame}
 
-Future work:
-
+\begin{frame}
+\frametitle{Future Work}
 \begin{itemize}
 \item More object-oriented concepts
 \item Improved testing methodology
